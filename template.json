@@ -1,0 +1,222 @@
+{
+  "title": "LEARNING PROGRAMME QUEST",
+  "subtitle": "An adventure across ten checkpoints",
+  "nodes": [
+    {
+      "id": "intake",
+      "label": "Intake",
+      "icon": "village",
+      "title": "The Quest Begins",
+      "stage": "Orientation",
+      "summary": "A request has arrived at the village gate. Before you set out, learn who has called for help and what trouble they are facing.",
+      "questions": [
+        "Who requested this and who owns the outcome?",
+        "What business result are they trying to change?",
+        "Is this truly a learning problem, or is it process, tooling, messaging, or performance management?"
+      ],
+      "minimum": [
+        "Named requester and stakeholder",
+        "Clear audience",
+        "Business problem in one sentence",
+        "Initial deadline or urgency"
+      ],
+      "output": "A short intake note that defines the request, owner, audience, and suspected problem."
+    },
+    {
+      "id": "tna",
+      "label": "TNA",
+      "icon": "library",
+      "title": "The Hall of Records",
+      "stage": "Discovery",
+      "summary": "Climb to the great library and read the signs. Find the real gap between what is and what should be before drawing a single sword.",
+      "questions": [
+        "What do people need to do differently after this?",
+        "What evidence shows there is a gap?",
+        "What do top performers already do that others do not?",
+        "What constraints exist: time, tools, policy, market, manager behaviour?"
+      ],
+      "minimum": [
+        "Current behaviour described",
+        "Desired behaviour described",
+        "Evidence of gap",
+        "Audience segmentation",
+        "Constraints and risks"
+      ],
+      "output": "A TNA summary with current state, desired state, root cause, and recommended intervention."
+    },
+    {
+      "id": "triage",
+      "label": "Triage",
+      "icon": "council",
+      "boss": true,
+      "title": "The Council Chamber",
+      "stage": "Decision",
+      "summary": "The council awaits a verdict. Speak plainly: should this quest proceed, pause, change shape, or be passed to another guild?",
+      "questions": [
+        "Does this align to team OKRs or business priorities?",
+        "Who would be impacted if this is deprioritised?",
+        "What is the opportunity cost?",
+        "Do we have enough information to proceed?"
+      ],
+      "minimum": [
+        "Priority level",
+        "Decision owner",
+        "Go / no-go / reshape decision",
+        "Named next step"
+      ],
+      "output": "A decision note with recommendation, rationale, risks, and next action."
+    },
+    {
+      "id": "stakeholder",
+      "label": "Stakeholder",
+      "icon": "tavern",
+      "title": "The Tavern Pact",
+      "stage": "Agreement",
+      "summary": "Sit with the requester and shake on it. Confirm what will be delivered, what will not, the timeline, and who signs off.",
+      "questions": [
+        "What exactly will be delivered?",
+        "What will not be delivered?",
+        "How long will this take?",
+        "Who approves content, messaging, and launch?"
+      ],
+      "minimum": [
+        "Scope agreed",
+        "Out of scope agreed",
+        "Timeline agreed",
+        "Approval route named",
+        "Communication rhythm set"
+      ],
+      "output": "A stakeholder agreement or working brief."
+    },
+    {
+      "id": "design",
+      "label": "Design",
+      "icon": "workshop",
+      "title": "The Architect's Workshop",
+      "stage": "Design",
+      "summary": "Sketch the journey on the workshop wall. Outcomes, modality, practice, reinforcement, measurement. Build a blueprint, not a content dump.",
+      "questions": [
+        "What must learners know, do, and say?",
+        "What practice will make the behaviour stick?",
+        "Should this be live, self-paced, manager-led, peer-led, or blended?",
+        "Where does AI support the learner or facilitator?"
+      ],
+      "minimum": [
+        "Learning outcomes",
+        "Audience journey",
+        "Format and modality",
+        "Practice activity",
+        "Measurement plan"
+      ],
+      "output": "A learning blueprint with outcomes, structure, activities, and measurement."
+    },
+    {
+      "id": "build",
+      "label": "Build",
+      "icon": "forge",
+      "title": "The Forge",
+      "stage": "Production",
+      "summary": "Light the forge. Hammer out the assets, the facilitator notes, the activities, the job aids. Make a complete, testable pack.",
+      "questions": [
+        "What assets are needed for launch?",
+        "What can be reused or adapted?",
+        "What needs legal, brand, product, or leadership review?",
+        "What is the minimum viable version?"
+      ],
+      "minimum": [
+        "Core content",
+        "Facilitator guide",
+        "Learner activity",
+        "Support assets",
+        "Version control"
+      ],
+      "output": "A complete asset pack ready for testing."
+    },
+    {
+      "id": "risk",
+      "label": "Risk",
+      "icon": "watchtower",
+      "boss": true,
+      "title": "The Watchtower",
+      "stage": "Quality",
+      "summary": "Climb the tower and look out across the road ahead. What could ambush this launch? Misalignment, weak approvals, missing manager support.",
+      "questions": [
+        "What could go wrong?",
+        "What message might be misunderstood?",
+        "What dependency could block launch?",
+        "What support will learners need afterwards?"
+      ],
+      "minimum": [
+        "Risk register",
+        "Approval status",
+        "Launch readiness check",
+        "Support plan"
+      ],
+      "output": "A risk and readiness checklist."
+    },
+    {
+      "id": "pilot",
+      "label": "Pilot",
+      "icon": "training",
+      "title": "The Training Grounds",
+      "stage": "Testing",
+      "summary": "Test the build in friendly territory before the real campaign. Watch for friction, listen for confusion, log every observation.",
+      "questions": [
+        "Who is the safest pilot group?",
+        "What feedback do we need?",
+        "What would make this fail at scale?",
+        "What must change before launch?"
+      ],
+      "minimum": [
+        "Pilot audience",
+        "Feedback method",
+        "Observed friction",
+        "Iteration log"
+      ],
+      "output": "A pilot feedback summary with required changes."
+    },
+    {
+      "id": "launch",
+      "label": "Launch",
+      "icon": "battle",
+      "title": "The Campaign Begins",
+      "stage": "Delivery",
+      "summary": "Sound the horn. Deliver the programme with strong context, real practice, and a visible route to support afterwards.",
+      "questions": [
+        "How will the audience understand why this matters?",
+        "What action should they take immediately afterwards?",
+        "What manager or stakeholder reinforcement is required?",
+        "Where do learners go for support?"
+      ],
+      "minimum": [
+        "Launch comms",
+        "Delivery plan",
+        "Attendance or completion tracking",
+        "Support route"
+      ],
+      "output": "A delivered programme with clear follow-up."
+    },
+    {
+      "id": "measure",
+      "label": "Measure",
+      "icon": "throne",
+      "title": "The Throne Room",
+      "stage": "Impact",
+      "summary": "Stand before the throne with proof. Did this work? What changed? What should be repeated, stopped, or improved?",
+      "questions": [
+        "Did the programme solve the original problem?",
+        "What evidence proves behaviour changed?",
+        "What feedback came from learners, managers, and stakeholders?",
+        "What should be repeated, stopped, or improved?"
+      ],
+      "minimum": [
+        "Learner feedback",
+        "Stakeholder feedback",
+        "Behaviour or performance signal",
+        "Lessons learned",
+        "Next recommendation"
+      ],
+      "output": "An impact review with evidence, insight, and next steps."
+    }
+  ]
+}

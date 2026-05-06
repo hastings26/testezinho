@@ -1,0 +1,1328 @@
+/* ============================================================
+   LEARNING PROGRAMME QUEST — pixel-art JRPG aesthetic
+   ============================================================ */
+
+:root {
+  --bg-deep: #07091c;
+  --bg-mid: #131838;
+  --panel: #1f2452;
+  --panel-light: #2d3473;
+  --panel-dark: #0e1130;
+  --border: #ffffff;
+  --gold: #ffd23f;
+  --gold-dark: #c89a1f;
+  --xp-fill: #4af6c3;
+  --xp-fill-2: #79f7d2;
+  --hp: #ff5470;
+  --grass: #5fa654;
+  --grass-dark: #3d7a36;
+  --grass-deep: #2a5723;
+  --water: #4a90e2;
+  --water-dark: #2d68b0;
+  --sand: #e0c074;
+  --path: #d4a875;
+  --stone: #8a8d9e;
+  --stone-dark: #5a5d70;
+  --mountain: #6b5d8a;
+  --mountain-dark: #463d5e;
+  --text: #ffffff;
+  --text-muted: #b8bedb;
+  --text-dim: #7a82a8;
+  --danger: #ff5470;
+  --shadow-hard: 4px 4px 0 0 rgba(0, 0, 0, 0.6);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 20px;
+  color: var(--text);
+  background: var(--bg-deep);
+  overflow: hidden;
+  letter-spacing: 0.02em;
+}
+
+button { font: inherit; cursor: pointer; color: inherit; }
+input, textarea { font-family: 'VT323', monospace; color: inherit; }
+
+.hidden { display: none !important; }
+
+.pixel-h, .screen-title, h1, h2, .lvl-badge, .day-counter, .stage, .victory-banner {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   STARFIELD BACKGROUND
+   ============================================================ */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 110%, #1a2058 0%, transparent 60%),
+    radial-gradient(ellipse at 80% -20%, #2d1a4e 0%, transparent 50%),
+    var(--bg-deep);
+}
+
+.starfield .layer {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 12% 18%, white, transparent),
+    radial-gradient(1px 1px at 28% 64%, white, transparent),
+    radial-gradient(2px 2px at 56% 32%, white, transparent),
+    radial-gradient(1px 1px at 74% 78%, white, transparent),
+    radial-gradient(1px 1px at 88% 22%, white, transparent),
+    radial-gradient(2px 2px at 38% 88%, white, transparent),
+    radial-gradient(1px 1px at 64% 12%, white, transparent),
+    radial-gradient(1px 1px at 82% 56%, white, transparent);
+  opacity: 0.6;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+.starfield .layer-2 { animation-delay: -1s; opacity: 0.4; transform: scale(1.3); }
+.starfield .layer-3 { animation-delay: -2.5s; opacity: 0.3; transform: scale(1.6); }
+
+@keyframes twinkle {
+  from { opacity: 0.2; }
+  to   { opacity: 0.7; }
+}
+
+/* ============================================================
+   SCREEN BASE
+   ============================================================ */
+.screen {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================
+   FRAME (chunky JRPG dialog box)
+   ============================================================ */
+.frame {
+  background: var(--panel);
+  border: 4px solid var(--border);
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 4px var(--panel-dark),
+    var(--shadow-hard),
+    var(--shadow-soft);
+  padding: 36px 40px;
+  position: relative;
+  max-width: 580px;
+  width: 90%;
+}
+
+.frame::before,
+.frame::after {
+  content: "◆";
+  position: absolute;
+  color: var(--gold);
+  font-size: 14px;
+  top: 8px;
+}
+.frame::before { left: 12px; }
+.frame::after { right: 12px; }
+
+/* ============================================================
+   TITLE SCREEN
+   ============================================================ */
+.title-screen { flex-direction: column; }
+
+.title-stack {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px;
+}
+
+.title-pre {
+  margin: 0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.title-logo {
+  margin: 12px 0 4px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(48px, 12vw, 120px);
+  color: var(--text);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-shadow:
+    4px 4px 0 var(--gold-dark),
+    8px 8px 0 var(--panel-dark),
+    0 0 24px rgba(255, 210, 63, 0.4);
+}
+
+.title-logo span {
+  display: inline-block;
+  animation: titleBob 2.4s ease-in-out infinite;
+}
+
+@keyframes titleBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.title-sub {
+  margin: 0 0 32px;
+  color: var(--text-muted);
+  font-size: 22px;
+  letter-spacing: 0.1em;
+}
+
+.press-start {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+  color: var(--text);
+  background: transparent;
+  border: 4px solid var(--text);
+  padding: 18px 32px;
+  letter-spacing: 0.08em;
+  margin-top: 12px;
+  animation: pulse 1.4s ease-in-out infinite;
+  box-shadow: var(--shadow-hard);
+}
+
+.press-start:hover {
+  background: var(--text);
+  color: var(--bg-deep);
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.title-credit {
+  margin-top: 32px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.16em;
+}
+
+/* ============================================================
+   SAVE SELECT / NEW QUEST
+   ============================================================ */
+.screen-title {
+  font-size: 18px;
+  margin: 0 0 20px;
+  color: var(--gold);
+  text-align: center;
+}
+
+.frame-help {
+  margin: -8px 0 18px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 18px;
+}
+
+.save-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+  max-height: 56vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.save-slot {
+  background: var(--panel-light);
+  border: 3px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  transition: transform 0.1s ease, background 0.1s ease;
+}
+
+.save-slot:hover {
+  background: var(--panel-dark);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.6);
+}
+
+.save-slot-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.save-slot-meta {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--gold);
+}
+
+.save-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#newQuestInput {
+  width: 100%;
+  background: var(--panel-dark);
+  border: 3px solid var(--border);
+  color: var(--text);
+  padding: 14px 16px;
+  font-size: 20px;
+  margin-bottom: 18px;
+  outline: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#newQuestInput:focus {
+  border-color: var(--gold);
+  background: var(--panel);
+}
+
+/* ============================================================
+   GAME BUTTON
+   ============================================================ */
+.game-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  background: var(--panel-light);
+  color: var(--text);
+  border: 3px solid var(--border);
+  padding: 12px 18px;
+  box-shadow: var(--shadow-hard);
+  transition: transform 0.08s ease, background 0.1s ease;
+}
+
+.game-btn:hover { background: var(--panel-dark); transform: translate(-1px, -1px); box-shadow: 5px 5px 0 0 rgba(0,0,0,0.6); }
+.game-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 rgba(0,0,0,0.6); }
+
+.game-btn.primary {
+  background: var(--gold);
+  color: var(--bg-deep);
+  border-color: var(--text);
+}
+.game-btn.primary:hover { background: #ffe070; }
+
+.game-btn.danger {
+  background: var(--danger);
+  color: white;
+}
+.game-btn.danger:hover { background: #ff7088; }
+
+.game-btn.full { width: 100%; text-align: center; margin-bottom: 8px; }
+
+/* ============================================================
+   GAME VIEW LAYOUT
+   ============================================================ */
+.game-view {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 12px;
+  gap: 10px;
+}
+
+/* ============================================================
+   HUD
+   ============================================================ */
+.hud {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 10px;
+  background: var(--panel);
+  border: 4px solid var(--border);
+  box-shadow: var(--shadow-hard);
+  padding: 10px 14px;
+  align-items: center;
+  z-index: 2;
+}
+
+.hud-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hud-right { justify-content: flex-end; }
+.hud-center { justify-content: center; }
+
+.hud-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  background: var(--panel-light);
+  color: var(--text);
+  border: 2px solid var(--border);
+  padding: 8px 10px;
+  letter-spacing: 0.05em;
+}
+
+.hud-btn:hover { background: var(--panel-dark); }
+
+.hud-quest-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.xp-block {
+  width: 100%;
+  max-width: 460px;
+}
+
+.xp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lvl-badge {
+  font-size: 11px;
+  background: var(--gold);
+  color: var(--bg-deep);
+  padding: 6px 10px;
+  border: 2px solid var(--text);
+  white-space: nowrap;
+}
+
+.xp-bar {
+  flex: 1;
+  height: 18px;
+  background: var(--panel-dark);
+  border: 2px solid var(--text);
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--xp-fill), var(--xp-fill-2));
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.18), inset 0 4px 0 rgba(255, 255, 255, 0.25);
+  transition: width 0.5s cubic-bezier(0.4, 1.6, 0.6, 1);
+}
+
+.xp-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.day-counter {
+  font-size: 11px;
+  background: var(--panel-light);
+  border: 2px solid var(--border);
+  padding: 6px 10px;
+  color: var(--text);
+}
+
+/* ============================================================
+   MAP FRAME
+   ============================================================ */
+.map-frame {
+  flex: 1;
+  background: var(--panel);
+  border: 4px solid var(--border);
+  box-shadow: var(--shadow-hard);
+  padding: 8px;
+  min-height: 0;
+  display: flex;
+}
+
+.map-frame-inner {
+  flex: 1;
+  position: relative;
+  background: #0c1838;
+  border: 2px solid var(--panel-dark);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#worldMap {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.map-toast {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--bg-deep);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  padding: 10px 18px;
+  border: 3px solid var(--text);
+  box-shadow: var(--shadow-hard);
+  pointer-events: none;
+  animation: toastIn 2.4s ease;
+  z-index: 5;
+}
+
+@keyframes toastIn {
+  0%   { opacity: 0; transform: translate(-50%, -10px); }
+  10%, 80% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* ============================================================
+   SVG NODE STYLING
+   ============================================================ */
+.tile-grass { fill: var(--grass); }
+.tile-grass-dark { fill: var(--grass-dark); }
+.tile-grass-deep { fill: var(--grass-deep); }
+.tile-water { fill: var(--water); }
+.tile-water-dark { fill: var(--water-dark); }
+.tile-sand { fill: var(--sand); }
+.tile-path { fill: var(--path); }
+.tile-mountain { fill: var(--mountain); }
+.tile-mountain-dark { fill: var(--mountain-dark); }
+
+.q-path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 4;
+  stroke-dasharray: 4 6;
+}
+
+.q-path-done {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 5;
+  stroke-linecap: square;
+  filter: drop-shadow(0 0 4px rgba(255, 210, 63, 0.7));
+}
+
+.q-node {
+  cursor: pointer;
+}
+
+.q-node-tile {
+  fill: var(--panel-dark);
+  stroke: var(--text);
+  stroke-width: 2.5;
+}
+
+.q-node.done .q-node-tile {
+  fill: var(--gold);
+  stroke: var(--text);
+}
+
+.q-node:hover .q-node-tile { fill: var(--panel-light); }
+.q-node.done:hover .q-node-tile { fill: #ffe070; }
+
+.q-node-num {
+  fill: var(--text);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.q-node.done .q-node-num { fill: var(--bg-deep); }
+
+.q-node-label {
+  fill: var(--text);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--bg-deep);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.q-node-stage {
+  fill: var(--gold);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--bg-deep);
+  stroke-width: 2.5px;
+}
+
+.q-node.current .q-glow {
+  animation: nodeGlow 1.4s ease-in-out infinite;
+}
+
+.q-glow {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 3;
+  opacity: 0;
+}
+
+@keyframes nodeGlow {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50%      { opacity: 0.9; transform: scale(1.4); }
+}
+
+.q-node.current .q-node-tile {
+  stroke: var(--gold);
+  stroke-width: 4;
+}
+
+/* Hero sprite */
+.hero-sprite {
+  pointer-events: none;
+  transition: transform 0.9s cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+.hero-sprite-bob {
+  animation: heroBob 0.6s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes heroBob {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-3px); }
+}
+
+/* ============================================================
+   PARTY BAR
+   ============================================================ */
+.party-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel);
+  border: 4px solid var(--border);
+  box-shadow: var(--shadow-hard);
+  padding: 8px 14px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.party-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.party-list {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.party-chip {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  background: var(--panel-light);
+  border: 2px solid var(--border);
+  padding: 8px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.party-chip:hover { background: var(--panel-dark); }
+.party-chip.active {
+  background: var(--gold);
+  color: var(--bg-deep);
+  border-color: var(--text);
+}
+
+.party-chip-meta {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+/* ============================================================
+   QUEST LOG (slide-up dialog)
+   ============================================================ */
+.quest-log {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 9, 28, 0.78);
+  backdrop-filter: blur(2px);
+  padding: 20px;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.ql-frame {
+  width: min(700px, 100%);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 4px solid var(--border);
+  box-shadow:
+    0 0 0 4px var(--panel-dark),
+    var(--shadow-hard),
+    0 16px 50px rgba(0, 0, 0, 0.8);
+  padding: 22px 26px 20px;
+  position: relative;
+  animation: slideUp 0.22s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.ql-frame::before,
+.ql-frame::after {
+  content: "◆";
+  position: absolute;
+  color: var(--gold);
+  font-size: 14px;
+  top: 6px;
+}
+.ql-frame::before { left: 10px; }
+.ql-frame::after { right: 10px; }
+
+.ql-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0 8px;
+}
+
+.ql-stage {
+  font-size: 10px;
+  color: var(--gold);
+}
+
+.ql-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: var(--text);
+  margin: 4px 0 12px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+
+.ql-summary {
+  margin: 0 0 16px;
+  font-size: 19px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.ql-section {
+  background: var(--panel-dark);
+  border: 2px solid var(--border);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.ql-section h4 {
+  margin: 0 0 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+
+.ql-section.ql-reward {
+  background: rgba(255, 210, 63, 0.12);
+  border-color: var(--gold);
+}
+
+.ql-section.ql-reward h4 {
+  color: var(--gold);
+}
+
+.ql-section.ql-reward p {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.ql-list, .ql-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ql-list li {
+  padding: 4px 0 4px 22px;
+  position: relative;
+  font-size: 18px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.ql-list li::before {
+  content: "›";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.ql-checks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 18px;
+}
+
+.ql-checks input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--text);
+  background: var(--panel);
+  cursor: pointer;
+  position: relative;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.ql-checks input[type="checkbox"]:checked {
+  background: var(--xp-fill);
+  border-color: var(--xp-fill);
+}
+
+.ql-checks input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  inset: -2px 0 0 1px;
+  color: var(--bg-deep);
+  font-weight: 900;
+  font-size: 16px;
+  text-align: center;
+  font-family: 'VT323', monospace;
+}
+
+.ql-checks label {
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.ql-checks input:checked + label {
+  color: var(--text-dim);
+  text-decoration: line-through;
+}
+
+#qlNotes {
+  width: 100%;
+  background: var(--panel);
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 18px;
+  resize: vertical;
+  min-height: 90px;
+  outline: none;
+  line-height: 1.4;
+}
+
+#qlNotes:focus { border-color: var(--gold); }
+
+.ql-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.ql-actions .game-btn { flex: 1; min-width: 130px; }
+
+/* ============================================================
+   MENU OVERLAY
+   ============================================================ */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  background: rgba(7, 9, 28, 0.84);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.16s ease;
+}
+
+.menu-frame {
+  width: min(420px, 100%);
+}
+
+/* ============================================================
+   VICTORY
+   ============================================================ */
+.victory {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(7, 9, 28, 0.85);
+  animation: fadeIn 0.3s ease;
+}
+
+.victory-frame {
+  width: min(560px, 100%);
+  text-align: center;
+  background: var(--panel);
+  border: 4px solid var(--gold);
+  box-shadow:
+    0 0 0 4px var(--panel-dark),
+    var(--shadow-hard),
+    0 0 80px rgba(255, 210, 63, 0.4);
+  padding: 36px;
+  position: relative;
+}
+
+.victory-banner {
+  font-family: 'Press Start 2P', monospace;
+  color: var(--gold);
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  margin-bottom: 18px;
+  animation: bannerPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes bannerPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+.victory-frame h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 24px;
+  color: var(--text);
+  margin: 0 0 12px;
+  text-shadow: 3px 3px 0 var(--gold-dark);
+}
+
+.victory-frame p {
+  font-size: 19px;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+
+.victory-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.stat-chip {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  background: var(--panel-light);
+  border: 2px solid var(--gold);
+  padding: 8px 10px;
+  color: var(--text);
+}
+
+/* ============================================================
+   PARTICLES
+   ============================================================ */
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(255, 210, 63, 0.9);
+  animation: particleFly 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes particleFly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.6) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(var(--tx, 60px), var(--ty, -100px))
+      scale(1.6)
+      rotate(var(--tr, 180deg));
+  }
+}
+
+.xp-popup {
+  position: absolute;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: var(--xp-fill);
+  text-shadow: 0 0 8px rgba(74, 246, 195, 0.8), 2px 2px 0 var(--bg-deep);
+  animation: xpFloat 1.4s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes xpFloat {
+  0%   { opacity: 0; transform: translateY(0) scale(0.8); }
+  20%  { opacity: 1; transform: translateY(-10px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-80px) scale(1); }
+}
+
+/* Screen shake on level up */
+.screen-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-4px, 2px); }
+  40% { transform: translate(4px, -2px); }
+  60% { transform: translate(-3px, -1px); }
+  80% { transform: translate(3px, 1px); }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 920px) {
+  .hud {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .hud-block { justify-content: center; flex-wrap: wrap; }
+  .hud-quest-name { max-width: 100%; }
+  .ql-frame { padding: 16px; }
+  .frame { padding: 24px 18px; }
+  .title-logo { font-size: 56px; }
+  body { font-size: 18px; }
+}
+
+@media (max-height: 700px) {
+  .map-frame { min-height: 320px; }
+}
+
+/* ============================================================
+   FRAME WIDE (used by new-quest screen with class picker)
+   ============================================================ */
+.frame-wide { max-width: 720px; }
+
+/* ============================================================
+   CLASS PICKER (new quest screen)
+   ============================================================ */
+.class-help {
+  margin: 18px 0 10px !important;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px !important;
+  color: var(--gold);
+  letter-spacing: 0.16em;
+  text-align: center;
+}
+
+.class-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.class-option {
+  background: var(--panel-light);
+  border: 3px solid var(--border);
+  padding: 12px 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  transition: transform 0.1s ease, background 0.1s ease, border-color 0.1s ease;
+  text-align: center;
+}
+
+.class-option:hover {
+  background: var(--panel-dark);
+  transform: translate(-1px, -1px);
+}
+
+.class-option.active {
+  background: var(--gold);
+  border-color: var(--text);
+  color: var(--bg-deep);
+}
+
+.class-option.active .class-desc { color: var(--bg-deep); opacity: 0.85; }
+
+.class-sprite {
+  width: 48px;
+  height: 56px;
+}
+
+.class-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.class-desc {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+/* ============================================================
+   BOSS BANNER (drops in before opening boss quest log)
+   ============================================================ */
+.boss-banner {
+  position: fixed;
+  inset: 0;
+  z-index: 28;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: bossFade 1.6s ease forwards;
+}
+
+.boss-banner-inner {
+  text-align: center;
+  padding: 30px 50px;
+  background: linear-gradient(180deg, rgba(168, 36, 58, 0.95), rgba(122, 24, 40, 0.95));
+  border: 4px solid var(--gold);
+  box-shadow:
+    0 0 0 4px var(--bg-deep),
+    var(--shadow-hard),
+    0 0 80px rgba(168, 36, 58, 0.7);
+  animation: bossDrop 0.4s cubic-bezier(0.4, 1.6, 0.6, 1);
+}
+
+.boss-warning {
+  margin: 0 0 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  animation: bossBlink 0.6s steps(2, jump-none) infinite;
+}
+
+.boss-name {
+  margin: 0 0 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 22px;
+  color: var(--text);
+  letter-spacing: 0.06em;
+  text-shadow: 4px 4px 0 var(--bg-deep);
+}
+
+.boss-sub {
+  margin: 4px 0 0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+}
+
+@keyframes bossFade {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes bossDrop {
+  from { transform: scale(0.7) translateY(-30px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes bossBlink {
+  to { opacity: 0.4; }
+}
+
+/* Boss landmark on world map */
+.q-node.boss .q-node-tile {
+  stroke: var(--danger);
+  stroke-width: 3.5;
+}
+
+.q-node.boss.done .q-node-tile { stroke: var(--text); }
+
+.q-boss-label {
+  fill: var(--danger);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--bg-deep);
+  stroke-width: 3px;
+  animation: bossLabelPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes bossLabelPulse {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
+
+/* ============================================================
+   ACHIEVEMENT TOASTS
+   ============================================================ */
+.achievement-toasts {
+  position: fixed;
+  top: 90px;
+  right: 16px;
+  z-index: 50;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 340px;
+}
+
+.achievement-toast {
+  background: var(--panel);
+  border: 4px solid var(--gold);
+  box-shadow:
+    var(--shadow-hard),
+    0 0 30px rgba(255, 210, 63, 0.45);
+  padding: 12px 16px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  animation: achIn 0.45s cubic-bezier(0.3, 1.4, 0.6, 1), achOut 0.6s ease 4s forwards;
+}
+
+.ach-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 0 6px rgba(255, 210, 63, 0.9));
+}
+
+.ach-text { display: flex; flex-direction: column; gap: 4px; }
+
+.ach-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+}
+
+.ach-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--text);
+}
+
+.ach-desc {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+@keyframes achIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes achOut {
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+/* ============================================================
+   TROPHY ROOM
+   ============================================================ */
+.trophy-frame { max-width: 640px; }
+
+.trophy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 14px 0 18px;
+  max-height: 56vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.trophy-card {
+  background: var(--panel-dark);
+  border: 3px solid var(--border);
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.trophy-card.locked {
+  opacity: 0.45;
+  border-color: var(--stone-dark);
+}
+
+.trophy-card .ach-icon { font-size: 22px; }
+.trophy-card .ach-name { font-size: 10px; }
+.trophy-card .ach-desc { font-size: 14px; }
+
+.trophy-card.locked .ach-icon { filter: grayscale(1); }
+
+@media (max-width: 640px) {
+  .class-picker { grid-template-columns: 1fr; }
+  .trophy-grid { grid-template-columns: 1fr; }
+}
