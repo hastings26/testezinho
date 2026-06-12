@@ -1298,7 +1298,8 @@ async function init() {
   showScreen("titleScreen");
 }
 
-init();
+// init() is invoked at the very end of this file, after every const it
+// depends on (HERO_DRAWERS, ACHIEVEMENTS) has been initialised.
 
 // =============================================================
 // HERO CLASS SPRITES
@@ -1546,3 +1547,5 @@ function renderTrophyRoom() {
   const totalAch = ACHIEVEMENTS.length;
   document.getElementById("trophyProgress").textContent = `${got} / ${totalAch} UNLOCKED`;
 }
+
+init();
