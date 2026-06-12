@@ -14,12 +14,13 @@ then open `http://localhost:8000`.
 
 ## What it does
 
-- **Title screen** with PRESS START, save-select, and a NAME YOUR QUEST flow
+- **Title screen** with PRESS START (click, Enter, or Space), save-select, and a NAME YOUR QUEST flow
 - **World map** with terrain, mountains, lake, forest, sun, clouds, and ten pixel-art landmarks (village → throne)
 - **A hero sprite** that stands at your current checkpoint and moves as you complete steps
 - **Quest log dialog** for each checkpoint — INVESTIGATE prompts, PROOF checkboxes, JOURNAL notes, REWARD
+- **Real progression gates** — checkpoints unlock in order (locked ones show 🔒 and can be previewed but not completed), and a step can't be marked complete until every PROOF box is ticked. Blocked attempts get a shake, a buzz, and a clear message — the same stops a learner hits in a real programme: do the work, collect the evidence, then move on
 - **HUD** with level, XP bar, day counter, sound toggle, menu
-- **Mark Complete** = particle burst, +XP popup, screen shake, ascending arpeggio (if sound on)
+- **Mark Complete** = particle burst, accurate +XP popup, screen shake, ascending arpeggio (if sound on), and a full LEVEL UP banner when you cross a level boundary
 - **Victory screen** at 100% with stats: days elapsed, XP earned, proof captured, journals filled
 - **Multiple quests** (party bar) — switch any time, each saves separately
 - **Markdown export** — clean handover doc for stakeholders

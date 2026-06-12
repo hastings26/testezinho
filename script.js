@@ -131,6 +131,48 @@ function firstIncompleteIndex(p) {
   return template.nodes.length - 1;
 }
 
+// A checkpoint is locked until every checkpoint before it is complete —
+// the journey has real stops, like a learning path with sign-offs.
+function isLocked(p, index) {
+  for (let i = 0; i < index; i++) {
+    if (!p.stepData[template.nodes[i].id].done) return true;
+  }
+  return false;
+}
+
+function xpGainedFor(node, data) {
+  let xp = XP_PER_QUEST_BASE;
+  data.minimumChecks.forEach((c) => { if (c) xp += XP_PER_MINIMUM; });
+  if (data.notes && data.notes.trim()) xp += XP_PER_NOTES;
+  return xp;
+}
+
+// Single source of truth for whether a step may be completed.
+// Returns null when completion is allowed, otherwise the blocking reason.
+function completionGate(p, index) {
+  const data = p.stepData[template.nodes[index].id];
+  if (isLocked(p, index)) {
+    const blockerIdx = firstIncompleteIndex(p);
+    return {
+      btnLabel: `🔒 FINISH STEP ${blockerIdx + 1} FIRST`,
+      denyMsg: `🔒 THE PATH IS BLOCKED — FINISH STEP ${blockerIdx + 1} FIRST`,
+    };
+  }
+  const checked = data.minimumChecks.filter(Boolean).length;
+  const total = data.minimumChecks.length;
+  if (checked < total) {
+    return {
+      btnLabel: `◇ PROOF ${checked}/${total} — COMPLETE`,
+      denyMsg: `◇ COLLECT ALL PROOF FIRST — ${checked}/${total}`,
+    };
+  }
+  return null;
+}
+
+function levelFor(xp) {
+  return Math.min(template.nodes.length + 1, Math.floor(xp / XP_PER_LEVEL) + 1);
+}
+
 function totalDone(p) {
   return template.nodes.filter((n) => p.stepData[n.id].done).length;
 }
@@ -139,11 +181,7 @@ function calculateXP(p) {
   let xp = 0;
   template.nodes.forEach((n) => {
     const d = p.stepData[n.id];
-    if (d.done) {
-      xp += XP_PER_QUEST_BASE;
-      d.minimumChecks.forEach((c) => { if (c) xp += XP_PER_MINIMUM; });
-      if (d.notes && d.notes.trim()) xp += XP_PER_NOTES;
-    }
+    if (d.done) xp += xpGainedFor(n, d);
   });
   return xp;
 }
@@ -419,16 +457,24 @@ function drawCloud(svg, cx, cy) {
   svg.appendChild(g);
 }
 
-function buildPath(svg, doneCount) {
+function buildPath(svg, programme) {
   // Smooth bezier path through all node positions
   const fullD = pathD(NODE_POSITIONS);
   const base = svgEl("path", { d: fullD });
   base.setAttribute("class", "q-path");
   svg.appendChild(base);
 
-  // Done overlay (path through completed nodes only)
-  if (doneCount >= 2) {
-    const partial = NODE_POSITIONS.slice(0, doneCount);
+  // Done overlay covers the travelled stretch: the contiguous run of
+  // completed checkpoints from the start (saves from before gating may
+  // have gaps, so don't assume totalDone is a prefix).
+  let prefix = 0;
+  while (
+    prefix < template.nodes.length &&
+    programme.stepData[template.nodes[prefix].id].done
+  ) prefix++;
+
+  if (prefix >= 2) {
+    const partial = NODE_POSITIONS.slice(0, prefix);
     const done = svgEl("path", { d: pathD(partial) });
     done.setAttribute("class", "q-path-done");
     svg.appendChild(done);
@@ -451,13 +497,15 @@ function buildLandmarks(svg, programme) {
   template.nodes.forEach((node, i) => {
     const pos = NODE_POSITIONS[i];
     const data = programme.stepData[node.id];
+    const locked = !data.done && isLocked(programme, i);
 
     const g = svgEl("g", { transform: `translate(${pos.x} ${pos.y})` });
     g.setAttribute("class",
       "q-node" +
       (data.done ? " done" : "") +
       (i === activeStepIndex ? " current" : "") +
-      (node.boss ? " boss" : "")
+      (node.boss ? " boss" : "") +
+      (locked ? " locked" : "")
     );
     g.addEventListener("click", () => openCard(i));
 
@@ -489,7 +537,7 @@ function buildLandmarks(svg, programme) {
     g.appendChild(tile);
 
     const num = svgEl("text", { x: 0, y: 30, "class": "q-node-num" });
-    num.textContent = data.done ? `${i + 1} ✓` : `${i + 1}`;
+    num.textContent = data.done ? `${i + 1} ✓` : locked ? "🔒" : `${i + 1}`;
     g.appendChild(num);
 
     // Node label below
@@ -543,7 +591,7 @@ function renderMap() {
   if (!p) return;
 
   buildBackground(svg);
-  buildPath(svg, totalDone(p));
+  buildPath(svg, p);
   buildLandmarks(svg, p);
   buildHero(svg, p);
 }
@@ -558,7 +606,7 @@ function renderHUD() {
   document.getElementById("hudQuestName").textContent = p.name;
 
   const xp = calculateXP(p);
-  const lvl = Math.min(template.nodes.length + 1, Math.floor(xp / XP_PER_LEVEL) + 1);
+  const lvl = levelFor(xp);
   const xpInLevel = xp % XP_PER_LEVEL;
   const xpPct = (xpInLevel / XP_PER_LEVEL) * 100;
 
@@ -595,9 +643,11 @@ function actuallyOpenCard(index) {
   activeStepIndex = index;
   const node = template.nodes[index];
   const data = p.stepData[node.id];
+  const locked = !data.done && isLocked(p, index);
 
   document.getElementById("qlStage").textContent =
-    `STEP ${index + 1}/${template.nodes.length} · ${node.stage.toUpperCase()}`;
+    `STEP ${index + 1}/${template.nodes.length} · ${node.stage.toUpperCase()}` +
+    (locked ? " · 🔒 LOCKED" : "");
   document.getElementById("qlTitle").textContent = node.title;
   document.getElementById("qlSummary").textContent = node.summary;
   document.getElementById("qlOutput").textContent = node.output;
@@ -621,9 +671,12 @@ function actuallyOpenCard(index) {
     cb.addEventListener("change", () => {
       data.minimumChecks[i] = cb.checked;
       touchActive();
-      sfxClick();
       renderHUD();
       checkAchievements();
+      refreshCompleteBtn(index);
+      // Last proof collected: chime + pulse the complete button
+      if (cb.checked && data.minimumChecks.every(Boolean) && !data.done) sfxReady();
+      else sfxClick();
     });
     const label = document.createElement("label");
     label.setAttribute("for", cb.id);
@@ -642,7 +695,7 @@ function actuallyOpenCard(index) {
     checkAchievements();
   };
 
-  document.getElementById("qlComplete").textContent = data.done ? "✓ COMPLETE — UNDO" : "✓ COMPLETE QUEST";
+  refreshCompleteBtn(index);
 
   renderMap(); // update current-node highlight
 
@@ -652,10 +705,56 @@ function actuallyOpenCard(index) {
   sfxClick();
 }
 
+function refreshCompleteBtn(index) {
+  const p = getActive();
+  if (!p) return;
+  const data = p.stepData[template.nodes[index].id];
+  const btn = document.getElementById("qlComplete");
+  btn.classList.remove("ready");
+
+  if (data.done) {
+    btn.textContent = "✓ COMPLETE — UNDO";
+    return;
+  }
+  const gate = completionGate(p, index);
+  if (gate) {
+    btn.textContent = gate.btnLabel;
+  } else {
+    btn.textContent = "✓ COMPLETE QUEST";
+    btn.classList.add("ready");
+  }
+}
+
+function dialogDeny(msg) {
+  const frame = document.querySelector("#questLog .ql-frame");
+  if (frame) {
+    frame.classList.remove("denied");
+    void frame.offsetWidth;
+    frame.classList.add("denied");
+  }
+  const toast = document.getElementById("qlToast");
+  if (toast) {
+    toast.textContent = msg;
+    toast.classList.remove("hidden");
+    clearTimeout(dialogDeny._t);
+    dialogDeny._t = setTimeout(() => toast.classList.add("hidden"), 2400);
+  }
+  sfxDenied();
+}
+
 function closeCard() {
   const log = document.getElementById("questLog");
   log.classList.add("hidden");
   log.setAttribute("aria-hidden", "true");
+  // Move the map's current-step glow to where the journey actually is
+  const p = getActive();
+  if (p) {
+    const next = firstIncompleteIndex(p);
+    if (next !== activeStepIndex) {
+      activeStepIndex = next;
+      renderMap();
+    }
+  }
 }
 
 function toggleComplete() {
@@ -664,17 +763,34 @@ function toggleComplete() {
   const node = template.nodes[activeStepIndex];
   const data = p.stepData[node.id];
   const wasComplete = data.done;
+
+  // The stops: previous checkpoint must be done, and all proof collected
+  if (!wasComplete) {
+    const gate = completionGate(p, activeStepIndex);
+    if (gate) {
+      dialogDeny(gate.denyMsg);
+      return;
+    }
+  }
+
+  const lvlBefore = levelFor(calculateXP(p));
   data.done = !data.done;
   data.completedAt = data.done ? new Date().toISOString() : null;
 
   touchActive();
-  document.getElementById("qlComplete").textContent = data.done ? "✓ COMPLETE — UNDO" : "✓ COMPLETE QUEST";
+  refreshCompleteBtn(activeStepIndex);
 
   if (data.done && !wasComplete) {
     sfxComplete();
     fireParticlesAtNode(activeStepIndex);
-    fireXpPopupAtNode(activeStepIndex);
-    activeStepIndex = firstIncompleteIndex(p);
+    fireXpPopupAtNode(activeStepIndex, xpGainedFor(node, data));
+    const lvlAfter = levelFor(calculateXP(p));
+    if (lvlAfter > lvlBefore) {
+      setTimeout(() => fireLevelUp(lvlAfter), 600);
+    }
+    // activeStepIndex stays on the completed step while the dialog is open,
+    // so UNDO and PREV/NEXT act on the step the user is looking at; the
+    // map highlight advances when the dialog closes.
     if (totalDone(p) === template.nodes.length) {
       setTimeout(showVictory, 800);
     }
@@ -718,15 +834,26 @@ function fireParticlesAtNode(index) {
   spawnParticles(x, y, 16);
 }
 
-function fireXpPopupAtNode(index) {
+function fireXpPopupAtNode(index, amount) {
   const { x, y } = getNodeScreenPos(index);
-  spawnXpPopup(x, y - 10, "+1000 XP");
+  spawnXpPopup(x, y - 10, `+${amount} XP`);
   // Brief screen shake
   const root = document.body;
   root.classList.remove("screen-shake");
   void root.offsetWidth;
   root.classList.add("screen-shake");
   setTimeout(() => root.classList.remove("screen-shake"), 400);
+}
+
+function fireLevelUp(lvl) {
+  const layer = document.getElementById("particles");
+  const p = document.createElement("div");
+  p.className = "level-popup";
+  p.textContent = `★ LEVEL UP! LV ${lvl} ★`;
+  layer.appendChild(p);
+  setTimeout(() => p.remove(), 2200);
+  spawnParticles(window.innerWidth / 2, window.innerHeight / 2, 20);
+  sfxLevelUp();
 }
 
 function spawnParticles(x, y, count = 12) {
@@ -806,6 +933,14 @@ function sfxVictory() {
   n.forEach((f, i) => setTimeout(() => beep(f, 0.22), i * 130));
 }
 function sfxOpen() { beep(440, 0.05, "triangle", 0.05); }
+function sfxDenied() {
+  beep(160, 0.12, "sawtooth", 0.06);
+  setTimeout(() => beep(120, 0.18, "sawtooth", 0.06), 110);
+}
+function sfxReady() {
+  beep(784, 0.08, "square", 0.05);
+  setTimeout(() => beep(1047, 0.12, "square", 0.05), 90);
+}
 
 // =============================================================
 // Save slots & party
@@ -828,7 +963,7 @@ function renderSaveSlots() {
       const total = template.nodes.length;
       const done = totalDone(p);
       const xp = calculateXP(p);
-      const lvl = Math.min(total + 1, Math.floor(xp / XP_PER_LEVEL) + 1);
+      const lvl = levelFor(xp);
 
       const btn = document.createElement("button");
       btn.className = "save-slot";
@@ -978,7 +1113,10 @@ function showScreen(name) {
     document.getElementById(id).classList.toggle("hidden", id !== name);
   });
   if (name === "saveSelect") renderSaveSlots();
-  if (name === "gameView") renderAll();
+  if (name === "gameView") {
+    renderAll();
+    maybeShowStartHint();
+  }
   if (name === "newQuestScreen") {
     selectedHeroClass = "warrior";
     document.querySelectorAll(".class-option").forEach((b) => {
@@ -993,6 +1131,14 @@ function renderAll() {
   renderHUD();
   renderMap();
   renderParty();
+}
+
+const _hintShownThisSession = new Set();
+function maybeShowStartHint() {
+  const p = getActive();
+  if (!p || totalDone(p) > 0 || _hintShownThisSession.has(p.id)) return;
+  _hintShownThisSession.add(p.id);
+  setTimeout(() => showToast("⚔ CLICK THE VILLAGE TO BEGIN YOUR QUEST"), 600);
 }
 
 // =============================================================
@@ -1126,6 +1272,13 @@ async function init() {
       if (e.key === "Escape") { closeCard(); sfxClick(); }
       if (e.key === "ArrowRight" && document.activeElement?.tagName !== "TEXTAREA") nextCard();
       if (e.key === "ArrowLeft" && document.activeElement?.tagName !== "TEXTAREA") prevCard();
+      return;
+    }
+    // PRESS START with Enter/Space, like a real title screen
+    const titleVisible = !document.getElementById("titleScreen").classList.contains("hidden");
+    if (titleVisible && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      document.getElementById("pressStartBtn").click();
     }
   });
 
@@ -1138,15 +1291,11 @@ async function init() {
     }, 150);
   });
 
-  // Initial screen
-  if (state.programmes.length === 0) {
-    showScreen("titleScreen");
-  } else if (state.activeProgrammeId && getActive()) {
+  // Initial screen — always boot to the title, like a real game
+  if (state.activeProgrammeId && getActive()) {
     activeStepIndex = firstIncompleteIndex(getActive());
-    showScreen("titleScreen");
-  } else {
-    showScreen("titleScreen");
   }
+  showScreen("titleScreen");
 }
 
 init();
