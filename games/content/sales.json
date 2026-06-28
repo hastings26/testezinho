@@ -51,5 +51,17 @@
       "answer": 1,
       "explain": "AI is great for fast, tailored first drafts and research — you still add the human personalisation and judgement."
     }
+  ],
+  "chains": [
+    {
+      "title": "Running a deal from first contact to close",
+      "steps": [
+        "Qualify the prospect",
+        "Run discovery to find the real need",
+        "Map your solution to their outcome",
+        "Handle objections honestly",
+        "Close and confirm the next steps"
+      ]
+    }
   ]
 }

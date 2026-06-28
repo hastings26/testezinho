@@ -106,6 +106,38 @@
     }
   }
 
+  /* ---- shared question modal (used by board games to gate a move) ---- */
+  function quizModal(item, cb) {
+    const keys = ["A", "B", "C", "D", "E", "F"];
+    const ov = document.createElement("div");
+    ov.className = "qmodal";
+    ov.innerHTML =
+      "<div class='qmodal-card'>" +
+      "<p class='qmodal-q'>" + item.q + "</p>" +
+      "<div class='qmodal-opts'>" +
+      item.options.map((o, i) => "<button class='q-opt' data-i='" + i + "'><span class='key'>" +
+        keys[i] + "</span><span>" + o + "</span></button>").join("") +
+      "</div><div class='qmodal-fb' id='qmFb'></div></div>";
+    document.body.appendChild(ov);
+    let done = false;
+    ov.querySelectorAll(".q-opt").forEach(b => b.addEventListener("click", () => {
+      if (done) return; done = true;
+      const i = parseInt(b.dataset.i, 10);
+      const correct = i === item.answer;
+      ov.querySelectorAll(".q-opt").forEach(x => {
+        x.disabled = true;
+        const xi = parseInt(x.dataset.i, 10);
+        if (xi === item.answer) x.classList.add("correct");
+        else if (xi === i) x.classList.add("wrong");
+      });
+      const fb = ov.querySelector("#qmFb");
+      fb.className = "qmodal-fb " + (correct ? "good" : "bad");
+      fb.textContent = correct ? "✓ Correct" : "✗ " + (item.explain || "Not quite.");
+      if (correct) sfx.good(); else sfx.bad();
+      setTimeout(() => { ov.remove(); cb(correct); }, correct ? 650 : 1500);
+    }));
+  }
+
   /* ---- standard top crumb bar wiring (sound toggle) ---- */
   function wireSoundToggle(btn) {
     if (!btn) return;
@@ -119,6 +151,6 @@
     shuffle, sample, pick,
     getBest, setBest,
     sfx, setMuted, isMuted, wireSoundToggle,
-    shake, confetti
+    shake, confetti, quizModal
   };
 })();

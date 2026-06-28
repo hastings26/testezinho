@@ -51,5 +51,17 @@
       "answer": 1,
       "explain": "Copilot accelerates the first 80%. You still own the judgement, accuracy, and the final word."
     }
+  ],
+  "chains": [
+    {
+      "title": "Drafting a document with Copilot",
+      "steps": [
+        "Open the file and gather the context",
+        "Prompt Copilot with the audience and goal",
+        "Review the generated draft",
+        "Verify any cited figures at the source",
+        "Edit in your voice, then send"
+      ]
+    }
   ]
 }

@@ -138,5 +138,159 @@
       "best": 1,
       "explain": "AI is great for shaping and polishing real input. The moment it invents accomplishments, you've traded a time-saver for a liability."
     }
+  ],
+  "chains": [
+    {
+      "title": "Working with AI, end to end",
+      "steps": [
+        "Define the task and what 'good' looks like",
+        "Write a clear, specific prompt",
+        "Generate a first draft",
+        "Verify the output against a trusted source",
+        "Refine, then ship it and own the result"
+      ]
+    },
+    {
+      "title": "Responding to a suspected hallucination",
+      "steps": [
+        "Notice a claim that sounds too confident",
+        "Check it against a reliable source",
+        "Confirm it is unsupported",
+        "Correct the output",
+        "Add the source so it can't slip through again"
+      ]
+    }
+  ],
+  "repairs": [
+    {
+      "bad": "write something about AI",
+      "options": ["Make it good", "Write a 150-word intro explaining what generative AI is, for non-technical managers, with one everyday analogy.", "Tell me about AI please", "Write about AI in detail"],
+      "answer": 1,
+      "explain": "A strong prompt sets length, audience, purpose and form — vague verbs like 'write something' give vague output."
+    },
+    {
+      "bad": "fix my code",
+      "options": ["Fix it", "This Python function throws an IndexError on empty input (code below) — explain the cause and give a corrected version with a guard clause.", "Make the code work", "Debug please"],
+      "answer": 1,
+      "explain": "Give the language, the actual error, the code, and what 'fixed' should look like."
+    },
+    {
+      "bad": "summarise this",
+      "options": ["Summarise", "Summarise the attached report in 5 bullets for an exec audience, focusing on risks and the decisions needed.", "Make it short", "TL;DR"],
+      "answer": 1,
+      "explain": "Specify length, format, audience and focus, or you'll get a generic summary of the wrong things."
+    }
+  ],
+  "builds": [
+    {
+      "goal": "You want back a table comparing 3 AI tools by price, best use, and a one-line verdict.",
+      "options": ["'tell me about tools'", "'Compare ChatGPT, Copilot and Claude in a markdown table with columns: Price, Best use, Verdict (one line each).'", "'which tool is best'", "'list AI tools'"],
+      "answer": 1,
+      "explain": "Name the items, the exact columns, and the output format you want."
+    },
+    {
+      "goal": "You want a polite 3-sentence email declining a meeting invite.",
+      "options": ["'say no'", "'Write a polite 3-sentence email declining Tuesday's budget meeting, offering to send written input instead.'", "'decline meeting'", "'no thanks email'"],
+      "answer": 1,
+      "explain": "State the tone, the length, the specific situation, and the alternative you're offering."
+    },
+    {
+      "goal": "You want 5 multiple-choice quiz questions, with answers, generated from a document.",
+      "options": ["'make a quiz'", "'From the text below, write 5 multiple-choice questions (4 options each) and mark the correct answer for each.'", "'questions please'", "'test me'"],
+      "answer": 1,
+      "explain": "Specify the count, the structure, and that the correct answers should be marked."
+    }
+  ],
+  "aivshuman": [
+    { "text": "I do not have personal opinions, but here are three balanced considerations to weigh.", "source": "AI", "explain": "The hedging disclaimer 'I don't have personal opinions' is a classic AI tell." },
+    { "text": "ugh this meeting could've been an email lol. anyway i pinged Sam, he's on it.", "source": "Human", "explain": "Lowercase, slang, and a real name plus a casual action read as a human colleague." },
+    { "text": "Certainly! Here is a comprehensive, structured overview. First… Second… In conclusion…", "source": "AI", "explain": "Eager 'Certainly!', perfectly balanced structure and a tidy 'In conclusion' are typical AI patterns." },
+    { "text": "Honestly not sure — I think it broke after Thursday's deploy but I'd have to dig into the logs to be certain.", "source": "Human", "explain": "Genuine uncertainty tied to a specific event and a personal next step feels human." }
+  ],
+  "redteam": [
+    {
+      "context": "An AI wrote this reply to a customer asking 'Is our data safe?'",
+      "claims": [
+        { "text": "Data is encrypted at rest and in transit.", "flawed": false, "note": "A reasonable, checkable claim." },
+        { "text": "Our systems are 100% unhackable.", "flawed": true, "note": "No system is 100% unhackable — an overclaim." },
+        { "text": "We are fully GDPR and HIPAA compliant.", "flawed": true, "note": "States legal compliance as fact with no basis — verify before claiming." },
+        { "text": "Access is limited to authorised staff.", "flawed": false, "note": "A plausible, standard control." }
+      ]
+    },
+    {
+      "context": "An AI summarised the quarter's results.",
+      "claims": [
+        { "text": "Revenue grew this quarter.", "flawed": false, "note": "General and supportable." },
+        { "text": "Revenue was exactly £4.2m.", "flawed": true, "note": "A specific figure that isn't in the source — likely fabricated." },
+        { "text": "Churn fell slightly.", "flawed": false, "note": "Reasonable if backed by the data." },
+        { "text": "This guarantees we'll beat target next quarter.", "flawed": true, "note": "An unfounded guarantee about the future." }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "evidence": ["Email 09:02 — 'Ship the report, the AI draft looks great!'", "AI draft footer — 'NOTE: figures are illustrative placeholders'", "Slack 09:30 — 'Board is asking why revenue shows £0.0m??'"],
+      "question": "What actually went wrong?",
+      "options": ["The board misread the report", "Placeholder AI figures were shipped without verification", "The email server failed", "Revenue genuinely was £0"],
+      "answer": 1,
+      "explain": "The draft itself warned the figures were placeholders — nobody verified before shipping."
+    },
+    {
+      "evidence": ["Ticket — 'customer says password-reset email never arrived'", "Mail logs — reset emails being flagged as spam", "Chatbot transcript — 'Your account has been deleted as requested.'", "Customer — 'I never asked to delete anything!'"],
+      "question": "What happened?",
+      "options": ["The customer deleted their own account", "The AI chatbot claimed an action it never took and misinformed the customer", "The spam filter deleted the account", "Nothing actually went wrong"],
+      "answer": 1,
+      "explain": "The bot confidently asserted a deletion that never happened — a fabricated action on top of the real spam-filter issue."
+    }
+  ],
+  "rooms": [
+    {
+      "name": "The Prompt Vault",
+      "scenario": "A sealed panel will only open for a well-formed prompt.",
+      "q": "Which prompt opens the vault?",
+      "options": ["'write stuff'", "'Draft a 100-word product update for customers, friendly tone, highlighting the new export feature.'", "'product update'", "'make it good'"],
+      "answer": 1,
+      "explain": "Audience, length, tone and content — the lock clicks open."
+    },
+    {
+      "name": "The Hall of Verification",
+      "scenario": "An AI states a statistic that supposedly unlocks the door.",
+      "q": "What do you do?",
+      "options": ["Trust it and walk through", "Verify the statistic against a trusted source first", "Ask the AI to sound more confident", "Ignore the door"],
+      "answer": 1,
+      "explain": "Verify before you rely — only then does the door open."
+    },
+    {
+      "name": "The Tool Chamber",
+      "scenario": "To escape you must handle: 'book a room, update the calendar, and email the team.'",
+      "q": "Which tool gets you out?",
+      "options": ["A web search", "An AI agent that can take those multi-step actions", "A spell-checker", "Nothing — wait for help"],
+      "answer": 1,
+      "explain": "Multiple actions across apps call for an agent. Freedom!"
+    }
+  ],
+  "surveys": [
+    {
+      "question": "Name a great everyday use of AI at work",
+      "answers": [
+        { "text": "Drafting emails & documents", "points": 32 },
+        { "text": "Summarising long content", "points": 27 },
+        { "text": "Brainstorming ideas", "points": 19 },
+        { "text": "Writing or fixing code", "points": 14 },
+        { "text": "Research & search", "points": 8 }
+      ],
+      "decoys": ["Approving legal contracts", "Guessing the lottery"]
+    },
+    {
+      "question": "Name something you should always do with AI output",
+      "answers": [
+        { "text": "Verify it against a source", "points": 38 },
+        { "text": "Edit & refine it", "points": 24 },
+        { "text": "Check the sources", "points": 18 },
+        { "text": "Keep a human in the loop", "points": 12 },
+        { "text": "Own the final result", "points": 8 }
+      ],
+      "decoys": ["Trust it blindly", "Forward it unread"]
+    }
   ]
 }

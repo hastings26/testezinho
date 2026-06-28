@@ -21,21 +21,57 @@ Wordle, Hangman and Memory engine works for "AI Literacy", "Copilot",
 
 | Game | Mechanic | File |
 |------|----------|------|
-| 🎯 Quiz Quest | Progressive multiple-choice (Millionaire-style) with a 50:50 lifeline | `quiz.html` |
-| 🔤 Word Recall | Wordle / Lingo recall, survival streak over key terms | `wordle.html` |
+All 24 mechanics below are **playable**. Every one is driven by the selected
+topic pack.
+
+**Quiz & review**
+
+| Game | Mechanic | File |
+|------|----------|------|
+| 🎯 Quiz Quest | Millionaire-style multiple choice + 50:50 lifeline | `quiz.html` |
+| 🎡 Trivia Wheel | Spin for a random question worth the segment's points | `wheel.html` |
+| 🅱 Bingo | Match called clues to terms for a blackout | `bingo.html` |
+| 📺 Jeopardy | Category × value board | `jeopardy.html` |
+| 👪 Family Feud | Name the top survey answers (3 strikes) | `feud.html` |
+| ⛓ Weakest Link | Timed rapid-fire chain with banking | `weakest.html` |
+
+**Word & recall**
+
+| Game | Mechanic | File |
+|------|----------|------|
+| 🔤 Word Recall | Wordle / Lingo survival over key terms | `wordle.html` |
 | 💀 Hangman | Vocabulary recall, hint-driven | `hangman.html` |
 | 🧠 Memory Match | Match each term to its meaning | `memory.html` |
-| ⚖️ Judge Mode | Read several AI answers and approve the best — teaches judgement, not recall | `judge.html` |
-| 🎯 Choose the Right Tool | Pick the right tool (ChatGPT, Copilot, agent, search, human…) for each task | `tool.html` |
+| 🔎 Word Search | Find hidden terms in a generated grid | `wordsearch.html` |
+| 📝 Crossword | Auto-generated crossword from terms + hints | `crossword.html` |
+| 🔢 Countdown | Unscramble terms + a numbers round | `countdown.html` |
+
+**Strategy & board** (each move is gated by answering a question)
+
+| Game | Mechanic | File |
+|------|----------|------|
+| ⭕ Tic Tac Toe | Answer to claim a square, vs AI | `tictactoe.html` |
+| 🔴 Connect Four | Answer to drop a disc, vs AI | `connect4.html` |
+| 🐍 Snakes & Ladders | A question-gated learning journey | `snakes.html` |
+| 🁢 Process Chains | Order the steps of a process (Dominoes) | `dominoes.html` |
+
+**AI judgment** (teach decision-making, not recall)
+
+| Game | Mechanic | File |
+|------|----------|------|
+| ⚖️ Judge Mode | Approve the best of several AI answers | `judge.html` |
+| 🎯 Choose the Right Tool | Pick the right tool for each task | `tool.html` |
+| 🕵️ Detective Mode | Read the evidence, work out what happened | `detective.html` |
+| 🔴 Red Team | Flag every flawed claim in an AI output | `redteam.html` |
+| 🎭 AI vs Human | Guess who wrote a message, and why | `aihuman.html` |
+| 🧩 Build the Prompt | Pick the prompt that produces the output | `build.html` |
+| 🛠 Repair the Prompt | Fix a terrible prompt | `repair.html` |
+| 🗺 AI Escape Room | Use AI correctly to open each room's lock | `escape.html` |
 
 Topic packs included: **AI Literacy**, **Microsoft 365 Copilot**, **Security
-Awareness**, **B2B Sales Skills**. (Judge Mode and Choose the Right Tool are
-AI-judgment games — they need `scenarios` / `tooltasks` content, which the AI
-Literacy pack provides; other topics gracefully fall back.)
-
-The library hub (`index.html`) also shows the **roadmap** — game-show formats,
-board games, and the remaining AI-judgment mechanics (Detective Mode, Red Team,
-AI vs Human, Build/Repair the Prompt, Escape Room) — as "coming soon" cards.
+Awareness**, **B2B Sales Skills**. The AI-judgment games and Process Chains use
+extra content types (below); the AI Literacy pack provides them, and any topic
+missing them shows a friendly fallback that links to the AI Literacy set.
 
 ## Files
 
@@ -103,8 +139,24 @@ Optional AI-judgment content (used by Judge Mode and Choose the Right Tool):
 }
 ```
 
-A pack without `tooltasks` / `scenarios` simply shows a friendly note in those
-two games — every other game still works.
+Full list of optional content arrays and the game each powers:
+
+| Field | Game |
+|-------|------|
+| `tools` + `tooltasks` | Choose the Right Tool |
+| `scenarios` | Judge Mode |
+| `chains` | Process Chains (Dominoes) |
+| `repairs` | Repair the Prompt |
+| `builds` | Build the Prompt |
+| `aivshuman` | AI vs Human |
+| `redteam` | Red Team |
+| `cases` | Detective Mode |
+| `rooms` | AI Escape Room |
+| `surveys` | Family Feud |
+
+A pack without a given field simply shows a friendly note in that one game and
+links to the AI Literacy set — every other game still works. See
+`content/ai-literacy.json` for a complete example of all of them.
 
 ## Add a new game
 

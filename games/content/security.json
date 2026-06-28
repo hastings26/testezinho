@@ -51,5 +51,17 @@
       "answer": 1,
       "explain": "Treat any external tool like sending data outside the building. Use approved tools and keep secrets out of public ones."
     }
+  ],
+  "chains": [
+    {
+      "title": "Handling a suspicious email",
+      "steps": [
+        "Notice the urgency or odd request",
+        "Don't click any links or attachments",
+        "Verify the sender via a known channel",
+        "Report it to IT / security",
+        "Delete it"
+      ]
+    }
   ]
 }
