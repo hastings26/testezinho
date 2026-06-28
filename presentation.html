@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The AI Mental Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#05060c;
+    --bg-2:#0a0d1a;
+    --ink:#eef1ff;
+    --muted:#9aa3c7;
+    --dim:#5b6488;
+    --accent:#6d7bff;
+    --accent-2:#27e0c4;
+    --accent-3:#ff7a59;
+    --accent-4:#ffd166;
+    --line:rgba(255,255,255,.10);
+    --card:rgba(255,255,255,.035);
+    --card-brd:rgba(255,255,255,.09);
+    --maxw:1080px;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;letter-spacing:-.02em;line-height:1.04}
+
+  /* ---------- Parallax cosmic backdrop (fixed, layered) ---------- */
+  .cosmos{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+  .cosmos .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.55;will-change:transform}
+  .b1{width:60vw;height:60vw;background:radial-gradient(circle,#3a2fff55,transparent 70%);top:-15vw;left:-10vw}
+  .b2{width:50vw;height:50vw;background:radial-gradient(circle,#10b5a055,transparent 70%);top:40vh;right:-15vw}
+  .b3{width:45vw;height:45vw;background:radial-gradient(circle,#ff6a3d44,transparent 70%);bottom:-10vw;left:20vw}
+  .grid-overlay{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 75%);opacity:.4}
+  .stars{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  .star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.0;animation:tw 4s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.1}50%{opacity:.8}}
+
+  /* ---------- Progress + nav ---------- */
+  .progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:100;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3));box-shadow:0 0 16px var(--accent)}
+  .dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:90;display:flex;flex-direction:column;gap:11px}
+  .dots a{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.18);transition:.3s;position:relative}
+  .dots a:hover{background:rgba(255,255,255,.5);transform:scale(1.25)}
+  .dots a.on{background:var(--accent-2);box-shadow:0 0 10px var(--accent-2)}
+  .dots a span{position:absolute;right:18px;top:50%;transform:translateY(-50%) translateX(6px);
+    white-space:nowrap;font-size:11px;color:var(--muted);opacity:0;pointer-events:none;transition:.25s;
+    font-family:var(--mono);background:rgba(8,10,20,.9);padding:3px 8px;border-radius:6px;border:1px solid var(--line)}
+  .dots a:hover span{opacity:1;transform:translateY(-50%) translateX(0)}
+  @media (max-width:760px){.dots{display:none}}
+
+  .hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:90;
+    font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;transition:opacity .6s}
+  .hint kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--muted);background:rgba(255,255,255,.04)}
+
+  /* ---------- Sections ---------- */
+  section{position:relative;min-height:100vh;display:flex;align-items:center;
+    padding:96px 28px;scroll-snap-align:start}
+  .wrap{width:100%;max-width:var(--maxw);margin:0 auto}
+  main{scroll-snap-type:y proximity}
+
+  .kicker{font-family:var(--mono);font-size:13px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--accent-2);margin-bottom:20px;display:flex;align-items:center;gap:14px}
+  .kicker::before{content:"";width:34px;height:1px;background:var(--accent-2);opacity:.7}
+  .modnum{font-family:var(--mono);color:var(--dim);font-size:13px;letter-spacing:.2em}
+
+  h2.title{font-size:clamp(34px,6vw,68px);font-weight:700;margin-bottom:8px}
+  .goal{color:var(--accent-3);font-size:clamp(15px,2vw,19px);font-weight:500;margin-bottom:34px;font-family:var(--mono)}
+  .lead{font-size:clamp(17px,2.3vw,22px);color:var(--muted);max-width:760px;font-weight:300}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+  .rv.d4{transition-delay:.32s}.rv.d5{transition-delay:.40s}.rv.d6{transition-delay:.48s}
+
+  /* ---------- Cover ---------- */
+  #cover{text-align:center;flex-direction:column;justify-content:center}
+  #cover .eyebrow{font-family:var(--mono);letter-spacing:.5em;text-transform:uppercase;color:var(--accent-2);font-size:13px;margin-bottom:28px}
+  #cover h1{font-size:clamp(46px,11vw,140px);font-weight:700;line-height:.92;
+    background:linear-gradient(180deg,#fff 25%,#9aa3c7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  #cover h1 .glow{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  #cover .sub{margin-top:30px;font-size:clamp(17px,2.6vw,26px);color:var(--muted);font-weight:300;max-width:680px;margin-inline:auto}
+  #cover .by{margin-top:40px;font-family:var(--mono);font-size:13px;color:var(--dim);letter-spacing:.18em}
+  .scroll-cue{margin-top:54px;display:inline-flex;flex-direction:column;align-items:center;gap:8px;color:var(--dim);font-family:var(--mono);font-size:11px;letter-spacing:.2em}
+  .scroll-cue .mouse{width:24px;height:38px;border:2px solid var(--dim);border-radius:14px;position:relative}
+  .scroll-cue .mouse::after{content:"";position:absolute;left:50%;top:7px;width:4px;height:7px;border-radius:3px;background:var(--accent-2);transform:translateX(-50%);animation:wheel 1.6s infinite}
+  @keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}40%{opacity:1}80%{opacity:0;transform:translate(-50%,12px)}}
+
+  .thesis{margin-top:46px;max-width:720px;margin-inline:auto;padding:24px 28px;border-radius:18px;
+    background:var(--card);border:1px solid var(--card-brd);font-size:clamp(15px,2vw,18px);color:var(--ink);font-weight:300}
+  .thesis b{color:var(--accent-2);font-weight:600}
+
+  /* ---------- Generic cards ---------- */
+  .cards{display:grid;gap:18px;margin-top:38px}
+  .c2{grid-template-columns:repeat(2,1fr)}
+  .c3{grid-template-columns:repeat(3,1fr)}
+  .c4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:860px){.c3,.c4{grid-template-columns:1fr 1fr}.c2{grid-template-columns:1fr}}
+  @media (max-width:560px){.c3,.c4,.c2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--card-brd);border-radius:18px;padding:26px;
+    transition:.4s;position:relative;overflow:hidden}
+  .card:hover{border-color:rgba(109,123,255,.45);transform:translateY(-4px);background:rgba(255,255,255,.055)}
+  .card .ic{font-size:24px;margin-bottom:14px;display:block}
+  .card h3{font-size:19px;font-weight:600;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:14.5px;font-weight:300}
+  .card .q{font-family:var(--mono);color:var(--accent-4);font-size:14px;margin-bottom:6px}
+
+  .pillrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .pill{font-family:var(--mono);font-size:13px;padding:9px 16px;border-radius:999px;
+    border:1px solid var(--card-brd);background:var(--card);color:var(--muted)}
+  .pill b{color:var(--accent-2);font-weight:600}
+
+  .takeaway{margin-top:40px;padding:22px 26px;border-left:3px solid var(--accent-2);
+    background:linear-gradient(90deg,rgba(39,224,196,.08),transparent);border-radius:0 14px 14px 0;
+    font-size:clamp(16px,2.2vw,21px);font-weight:300}
+  .takeaway b{color:var(--accent-2);font-weight:600}
+
+  /* ---------- Autocomplete demo (Module 1) ---------- */
+  .auto{margin-top:40px;background:var(--card);border:1px solid var(--card-brd);border-radius:20px;padding:34px;text-align:center}
+  .auto .line{font-family:var(--mono);font-size:clamp(22px,5vw,42px);font-weight:500;letter-spacing:.04em}
+  .auto .line span{opacity:.55}
+  .blank{display:inline-block;min-width:3.2em;border-bottom:3px solid var(--accent-3);position:relative}
+  .blank b{color:var(--accent-2);opacity:0;transition:.5s}
+  .blank.reveal b{opacity:1}
+  .auto button{margin-top:26px;font-family:var(--mono);font-size:14px;padding:12px 24px;border-radius:12px;
+    border:1px solid var(--accent);background:rgba(109,123,255,.12);color:var(--ink);cursor:pointer;transition:.25s}
+  .auto button:hover{background:rgba(109,123,255,.28)}
+  .probs{display:flex;flex-direction:column;gap:8px;max-width:420px;margin:28px auto 0;text-align:left;
+    opacity:0;max-height:0;overflow:hidden;transition:opacity .6s,max-height .6s}
+  .probs.show{opacity:1;max-height:400px}
+  .prob{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:14px}
+  .prob .bar{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width 1s ease}
+  .prob .tk{width:70px;color:var(--muted)}.prob .pc{width:54px;text-align:right;color:var(--accent-2)}
+  .auto .punch{margin-top:24px;font-size:clamp(18px,3vw,26px);font-weight:600;opacity:0;transition:.6s}
+  .auto .punch.show{opacity:1}.auto .punch b{color:var(--accent-2)}
+
+  /* ---------- Flow diagrams ---------- */
+  .flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:34px}
+  .flow .node{font-family:var(--mono);font-size:15px;padding:14px 22px;border-radius:12px;
+    background:var(--card);border:1px solid var(--card-brd);white-space:nowrap}
+  .flow .node.hl{border-color:var(--accent-2);color:var(--accent-2);box-shadow:0 0 24px rgba(39,224,196,.18)}
+  .flow .arr{color:var(--accent);font-size:22px;opacity:.7}
+  .flowv{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:30px}
+  .flowv .arr{transform:rotate(90deg);color:var(--accent);opacity:.7}
+
+  /* token chips */
+  .tokrow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:26px}
+  .tok{font-family:var(--mono);font-size:15px;padding:7px 11px;border-radius:8px;border:1px solid var(--card-brd)}
+  .tok:nth-child(5n+1){background:rgba(109,123,255,.16)}
+  .tok:nth-child(5n+2){background:rgba(39,224,196,.16)}
+  .tok:nth-child(5n+3){background:rgba(255,122,89,.16)}
+  .tok:nth-child(5n+4){background:rgba(255,209,102,.16)}
+  .tok:nth-child(5n+5){background:rgba(160,120,255,.16)}
+
+  /* ---------- Tokenizer live demo ---------- */
+  .demo{margin-top:36px;background:linear-gradient(135deg,rgba(39,224,196,.06),rgba(109,123,255,.06));
+    border:1px solid var(--card-brd);border-radius:22px;padding:34px}
+  .demo .badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:#04140f;background:var(--accent-2);padding:5px 12px;border-radius:999px;margin-bottom:18px;font-weight:700}
+  .demo input{width:100%;font-family:var(--mono);font-size:18px;padding:15px 18px;border-radius:12px;
+    border:1px solid var(--card-brd);background:rgba(0,0,0,.3);color:var(--ink);margin-bottom:6px}
+  .demo input:focus{outline:none;border-color:var(--accent-2)}
+  .demo .quick{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 22px}
+  .demo .quick button{font-family:var(--mono);font-size:13px;padding:7px 13px;border-radius:9px;
+    border:1px solid var(--card-brd);background:var(--card);color:var(--muted);cursor:pointer;transition:.2s}
+  .demo .quick button:hover{color:var(--ink);border-color:var(--accent-2)}
+  #tokOut{display:flex;flex-wrap:wrap;gap:5px;min-height:46px;align-items:center}
+  .demo .stat{display:flex;gap:28px;margin-top:22px;flex-wrap:wrap}
+  .demo .stat div{font-family:var(--mono)}
+  .demo .stat .n{font-size:30px;font-weight:700;color:var(--accent-2)}
+  .demo .stat .l{font-size:12px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+  .demo .note{margin-top:18px;color:var(--muted);font-size:13.5px;font-weight:300}
+
+  /* strawberry */
+  .berry{margin-top:34px;text-align:center}
+  .berry .word{font-family:'Space Grotesk';font-size:clamp(34px,8vw,72px);font-weight:700}
+  .berry .word i{font-style:normal;padding:0 2px;border-radius:6px;transition:.4s;background:transparent}
+  .berry.split .word i:nth-child(odd){background:rgba(39,224,196,.22)}
+  .berry.split .word i:nth-child(even){background:rgba(255,122,89,.22)}
+  .berry .ask{margin-top:18px;color:var(--muted);font-family:var(--mono)}
+  .berry button{margin-top:22px;font-family:var(--mono);font-size:14px;padding:11px 22px;border-radius:11px;
+    border:1px solid var(--accent-2);background:rgba(39,224,196,.1);color:var(--ink);cursor:pointer}
+  .berry button:hover{background:rgba(39,224,196,.22)}
+
+  /* ---------- Money / cost compare ---------- */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:36px}
+  @media(max-width:620px){.compare{grid-template-columns:1fr}}
+  .cmp{border-radius:18px;padding:26px;border:1px solid var(--card-brd)}
+  .cmp.bad{background:linear-gradient(160deg,rgba(255,90,90,.10),transparent)}
+  .cmp.good{background:linear-gradient(160deg,rgba(39,224,196,.12),transparent);border-color:rgba(39,224,196,.35)}
+  .cmp .tag{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+  .cmp .big{font-family:var(--mono);font-size:40px;font-weight:700;margin:6px 0}
+  .cmp.bad .big{color:#ff8b8b}.cmp.good .big{color:var(--accent-2)}
+  .cmp p{color:var(--muted);font-size:14px}
+  .metrics{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+  .metric{flex:1;min-width:150px;background:var(--card);border:1px solid var(--card-brd);border-radius:14px;padding:18px 20px}
+  .metric .k{font-size:13px;color:var(--dim);font-family:var(--mono)}
+  .metric .v{font-size:18px;font-weight:600;color:var(--accent-2);margin-top:4px}
+
+  .toktype{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:30px}
+  @media(max-width:680px){.toktype{grid-template-columns:1fr 1fr}}
+  .toktype div{background:var(--card);border:1px solid var(--card-brd);border-radius:13px;padding:16px;text-align:center}
+  .toktype .t{font-family:var(--mono);font-size:14px;color:var(--ink);font-weight:600}
+  .toktype .d{font-size:12px;color:var(--dim);margin-top:4px}
+
+  /* ---------- Context window ---------- */
+  .ctx{margin-top:38px;background:var(--card);border:1px solid var(--card-brd);border-radius:20px;padding:30px}
+  .ctx .label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:10px}
+  .ctxbar{height:54px;border-radius:12px;overflow:hidden;display:flex;border:1px solid var(--card-brd);background:rgba(0,0,0,.3)}
+  .ctxbar .seg{height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+    font-size:12px;font-weight:600;color:#05060c;width:0;transition:width 1.2s cubic-bezier(.3,.7,.2,1);overflow:hidden;white-space:nowrap}
+  .s-conv{background:var(--accent)}.s-pdf{background:var(--accent-2)}.s-sys{background:var(--accent-4)}.s-ans{background:var(--accent-3)}
+  .ctx .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .ctx .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:middle}
+  .ctx .full{margin-top:22px;font-size:15px;color:var(--accent-3);font-family:var(--mono);opacity:0;transition:.6s}
+  .ctx .full.show{opacity:1}
+
+  /* ---------- Timeline ---------- */
+  .timeline{margin-top:44px;position:relative}
+  .timeline::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3));opacity:.5}
+  .tl-track{display:flex;justify-content:space-between;gap:8px;position:relative;overflow-x:auto;padding:8px 0}
+  .tl{flex:1;min-width:96px;text-align:center}
+  .tl .dot{width:14px;height:14px;border-radius:50%;background:var(--accent-2);margin:0 auto;
+    box-shadow:0 0 0 5px rgba(39,224,196,.14)}
+  .tl .name{font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-top:14px}
+  .tl .val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent-2);margin-top:2px}
+  .tl .val.huge{color:var(--accent-3)}
+
+  /* ---------- Model game ---------- */
+  .game{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px}
+  @media(max-width:680px){.game{grid-template-columns:1fr}}
+  .task{background:var(--card);border:1px solid var(--card-brd);border-radius:14px;padding:18px 20px;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;transition:.3s;cursor:default}
+  .task:hover{border-color:rgba(39,224,196,.4)}
+  .task .lbl{font-size:15px;font-weight:500}
+  .task .ans{font-family:var(--mono);font-size:13px;font-weight:600;padding:6px 12px;border-radius:8px;
+    background:rgba(39,224,196,.14);color:var(--accent-2);white-space:nowrap;opacity:.35;transition:.4s}
+  .task.reveal .ans{opacity:1}
+  .gamebtn{margin-top:24px;font-family:var(--mono);font-size:14px;padding:12px 24px;border-radius:12px;
+    border:1px solid var(--accent-2);background:rgba(39,224,196,.1);color:var(--ink);cursor:pointer}
+  .gamebtn:hover{background:rgba(39,224,196,.22)}
+
+  /* model principles */
+  .models{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:34px}
+  @media(max-width:680px){.models{grid-template-columns:1fr}}
+  .model{border-radius:18px;padding:24px;border:1px solid var(--card-brd);background:var(--card)}
+  .model h3{font-size:20px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .model h3 .d{width:12px;height:12px;border-radius:50%}
+  .model p{color:var(--muted);font-size:14.5px;font-weight:300}
+  .m-gpt h3 .d{background:#19c37d}.m-claude h3 .d{background:#d97757}
+  .m-gem h3 .d{background:#4285f4}.m-cop h3 .d{background:#0a84ff}
+
+  /* ---------- Three circles ---------- */
+  .circles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+  @media(max-width:760px){.circles{grid-template-columns:1fr}}
+  .circ{border-radius:20px;padding:28px;border:1px solid var(--card-brd);position:relative;overflow:hidden}
+  .circ::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;filter:blur(50px);opacity:.3;top:-60px;right:-60px}
+  .circ.one::before{background:var(--accent)}
+  .circ.two::before{background:var(--accent-2)}
+  .circ.three::before{background:var(--accent-3)}
+  .circ .scope{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+  .circ h3{font-size:24px;margin:8px 0 16px}
+  .circ ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .circ li{font-size:14px;color:var(--muted);padding-left:20px;position:relative}
+  .circ li::before{content:"›";position:absolute;left:2px;color:var(--accent-2)}
+  .circ .inherit{font-size:12.5px;color:var(--accent-4);font-family:var(--mono);margin-bottom:10px}
+
+  /* credits equation */
+  .equation{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:40px}
+  .eq{font-family:var(--mono);font-size:16px;padding:16px 22px;border-radius:14px;text-align:center;
+    background:var(--card);border:1px solid var(--card-brd)}
+  .eq b{display:block;font-size:13px;color:var(--dim);font-weight:400;margin-top:4px}
+  .equation .arr{font-size:24px;color:var(--accent);opacity:.7}
+  .eq.final{background:linear-gradient(160deg,rgba(255,209,102,.16),transparent);border-color:rgba(255,209,102,.4);color:var(--accent-4)}
+
+  /* prompt anatomy */
+  .anatomy{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+  @media(max-width:680px){.anatomy{grid-template-columns:1fr 1fr}}
+  @media(max-width:460px){.anatomy{grid-template-columns:1fr}}
+  .part{background:var(--card);border:1px solid var(--card-brd);border-radius:14px;padding:20px;transition:.3s}
+  .part:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .part .n{font-family:var(--mono);font-size:12px;color:var(--accent-2)}
+  .part h3{font-size:18px;margin:6px 0 6px}
+  .part p{font-size:13px;color:var(--muted);font-weight:300}
+
+  /* safety */
+  .rules{display:flex;flex-direction:column;gap:14px;margin-top:34px}
+  .rule{display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid var(--card-brd);
+    border-radius:14px;padding:20px 24px}
+  .rule .num{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent-3);min-width:32px}
+  .rule .tx{font-size:16px}
+  .rule .tx b{color:var(--ink)}
+  .rule .tx span{color:var(--muted);font-weight:300}
+  .creed{margin-top:34px;text-align:center;font-family:'Space Grotesk';font-size:clamp(22px,4vw,38px);font-weight:700}
+  .creed .a{color:var(--accent-2)}.creed .b{color:var(--accent-3)}
+
+  /* learn more */
+  .links{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+  @media(max-width:760px){.links{grid-template-columns:1fr 1fr}}
+  @media(max-width:460px){.links{grid-template-columns:1fr}}
+  .lk{background:var(--card);border:1px solid var(--card-brd);border-radius:14px;padding:22px;transition:.3s}
+  .lk:hover{border-color:var(--accent-2);transform:translateY(-3px);background:rgba(255,255,255,.05)}
+  .lk .ic{font-size:22px}.lk h3{font-size:17px;margin:10px 0 4px}.lk p{font-size:13px;color:var(--muted);font-weight:300}
+
+  /* close */
+  #close{text-align:center;flex-direction:column;justify-content:center}
+  #close h2{font-size:clamp(34px,7vw,80px);font-weight:700;
+    background:linear-gradient(180deg,#fff,#9aa3c7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  #close .recap{margin-top:34px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:780px;margin-inline:auto}
+  #close .recap span{font-family:var(--mono);font-size:13px;padding:9px 15px;border-radius:999px;border:1px solid var(--card-brd);background:var(--card);color:var(--muted)}
+  #close .end{margin-top:42px;font-family:var(--mono);color:var(--dim);font-size:13px;letter-spacing:.2em}
+
+  .divider{height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
+</style>
+</head>
+<body>
+
+<!-- backdrop -->
+<div class="cosmos">
+  <div class="blob b1" data-depth="0.10"></div>
+  <div class="blob b2" data-depth="0.18"></div>
+  <div class="blob b3" data-depth="0.24"></div>
+</div>
+<div class="grid-overlay"></div>
+<div class="stars" id="stars"></div>
+
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots"></nav>
+<div class="hint" id="hint">Scroll or press <kbd>→</kbd> / <kbd>Space</kbd> to advance</div>
+
+<main>
+
+<!-- ============ COVER ============ -->
+<section id="cover" data-label="Start">
+  <div class="wrap rv in">
+    <p class="eyebrow">A Foundations Session</p>
+    <h1>The AI<br><span class="glow">Mental Model</span></h1>
+    <p class="sub">Before prompts, before CoWork, before governance — get the model of the machine right.</p>
+    <div class="thesis">
+      This isn't an “AI training.” It's a <b>mental model</b>. Leave with “AI is magic” and everything
+      stays hard. Leave with the <b>right model</b> and prompts, CoWork, Copilot and governance all become obvious.
+    </div>
+    <p class="by">Presented by Alex · Hastings Hub</p>
+    <div class="scroll-cue"><span class="mouse"></span>SCROLL</div>
+  </div>
+</section>
+
+<!-- ============ M1 — AI ISN'T INTELLIGENT ============ -->
+<section id="m1" data-label="01 · Not Intelligent">
+  <div class="wrap">
+    <div class="kicker rv">Module 01</div>
+    <h2 class="title rv d1">AI isn't intelligent</h2>
+    <p class="goal rv d1">Goal — break the magic.</p>
+    <p class="lead rv d2">It doesn't think. It doesn't understand. It doesn't “know” things.
+      It is the world's most sophisticated <b style="color:var(--accent-2)">autocomplete</b> — a prediction engine.</p>
+
+    <div class="cards c4">
+      <div class="card rv d2"><span class="q">Q</span><p>Is ChatGPT thinking?</p></div>
+      <div class="card rv d3"><span class="q">Q</span><p>Does AI understand?</p></div>
+      <div class="card rv d4"><span class="q">Q</span><p>Why does AI hallucinate?</p></div>
+      <div class="card rv d5"><span class="q">Q</span><p>Why so confident and still wrong?</p></div>
+    </div>
+
+    <div class="pillrow rv d2">
+      <span class="pill"><b>LLM</b> = Large Language Model</span>
+      <span class="pill">Prediction engine</span>
+      <span class="pill">“Next-token prediction”</span>
+    </div>
+
+    <!-- interactive autocomplete -->
+    <div class="auto rv d3">
+      <div class="line"><span>I love to eat ice</span> <span class="blank" id="iceBlank"><b>&nbsp;cream</b></span></div>
+      <button id="iceBtn">Reveal what everyone says →</button>
+      <div class="probs" id="iceProbs">
+        <div class="prob"><span class="tk">cream</span><span class="bar" data-w="92%"></span><span class="pc">92%</span></div>
+        <div class="prob"><span class="tk">cubes</span><span class="bar" data-w="4%"></span><span class="pc">4%</span></div>
+        <div class="prob"><span class="tk">cold</span><span class="bar" data-w="2%"></span><span class="pc">2%</span></div>
+        <div class="prob"><span class="tk">age</span><span class="bar" data-w="1%"></span><span class="pc">1%</span></div>
+        <div class="prob"><span class="tk">…50k+</span><span class="bar" data-w="1%"></span><span class="pc">…</span></div>
+      </div>
+      <p class="punch" id="icePunch">So did the AI. Except it weighs <b>probabilities across 50,000+ possible tokens</b> — every single time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ M2 — TOKENS ============ -->
+<section id="m2" data-label="02 · Tokens">
+  <div class="wrap">
+    <div class="kicker rv">Module 02</div>
+    <h2 class="title rv d1">What is a token?</h2>
+    <p class="goal rv d1">The unit the machine actually sees.</p>
+
+    <div class="flow rv d2">
+      <span class="node">Text</span><span class="arr">→</span>
+      <span class="node hl">Tokenizer</span><span class="arr">→</span>
+      <span class="node">Tokens</span><span class="arr">→</span>
+      <span class="node">Model</span>
+    </div>
+
+    <div class="cards c3">
+      <div class="card rv d2"><span class="ic">🔤</span><h3>“Hello”</h3><p><b style="color:var(--accent-2)">1 token</b></p></div>
+      <div class="card rv d3"><span class="ic">🔤</span><h3>“Hello Alex”</h3><p><b style="color:var(--accent-2)">2–3 tokens</b></p></div>
+      <div class="card rv d4"><span class="ic">📐</span><h3>Rule of thumb</h3><p>≈ <b style="color:var(--accent-2)">1 token per ¾ word</b> in English</p></div>
+    </div>
+
+    <p class="lead rv d2" style="margin-top:40px">And it isn't just text. <b style="color:var(--accent-2)">Everything becomes tokens.</b></p>
+    <div class="cards c4">
+      <div class="card rv d2"><span class="ic">🖼️</span><h3>Image</h3><p>→ tokens</p></div>
+      <div class="card rv d3"><span class="ic">🔊</span><h3>Audio</h3><p>→ tokens</p></div>
+      <div class="card rv d4"><span class="ic">📄</span><h3>PDF</h3><p>→ tokens</p></div>
+      <div class="card rv d5"><span class="ic">🎬</span><h3>Video</h3><p>→ tokens</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEMO — TOKENIZER ============ -->
+<section id="demo-tok" data-label="Live · Tokenizer">
+  <div class="wrap">
+    <div class="kicker rv">Live Demo</div>
+    <h2 class="title rv d1">See it get chopped up</h2>
+    <p class="lead rv d2">The model doesn't see letters. It doesn't even see words. It sees <b style="color:var(--accent-2)">tokens</b>. Type anything.</p>
+
+    <div class="demo rv d2">
+      <span class="badge">Tokenizer</span>
+      <input id="tokIn" type="text" value="The quick brown fox jumps over the lazy dog." spellcheck="false" />
+      <div class="quick">
+        <button data-t="Strawberry">Strawberry</button>
+        <button data-t="unbelievable">unbelievable</button>
+        <button data-t="ChatGPT is autocomplete on steroids.">a sentence</button>
+        <button data-t="antidisestablishmentarianism">a long word</button>
+        <button data-t="🚀 emoji + tokens 🎯">emoji</button>
+      </div>
+      <div id="tokOut"></div>
+      <div class="stat">
+        <div><div class="n" id="nChars">0</div><div class="l">Characters</div></div>
+        <div><div class="n" id="nTok">0</div><div class="l">≈ Tokens</div></div>
+        <div><div class="n" id="nRatio">0</div><div class="l">Chars / Token</div></div>
+      </div>
+      <p class="note">Approximate, GPT-style segmentation. Real tokenizers vary by model — but the lesson holds: your bill and your memory are measured in <b style="color:var(--accent-2)">these</b>, not words.</p>
+    </div>
+
+    <!-- strawberry -->
+    <div class="berry rv d3" id="berry">
+      <div class="word">
+        <i>St</i><i>raw</i><i>berry</i>
+      </div>
+      <p class="ask">“How many letters?” — everyone says <b style="color:var(--accent-4)">ten</b>. The model doesn't count letters…</p>
+      <button id="berryBtn">Show what the model sees →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ M3 — MONEY ============ -->
+<section id="m3" data-label="03 · Money">
+  <div class="wrap">
+    <div class="kicker rv">Module 03</div>
+    <h2 class="title rv d1">Money</h2>
+    <p class="goal rv d1">Now you understand why prompts matter.</p>
+    <p class="lead rv d2">Every model bills by the token. Four meters are running:</p>
+
+    <div class="toktype">
+      <div class="rv d2"><div class="t">Input tokens</div><div class="d">what you send</div></div>
+      <div class="rv d3"><div class="t">Output tokens</div><div class="d">what it returns</div></div>
+      <div class="rv d4"><div class="t">Reasoning tokens</div><div class="d">internal thinking</div></div>
+      <div class="rv d5"><div class="t">Cached tokens</div><div class="d">cheaper re-use</div></div>
+    </div>
+
+    <div class="compare">
+      <div class="cmp bad rv d2">
+        <div class="tag">Bad prompt</div>
+        <div class="big">1000</div>
+        <p>tokens in → an answer</p>
+      </div>
+      <div class="cmp good rv d3">
+        <div class="tag">Good prompt</div>
+        <div class="big">200</div>
+        <p>tokens in → the <b style="color:var(--accent-2)">same</b> answer</p>
+      </div>
+    </div>
+
+    <div class="metrics rv d3">
+      <div class="metric"><div class="k">Cost</div><div class="v">↓ drops</div></div>
+      <div class="metric"><div class="k">Latency</div><div class="v">↓ drops</div></div>
+      <div class="metric"><div class="k">Accuracy</div><div class="v">↑ improves</div></div>
+    </div>
+    <div class="takeaway rv d3">A tighter prompt is <b>cheaper, faster, and more accurate</b> — all at once. That's the whole pitch for prompt craft.</div>
+  </div>
+</section>
+
+<!-- ============ M4 — CONTEXT WINDOW ============ -->
+<section id="m4" data-label="04 · Context Window">
+  <div class="wrap">
+    <div class="kicker rv">Module 04</div>
+    <h2 class="title rv d1">The context window</h2>
+    <p class="goal rv d1">One of the most misunderstood ideas in AI.</p>
+    <p class="lead rv d2">Think of one finite desk. Your prompt, the conversation, files, images and the system
+      instructions <b style="color:var(--accent-2)">all share the same surface.</b></p>
+
+    <div class="ctx rv d2">
+      <div class="label"><span>Window = 200,000 tokens</span><span id="ctxPct">filling…</span></div>
+      <div class="ctxbar" id="ctxBar">
+        <div class="seg s-conv" data-w="50%">Conversation 100k</div>
+        <div class="seg s-pdf"  data-w="40%">PDF 80k</div>
+        <div class="seg s-sys"  data-w="5%">Sys 10k</div>
+        <div class="seg s-ans"  data-w="5%">Answer 10k</div>
+      </div>
+      <div class="legend">
+        <span><i class="s-conv" style="background:var(--accent)"></i>Conversation</span>
+        <span><i class="s-pdf" style="background:var(--accent-2)"></i>Uploaded PDF</span>
+        <span><i class="s-sys" style="background:var(--accent-4)"></i>System prompt</span>
+        <span><i class="s-ans" style="background:var(--accent-3)"></i>Room for the answer</span>
+      </div>
+      <p class="full" id="ctxFull">⚠ Window full → old information is forgotten, compressed, or dropped. Not because the AI wants to — because there's literally nowhere left to store it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ M5 — WHY OLD CHATS GO STUPID ============ -->
+<section id="m5" data-label="05 · Old Chats">
+  <div class="wrap">
+    <div class="kicker rv">Module 05</div>
+    <h2 class="title rv d1">Why old chats get “stupid”</h2>
+    <p class="goal rv d1">The question everyone asks.</p>
+    <p class="lead rv d2">There's no running memory. Every new message resends the <b style="color:var(--accent-2)">entire</b> conversation, every time.</p>
+
+    <div class="flow rv d2">
+      <span class="node">Old chat</span><span class="arr">+</span>
+      <span class="node">New prompt</span><span class="arr">→</span>
+      <span class="node hl">Whole thing re-sent</span>
+    </div>
+
+    <div class="cards c4" style="margin-top:34px">
+      <div class="card rv d2"><span class="ic">📈</span><h3>Higher latency</h3><p>more to re-read every turn</p></div>
+      <div class="card rv d3"><span class="ic">💸</span><h3>Higher cost</h3><p>you pay for it all, again</p></div>
+      <div class="card rv d4"><span class="ic">🤯</span><h3>More confusion</h3><p>old contradictions linger</p></div>
+      <div class="card rv d5"><span class="ic">📉</span><h3>Less reliable</h3><p>signal buried in noise</p></div>
+    </div>
+
+    <div class="takeaway rv d3">The fix people remember forever: <b>start a new chat.</b> Fresh desk, sharp again.</div>
+  </div>
+</section>
+
+<!-- ============ M6 — EVOLUTION ============ -->
+<section id="m6" data-label="06 · Window Growth">
+  <div class="wrap">
+    <div class="kicker rv">Module 06</div>
+    <h2 class="title rv d1">Context windows have exploded</h2>
+    <p class="goal rv d1">From a few thousand tokens to millions.</p>
+
+    <div class="timeline rv d2">
+      <div class="tl-track">
+        <div class="tl"><div class="dot"></div><div class="name">GPT-3</div><div class="val">~4k</div></div>
+        <div class="tl"><div class="dot"></div><div class="name">GPT-4</div><div class="val">8k</div></div>
+        <div class="tl"><div class="dot"></div><div class="name">GPT-4-32k</div><div class="val">32k</div></div>
+        <div class="tl"><div class="dot"></div><div class="name">GPT-4 Turbo</div><div class="val">128k</div></div>
+        <div class="tl"><div class="dot"></div><div class="name">Claude</div><div class="val">200k</div></div>
+        <div class="tl"><div class="dot"></div><div class="name">Gemini 1.5</div><div class="val huge">1M+</div></div>
+        <div class="tl"><div class="dot"></div><div class="name">Gemini 2.5</div><div class="val huge">2M</div></div>
+      </div>
+    </div>
+
+    <div class="takeaway rv d3" style="margin-top:48px">Bigger context <b>≠ smarter.</b> It simply <b>remembers more</b>. Huge difference — and an easy one to confuse.</div>
+  </div>
+</section>
+
+<!-- ============ M7 — DIFFERENT MODELS (GAME) ============ -->
+<section id="m7" data-label="07 · Which Model">
+  <div class="wrap">
+    <div class="kicker rv">Module 07</div>
+    <h2 class="title rv d1">Different models, different strengths</h2>
+    <p class="goal rv d1">Not a feature chart — a game. Vote first, then reveal.</p>
+
+    <div class="game" id="taskGame">
+      <div class="task rv d2"><span class="lbl">Brainstorm ideas</span><span class="ans">ChatGPT</span></div>
+      <div class="task rv d2"><span class="lbl">Analyse a 300-page document</span><span class="ans">Claude</span></div>
+      <div class="task rv d3"><span class="lbl">Research across the internet</span><span class="ans">Gemini</span></div>
+      <div class="task rv d3"><span class="lbl">Write code</span><span class="ans">Claude / ChatGPT</span></div>
+      <div class="task rv d4"><span class="lbl">Image generation</span><span class="ans">ChatGPT</span></div>
+      <div class="task rv d4"><span class="lbl">Video understanding</span><span class="ans">Gemini</span></div>
+      <div class="task rv d5"><span class="lbl">Enterprise Microsoft ecosystem</span><span class="ans">Copilot</span></div>
+      <div class="task rv d5"><span class="lbl">PowerPoint inside Microsoft</span><span class="ans">Copilot</span></div>
+    </div>
+    <button class="gamebtn rv d3" id="revealTasks">Reveal the votes →</button>
+
+    <div class="takeaway rv d4">There is no “best AI.” There's a <b>best AI for a task</b> — and the task, context and data usually matter more than the brand.</div>
+  </div>
+</section>
+
+<!-- ============ DEMO — BLIND VOTE + PRINCIPLES ============ -->
+<section id="m7b" data-label="Principles · Models">
+  <div class="wrap">
+    <div class="kicker rv">The honest version</div>
+    <h2 class="title rv d1">Teach principles, not habits</h2>
+    <p class="lead rv d2">“ChatGPT is for brainstorming” is a beginner shortcut that ages badly. Here's the durable framing —
+      and a demo that proves the point: show the same question answered four times, <b style="color:var(--accent-2)">vote blind, then reveal the names.</b></p>
+
+    <div class="models">
+      <div class="model m-gpt rv d2"><h3><span class="d"></span>ChatGPT</h3><p>Strong all-rounder — writing, reasoning, coding and multimodal tasks.</p></div>
+      <div class="model m-claude rv d3"><h3><span class="d"></span>Claude</h3><p>Excellent for long documents, writing quality and sustained reasoning.</p></div>
+      <div class="model m-gem rv d4"><h3><span class="d"></span>Gemini</h3><p>Strong for research, multimodal understanding and the Google ecosystem.</p></div>
+      <div class="model m-cop rv d5"><h3><span class="d"></span>Copilot</h3><p>Best when work depends on your Microsoft 365 data — email, Teams, SharePoint, docs, workflows.</p></div>
+    </div>
+    <div class="takeaway rv d3">The lesson that lands: the <b>model is one part of the equation.</b> Task, context and available data often matter more than the logo.</div>
+  </div>
+</section>
+
+<!-- ============ M8 — CHAT vs COPILOT vs COWORK ============ -->
+<section id="m8" data-label="08 · Chat / Copilot / CoWork">
+  <div class="wrap">
+    <div class="kicker rv">Module 08</div>
+    <h2 class="title rv d1">Chat vs Copilot vs CoWork</h2>
+    <p class="goal rv d1">Each ring inherits everything inside it.</p>
+
+    <div class="circles">
+      <div class="circ one rv d2">
+        <div class="scope">Ring 1</div>
+        <h3>Chat</h3>
+        <ul>
+          <li>Knows only what you give it</li>
+          <li>Public knowledge only</li>
+          <li>Cannot see company files</li>
+        </ul>
+      </div>
+      <div class="circ two rv d3">
+        <div class="scope">Ring 2</div>
+        <h3>Copilot Chat</h3>
+        <div class="inherit">+ everything in Chat</div>
+        <ul>
+          <li>Your company identity</li>
+          <li>Microsoft Graph + permissions</li>
+          <li>Email · Calendar · Teams</li>
+          <li>SharePoint documents</li>
+        </ul>
+      </div>
+      <div class="circ three rv d4">
+        <div class="scope">Ring 3</div>
+        <h3>CoWork</h3>
+        <div class="inherit">+ everything in Copilot</div>
+        <ul>
+          <li>Agents</li>
+          <li>Business workflows</li>
+          <li>Automation</li>
+          <li>Higher-value tasks · credits</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaway rv d3">Now it's obvious <b>why CoWork costs money</b> — it does more, reaches further, and acts on your behalf.</div>
+  </div>
+</section>
+
+<!-- ============ M9 — CREDITS ============ -->
+<section id="m9" data-label="09 · Credits">
+  <div class="wrap">
+    <div class="kicker rv">Module 09</div>
+    <h2 class="title rv d1">Credits</h2>
+    <p class="goal rv d1">The business side — don't start here, end here.</p>
+    <p class="lead rv d2">Don't open with credits; nobody understands them cold. Start with tokens, and credits fall out naturally.</p>
+
+    <div class="equation">
+      <div class="eq rv d2">Every action<b>you take</b></div>
+      <div class="arr rv d2">→</div>
+      <div class="eq rv d3">Model<b>does work</b></div>
+      <div class="arr rv d3">→</div>
+      <div class="eq rv d3">Tokens<b>consumed</b></div>
+      <div class="arr rv d4">→</div>
+      <div class="eq rv d4">Cost<b>incurred</b></div>
+      <div class="arr rv d4">→</div>
+      <div class="eq final rv d5">Credits<b>billed</b></div>
+    </div>
+    <div class="takeaway rv d4">Credits are just <b>tokens wearing a price tag.</b> Once tokens click, credits stop being mysterious.</div>
+  </div>
+</section>
+
+<!-- ============ M10 — PROMPT ENGINEERING ============ -->
+<section id="m10" data-label="10 · Prompting">
+  <div class="wrap">
+    <div class="kicker rv">Module 10</div>
+    <h2 class="title rv d1">Now — and only now — prompts</h2>
+    <p class="goal rv d1">Everything before this is why prompting works.</p>
+    <p class="lead rv d2">Six ingredients. Reach for them in any order; the more you supply, the sharper the answer.</p>
+
+    <div class="anatomy">
+      <div class="part rv d2"><div class="n">01</div><h3>Role</h3><p>Who the AI should act as.</p></div>
+      <div class="part rv d2"><div class="n">02</div><h3>Goal</h3><p>What outcome you want.</p></div>
+      <div class="part rv d3"><div class="n">03</div><h3>Context</h3><p>The facts it needs to know.</p></div>
+      <div class="part rv d3"><div class="n">04</div><h3>Constraints</h3><p>Limits, tone, length, do-nots.</p></div>
+      <div class="part rv d4"><div class="n">05</div><h3>Output format</h3><p>Exactly how to return it.</p></div>
+      <div class="part rv d4"><div class="n">06</div><h3>Examples</h3><p>Show, don't just tell.</p></div>
+    </div>
+    <div class="takeaway rv d4">Role · Goal · Context · Constraints · Format · Examples. <b>Done.</b></div>
+  </div>
+</section>
+
+<!-- ============ M11 — SAFETY ============ -->
+<section id="m11" data-label="11 · Safety">
+  <div class="wrap">
+    <div class="kicker rv">Module 11</div>
+    <h2 class="title rv d1">AI safety</h2>
+    <p class="goal rv d1">Short, and non-negotiable.</p>
+
+    <div class="rules">
+      <div class="rule rv d2"><span class="num">1</span><span class="tx"><b>Never upload confidential data</b> <span>unless it's an approved tool.</span></span></div>
+      <div class="rule rv d3"><span class="num">2</span><span class="tx"><b>Know your approved tools</b> <span>— use the catalogue, not whatever's trending.</span></span></div>
+      <div class="rule rv d4"><span class="num">3</span><span class="tx"><b>Verify important answers</b> <span>— confident ≠ correct.</span></span></div>
+    </div>
+
+    <div class="creed rv d4"><span class="a">AI assists.</span> <span class="b">Humans decide.</span></div>
+  </div>
+</section>
+
+<!-- ============ M12 — LEARN MORE ============ -->
+<section id="m12" data-label="12 · Learn More">
+  <div class="wrap">
+    <div class="kicker rv">Module 12</div>
+    <h2 class="title rv d1">Keep going</h2>
+    <p class="goal rv d1">Where to take this next.</p>
+
+    <div class="links">
+      <div class="lk rv d2"><div class="ic">🛋️</div><h3>Couch to CoWork</h3><p>The guided path from curious to capable.</p></div>
+      <div class="lk rv d2"><div class="ic">🏠</div><h3>Internal AI Hub</h3><p>Everything in one place.</p></div>
+      <div class="lk rv d3"><div class="ic">✅</div><h3>Approved AI Catalogue</h3><p>What's safe to use, and for what.</p></div>
+      <div class="lk rv d3"><div class="ic">📋</div><h3>AI Policies</h3><p>The guardrails, in plain language.</p></div>
+      <div class="lk rv d4"><div class="ic">📚</div><h3>Prompt Library</h3><p>Steal these. Adapt them.</p></div>
+      <div class="lk rv d4"><div class="ic">🕐</div><h3>Office Hours</h3><p>Bring a real task; leave with an answer.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSE ============ -->
+<section id="close" data-label="Recap">
+  <div class="wrap rv">
+    <p class="kicker" style="justify-content:center">The whole model, in one breath</p>
+    <h2>It predicts tokens.<br>Tokens cost money.<br>The window is finite.</h2>
+    <div class="recap">
+      <span>Autocomplete, not intelligence</span>
+      <span>Everything → tokens</span>
+      <span>Tighter prompt = cheaper + faster + better</span>
+      <span>One shared window</span>
+      <span>Start a new chat</span>
+      <span>Best AI per task</span>
+      <span>Chat ⊂ Copilot ⊂ CoWork</span>
+      <span>Credits = priced tokens</span>
+      <span>AI assists, humans decide</span>
+    </div>
+    <p class="end">THANK YOU · QUESTIONS?</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ---------- starfield ---------- */
+(function(){
+  const s=document.getElementById('stars');
+  let h='';
+  for(let i=0;i<90;i++){
+    const x=(i*53.7)%100, y=(i*29.3)%100, d=(i%5);
+    h+=`<div class="star" style="left:${x}%;top:${y}%;animation-delay:${d*0.7}s"></div>`;
+  }
+  s.innerHTML=h;
+})();
+
+/* ---------- nav dots ---------- */
+const sections=[...document.querySelectorAll('section')];
+const dots=document.getElementById('dots');
+sections.forEach((sec,i)=>{
+  const a=document.createElement('a');
+  a.href='#'+sec.id;
+  a.innerHTML=`<span>${sec.dataset.label||sec.id}</span>`;
+  a.addEventListener('click',e=>{e.preventDefault();sec.scrollIntoView({behavior:'smooth'});});
+  dots.appendChild(a);
+});
+const dotEls=[...dots.children];
+
+/* ---------- scroll: progress + active dot + parallax ---------- */
+const progress=document.getElementById('progress');
+const blobs=[...document.querySelectorAll('.blob')];
+const hint=document.getElementById('hint');
+function onScroll(){
+  const sc=window.scrollY, max=document.body.scrollHeight-window.innerHeight;
+  progress.style.width=(max>0?(sc/max*100):0)+'%';
+  if(sc>120)hint.style.opacity='0';else hint.style.opacity='1';
+  blobs.forEach(b=>{const d=parseFloat(b.dataset.depth)||.1;b.style.transform=`translateY(${sc*d}px)`;});
+  // active dot
+  let idx=0;
+  sections.forEach((s,i)=>{if(s.getBoundingClientRect().top<=window.innerHeight*0.45)idx=i;});
+  dotEls.forEach((d,i)=>d.classList.toggle('on',i===idx));
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+onScroll();
+
+/* ---------- reveal on view ---------- */
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:0.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* ---------- keyboard nav ---------- */
+function nearestIndex(){
+  let idx=0,best=Infinity;
+  sections.forEach((s,i)=>{const t=Math.abs(s.getBoundingClientRect().top);if(t<best){best=t;idx=i;}});
+  return idx;
+}
+window.addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){
+    e.preventDefault();const i=Math.min(sections.length-1,nearestIndex()+1);sections[i].scrollIntoView({behavior:'smooth'});
+  }else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){
+    e.preventDefault();const i=Math.max(0,nearestIndex()-1);sections[i].scrollIntoView({behavior:'smooth'});
+  }else if(e.key==='Home'){e.preventDefault();sections[0].scrollIntoView({behavior:'smooth'});}
+  else if(e.key==='End'){e.preventDefault();sections[sections.length-1].scrollIntoView({behavior:'smooth'});}
+});
+
+/* ---------- M1 autocomplete ---------- */
+const iceBtn=document.getElementById('iceBtn');
+iceBtn?.addEventListener('click',()=>{
+  document.getElementById('iceBlank').classList.add('reveal');
+  const p=document.getElementById('iceProbs');p.classList.add('show');
+  setTimeout(()=>p.querySelectorAll('.bar').forEach(b=>b.style.width=b.dataset.w),120);
+  setTimeout(()=>document.getElementById('icePunch').classList.add('show'),500);
+  iceBtn.textContent='cream — every time. ✓';iceBtn.disabled=true;iceBtn.style.opacity='.6';
+});
+
+/* ---------- tokenizer demo (approximate, GPT-ish) ---------- */
+const tokIn=document.getElementById('tokIn'), tokOut=document.getElementById('tokOut');
+function tokenize(text){
+  // approximate: split on word boundaries + punctuation, chunk long words ~every 4 chars
+  const out=[];
+  const re=/(\s+|[^\s\w]|\w+)/g; let m;
+  while((m=re.exec(text))!==null){
+    let t=m[0];
+    if(/^\w+$/.test(t)&&t.length>6){
+      for(let i=0;i<t.length;i+=4)out.push(t.slice(i,i+4));
+    }else{out.push(t);}
+  }
+  return out.filter(t=>t.length);
+}
+function renderTok(){
+  const text=tokIn.value;
+  const toks=tokenize(text);
+  tokOut.innerHTML=toks.map(t=>`<span class="tok">${t.replace(/ /g,'·').replace(/</g,'&lt;')}</span>`).join('');
+  const tk=toks.length, ch=text.length;
+  document.getElementById('nChars').textContent=ch;
+  document.getElementById('nTok').textContent=tk;
+  document.getElementById('nRatio').textContent=tk?(ch/tk).toFixed(1):'0';
+}
+tokIn?.addEventListener('input',renderTok);
+document.querySelectorAll('.demo .quick button').forEach(b=>{
+  b.addEventListener('click',()=>{tokIn.value=b.dataset.t;renderTok();tokIn.focus();});
+});
+renderTok();
+
+/* ---------- strawberry ---------- */
+const berryBtn=document.getElementById('berryBtn');
+berryBtn?.addEventListener('click',()=>{
+  const b=document.getElementById('berry');b.classList.add('split');
+  b.querySelector('.ask').innerHTML='It sees <b style="color:var(--accent-2)">3 tokens</b> — St · raw · berry. No letters. No spelling. That\'s why it miscounts the r\'s.';
+  berryBtn.textContent='St · raw · berry ✓';berryBtn.disabled=true;berryBtn.style.opacity='.6';
+});
+
+/* ---------- context window fill (animate when in view) ---------- */
+const ctxBar=document.getElementById('ctxBar');
+let ctxDone=false;
+const ctxIO=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting&&!ctxDone){
+      ctxDone=true;
+      e.target.querySelectorAll('.seg').forEach((s,i)=>setTimeout(()=>s.style.width=s.dataset.w,i*260));
+      setTimeout(()=>{document.getElementById('ctxPct').textContent='100% FULL';
+        document.getElementById('ctxFull').classList.add('show');},1300);
+    }
+  });
+},{threshold:0.4});
+if(ctxBar)ctxIO.observe(ctxBar);
+
+/* ---------- task game reveal ---------- */
+document.getElementById('revealTasks')?.addEventListener('click',function(){
+  document.querySelectorAll('#taskGame .task').forEach((t,i)=>setTimeout(()=>t.classList.add('reveal'),i*90));
+  this.textContent='Revealed — but the task matters more than the logo ✓';this.disabled=true;this.style.opacity='.6';
+});
+</script>
+</body>
+</html>
