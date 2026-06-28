@@ -1,0 +1,82 @@
+{
+  "id": "ai-literacy",
+  "title": "AI Literacy",
+  "subtitle": "Foundations of working well with AI",
+  "accent": "#4af6c3",
+  "terms": [
+    { "term": "PROMPT", "hint": "The instruction you give an AI" },
+    { "term": "TOKEN", "hint": "A chunk of text a model reads or writes" },
+    { "term": "MODEL", "hint": "The trained system that generates answers" },
+    { "term": "AGENT", "hint": "AI that takes actions, not just chats" },
+    { "term": "CONTEXT", "hint": "All the input a model can see at once" },
+    { "term": "BIAS", "hint": "Skew in the data or the output" },
+    { "term": "VERIFY", "hint": "What you must always do with AI output" },
+    { "term": "DATASET", "hint": "The collection a model learned from" },
+    { "term": "LATENCY", "hint": "The delay before a response arrives" },
+    { "term": "GROUNDING", "hint": "Tying answers to real, cited sources" },
+    { "term": "GUARDRAIL", "hint": "A safety limit on what AI may do" },
+    { "term": "HALLUCINATION", "hint": "A confident answer that is simply wrong" }
+  ],
+  "questions": [
+    {
+      "q": "An AI gives a confident, detailed answer that turns out to be completely made up. What is this called?",
+      "options": ["A hallucination", "A guardrail", "A token limit", "Fine-tuning"],
+      "answer": 0,
+      "explain": "Models can produce fluent, confident text that is factually wrong. That is a hallucination — which is exactly why you verify."
+    },
+    {
+      "q": "Which task should stay with a human rather than be handed to AI?",
+      "options": ["Drafting a first version of an email", "Summarising a long report", "Final sign-off on a legal contract", "Brainstorming campaign ideas"],
+      "answer": 2,
+      "explain": "AI is great for drafts, summaries and ideas. Accountable final decisions — legal sign-off — stay with a human."
+    },
+    {
+      "q": "Your prompt returns a vague, generic answer. What is the best fix?",
+      "options": ["Ask the same thing again", "Add context, a goal, and an example", "Use ALL CAPS", "Wait and retry later"],
+      "answer": 1,
+      "explain": "Specificity beats repetition. Give the model context, the goal, the audience, and an example of what good looks like."
+    },
+    {
+      "q": "You need AI to answer using your company's private documents. What approach fits best?",
+      "options": ["Hope the model already knows", "Ground it on the documents (RAG / upload)", "Increase the temperature", "Ask it to guess confidently"],
+      "answer": 1,
+      "explain": "Grounding the model on the actual source documents keeps answers tied to your reality instead of its training data."
+    },
+    {
+      "q": "An AI answer looks perfect on a topic you don't know well. Best next step?",
+      "options": ["Ship it immediately", "Verify the key claims against a trusted source", "Ask it if it's sure", "Add more emojis"],
+      "answer": 1,
+      "explain": "'Looks confident' is not 'is correct'. Verify the load-bearing claims before you rely on them."
+    },
+    {
+      "q": "What does the 'context window' of a model limit?",
+      "options": ["How fast it types", "How much text it can consider at once", "How polite it is", "How many users it has"],
+      "answer": 1,
+      "explain": "The context window is the total amount of input (and output) the model can hold in view for a single response."
+    },
+    {
+      "q": "Which is the strongest sign you should NOT automate a task with AI yet?",
+      "options": ["It's repetitive", "It's well-documented", "Mistakes are costly and hard to reverse", "It's boring"],
+      "answer": 2,
+      "explain": "High-stakes, hard-to-reverse work needs a human in the loop. Start automating where errors are cheap and visible."
+    },
+    {
+      "q": "What is the main risk of training data that over-represents one group?",
+      "options": ["Faster responses", "Biased outputs that disadvantage others", "Lower energy use", "Shorter answers"],
+      "answer": 1,
+      "explain": "Skewed data produces skewed outputs. Representative data and testing reduce bias."
+    },
+    {
+      "q": "A teammate pastes confidential customer data into a public AI tool. The biggest concern is:",
+      "options": ["It might be slow", "Data may leave your control and be retained", "The answer will be too long", "It costs tokens"],
+      "answer": 1,
+      "explain": "Treat AI inputs like anything you send outside the building. Use approved tools and avoid pasting secrets into public ones."
+    },
+    {
+      "q": "What's the best mindset for working with AI day to day?",
+      "options": ["Trust it completely", "Treat it as a fast junior who needs checking", "Never use it", "Only use it for fun"],
+      "answer": 1,
+      "explain": "A capable, fast collaborator whose work you review — that framing captures both the leverage and the responsibility."
+    }
+  ]
+}
