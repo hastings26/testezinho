@@ -1,0 +1,55 @@
+{
+  "id": "copilot",
+  "title": "Microsoft 365 Copilot",
+  "subtitle": "Getting real work done with Copilot",
+  "terms": [
+    { "term": "PROMPT", "hint": "What you ask Copilot to do" },
+    { "term": "CONTEXT", "hint": "The files and chat Copilot can see" },
+    { "term": "GROUNDING", "hint": "Copilot using your real work files" },
+    { "term": "DRAFT", "hint": "A first version Copilot writes for you" },
+    { "term": "SUMMARY", "hint": "Copilot condensing a long thread" },
+    { "term": "CITATION", "hint": "The source link Copilot shows" },
+    { "term": "PRIVACY", "hint": "Your data staying inside your tenant" },
+    { "term": "VERIFY", "hint": "Checking Copilot's output before you send it" },
+    { "term": "AGENT", "hint": "Copilot taking multi-step actions" },
+    { "term": "RECAP", "hint": "A catch-up on a meeting you missed" }
+  ],
+  "questions": [
+    {
+      "q": "What makes Microsoft 365 Copilot different from a plain chatbot?",
+      "options": ["It's grounded in your own work data (mail, files, chats)", "It only tells jokes", "It works offline with no data", "It replaces your manager"],
+      "answer": 0,
+      "explain": "Copilot's edge is grounding — it answers using your tenant's real content, with citations, not just general knowledge."
+    },
+    {
+      "q": "Your Copilot prompt returns a weak draft. Best improvement?",
+      "options": ["Say 'do better'", "Add the audience, goal, tone, and a file to ground it", "Ask three times", "Switch the language"],
+      "answer": 1,
+      "explain": "Specific, grounded prompts win. Point Copilot at the right document and tell it who it's for and what 'good' looks like."
+    },
+    {
+      "q": "Copilot drafts an email citing a figure from a file. Before sending you should:",
+      "options": ["Send immediately", "Open the cited source and confirm the figure", "Delete the citation", "Forward to everyone"],
+      "answer": 1,
+      "explain": "Citations make verification easy — actually click through and confirm before anything leaves your outbox."
+    },
+    {
+      "q": "Which is a great everyday Copilot use?",
+      "options": ["Recapping a Teams meeting you missed with action items", "Guessing next week's lottery", "Storing passwords", "Replacing all human review"],
+      "answer": 0,
+      "explain": "Meeting recap with owners and actions is a classic high-value, low-risk Copilot task."
+    },
+    {
+      "q": "A colleague worries Copilot will leak data to the public internet. The reassurance is:",
+      "options": ["It posts everything publicly", "It respects your existing permissions and stays in your tenant", "It emails competitors", "It has no security"],
+      "answer": 1,
+      "explain": "Copilot honours the access controls you already have — it can't surface content a user couldn't already reach."
+    },
+    {
+      "q": "Best mindset when Copilot writes a document for you?",
+      "options": ["Ship it unread", "Treat it as a fast first draft you edit and own", "Never read it", "Assume it's final"],
+      "answer": 1,
+      "explain": "Copilot accelerates the first 80%. You still own the judgement, accuracy, and the final word."
+    }
+  ]
+}

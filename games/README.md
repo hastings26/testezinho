@@ -25,10 +25,17 @@ Wordle, Hangman and Memory engine works for "AI Literacy", "Copilot",
 | 🔤 Word Recall | Wordle / Lingo recall, survival streak over key terms | `wordle.html` |
 | 💀 Hangman | Vocabulary recall, hint-driven | `hangman.html` |
 | 🧠 Memory Match | Match each term to its meaning | `memory.html` |
+| ⚖️ Judge Mode | Read several AI answers and approve the best — teaches judgement, not recall | `judge.html` |
+| 🎯 Choose the Right Tool | Pick the right tool (ChatGPT, Copilot, agent, search, human…) for each task | `tool.html` |
+
+Topic packs included: **AI Literacy**, **Microsoft 365 Copilot**, **Security
+Awareness**, **B2B Sales Skills**. (Judge Mode and Choose the Right Tool are
+AI-judgment games — they need `scenarios` / `tooltasks` content, which the AI
+Literacy pack provides; other topics gracefully fall back.)
 
 The library hub (`index.html`) also shows the **roadmap** — game-show formats,
-board games, and the AI-judgment mechanics (Detective Mode, Judge Mode, Red
-Team, Build/Repair the Prompt, Escape Room) — as "coming soon" cards.
+board games, and the remaining AI-judgment mechanics (Detective Mode, Red Team,
+AI vs Human, Build/Repair the Prompt, Escape Room) — as "coming soon" cards.
 
 ## Files
 
@@ -76,6 +83,28 @@ Copy `content/ai-literacy.json`, change the content, and play it via
   short hint. Powers Wordle, Hangman, and Memory Match.
 - `questions` — multiple choice with the correct index and an explanation.
   Powers Quiz Quest.
+
+Optional AI-judgment content (used by Judge Mode and Choose the Right Tool):
+
+```jsonc
+{
+  "tools": [ { "id": "human", "label": "Human only", "icon": "🧠" } ],
+  "tooltasks": [
+    { "task": "Sign off a sensitive legal decision.", "answer": "human", "explain": "…" }
+  ],
+  "scenarios": [
+    {
+      "prompt": "Which AI answer would you approve?",
+      "answers": [ { "text": "…", "verdict": "why it's good/bad" } ],
+      "best": 0,          // index of the answer to approve
+      "explain": "Why."
+    }
+  ]
+}
+```
+
+A pack without `tooltasks` / `scenarios` simply shows a friendly note in those
+two games — every other game still works.
 
 ## Add a new game
 

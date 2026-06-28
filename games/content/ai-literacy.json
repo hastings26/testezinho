@@ -78,5 +78,65 @@
       "answer": 1,
       "explain": "A capable, fast collaborator whose work you review — that framing captures both the leverage and the responsibility."
     }
+  ],
+  "tools": [
+    { "id": "chatgpt", "label": "ChatGPT", "icon": "💬" },
+    { "id": "copilot", "label": "Copilot", "icon": "🧑‍💻" },
+    { "id": "claude", "label": "Claude", "icon": "📜" },
+    { "id": "notebooklm", "label": "NotebookLM", "icon": "📓" },
+    { "id": "agent", "label": "AI Agent", "icon": "🤖" },
+    { "id": "search", "label": "Web Search", "icon": "🔎" },
+    { "id": "human", "label": "Human only", "icon": "🧠" }
+  ],
+  "tooltasks": [
+    { "task": "Refactor a function and generate unit tests, right inside your code editor.", "answer": "copilot", "explain": "Copilot lives in the IDE with your codebase in view — in-editor coding is its home turf." },
+    { "task": "Answer questions across 30 PDFs you uploaded, with a citation for every claim.", "answer": "notebooklm", "explain": "NotebookLM grounds answers in the sources you give it and cites each one — built for your own documents." },
+    { "task": "Get this morning's headlines about a breaking news event.", "answer": "search", "explain": "Live, changing facts need real-time web search, not a model's frozen training data." },
+    { "task": "Sign off the final compensation figures in an employee's job offer.", "answer": "human", "explain": "High-stakes, accountable, sensitive decisions stay with a person — full stop." },
+    { "task": "Research a venue, book it, add it to your calendar, and email the attendees.", "answer": "agent", "explain": "A chain of actions across multiple tools is exactly what an agent is for." },
+    { "task": "Read a 60-page policy document and produce a careful, structured risk summary.", "answer": "claude", "explain": "Long-context, careful reasoning over a big document plays to a strong general assistant." },
+    { "task": "Give five quick analogies to explain APIs to a complete beginner.", "answer": "chatgpt", "explain": "Fast, general explanation with no special context needed — a quick chat model nails this." }
+  ],
+  "scenarios": [
+    {
+      "prompt": "A customer asks whether your software is fully GDPR-compliant. Which AI-drafted reply would you approve to send?",
+      "answers": [
+        { "text": "\"Yes — our product is 100% GDPR-compliant in every region, guaranteed.\"", "verdict": "Overclaims and states legal compliance as a fact it can't back." },
+        { "text": "\"We take data protection seriously and follow GDPR principles. For the specifics on your region, I'll connect you with our Data Protection Officer.\"", "verdict": "Helpful, honest, and routes the legal specifics to the right human." },
+        { "text": "\"I'm not sure, sorry.\"", "verdict": "Accurate that it doesn't know, but unhelpful and unprofessional." }
+      ],
+      "best": 1,
+      "explain": "Approve the reply that helps the customer without making legal guarantees it can't stand behind — and escalates specifics to a human."
+    },
+    {
+      "prompt": "You asked an AI to summarise this quarter's numbers for the board. Which summary do you approve?",
+      "answers": [
+        { "text": "A confident summary featuring a precise figure (£4.2m) that does not appear anywhere in the source.", "verdict": "Contains a fabricated number — a hallucination presented as fact." },
+        { "text": "Accurate figures pulled from the source, with one missing data point clearly flagged as 'not provided'.", "verdict": "Accurate and transparent about a gap — exactly what a board needs." },
+        { "text": "A vague paragraph with no numbers at all.", "verdict": "Too vague to be useful for a board decision." }
+      ],
+      "best": 1,
+      "explain": "Approve the answer that is accurate and honest about what it doesn't know. Invented precision is the most dangerous kind of wrong."
+    },
+    {
+      "prompt": "An AI wrote a script to clean up old database records. Which version do you approve to run in production?",
+      "answers": [
+        { "text": "Deletes everything older than the cutoff immediately, with no backup and no confirmation.", "verdict": "Destructive and irreversible, with zero safeguards." },
+        { "text": "Runs a dry-run first, filters strictly by date, logs exactly what it would delete, and asks before committing.", "verdict": "Scoped, reversible, and observable — safe to run." },
+        { "text": "Has lovely comments explaining the code, but still deletes everything with no backup.", "verdict": "Well-documented, but still unsafe." }
+      ],
+      "best": 1,
+      "explain": "For anything irreversible, approve the option with a dry-run, scoping, and logging. Good comments don't make a destructive action safe."
+    },
+    {
+      "prompt": "A teammate used AI to draft their performance self-review. Which output do you approve?",
+      "answers": [
+        { "text": "Invents impressive achievements and metrics the person never actually did.", "verdict": "Fabricated accomplishments — dishonest and risky." },
+        { "text": "A polished draft built only from the real work the person listed, written in their voice.", "verdict": "Uses genuine input, saves time, and stays honest." },
+        { "text": "Generic filler full of buzzwords and no specifics.", "verdict": "Harmless but useless." }
+      ],
+      "best": 1,
+      "explain": "AI is great for shaping and polishing real input. The moment it invents accomplishments, you've traded a time-saver for a liability."
+    }
   ]
 }
