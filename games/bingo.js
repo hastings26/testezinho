@@ -62,7 +62,7 @@
 
   function finish() {
     const score = Math.max(0, 100 - mistakes * 10);
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score, { perfect: score === 100 });
     Engine.sfx.win(); Engine.confetti(60);
     document.getElementById("fb").innerHTML =
       "<div class='gameover'><h2>★ BLACKOUT — BINGO! ★</h2><div class='big'>" + score + "</div>" +

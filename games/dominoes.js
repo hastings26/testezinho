@@ -77,7 +77,7 @@
   function next() { ci++; ci < chains.length ? loadChain() : finish(); }
 
   function finish() {
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score);
     Engine.sfx.win();
     stage.innerHTML = "<div class='gameover'><h2>CHAINS COMPLETE</h2><div class='big'>" + score + "</div>" +
       "<p>steps placed correctly" + (isBest ? " · ★ NEW BEST!" : "") + "</p>" +

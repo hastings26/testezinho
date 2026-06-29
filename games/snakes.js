@@ -68,7 +68,7 @@
   function win() {
     over = true;
     const score = Math.max(10, 400 - turns * 8);
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score);
     Engine.sfx.win(); Engine.confetti(70);
     msg = "★ You reached the end in " + turns + " turns!" + (isBest ? " ★ NEW BEST " + score + "!" : " (" + score + " pts)");
     render();

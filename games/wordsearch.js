@@ -109,7 +109,7 @@
 
   function finish() {
     const score = Object.keys(placements).length * 10;
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score);
     Engine.sfx.win(); Engine.confetti(60);
     document.getElementById("fb").innerHTML = "<div class='gameover'><h2>ALL FOUND!</h2><div class='big'>" + score + "</div>" +
       "<p>words discovered" + (isBest ? " · ★ NEW BEST!" : "") + "</p>" +

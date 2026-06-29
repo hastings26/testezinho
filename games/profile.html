@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Profile · Learning Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="games.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="crumbs"><a href="index.html">← LIBRARY</a></div>
+      <button id="reset" class="btn sm ghost">RESET PROGRESS</button>
+    </div>
+
+    <div class="frame" style="margin-bottom:8px">
+      <div class="prof-head">
+        <div class="prof-badge-lv"><b id="lvNum">1</b><span>LEVEL</span></div>
+        <div class="prof-xpwrap">
+          <h1 style="font-size:22px;margin:0 0 8px">🎖 YOUR PROFILE</h1>
+          <div class="prof-xpbar"><span id="xpFill" style="width:0%"></span></div>
+          <p class="pack-name" id="xpText" style="margin:6px 0 0">0 XP</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid" id="stats"></div>
+
+    <h2 class="section-title">🎯 DAILY QUESTS</h2>
+    <div class="quests" id="quests"></div>
+
+    <h2 class="section-title">🏅 BADGES <span id="badgeCount" style="color:var(--text-dim);font-size:11px"></span></h2>
+    <div class="badge-grid" id="badges"></div>
+
+    <h2 class="section-title">🎮 COLLECTION <span id="collCount" style="color:var(--text-dim);font-size:11px"></span></h2>
+    <div class="grid" id="collection"></div>
+  </div>
+
+  <script src="engine.js"></script>
+  <script src="profile.js"></script>
+</body>
+</html>

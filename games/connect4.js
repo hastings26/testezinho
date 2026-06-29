@@ -83,7 +83,7 @@
   }
 
   function check(okStatus) {
-    if (wins4(1)) { over = true; wins++; Engine.setBest(GAME, pack.id, wins); Engine.sfx.win(); Engine.confetti(50); render("★ FOUR IN A ROW — YOU WIN! ★"); return true; }
+    if (wins4(1)) { over = true; wins++; Engine.recordPlay(GAME, pack.id, wins); Engine.sfx.win(); Engine.confetti(50); render("★ FOUR IN A ROW — YOU WIN! ★"); return true; }
     if (wins4(2)) { over = true; Engine.sfx.lose(); render("The AI connects four. Try again."); return true; }
     if (grid.every(Boolean)) { over = true; render("Board full — a draw."); return true; }
     if (okStatus) render(okStatus);

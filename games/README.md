@@ -68,10 +68,33 @@ topic pack.
 | 🛠 Repair the Prompt | Fix a terrible prompt | `repair.html` |
 | 🗺 AI Escape Room | Use AI correctly to open each room's lock | `escape.html` |
 
-Topic packs included: **AI Literacy**, **Microsoft 365 Copilot**, **Security
-Awareness**, **B2B Sales Skills**. The AI-judgment games and Process Chains use
-extra content types (below); the AI Literacy pack provides them, and any topic
-missing them shows a friendly fallback that links to the AI Literacy set.
+### Topic packs (12)
+
+AI Literacy · Microsoft 365 Copilot · Security Awareness · B2B Sales Skills ·
+Leadership & Management · Communication Skills · Customer Service · Project
+Management · Data & Analytics · Finance Basics · Marketing Fundamentals · New
+Starter Onboarding.
+
+Every pack drives every core game. The AI-judgment games use extra content types
+(below) that the AI Literacy pack provides; any topic missing them shows a
+friendly fallback that links to the AI Literacy set.
+
+## Progression — one profile across every game
+
+The library isn't 24 separate games; it's one platform. Every game feeds a
+shared profile (in `localStorage`):
+
+- **XP & levels** — earn XP every time you finish a game (more for new bests and
+  perfect runs); 250 XP per level.
+- **Daily streak** — play on consecutive days to build it.
+- **Badges** — 15 achievements for breadth, streaks, levels and perfect runs.
+- **Daily quests** — three rotating goals each day, with XP rewards.
+- **Collection** — track which of the 24 games you've played and your best in each.
+
+See it all on the **Profile / Trophy Room** (`profile.html`), and a live
+XP/level/streak strip sits on the hub. Games call `Engine.recordPlay(game, pack,
+score, opts)` at the end of a run; the engine handles XP, streaks, quests and
+badges, and surfaces XP toasts plus level-up / badge banners.
 
 ## Files
 

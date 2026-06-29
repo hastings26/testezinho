@@ -1,0 +1,28 @@
+{
+  "id": "onboarding",
+  "title": "New Starter Onboarding",
+  "subtitle": "A great first 30 days",
+  "terms": [
+    { "term": "WELCOME", "hint": "The warm first impression" },
+    { "term": "BUDDY", "hint": "A peer who shows you the ropes" },
+    { "term": "POLICY", "hint": "The rules and how-we-do-things" },
+    { "term": "TOOLS", "hint": "The systems you'll work in" },
+    { "term": "GOALS", "hint": "What success looks like for you" },
+    { "term": "CULTURE", "hint": "How the team really works together" },
+    { "term": "TRAINING", "hint": "Learning the skills you need" },
+    { "term": "ACCESS", "hint": "Logins and permissions to work" },
+    { "term": "FEEDBACK", "hint": "Two-way input in your early weeks" },
+    { "term": "NETWORK", "hint": "The people you should get to know" }
+  ],
+  "questions": [
+    { "q": "What helps a new starter most in week one?", "options": ["Being left to figure it all out", "Working access, a buddy, and clear first goals", "A 200-page manual only", "No meetings at all"], "answer": 1, "explain": "Tools that work, a friendly guide, and clarity on goals beat any document dump." },
+    { "q": "A good onboarding 'buddy' is…", "options": ["The CEO", "A friendly peer who answers the small questions", "An external recruiter", "Nobody — it's a solo journey"], "answer": 1, "explain": "A peer buddy makes it safe to ask the 'silly' questions everyone actually has." },
+    { "q": "When should first objectives be set?", "options": ["After six months", "Early — so the new starter knows what good looks like", "Never", "Only at the annual review"], "answer": 1, "explain": "Early, clear 30/60/90-day goals turn enthusiasm into focused progress." },
+    { "q": "Onboarding feedback should flow…", "options": ["Only from manager to starter", "Both ways — the new starter sees gaps you've gone blind to", "Never", "Only at the exit interview"], "answer": 1, "explain": "Fresh eyes spot broken steps. Ask new starters what was confusing." },
+    { "q": "Culture is learned mostly through…", "options": ["The handbook", "Watching how the team actually behaves day to day", "The logo", "The org chart"], "answer": 1, "explain": "People absorb culture from lived behaviour, not posters. Model it deliberately." },
+    { "q": "Best sign onboarding worked?", "options": ["The desk looks tidy", "The new starter is contributing and knows where to get help", "They've read every policy", "They never ask questions"], "answer": 1, "explain": "Confident contribution plus knowing where to turn = a successful start." }
+  ],
+  "chains": [
+    { "title": "A great first week", "steps": ["Set up access and tools", "Meet the team and your buddy", "Learn the goals and priorities", "Complete core training", "Agree your 30-day objectives"] }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "leadership",
+  "title": "Leadership & Management",
+  "subtitle": "Leading people and getting results",
+  "terms": [
+    { "term": "DELEGATE", "hint": "Hand a task to the right person" },
+    { "term": "FEEDBACK", "hint": "Specific input to improve performance" },
+    { "term": "VISION", "hint": "The future you're steering toward" },
+    { "term": "COACHING", "hint": "Helping someone find their own answer" },
+    { "term": "TRUST", "hint": "The foundation of any team" },
+    { "term": "EMPATHY", "hint": "Understanding how others feel" },
+    { "term": "INTEGRITY", "hint": "Doing right when no one's watching" },
+    { "term": "RECOGNITION", "hint": "Noticing and valuing good work" },
+    { "term": "PRIORITY", "hint": "What matters most, right now" },
+    { "term": "ACCOUNTABLE", "hint": "Owning the outcome, good or bad" }
+  ],
+  "questions": [
+    { "q": "A team member keeps missing deadlines. Best first step?", "options": ["Do their work for them", "Have a private conversation to understand why", "Call them out in the team meeting", "Ignore it and hope it improves"], "answer": 1, "explain": "Lead with curiosity in private — understand the cause before you decide the fix." },
+    { "q": "What makes feedback most useful?", "options": ["It's vague and gentle", "It's specific, timely and about behaviour", "It's saved for the annual review", "It's only about what went wrong"], "answer": 1, "explain": "Specific, timely, behaviour-focused feedback is something a person can actually act on." },
+    { "q": "Good delegation means…", "options": ["Dumping tasks you dislike", "Matching the task to the person and giving context + ownership", "Keeping all the important work yourself", "Telling them exactly which keys to press"], "answer": 1, "explain": "Delegate the outcome with context and authority — not just the keystrokes." },
+    { "q": "A great way to build trust in a team is to…", "options": ["Take credit for wins", "Admit your own mistakes and follow through on commitments", "Avoid all difficult conversations", "Monitor everyone constantly"], "answer": 1, "explain": "Trust grows from honesty, consistency and keeping your word." },
+    { "q": "When should you recognise good work?", "options": ["Only at bonus time", "Specifically and soon after it happens", "Never — it's their job", "Only in private, never publicly"], "answer": 1, "explain": "Timely, specific recognition reinforces exactly the behaviour you want more of." },
+    { "q": "Coaching differs from telling because it…", "options": ["Gives the answer faster", "Helps people reach their own solution through questions", "Avoids any guidance", "Is only for poor performers"], "answer": 1, "explain": "Coaching builds capability — you ask questions that help them think, not just hand over answers." }
+  ],
+  "chains": [
+    { "title": "Giving effective feedback", "steps": ["Pick a private, calm moment", "Describe the specific behaviour", "Explain the impact it had", "Listen to their perspective", "Agree a concrete next step"] }
+  ]
+}

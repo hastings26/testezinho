@@ -60,7 +60,7 @@
   }
 
   function finish() {
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score);
     const pct = Math.round(score / items.length * 100);
     if (pct >= 60) { Engine.sfx.win(); Engine.confetti(60); } else Engine.sfx.lose();
     stage.innerHTML = "<div class='gameover'><h2>" + (pct >= 60 ? "SHARP EYE" : "RUN COMPLETE") + "</h2>" +

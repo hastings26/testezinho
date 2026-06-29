@@ -77,7 +77,7 @@
   }
 
   function finish() {
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score);
     Engine.sfx.win(); Engine.confetti(60);
     stage.innerHTML = "<div class='gameover'><h2>RED TEAM REPORT</h2><div class='big'>" + score + "</div>" +
       "<p>claims judged correctly" + (isBest ? " · ★ NEW BEST!" : "") + "</p>" +

@@ -442,3 +442,79 @@ input { font-family: 'VT323', monospace; color: inherit; }
 .ff-slot .pts { font-family:'Press Start 2P',monospace; color:var(--good); font-size:15px; }
 .ff-strikes { text-align:center; font-size:34px; color:var(--bad); letter-spacing:8px; min-height:40px; margin-bottom:10px; }
 .ff-pool { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+
+/* ============================================================
+   PROGRESSION — toasts, banners, hub strip, profile
+   ============================================================ */
+.lgl-prog { position: fixed; right: 16px; bottom: 16px; z-index: 80; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none; }
+.lgl-xp {
+  font-family: 'Press Start 2P', monospace; font-size: 13px; color: var(--bg-deep);
+  background: var(--good); border: 3px solid #fff; padding: 8px 12px; box-shadow: var(--shadow-hard);
+  animation: xpPop 2.2s ease forwards;
+}
+@keyframes xpPop {
+  0% { transform: translateY(20px) scale(0.8); opacity: 0; }
+  12% { transform: translateY(0) scale(1); opacity: 1; }
+  75% { opacity: 1; }
+  100% { transform: translateY(-30px); opacity: 0; }
+}
+.lgl-banner {
+  background: var(--panel); border: 3px solid var(--gold); box-shadow: var(--shadow-soft);
+  padding: 12px 18px; min-width: 240px; transition: opacity 0.4s ease; animation: bnrIn 0.4s ease;
+}
+@keyframes bnrIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.lgl-banner-t { font-family: 'Press Start 2P', monospace; font-size: 11px; margin-bottom: 4px; }
+.lgl-banner-s { font-size: 19px; color: var(--text); }
+
+/* hub level strip */
+.lvl-strip {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  background: var(--panel); border: 3px solid var(--border); box-shadow: var(--shadow-hard);
+  padding: 14px 18px; margin-bottom: 8px;
+}
+.lvl-strip .lv { font-family: 'Press Start 2P', monospace; font-size: 13px; color: var(--gold); white-space: nowrap; }
+.lvl-strip .bar { flex: 1; min-width: 140px; height: 16px; background: var(--panel-dark); border: 2px solid var(--border); }
+.lvl-strip .bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--good), var(--good-2)); }
+.lvl-strip .meta { font-size: 17px; color: var(--text-muted); white-space: nowrap; }
+.lvl-strip .streak { color: var(--warn); font-size: 19px; white-space: nowrap; }
+.lvl-strip a.btn { text-decoration: none; }
+
+/* daily quests */
+.quests { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.quest { background: var(--panel); border: 3px solid var(--border); padding: 12px 14px; box-shadow: var(--shadow-hard); }
+.quest.done { border-color: var(--good); }
+.quest .qd { font-size: 19px; margin-bottom: 8px; }
+.quest .qbar { height: 12px; background: var(--panel-dark); border: 2px solid var(--text-dim); margin-bottom: 6px; }
+.quest .qbar span { display: block; height: 100%; background: var(--good); }
+.quest .qf { display: flex; justify-content: space-between; font-size: 16px; color: var(--text-dim); }
+.quest .qf .rw { color: var(--gold); }
+
+/* profile */
+.prof-head { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.prof-badge-lv {
+  width: 92px; height: 92px; flex: none; border: 3px solid var(--gold); background: var(--panel-dark);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-hard);
+}
+.prof-badge-lv b { font-family: 'Press Start 2P', monospace; font-size: 26px; color: var(--gold); }
+.prof-badge-lv span { font-size: 14px; color: var(--text-dim); }
+.prof-xpwrap { flex: 1; min-width: 220px; }
+.prof-xpbar { height: 22px; background: var(--panel-dark); border: 3px solid var(--border); }
+.prof-xpbar span { display: block; height: 100%; background: linear-gradient(90deg, var(--good), var(--good-2)); }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 8px 0; }
+.stat { background: var(--panel); border: 3px solid var(--border); padding: 14px; text-align: center; box-shadow: var(--shadow-hard); }
+.stat b { display: block; font-family: 'Press Start 2P', monospace; font-size: 22px; color: var(--good); margin-bottom: 6px; }
+.stat span { font-size: 16px; color: var(--text-muted); }
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.badge {
+  background: var(--panel); border: 3px solid var(--border); padding: 14px; text-align: center; box-shadow: var(--shadow-hard);
+}
+.badge.locked { opacity: 0.35; filter: grayscale(1); }
+.badge .bi { font-size: 34px; }
+.badge .bn { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--gold); margin: 6px 0 4px; line-height: 1.4; }
+.badge .bd { font-size: 15px; color: var(--text-dim); }
+.mastery { display: grid; gap: 8px; }
+.mastery .row { display: flex; align-items: center; gap: 10px; background: var(--panel); border: 2px solid var(--panel-light); padding: 8px 12px; }
+.mastery .row .nm { min-width: 160px; }
+.mastery .row .mb { flex: 1; height: 12px; background: var(--panel-dark); border: 2px solid var(--text-dim); }
+.mastery .row .mb span { display: block; height: 100%; background: var(--good); }
+.mastery .row .pc { font-size: 16px; color: var(--text-dim); min-width: 60px; text-align: right; }

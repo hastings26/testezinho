@@ -80,7 +80,7 @@
 
   function finish() {
     const score = Math.round((deck.length / 2) / moves * 100); // 100 = perfect
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score, { perfect: score === 100 });
     renderScore();
     Engine.sfx.win(); Engine.confetti(60);
     const fb = document.getElementById("fb");

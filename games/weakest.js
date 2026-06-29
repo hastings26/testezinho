@@ -81,7 +81,7 @@
     clearInterval(timer);
     locked = true;
     const total = banked + (chain ? CHAIN[chain - 1] : 0);
-    const isBest = Engine.setBest(GAME, pack.id, total);
+    const isBest = Engine.recordPlay(GAME, pack.id, total);
     Engine.sfx.win(); Engine.confetti(50);
     stage.innerHTML = "<div class='gameover'><h2>TIME!</h2><div class='big'>" + total + "</div>" +
       "<p>banked " + banked + " + chain " + (chain ? CHAIN[chain - 1] : 0) + (isBest ? " · ★ NEW BEST!" : "") + "</p>" +

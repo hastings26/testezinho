@@ -97,7 +97,7 @@
   }
 
   function finish() {
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score, { perfect: score === questions.length });
     const pct = Math.round((score / questions.length) * 100);
     if (pct >= 60) { Engine.sfx.win(); Engine.confetti(60); } else Engine.sfx.lose();
     renderScore();

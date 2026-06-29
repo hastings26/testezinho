@@ -66,7 +66,7 @@
 
   function check(okStatus) {
     const xw = winnerLine(board, "X"), ow = winnerLine(board, "O");
-    if (xw) { over = true; wins++; Engine.setBest(GAME, pack.id, wins); Engine.sfx.win(); Engine.confetti(50); render("★ YOU WIN! ★", xw); return true; }
+    if (xw) { over = true; wins++; Engine.recordPlay(GAME, pack.id, wins); Engine.sfx.win(); Engine.confetti(50); render("★ YOU WIN! ★", xw); return true; }
     if (ow) { over = true; Engine.sfx.lose(); render("The AI wins this round.", ow); return true; }
     if (board.every(Boolean)) { over = true; Engine.sfx.click(); render("Draw — well matched."); return true; }
     if (okStatus) render(okStatus);

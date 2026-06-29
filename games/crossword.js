@@ -139,7 +139,7 @@
     const fb = document.getElementById("fb");
     if (right === total) {
       Engine.sfx.win(); Engine.confetti(60);
-      Engine.setBest(GAME, pack.id, placed.length * 10);
+      Engine.recordPlay(GAME, pack.id, placed.length * 10);
       fb.className = "toast good"; fb.textContent = "★ Solved! Every answer correct.";
     } else { Engine.sfx.bad(); fb.className = "toast bad"; fb.textContent = right + " / " + total + " letters correct."; }
   }

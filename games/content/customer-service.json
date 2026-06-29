@@ -1,0 +1,28 @@
+{
+  "id": "customer-service",
+  "title": "Customer Service",
+  "subtitle": "Turning problems into loyalty",
+  "terms": [
+    { "term": "EMPATHY", "hint": "Seeing it from the customer's side" },
+    { "term": "LISTEN", "hint": "Hear the full problem before replying" },
+    { "term": "RESOLVE", "hint": "Actually fix the issue" },
+    { "term": "ESCALATE", "hint": "Pass it to someone who can help" },
+    { "term": "PATIENCE", "hint": "Staying calm under pressure" },
+    { "term": "RAPPORT", "hint": "A friendly, trusting connection" },
+    { "term": "SOLUTION", "hint": "The outcome that fixes it" },
+    { "term": "APOLOGY", "hint": "Owning the impact sincerely" },
+    { "term": "FOLLOWUP", "hint": "Checking back that it's sorted" },
+    { "term": "PROMISE", "hint": "Only commit to what you can deliver" }
+  ],
+  "questions": [
+    { "q": "An angry customer is venting. What's your first move?", "options": ["Interrupt with the policy", "Listen fully and acknowledge their frustration", "Transfer them immediately", "Defend the company"], "answer": 1, "explain": "Let them be heard first — acknowledgement defuses far more than a policy quote." },
+    { "q": "Best way to say no to a request you can't meet?", "options": ["\"That's not possible.\"", "Explain why, then offer the closest alternative you can", "Ignore the question", "Blame another department"], "answer": 1, "explain": "A clear reason plus a helpful alternative keeps the relationship intact." },
+    { "q": "You promised a callback by 2pm but can't make it. You should…", "options": ["Say nothing and hope they forget", "Proactively let them know and set a new time", "Wait for them to chase", "Cancel the callback"], "answer": 1, "explain": "Proactive honesty about a slip builds more trust than silence ever could." },
+    { "q": "What turns a complaint into loyalty?", "options": ["A fast, fair resolution and genuine care", "A long apology with no fix", "Free stuff with no explanation", "Closing the ticket quickly"], "answer": 0, "explain": "Customers remember how well you put it right far more than the original mistake." },
+    { "q": "When should you escalate an issue?", "options": ["Never — handle everything alone", "When it's beyond your authority or expertise to resolve well", "Immediately, to avoid the work", "Only after the customer demands it"], "answer": 1, "explain": "Escalate when someone else can genuinely resolve it better — that's good service, not failure." },
+    { "q": "A good apology…", "options": ["Makes excuses", "Acknowledges the impact and what you'll do next", "Blames the customer", "Is generic copy-paste"], "answer": 1, "explain": "Own the impact and state the fix — that's an apology that lands." }
+  ],
+  "chains": [
+    { "title": "Handling an upset customer", "steps": ["Listen fully without interrupting", "Acknowledge and empathise", "Apologise for the impact", "Offer a clear solution", "Follow up to confirm it's fixed"] }
+  ]
+}

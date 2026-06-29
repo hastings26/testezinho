@@ -68,7 +68,7 @@
 
   function finish() {
     const score = Math.max(10, rooms.length * 100 - (attempts - rooms.length) * 20);
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score);
     Engine.sfx.win(); Engine.confetti(80);
     stage.innerHTML = "<div class='gameover'><h2>★ YOU ESCAPED! ★</h2><div class='big'>" + score + "</div>" +
       "<p>" + rooms.length + " rooms in " + attempts + " tries" + (isBest ? " · ★ NEW BEST!" : "") + "</p>" +

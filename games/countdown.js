@@ -107,7 +107,7 @@
   }
 
   function finish() {
-    const isBest = Engine.setBest(GAME, pack.id, score);
+    const isBest = Engine.recordPlay(GAME, pack.id, score);
     Engine.sfx.win(); Engine.confetti(60);
     stage.innerHTML = "<div class='gameover'><h2>THAT'S COUNTDOWN</h2><div class='big'>" + score + "</div>" +
       "<p>points" + (isBest ? " · ★ NEW BEST!" : "") + "</p>" +

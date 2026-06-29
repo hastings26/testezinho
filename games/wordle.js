@@ -125,7 +125,7 @@
     const won = cur === target.word;
     cur = "";
     if (won) { over = true; Engine.sfx.good(); Engine.confetti(40); }
-    else if (rows.length >= MAX_ROWS) { over = true; Engine.setBest(GAME, pack.id, solved); Engine.sfx.lose(); }
+    else if (rows.length >= MAX_ROWS) { over = true; Engine.recordPlay(GAME, pack.id, solved); Engine.sfx.lose(); }
     render();
   }
 

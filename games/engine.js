@@ -138,6 +138,155 @@
     }));
   }
 
+  /* ============================================================
+     PROGRESSION — XP, levels, streaks, badges, daily quests.
+     Every game calls recordPlay() at the end of a run; this is the
+     spine that turns 24 games into one platform.
+     ============================================================ */
+  const XP_PER_LEVEL = 250;
+
+  const BADGES = [
+    { id: "first", icon: "👣", name: "First Steps", desc: "Finish your first game", test: p => p.plays >= 1 },
+    { id: "five", icon: "🎲", name: "Getting Around", desc: "Play 5 different games", test: p => distinctGames(p) >= 5 },
+    { id: "ten", icon: "🎯", name: "Dabbler", desc: "Play 10 different games", test: p => distinctGames(p) >= 10 },
+    { id: "allgames", icon: "👑", name: "Master of Games", desc: "Play all 24 games", test: p => distinctGames(p) >= 24 },
+    { id: "topics2", icon: "🧭", name: "Wanderer", desc: "Play 2 different topics", test: p => distinctTopics(p) >= 2 },
+    { id: "topics4", icon: "🌍", name: "Globetrotter", desc: "Play 4 different topics", test: p => distinctTopics(p) >= 4 },
+    { id: "streak3", icon: "🔥", name: "On a Roll", desc: "Keep a 3-day streak", test: p => (p.streak && p.streak.count) >= 3 },
+    { id: "streak7", icon: "⚡", name: "Unstoppable", desc: "Keep a 7-day streak", test: p => (p.streak && p.streak.count) >= 7 },
+    { id: "lvl5", icon: "🛡️", name: "Veteran", desc: "Reach level 5", test: p => levelFromXp(p.xp) >= 5 },
+    { id: "lvl10", icon: "🏆", name: "Legend", desc: "Reach level 10", test: p => levelFromXp(p.xp) >= 10 },
+    { id: "plays25", icon: "💪", name: "Committed", desc: "Finish 25 games", test: p => p.plays >= 25 },
+    { id: "plays100", icon: "💯", name: "Centurion", desc: "Finish 100 games", test: p => p.plays >= 100 },
+    { id: "bests10", icon: "📈", name: "Record Breaker", desc: "Set a best in 10 games", test: p => Object.keys(p.bests || {}).length >= 10 },
+    { id: "perfect5", icon: "✨", name: "Flawless", desc: "Score 5 perfect runs", test: p => (p.perfects || 0) >= 5 },
+    { id: "xp2500", icon: "💎", name: "XP Hoarder", desc: "Earn 2,500 total XP", test: p => p.xp >= 2500 }
+  ];
+
+  const QUEST_POOL = [
+    { id: "play3", desc: "Play 3 games today", goal: 3, reward: 50, prog: d => d.plays },
+    { id: "earn150", desc: "Earn 150 XP today", goal: 150, reward: 60, prog: d => d.xp },
+    { id: "newgame", desc: "Try a game you've never played", goal: 1, reward: 40, prog: d => d.newGames },
+    { id: "topics2", desc: "Play 2 different topics today", goal: 2, reward: 50, prog: d => Object.keys(d.topics || {}).length },
+    { id: "play5", desc: "Play 5 games today", goal: 5, reward: 80, prog: d => d.plays }
+  ];
+
+  function distinctGames(p) { return Object.keys(p.games || {}).length; }
+  function distinctTopics(p) { return Object.keys(p.topics || {}).length; }
+  function levelFromXp(xp) { return 1 + Math.floor((xp || 0) / XP_PER_LEVEL); }
+  function levelProgress(xp) {
+    const lvl = levelFromXp(xp), into = (xp || 0) - (lvl - 1) * XP_PER_LEVEL;
+    return { level: lvl, into, need: XP_PER_LEVEL, pct: Math.round(into / XP_PER_LEVEL * 100) };
+  }
+
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function dayDiff(a, b) {
+    if (!a || !b) return 99;
+    return Math.round((new Date(b) - new Date(a)) / 86400000);
+  }
+  function dayIndex() { return Math.floor(new Date().setHours(0,0,0,0) / 86400000); }
+
+  function blankProfile() {
+    return { xp: 0, plays: 0, games: {}, topics: {}, bests: {}, perfects: 0,
+      streak: { count: 0, last: null }, badges: {}, daily: null };
+  }
+  function getProfile() {
+    try { return Object.assign(blankProfile(), JSON.parse(localStorage.getItem("lgl:profile") || "{}")); }
+    catch (e) { return blankProfile(); }
+  }
+  function saveProfile(p) { localStorage.setItem("lgl:profile", JSON.stringify(p)); }
+
+  function dailyQuests(p) {
+    const today = todayStr();
+    if (!p.daily || p.daily.date !== today) {
+      const idx = dayIndex();
+      const picks = [QUEST_POOL[idx % QUEST_POOL.length], QUEST_POOL[(idx + 2) % QUEST_POOL.length], QUEST_POOL[(idx + 4) % QUEST_POOL.length]];
+      const seen = {}, quests = [];
+      picks.forEach(q => { if (!seen[q.id]) { seen[q.id] = 1; quests.push(q.id); } });
+      p.daily = { date: today, plays: 0, xp: 0, topics: {}, newGames: 0, quests, claimed: {} };
+    }
+    return p.daily.quests.map(id => {
+      const def = QUEST_POOL.find(q => q.id === id);
+      const progress = Math.min(def.prog(p.daily), def.goal);
+      return { id, desc: def.desc, goal: def.goal, reward: def.reward, progress, done: progress >= def.goal, claimed: !!p.daily.claimed[id] };
+    });
+  }
+
+  // returns { isBest, xpGain, leveledTo (or null), newBadges:[], questsDone:[] }
+  function recordPlay(game, packId, score, opts) {
+    opts = opts || {};
+    const p = getProfile();
+    const before = levelFromXp(p.xp);
+    const isBest = setBest(game, packId, score);
+    const isNewGame = !p.games[game];
+
+    p.plays++;
+    p.games[game] = (p.games[game] || 0) + 1;
+    p.topics[packId] = true;
+    if (isBest && score > 0) p.bests[game + ":" + packId] = true;
+    if (opts.perfect) p.perfects = (p.perfects || 0) + 1;
+
+    const xpGain = 15 + Math.min(Math.max(0, Math.round(score)), 100) + (isBest ? 25 : 0) + (opts.perfect ? 30 : 0);
+    p.xp += xpGain;
+
+    // streak
+    const today = todayStr();
+    if (p.streak.last !== today) {
+      p.streak.count = dayDiff(p.streak.last, today) === 1 ? (p.streak.count || 0) + 1 : 1;
+      p.streak.last = today;
+    }
+
+    // daily counters
+    dailyQuests(p); // ensures p.daily exists for today
+    p.daily.plays++; p.daily.xp += xpGain; p.daily.topics[packId] = true;
+    if (isNewGame) p.daily.newGames++;
+
+    // claim finished quests (award reward once)
+    const questsDone = [];
+    dailyQuests(p).forEach(q => {
+      if (q.done && !p.daily.claimed[q.id]) { p.daily.claimed[q.id] = true; p.xp += q.reward; questsDone.push(q); }
+    });
+
+    // badges
+    const newBadges = [];
+    BADGES.forEach(b => { if (!p.badges[b.id] && b.test(p)) { p.badges[b.id] = true; newBadges.push(b); } });
+
+    const after = levelFromXp(p.xp);
+    saveProfile(p);
+
+    // surface it
+    showXp(xpGain);
+    questsDone.forEach(q => banner("✓ DAILY QUEST", q.desc + "  +" + q.reward + " XP", "#4af6c3"));
+    if (after > before) banner("★ LEVEL UP ★", "You reached level " + after, "#ffd23f");
+    newBadges.forEach(b => banner("🏅 BADGE UNLOCKED", b.icon + " " + b.name, "#79f7d2"));
+
+    return { isBest, xpGain, leveledTo: after > before ? after : null, newBadges, questsDone };
+  }
+
+  /* ---- progression UI: XP toast + banners ---- */
+  function progLayer() {
+    let el = document.getElementById("lglProg");
+    if (!el) { el = document.createElement("div"); el.id = "lglProg"; el.className = "lgl-prog"; document.body.appendChild(el); }
+    return el;
+  }
+  function showXp(n) {
+    const t = document.createElement("div");
+    t.className = "lgl-xp"; t.textContent = "+" + n + " XP";
+    progLayer().appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
+  function banner(title, sub, color) {
+    const b = document.createElement("div");
+    b.className = "lgl-banner"; b.style.borderColor = color;
+    b.innerHTML = "<div class='lgl-banner-t' style='color:" + color + "'>" + title + "</div><div class='lgl-banner-s'>" + sub + "</div>";
+    progLayer().appendChild(b);
+    if (!isMuted()) sfx.win();
+    setTimeout(() => { b.style.opacity = "0"; setTimeout(() => b.remove(), 400); }, 2600);
+  }
+
   /* ---- standard top crumb bar wiring (sound toggle) ---- */
   function wireSoundToggle(btn) {
     if (!btn) return;
@@ -151,6 +300,9 @@
     shuffle, sample, pick,
     getBest, setBest,
     sfx, setMuted, isMuted, wireSoundToggle,
-    shake, confetti, quizModal
+    shake, confetti, quizModal,
+    // progression
+    recordPlay, getProfile, saveProfile, dailyQuests,
+    levelFromXp, levelProgress, BADGES
   };
 })();

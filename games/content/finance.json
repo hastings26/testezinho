@@ -1,0 +1,28 @@
+{
+  "id": "finance",
+  "title": "Finance Basics",
+  "subtitle": "Money sense for non-finance people",
+  "terms": [
+    { "term": "BUDGET", "hint": "A plan for income and spending" },
+    { "term": "REVENUE", "hint": "Money coming in from sales" },
+    { "term": "PROFIT", "hint": "What's left after costs" },
+    { "term": "EXPENSE", "hint": "Money going out" },
+    { "term": "MARGIN", "hint": "Profit as a share of revenue" },
+    { "term": "CASHFLOW", "hint": "The timing of money in and out" },
+    { "term": "FORECAST", "hint": "An estimate of future numbers" },
+    { "term": "INVOICE", "hint": "A request for payment" },
+    { "term": "ASSET", "hint": "Something of value you own" },
+    { "term": "LIABILITY", "hint": "Something you owe" }
+  ],
+  "questions": [
+    { "q": "Revenue is £100k and costs are £90k. Profit is…", "options": ["£100k", "£10k", "£190k", "£90k"], "answer": 1, "explain": "Profit = revenue − costs = £100k − £90k = £10k." },
+    { "q": "A profitable business can still fail if it…", "options": ["Has happy staff", "Runs out of cash to pay bills on time", "Grows too slowly", "Has too many assets"], "answer": 1, "explain": "Profit on paper isn't cash in the bank. Cashflow timing can sink a profitable firm." },
+    { "q": "Margin tells you…", "options": ["Total revenue", "How much profit each £ of sales keeps", "Number of customers", "The tax rate"], "answer": 1, "explain": "Margin = profit ÷ revenue. A higher margin keeps more from each sale." },
+    { "q": "A 'fixed cost' is one that…", "options": ["Changes with every sale", "Stays roughly the same regardless of volume (e.g. rent)", "Only happens once", "Is always small"], "answer": 1, "explain": "Fixed costs like rent don't move with sales volume; variable costs do." },
+    { "q": "Why forecast at all?", "options": ["To be exactly right", "To plan ahead and spot problems early", "Because it's required by law always", "To impress people"], "answer": 1, "explain": "A forecast is a planning tool — it flags gaps in time to act, even if it's never perfect." },
+    { "q": "An unpaid customer invoice is, to your business, an…", "options": ["Expense", "Asset (money owed to you)", "Liability", "Loss"], "answer": 1, "explain": "Money owed to you is an asset (a receivable); money you owe is a liability." }
+  ],
+  "chains": [
+    { "title": "Managing a budget", "steps": ["Forecast the expected costs", "Track the actual spend", "Compare actual to budget", "Explain the variances", "Adjust the plan"] }
+  ]
+}

@@ -106,7 +106,7 @@
     } else {
       wrong++;
       Engine.sfx.bad();
-      if (wrong >= MAX_WRONG) { over = true; Engine.setBest(GAME, pack.id, solved); Engine.sfx.lose(); }
+      if (wrong >= MAX_WRONG) { over = true; Engine.recordPlay(GAME, pack.id, solved); Engine.sfx.lose(); }
       else Engine.shake(stage.querySelector(".hm-gallows"));
     }
     render();
