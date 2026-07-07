@@ -1,0 +1,382 @@
+<title>Impara l'Italiano</title>
+<style>
+  :root {
+    --paper: #f5f0e6;
+    --card: #fffdf8;
+    --ink: #2a241c;
+    --muted: #8a8175;
+    --line: #e6ded0;
+    --basil: #3e7a4e;
+    --basil-soft: #e7f0e7;
+    --terra: #c0573a;
+    --terra-soft: #f7e7e0;
+    --shadow: 0 10px 30px rgba(42, 36, 28, 0.10);
+    --shadow-sm: 0 2px 8px rgba(42, 36, 28, 0.06);
+    --radius: 18px;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #201b15; --card: #2b2419; --ink: #f2ebdd; --muted: #a89d8c;
+      --line: #3d3427; --basil: #7cbf8e; --basil-soft: #263528; --terra: #e08a70;
+      --terra-soft: #3a2620; --shadow: 0 10px 30px rgba(0,0,0,0.35); --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #201b15; --card: #2b2419; --ink: #f2ebdd; --muted: #a89d8c;
+    --line: #3d3427; --basil: #7cbf8e; --basil-soft: #263528; --terra: #e08a70;
+    --terra-soft: #3a2620; --shadow: 0 10px 30px rgba(0,0,0,0.35); --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  :root[data-theme="light"] {
+    --paper: #f5f0e6; --card: #fffdf8; --ink: #2a241c; --muted: #8a8175;
+    --line: #e6ded0; --basil: #3e7a4e; --basil-soft: #e7f0e7; --terra: #c0573a;
+    --terra-soft: #f7e7e0; --shadow: 0 10px 30px rgba(42,36,28,0.10); --shadow-sm: 0 2px 8px rgba(42,36,28,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans);
+    line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 40px 22px 72px; }
+
+  .topline { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand h1 { font-family: var(--serif); font-weight: 600; font-size: 2rem; margin: 0; letter-spacing: -0.01em; }
+  .brand .il { color: var(--terra); font-style: italic; }
+  .theme-btn { border: 1px solid var(--line); background: var(--card); color: var(--muted); cursor: pointer;
+    border-radius: 999px; width: 40px; height: 40px; font-size: 1.05rem; box-shadow: var(--shadow-sm); }
+  .lede { color: var(--muted); font-size: 0.95rem; margin: -22px 0 28px; }
+
+  nav.tabs { display: flex; gap: 4px; background: var(--card); padding: 5px; border-radius: 999px;
+    box-shadow: var(--shadow-sm); border: 1px solid var(--line); margin-bottom: 30px; }
+  nav.tabs button { flex: 1; border: 0; background: transparent; padding: 11px 8px; border-radius: 999px;
+    font-family: var(--sans); font-size: 0.9rem; font-weight: 600; cursor: pointer; color: var(--muted);
+    transition: color .18s, background .18s; }
+  nav.tabs button.active { background: var(--basil); color: #fff; }
+  :root[data-theme="dark"] nav.tabs button.active,
+  @media (prefers-color-scheme: dark) { }
+  .panel { display: none; }
+  .panel.active { display: block; animation: rise .3s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .panel.active { animation: none; } .flashcard { transition: none !important; } }
+
+  /* chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 7px 15px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--muted); font-family: var(--sans); }
+  .chip.active { background: var(--ink); color: var(--paper); border-color: transparent; }
+
+  /* flashcard */
+  .scene { perspective: 1400px; margin-bottom: 20px; }
+  .flashcard { position: relative; width: 100%; height: 280px; cursor: pointer; transform-style: preserve-3d;
+    transition: transform .6s cubic-bezier(.2,.75,.2,1); }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; background: var(--card);
+    border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--line);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; }
+  .face .eyebrow { position: absolute; top: 18px; left: 22px; font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--muted); font-weight: 700; }
+  .face .word { font-family: var(--serif); font-size: 2.6rem; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
+  .face .pron { color: var(--muted); margin-top: 12px; font-size: 0.95rem; font-style: italic; }
+  .back { transform: rotateY(180deg); }
+  .back .word { color: var(--basil); }
+  .back .ex { color: var(--muted); margin-top: 14px; font-family: var(--serif); font-style: italic; font-size: 1.05rem; }
+  .flip-hint { text-align: center; color: var(--muted); font-size: 0.82rem; margin-bottom: 18px; }
+
+  .row { display: flex; gap: 10px; justify-content: center; align-items: center; }
+  .btn { border: 1px solid var(--line); border-radius: 13px; padding: 12px 20px; font-family: var(--sans);
+    font-size: 0.95rem; font-weight: 600; cursor: pointer; background: var(--card); color: var(--ink);
+    box-shadow: var(--shadow-sm); transition: transform .1s; }
+  .btn:active { transform: scale(.96); }
+  .btn.primary { background: var(--basil); color: #fff; border-color: transparent; }
+  .btn.icon { font-size: 1.2rem; padding: 12px 15px; }
+  .btn:focus-visible, .chip:focus-visible, .option:focus-visible, nav.tabs button:focus-visible,
+  .theme-btn:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+  .counter { text-align: center; color: var(--muted); font-size: 0.84rem; margin-top: 16px;
+    font-variant-numeric: tabular-nums; }
+
+  /* quiz */
+  .scorebar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+    color: var(--muted); font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+  .scorebar strong { color: var(--ink); }
+  .qcard { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 30px 24px; text-align: center; margin-bottom: 18px; }
+  .qcard .eyebrow { font-size: 0.7rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 700; }
+  .qcard .qword { font-family: var(--serif); font-size: 2.2rem; font-weight: 600; margin-top: 10px; text-wrap: balance; }
+  .options { display: grid; gap: 10px; }
+  .option { border: 1px solid var(--line); background: var(--card); border-radius: 13px; padding: 15px 18px;
+    font-family: var(--sans); font-size: 1rem; font-weight: 600; cursor: pointer; text-align: left; color: var(--ink);
+    transition: border-color .15s, background .15s; }
+  .option:hover { border-color: var(--basil); }
+  .option.correct { background: var(--basil-soft); border-color: var(--basil); color: var(--basil); }
+  .option.wrong { background: var(--terra-soft); border-color: var(--terra); color: var(--terra); }
+  .option.dim { pointer-events: none; opacity: .7; }
+
+  /* phrasebook */
+  .grouphead { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; margin: 26px 0 12px; }
+  .grouphead:first-child { margin-top: 0; }
+  .phrase { background: var(--card); border: 1px solid var(--line); border-radius: 13px; padding: 15px 17px;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); }
+  .phrase .txt { flex: 1; }
+  .phrase .it { font-family: var(--serif); font-weight: 600; font-size: 1.12rem; }
+  .phrase .en { color: var(--muted); font-size: 0.9rem; margin-top: 2px; }
+  .phrase button { border: 1px solid var(--line); background: var(--paper); border-radius: 11px; cursor: pointer;
+    font-size: 1.1rem; padding: 9px 12px; color: var(--ink); }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.82rem; margin-top: 44px; font-family: var(--serif); font-style: italic; }
+</style>
+
+<div class="wrap">
+  <div class="topline">
+    <div class="brand"><h1>Impara <span class="il">l'italiano</span></h1></div>
+    <button class="theme-btn" id="theme" title="Toggle light / dark" aria-label="Toggle theme">◐</button>
+  </div>
+  <p class="lede">A small, quiet app to start speaking Italian — cards, a quick quiz, and phrases for the table and the street.</p>
+
+  <nav class="tabs">
+    <button data-tab="learn" class="active">Cards</button>
+    <button data-tab="quiz">Quiz</button>
+    <button data-tab="phrases">Phrases</button>
+  </nav>
+
+  <section id="learn" class="panel active">
+    <div class="chips" id="chips"></div>
+    <div class="scene">
+      <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flashcard, activate to flip">
+        <div class="face front">
+          <div class="eyebrow" id="fc-cat"></div>
+          <div class="word" id="fc-front"></div>
+          <div class="pron" id="fc-pron"></div>
+        </div>
+        <div class="face back">
+          <div class="eyebrow">English</div>
+          <div class="word" id="fc-back"></div>
+          <div class="ex" id="fc-ex"></div>
+        </div>
+      </div>
+    </div>
+    <p class="flip-hint">Tap the card to flip · press 🔊 to hear it</p>
+    <div class="row">
+      <button class="btn" id="prev">← Prev</button>
+      <button class="btn icon" id="fc-speak" aria-label="Hear pronunciation">🔊</button>
+      <button class="btn primary" id="next">Next →</button>
+    </div>
+    <div class="counter" id="fc-count"></div>
+  </section>
+
+  <section id="quiz" class="panel">
+    <div class="scorebar">
+      <span>Score <strong id="q-score">0</strong></span>
+      <span><strong id="q-num">1</strong> / <strong id="q-total">10</strong></span>
+      <span>Streak <strong id="q-streak">0</strong> 🔥</span>
+    </div>
+    <div class="qcard">
+      <div class="eyebrow" id="q-label">What does this mean?</div>
+      <div class="qword" id="q-word"></div>
+    </div>
+    <div class="options" id="q-options"></div>
+    <div class="row" style="margin-top:18px;">
+      <button class="btn primary" id="q-next" style="display:none;">Next →</button>
+      <button class="btn" id="q-restart" style="display:none;">Play again</button>
+    </div>
+  </section>
+
+  <section id="phrases" class="panel">
+    <div id="phrasebook"></div>
+  </section>
+
+  <footer>Buono studio! 🇮🇹</footer>
+</div>
+
+<script>
+  const VOCAB = [
+    { cat: "Greetings", it: "Ciao", en: "Hi / Bye", pron: "chow", ex: "Ciao, come stai?" },
+    { cat: "Greetings", it: "Buongiorno", en: "Good morning", pron: "bwon-JOR-no", ex: "Buongiorno a tutti!" },
+    { cat: "Greetings", it: "Buonasera", en: "Good evening", pron: "bwo-na-SEH-ra", ex: "Buonasera, signora." },
+    { cat: "Greetings", it: "Grazie", en: "Thank you", pron: "GRAH-tsee-eh", ex: "Grazie mille!" },
+    { cat: "Greetings", it: "Prego", en: "You're welcome", pron: "PREH-go", ex: "Prego, si figuri." },
+    { cat: "Greetings", it: "Per favore", en: "Please", pron: "per fa-VOH-reh", ex: "Un caffè, per favore." },
+    { cat: "Greetings", it: "Arrivederci", en: "Goodbye", pron: "ah-ree-veh-DER-chee", ex: "Arrivederci, a domani!" },
+    { cat: "Greetings", it: "Scusi", en: "Excuse me", pron: "SKOO-zee", ex: "Scusi, dov'è il bagno?" },
+    { cat: "Numbers", it: "Uno", en: "One", pron: "OO-no", ex: "Uno, due, tre." },
+    { cat: "Numbers", it: "Due", en: "Two", pron: "DOO-eh", ex: "Ho due sorelle." },
+    { cat: "Numbers", it: "Tre", en: "Three", pron: "treh", ex: "Sono le tre." },
+    { cat: "Numbers", it: "Quattro", en: "Four", pron: "KWAH-tro", ex: "Un tavolo per quattro." },
+    { cat: "Numbers", it: "Cinque", en: "Five", pron: "CHEEN-kweh", ex: "Cinque euro." },
+    { cat: "Numbers", it: "Dieci", en: "Ten", pron: "dee-EH-chee", ex: "Dieci minuti." },
+    { cat: "Food", it: "Acqua", en: "Water", pron: "AH-kwa", ex: "Un'acqua naturale, grazie." },
+    { cat: "Food", it: "Vino", en: "Wine", pron: "VEE-no", ex: "Un bicchiere di vino rosso." },
+    { cat: "Food", it: "Pane", en: "Bread", pron: "PAH-neh", ex: "Vorrei del pane." },
+    { cat: "Food", it: "Formaggio", en: "Cheese", pron: "for-MAH-jo", ex: "Mi piace il formaggio." },
+    { cat: "Food", it: "Caffè", en: "Coffee", pron: "kaf-FEH", ex: "Un caffè, per favore." },
+    { cat: "Food", it: "Gelato", en: "Ice cream", pron: "jeh-LAH-to", ex: "Un gelato al cioccolato." },
+    { cat: "Food", it: "Il conto", en: "The bill", pron: "eel KON-to", ex: "Il conto, per favore." },
+    { cat: "Travel", it: "Dov'è...?", en: "Where is...?", pron: "do-VEH", ex: "Dov'è la stazione?" },
+    { cat: "Travel", it: "Stazione", en: "Station", pron: "sta-tsee-OH-neh", ex: "La stazione è vicina." },
+    { cat: "Travel", it: "Treno", en: "Train", pron: "TREH-no", ex: "Il treno per Roma." },
+    { cat: "Travel", it: "Albergo", en: "Hotel", pron: "al-BER-go", ex: "Cerco un albergo." },
+    { cat: "Travel", it: "A sinistra", en: "To the left", pron: "ah see-NEE-stra", ex: "Gira a sinistra." },
+    { cat: "Travel", it: "A destra", en: "To the right", pron: "ah DEH-stra", ex: "Gira a destra." },
+    { cat: "Basics", it: "Sì", en: "Yes", pron: "see", ex: "Sì, certo!" },
+    { cat: "Basics", it: "No", en: "No", pron: "no", ex: "No, grazie." },
+    { cat: "Basics", it: "Bene", en: "Well / Good", pron: "BEH-neh", ex: "Sto molto bene." },
+    { cat: "Basics", it: "Non capisco", en: "I don't understand", pron: "non ka-PEES-ko", ex: "Scusi, non capisco." },
+    { cat: "Basics", it: "Come stai?", en: "How are you?", pron: "KOH-meh stai", ex: "Ciao! Come stai?" },
+    { cat: "Basics", it: "Mi chiamo...", en: "My name is...", pron: "mee kee-AH-mo", ex: "Mi chiamo Alex." },
+  ];
+
+  const PHRASES = [
+    { group: "Essentials", items: [
+      { it: "Parla inglese?", en: "Do you speak English?" },
+      { it: "Non parlo italiano.", en: "I don't speak Italian." },
+      { it: "Può ripetere, per favore?", en: "Can you repeat, please?" },
+      { it: "Mi dispiace.", en: "I'm sorry." },
+    ]},
+    { group: "At the table", items: [
+      { it: "Vorrei prenotare un tavolo.", en: "I'd like to book a table." },
+      { it: "Che cosa mi consiglia?", en: "What do you recommend?" },
+      { it: "È delizioso!", en: "It's delicious!" },
+      { it: "Il conto, per favore.", en: "The bill, please." },
+    ]},
+    { group: "Out and about", items: [
+      { it: "Quanto costa?", en: "How much is it?" },
+      { it: "Dov'è il bagno?", en: "Where is the bathroom?" },
+      { it: "A che ora apre?", en: "What time does it open?" },
+      { it: "Mi sono perso.", en: "I'm lost." },
+    ]},
+  ];
+
+  // theme toggle
+  const root = document.documentElement;
+  document.getElementById("theme").addEventListener("click", () => {
+    const now = getComputedStyle(root).getPropertyValue("--paper").trim();
+    const isDark = now === "#201b15";
+    root.setAttribute("data-theme", isDark ? "light" : "dark");
+  });
+
+  // speech
+  let itVoice = null;
+  function pickVoice() {
+    const v = speechSynthesis.getVoices();
+    itVoice = v.find(x => x.lang && x.lang.toLowerCase().startsWith("it")) || null;
+  }
+  if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  function speak(t) {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = "it-IT"; if (itVoice) u.voice = itVoice; u.rate = 0.9;
+    speechSynthesis.speak(u);
+  }
+
+  // tabs
+  document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll("nav.tabs button").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    document.getElementById(b.dataset.tab).classList.add("active");
+  }));
+
+  // flashcards
+  const cats = ["All", ...new Set(VOCAB.map(v => v.cat))];
+  let deck = VOCAB.slice(), idx = 0;
+  const chips = document.getElementById("chips");
+  cats.forEach(c => {
+    const el = document.createElement("button");
+    el.className = "chip" + (c === "All" ? " active" : "");
+    el.textContent = c;
+    el.addEventListener("click", () => {
+      document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+      el.classList.add("active");
+      deck = c === "All" ? VOCAB.slice() : VOCAB.filter(v => v.cat === c);
+      idx = 0; render();
+    });
+    chips.appendChild(el);
+  });
+  const flashcard = document.getElementById("flashcard");
+  function render() {
+    flashcard.classList.remove("flipped");
+    const v = deck[idx];
+    document.getElementById("fc-cat").textContent = v.cat;
+    document.getElementById("fc-front").textContent = v.it;
+    document.getElementById("fc-pron").textContent = v.pron;
+    document.getElementById("fc-back").textContent = v.en;
+    document.getElementById("fc-ex").textContent = "“" + v.ex + "”";
+    document.getElementById("fc-count").textContent = (idx + 1) + " of " + deck.length;
+  }
+  flashcard.addEventListener("click", () => flashcard.classList.toggle("flipped"));
+  flashcard.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flashcard.classList.toggle("flipped"); } });
+  document.getElementById("next").addEventListener("click", () => { idx = (idx + 1) % deck.length; render(); });
+  document.getElementById("prev").addEventListener("click", () => { idx = (idx - 1 + deck.length) % deck.length; render(); });
+  document.getElementById("fc-speak").addEventListener("click", e => { e.stopPropagation(); speak(deck[idx].it); });
+
+  // quiz
+  const LEN = 10;
+  let pool = [], qi = 0, score = 0, streak = 0, locked = false;
+  function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function startQuiz() {
+    pool = shuffle(VOCAB).slice(0, LEN); qi = 0; score = 0; streak = 0;
+    document.getElementById("q-total").textContent = LEN;
+    document.getElementById("q-label").textContent = "What does this mean?";
+    document.getElementById("q-restart").style.display = "none";
+    renderQ();
+  }
+  function renderQ() {
+    locked = false;
+    const q = pool[qi];
+    document.getElementById("q-word").textContent = q.it;
+    document.getElementById("q-num").textContent = qi + 1;
+    document.getElementById("q-score").textContent = score;
+    document.getElementById("q-streak").textContent = streak;
+    document.getElementById("q-next").style.display = "none";
+    const wrong = shuffle(VOCAB.filter(v => v.en !== q.en)).slice(0, 3);
+    const opts = shuffle([q, ...wrong]);
+    const box = document.getElementById("q-options"); box.innerHTML = "";
+    opts.forEach(o => {
+      const b = document.createElement("button");
+      b.className = "option"; b.textContent = o.en;
+      b.addEventListener("click", () => choose(b, o, q));
+      box.appendChild(b);
+    });
+    speak(q.it);
+  }
+  function choose(btn, chosen, q) {
+    if (locked) return; locked = true;
+    document.querySelectorAll("#q-options .option").forEach(b => {
+      b.classList.add("dim");
+      if (b.textContent === q.en) b.classList.add("correct");
+    });
+    if (chosen.en === q.en) { score++; streak++; } else { btn.classList.add("wrong"); streak = 0; }
+    document.getElementById("q-score").textContent = score;
+    document.getElementById("q-streak").textContent = streak;
+    if (qi < LEN - 1) document.getElementById("q-next").style.display = "inline-block";
+    else finish();
+  }
+  function finish() {
+    document.getElementById("q-options").innerHTML = "";
+    document.getElementById("q-word").textContent = "Finito! 🎉";
+    document.getElementById("q-label").textContent = "You scored " + score + " / " + LEN;
+    document.getElementById("q-restart").style.display = "inline-block";
+  }
+  document.getElementById("q-next").addEventListener("click", () => { qi++; renderQ(); });
+  document.getElementById("q-restart").addEventListener("click", startQuiz);
+
+  // phrasebook
+  const pb = document.getElementById("phrasebook");
+  PHRASES.forEach(g => {
+    const h = document.createElement("div"); h.className = "grouphead"; h.textContent = g.group; pb.appendChild(h);
+    g.items.forEach(p => {
+      const row = document.createElement("div"); row.className = "phrase";
+      const txt = document.createElement("div"); txt.className = "txt";
+      const it = document.createElement("div"); it.className = "it"; it.textContent = p.it;
+      const en = document.createElement("div"); en.className = "en"; en.textContent = p.en;
+      txt.append(it, en);
+      const btn = document.createElement("button"); btn.textContent = "🔊"; btn.setAttribute("aria-label", "Hear phrase");
+      btn.addEventListener("click", () => speak(p.it));
+      row.append(txt, btn); pb.appendChild(row);
+    });
+  });
+
+  render();
+  startQuiz();
+</script>
