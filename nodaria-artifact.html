@@ -167,6 +167,19 @@
   .hintbtn:hover{border-color:var(--sky)}
   @media (prefers-reduced-motion: reduce){ .coach-face{animation:none} }
 
+  /* guided ("one step at a time") mode: only the glowing target is clickable */
+  .panel.guiding .palette, .panel.guiding .inspector, .panel.guiding #nodeLayer,
+  .panel.guiding .builder-foot, .panel.guiding .sinks{ pointer-events:none; }
+  .panel.guiding .guide-allow{ pointer-events:auto !important; }
+  .guide-glow{ outline:3px solid var(--gold) !important; outline-offset:2px;
+    box-shadow:0 0 0 3px rgba(255,207,92,.35), 0 0 18px 5px rgba(255,207,92,.65) !important;
+    border-radius:5px; z-index:6 !important; animation:guidepulse 1s ease-in-out infinite; }
+  .guide-glow.port{ transform:scale(1.6); background:var(--gold) !important; }
+  @keyframes guidepulse{50%{box-shadow:0 0 0 6px rgba(255,207,92,.5), 0 0 28px 9px rgba(255,207,92,.9) !important}}
+  .guide-skip{ text-decoration:underline; color:var(--dim); cursor:pointer; margin-left:10px; font-size:15px; }
+  .guide-skip:hover{ color:var(--sky); }
+  @media (prefers-reduced-motion: reduce){ .guide-glow{animation:none} }
+
   /* sink readout */
   .sinks{display:flex; gap:8px; flex-wrap:wrap; padding:8px 12px; background:#0c1120; border-top:2px solid var(--edge); font-size:15px; max-height:96px; overflow-y:auto}
   .sink{background:#141b2e; border:2px solid var(--edge); padding:5px 8px; min-width:96px}
@@ -1110,10 +1123,14 @@ function openBuilder(which){
   show($('builderModal'));
   inputLocked=true;
   renderNodes(); renderWires();
-  updateCoach();
-  if(!state.flags.sawBuilderHelp){ state.flags.sawBuilderHelp=true; save(); showBuilderIntro(); }
+  if(which==='build' && !state.flags.guidedBuildDone){
+    startGuide('build');   // hand-held first build: one step at a time
+  } else {
+    updateCoach();
+    if(!state.flags.sawBuilderHelp){ state.flags.sawBuilderHelp=true; save(); showBuilderIntro(); }
+  }
 }
-function closeBuilder(){ hide($('builderModal')); inputLocked=false; pumpReveal(); }
+function closeBuilder(){ if(B.guide){ B.guide=null; clearGuideGlow(); const p=guidingPanel(); if(p) p.classList.remove('guiding'); } hide($('builderModal')); inputLocked=false; pumpReveal(); }
 
 function buildPalette(list){
   const p=$('palette'); p.innerHTML='<h4>NODE SPIRITS</h4>';
@@ -1202,6 +1219,7 @@ function guidanceDisrupt(){
 }
 function builderGuidance(){ return B.challenge==='disrupt'?guidanceDisrupt():guidanceBuild(); }
 function updateCoach(prefix){
+  if(B.guide){ guideTick(); return; }   // guided mode drives its own instructions
   const g=builderGuidance();
   if(prefix) showCoach('<b style="color:var(--green)">✓ '+prefix+'</b> '+g[0], g[1]==='done'?'done':'good');
   else showCoach(g[0], g[1]);
@@ -1249,6 +1267,62 @@ function showMilestoneQueue(list,i){
     primary: i<list.length-1?'NEXT':'KEEP BUILDING',
     onClose:()=>showMilestoneQueue(list,i+1)
   });
+}
+
+/* --------- guided "one step at a time" mode (first build only) --------- */
+function palCard(name){ return [...document.querySelectorAll('.palnode')].find(e=>e.textContent.includes(name)); }
+function nodePort(id,cls){ return document.querySelector('.wnode[data-id="'+id+'"] .port.'+cls); }
+// deterministic ids in guided build: trigger=1, split=2, if=3, festival=4, return=5
+const GUIDE={ build:[
+  {instruct:'Click the glowing <b>Split Out</b> card on the left to add it.', target:()=>palCard('Split Out'), done:()=>bNodes('split').length>=1},
+  {instruct:'Now join them. Click the glowing dot on the <b>right edge of Manual Trigger</b>.', target:()=>nodePort(1,'out'), done:()=>(B.linkFrom&&B.linkFrom.node===1)||bConn(1,2)},
+  {instruct:'Click the glowing dot on the <b>left edge of Split Out</b> to finish the wire.', target:()=>nodePort(2,'in'), done:()=>bConn(1,2)},
+  {instruct:'Great! Now add the decision — click the glowing <b>If</b> card.', target:()=>palCard('If'), done:()=>bNodes('ifn').length>=1},
+  {instruct:'Wire Split Out into it: click the dot on the <b>right edge of Split Out</b>.', target:()=>nodePort(2,'out'), done:()=>(B.linkFrom&&B.linkFrom.node===2)||bConn(2,3)},
+  {instruct:'Click the dot on the <b>left edge of If</b>. (It already asks "is rsvp true?" — did they say yes?)', target:()=>nodePort(3,'in'), done:()=>bConn(2,3)},
+  {instruct:'Add a destination box — click the glowing <b>Deliver To</b> card.', target:()=>palCard('Deliver To'), done:()=>bNodes('send').length>=1},
+  {instruct:'On the right, open the dropdown and choose <b>Festival</b>.', target:()=>document.querySelector('#inspBody [data-k="dest"]'), done:()=>{const n=B.nodes.find(x=>x.id===4);return !!(n&&n.cfg.dest==='Festival');}},
+  {instruct:'Send the "yes" guests there: click the green <b>TRUE dot</b> on the If (top-right).', target:()=>nodePort(3,'true'), done:()=>(B.linkFrom&&B.linkFrom.node===3&&B.linkFrom.port==='true')||bConn(3,4,'true')},
+  {instruct:'Click the dot on the <b>left edge of the Festival box</b>.', target:()=>nodePort(4,'in'), done:()=>bConn(3,4)},
+  {instruct:'One more box for the "no" guests — click <b>Deliver To</b> again.', target:()=>palCard('Deliver To'), done:()=>bNodes('send').length>=2},
+  {instruct:'Choose <b>Return</b> in the dropdown on the right.', target:()=>document.querySelector('#inspBody [data-k="dest"]'), done:()=>{const n=B.nodes.find(x=>x.id===5);return !!(n&&n.cfg.dest==='Return');}},
+  {instruct:'Click the red <b>FALSE dot</b> on the If (bottom-right).', target:()=>nodePort(3,'false'), done:()=>(B.linkFrom&&B.linkFrom.node===3&&B.linkFrom.port==='false')||bConn(3,5,'false')},
+  {instruct:'Click the dot on the <b>left edge of the Return box</b>.', target:()=>nodePort(5,'in'), done:()=>bConn(3,5)},
+  {instruct:'That\'s the whole flow — press the big green <b>▶ RUN THE FLOW</b> button!', target:()=>$('runBtn'), done:()=>false},
+]};
+function guidingPanel(){ return $('builderModal').querySelector('.panel'); }
+function startGuide(which){
+  if(!GUIDE[which]){ updateCoach(); return; }
+  B.guide={steps:GUIDE[which], i:0};
+  const p=guidingPanel(); if(p) p.classList.add('guiding');
+  renderGuideStep();
+}
+function clearGuideGlow(){
+  document.querySelectorAll('.guide-glow').forEach(e=>e.classList.remove('guide-glow','guide-allow'));
+  B.guideEl=null;
+}
+function renderGuideStep(){
+  clearGuideGlow();
+  const g=B.guide; if(!g) return;
+  if(g.i>=g.steps.length){ endGuide(); return; }
+  const step=g.steps[g.i];
+  showCoach('<b class="k">STEP '+(g.i+1)+' / '+g.steps.length+'</b> '+step.instruct+'<span class="guide-skip" id="guideSkip">skip &amp; build freely</span>','tip');
+  const sk=$('guideSkip'); if(sk) sk.onclick=endGuide;
+  const el=step.target();
+  if(el){ el.classList.add('guide-glow','guide-allow'); B.guideEl=el; }
+}
+function guideTick(){
+  const g=B.guide; if(!g) return;
+  let moved=false;
+  while(g.i<g.steps.length && g.steps[g.i].done()){ g.i++; moved=true; }
+  if(moved) sfx.ok();
+  renderGuideStep();
+}
+function endGuide(){
+  clearGuideGlow();
+  B.guide=null;
+  const p=guidingPanel(); if(p) p.classList.remove('guiding');
+  if(!$('builderModal').classList.contains('hidden')) updateCoach();
 }
 function cfgAffirm(node){
   if(node.type==='split') return 'Splitting on the "'+node.cfg.field+'" list.';
@@ -1343,6 +1417,7 @@ function handlePortClick(p){
   const io=p.dataset.io, node=+p.dataset.node, port=p.dataset.port;
   if(io==='out'){
     B.linkFrom={node, port}; p.style.background='#ffcf5c';
+    if(B.guide){ guideTick(); return; }
     const which = port==='true' ? 'the <span class="port-t">TRUE ●</span> exit' : port==='false' ? 'the <span class="port-f">FALSE ●</span> exit' : 'that output ●';
     showCoach('Grabbed '+which+'. Now click the <span class="k">input ●</span> (left edge) of the node you want to feed.','tip');
   } else if(io==='in' && B.linkFrom){
@@ -1353,7 +1428,8 @@ function handlePortClick(p){
       sfx.wire(); added=true;
     }
     B.linkFrom=null; renderNodes(); renderWires();
-    if(added) updateCoach('Connected — data now flows down that wire.'); else updateCoach();
+    if(B.guide) guideTick();
+    else if(added) updateCoach('Connected — data now flows down that wire.'); else updateCoach();
   }
 }
 
@@ -1520,6 +1596,7 @@ function renderSinks(res){
 }
 
 function runFlow(){
+  if(B.guide) endGuide();
   const res=simulate();
   if(res.error==='loop'){
     sfx.bad(); flash();
@@ -1551,6 +1628,7 @@ function runFlow(){
 
 function onChallengePass(which){
   const ch=CHALLENGES[which];
+  if(which==='build'){ state.flags.guidedBuildDone=true; save(); } // guide only teaches once
   if(ch.folioOnPass) unlockFolio(ch.folioOnPass);
   addMastery(35);
   closeBuilder();

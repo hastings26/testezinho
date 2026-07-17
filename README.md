@@ -14,7 +14,10 @@ travelled on their own. Then the Great Disconnection shattered it. You are a you
 2. **Explore** the village (top-down, WASD/arrows) and talk to villagers.
 3. **Learn a power** — recruit Node Spirit companions: **Triggi** (triggers), **Jessa**
    (items/JSON), **Ifrit** (branching logic).
-4. **Build** the fix in a real, n8n-style **workflow builder** — add nodes, wire output ●
+4. **Build** the fix in a real, n8n-style **workflow builder**. The very first build runs in
+   **guided "one step at a time" mode** — only the one glowing target is clickable and
+   everything else is inert, so a first-timer literally cannot get it wrong (with a
+   *skip & build freely* escape). After that you build freely: add nodes, wire output ●
    ports to input ● ports, configure each node, then **Run the Flow** and watch every parcel
    land in a live sink read-out. A first-time **"how to build"** card explains the mechanics,
    and **Bug the coach** narrates every step live along the bottom ("✓ Split Out added… now
