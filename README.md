@@ -1,3 +1,41 @@
+## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
+
+`nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
+that teaches [n8n](https://n8n.io) automation concepts through play. Open the file in a
+browser (or serve the folder and visit `/nodaria.html`).
+
+**The fantasy:** the world once ran on the Great Flow — messages, warnings and supplies all
+travelled on their own. Then the Great Disconnection shattered it. You are a young
+**Flowkeeper** who can see the invisible links between things, armed with the **Nodeblade**.
+
+**What this slice contains** — the full six-part quest loop in Soleil Village:
+
+1. **Discover** a broken process — a caravan's six festival parcels arrive unsorted.
+2. **Explore** the village (top-down, WASD/arrows) and talk to villagers.
+3. **Learn a power** — recruit Node Spirit companions: **Triggi** (triggers), **Jessa**
+   (items/JSON), **Ifrit** (branching logic).
+4. **Build** the fix in a real, n8n-style **workflow builder** — add nodes, wire output ●
+   ports to input ● ports, configure each node, then **Run the Flow** and watch every parcel
+   land in a live sink read-out.
+5. **Survive the disruption** — a late parcel arrives with a blank name and no RSVP. Your
+   flow still runs "green" but silently returns a real guest. You must add a guard for the
+   missing value and route it to human **Review**.
+6. **Face the review** — **The Auditor** quizzes you on *why* it works (trigger type, empty
+   vs. null, silent failure, human safety). Pass to rank up **Spark → Connector**.
+
+Everything the doc calls out is modelled: the **companion system**, the **Flowfolio**
+journal (every concept has *Tale / Mechanism / Real World* views), the impatient hint
+creature **Bug** (Nudge → Clue → Reveal, costing mastery), infinite-loop detection, and
+lost-message detection. The workflow builder *actually simulates data* through the graph you
+wire — there is no single sacred answer, only flows that route every parcel correctly and
+lose nothing.
+
+- Pure offline, no build step, `localStorage` save under `nodariaSaveV1`.
+- Dev/testing globals: `NODARIA_RESET()` wipes the save; `NODARIA_DEV` jumps into a builder
+  challenge (used by the automated smoke tests).
+
+---
+
 # Learning Programme Quest — Game Edition
 
 A full-screen retro-game-styled tracker for learning programmes. Real workflow underneath, JRPG chrome on top. Built to **present** and **track** at the same time.
