@@ -106,7 +106,7 @@
   .closex:hover{background:#2a1520}
 
   .builder{flex:1; display:flex; min-height:0}
-  .palette{width:172px; flex:0 0 auto; background:#0a0e1a; border-right:2px solid var(--edge); padding:9px; overflow-y:auto}
+  .palette{width:150px; flex:0 0 auto; background:#0a0e1a; border-right:2px solid var(--edge); padding:9px; overflow-y:auto}
   .palette h4{font-family:'Press Start 2P'; font-size:8px; color:var(--dim); margin:4px 0 8px}
   .palnode{display:flex; gap:8px; align-items:center; background:#141b2e; border:2px solid var(--edge); border-left-width:5px; padding:7px 8px; margin-bottom:8px; cursor:pointer; user-select:none}
   .palnode:hover{background:#1c2540}
@@ -115,13 +115,13 @@
   .palnode .pn-sp{font-size:13px; color:var(--dim)}
   .palnote{font-size:14px; color:var(--dim); margin-top:6px; line-height:1.3}
 
-  .canvaswrap{flex:1; position:relative; overflow:hidden; background:
+  .canvaswrap{flex:1; position:relative; overflow:auto; background:
     linear-gradient(#0c1322 1px, transparent 1px) 0 0/22px 22px,
     linear-gradient(90deg,#0c1322 1px, transparent 1px) 0 0/22px 22px,
     #0a0f1c;}
-  #wires{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1}
-  #nodeLayer{position:absolute; inset:0; z-index:2}
-  .wnode{position:absolute; width:132px; background:#141b2e; border:2px solid var(--edge); border-top-width:4px; user-select:none; box-shadow:3px 3px 0 rgba(0,0,0,.35)}
+  #wires{position:absolute; top:0; left:0; width:100%; min-width:600px; height:100%; min-height:100%; pointer-events:none; z-index:1}
+  #nodeLayer{position:absolute; top:0; left:0; width:100%; min-width:600px; height:100%; min-height:100%; z-index:2}
+  .wnode{position:absolute; width:112px; background:#141b2e; border:2px solid var(--edge); border-top-width:4px; user-select:none; box-shadow:3px 3px 0 rgba(0,0,0,.35)}
   .wnode.sel{outline:2px solid var(--gold); outline-offset:1px}
   .wnode .wn-head{display:flex; align-items:center; gap:6px; padding:5px 7px; cursor:grab; background:rgba(255,255,255,.03)}
   .wnode .wn-ic{font-size:17px}
@@ -138,7 +138,7 @@
   .portlbl.t{top:2px; color:var(--green)}
   .portlbl.f{top:28px; color:var(--red)}
 
-  .inspector{width:210px; flex:0 0 auto; background:#0a0e1a; border-left:2px solid var(--edge); padding:10px; overflow-y:auto; display:flex; flex-direction:column}
+  .inspector{width:178px; flex:0 0 auto; background:#0a0e1a; border-left:2px solid var(--edge); padding:10px; overflow-y:auto; display:flex; flex-direction:column}
   .inspector h4{font-family:'Press Start 2P'; font-size:8px; color:var(--gold); margin-bottom:9px}
   .field{margin-bottom:11px}
   .field label{display:block; font-size:15px; color:var(--dim); margin-bottom:3px}
@@ -219,7 +219,9 @@
   #cardOverlay{z-index:65; background:rgba(4,6,12,.9)}
   .infocard{background:linear-gradient(180deg,#1a2136,#12182a); border:3px solid var(--gold2); box-shadow:0 0 40px rgba(245,166,35,.25), 0 0 0 3px #0a0f1e; padding:26px 30px; text-align:center; max-width:440px; width:90%}
   .ic-kind{font-family:'Press Start 2P'; font-size:9px; letter-spacing:2px; color:var(--sky)}
-  .ic-kind.reveal{color:var(--gold)} .ic-kind.recap{color:var(--pink)}
+  .ic-kind.reveal{color:var(--gold)} .ic-kind.recap{color:var(--pink)} .ic-kind.good{color:var(--green)}
+  .ic-body .n8nline.everyday{border-left-color:var(--green); color:var(--green)}
+  .ic-body .n8nline.everyday b{color:var(--green)}
   .ic-icon{font-size:44px; margin:12px 0 6px}
   .ic-title{font-size:15px; color:var(--gold); margin-bottom:14px; line-height:1.4}
   .ic-body{font-size:20px; color:var(--text); line-height:1.4; text-align:left}
@@ -1094,15 +1096,15 @@ const CHALLENGES={
 };
 
 // live builder graph
-let B={ challenge:null, nodes:[], conns:[], nextId:1, sel:null, linkFrom:null, hintLevel:0 };
+let B={ challenge:null, nodes:[], conns:[], nextId:1, sel:null, linkFrom:null, hintLevel:0, celebrated:new Set() };
 
 function openBuilder(which){
   const ch=CHALLENGES[which]; if(!ch) return;
-  B={ challenge:which, nodes:[], conns:[], nextId:1, sel:null, linkFrom:null, hintLevel:0 };
+  B={ challenge:which, nodes:[], conns:[], nextId:1, sel:null, linkFrom:null, hintLevel:0, celebrated:new Set() };
   $('builderTitle').textContent=ch.title;
   $('builderSub').textContent=ch.sub;
   // seed a trigger node
-  addNode('trigger', 40, 150, true);
+  addNode('trigger', 18, 92, true);
   buildPalette(ch.palette);
   renderSinks(null);
   show($('builderModal'));
@@ -1121,7 +1123,7 @@ function buildPalette(list){
     el.style.borderLeftColor=nt.color;
     el.innerHTML=`<span class="pn-ic">${nt.ic}</span><span><span class="pn-name">${nt.title}</span><br><span class="pn-sp">${nt.spirit?SPIRITS[nt.spirit].name:'Delivery'}</span></span>`;
     if(!owned){ el.style.opacity=.4; el.title='Recruit '+SPIRITS[nt.spirit].name+' first'; }
-    else el.onclick=()=>{ const p=nextNodePos(); addNode(key, p.x, p.y); renderNodes(); renderWires(); updateCoach(NODE_ADD_TIP[key]); };
+    else el.onclick=()=>{ const p=nextNodePos(key); const nd=addNode(key, p.x, p.y); B.sel=nd.id; renderNodes(); renderWires(); renderInspector(); highlightSel(); updateCoach(NODE_ADD_TIP[key]); };
     p.appendChild(el);
   });
   const note=document.createElement('div'); note.className='palnote';
@@ -1136,11 +1138,14 @@ function addNode(type,x,y,fixed){
   B.nodes.push(node);
   return node;
 }
-// tidy left-to-right, top-to-bottom placement so a fresh canvas reads cleanly
-function nextNodePos(){
-  const n=B.nodes.filter(nd=>nd.type!=='trigger').length; // exclude fixed trigger at far left
-  const col=Math.floor(n/3), row=n%3;
-  return { x:200+col*170, y:40+row*112 };
+// place each node type in its own column so the flow forms its natural
+// left-to-right shape and fits on screen without any dragging
+function nextNodePos(type){
+  const colX={split:150, ifn:300, send:452};
+  const inCol=B.nodes.filter(n=>n.type===type).length; // how many of this type already
+  const x = colX[type]!==undefined ? colX[type] : 200;
+  const y = 26 + inCol*104;
+  return {x,y};
 }
 function defaultCfg(type){
   if(type==='split') return {field:'parcels'};
@@ -1200,6 +1205,50 @@ function updateCoach(prefix){
   const g=builderGuidance();
   if(prefix) showCoach('<b style="color:var(--green)">✓ '+prefix+'</b> '+g[0], g[1]==='done'?'done':'good');
   else showCoach(g[0], g[1]);
+  checkMilestones();
+}
+
+/* --------- milestone pop-ups: celebrate correct moves + everyday analogy --------- */
+function isSend(id){ return B.nodes.some(s=>s.id===id && s.type==='send'); }
+const MILESTONES={
+  build:[
+    {id:'split',
+     test:()=>{ const t=bNodes('trigger')[0], s=bNodes('split')[0]; return !!(s&&t&&bConn(t.id,s.id)); },
+     title:'You unpacked the batch!',
+     what:'You used <b>Split Out</b> to turn one crate holding many parcels into separate items — now every parcel travels on its own and can be handled one by one.',
+     everyday:'Like tipping a sack of mail onto the table so you can deal with each letter individually, instead of trying to post the whole sack at once.'},
+    {id:'branch',
+     test:()=>{ const f=bNodes('ifn')[0]; if(!f) return false;
+       return f.cfg.field==='rsvp' && portTargets(f.id,'true').some(isSend) && portTargets(f.id,'false').some(isSend); },
+     title:'You built a decision!',
+     what:'Your <b>If</b> node asks a yes/no question about each parcel and sends the "yes"es and "no"s down two different roads.',
+     everyday:'Like a doorman with a guest list: on the list? come in. Not on it? turned away. One question, two doors.'},
+  ],
+  disrupt:[
+    {id:'guard',
+     test:()=>{ const g=bNodes('ifn').find(n=>n.cfg.field==='guest'&&n.cfg.op==='is empty');
+       return !!(g && portTargets(g.id,'true').some(t=>destOf(t)==='Review')); },
+     title:'You caught the broken one!',
+     what:'You added a <b>guard</b> that spots parcels with missing information and sets them aside for a human to check — instead of letting a machine quietly guess.',
+     everyday:'Like a driver who finds a parcel with no address: they don\'t toss it in the street, they bring it back to the depot for a person to sort out.'},
+  ],
+};
+function checkMilestones(){
+  if(cardShowing) return;
+  const list=(MILESTONES[B.challenge]||[]).filter(m=>!B.celebrated.has(m.id) && m.test());
+  if(!list.length) return;
+  list.forEach(m=>B.celebrated.add(m.id));
+  showMilestoneQueue(list,0);
+}
+function showMilestoneQueue(list,i){
+  if(i>=list.length) return;
+  const m=list[i]; sfx.ok();
+  showCard({
+    kind:'✓ NICE WORK', kindClass:'good', icon:'🎉', title:m.title,
+    body:`<div>${m.what}</div><div class="n8nline everyday"><b>In everyday life —</b> ${m.everyday}</div>`,
+    primary: i<list.length-1?'NEXT':'KEEP BUILDING',
+    onClose:()=>showMilestoneQueue(list,i+1)
+  });
 }
 function cfgAffirm(node){
   if(node.type==='split') return 'Splitting on the "'+node.cfg.field+'" list.';
@@ -1311,7 +1360,7 @@ function handlePortClick(p){
 function portPos(nodeId, port, io){
   const node=B.nodes.find(n=>n.id===nodeId); if(!node) return {x:0,y:0};
   const nt=NODE_TYPES[node.type];
-  const W=132;
+  const W=112;
   if(io==='in') return {x:node.x-2, y:node.y+21};
   // out
   if(nt.outs.length===2){

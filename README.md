@@ -19,7 +19,10 @@ travelled on their own. Then the Great Disconnection shattered it. You are a you
    land in a live sink read-out. A first-time **"how to build"** card explains the mechanics,
    and **Bug the coach** narrates every step live along the bottom ("✓ Split Out added… now
    wire the Trigger into it"), always pointing at the single most useful next move — so you
-   learn *why* as you place each node.
+   learn *why* as you place each node. Nodes auto-arrange into tidy left→right columns so the
+   flow fits on screen without dragging, and **milestone pop-ups** celebrate each correct move
+   with a plain-English + everyday-life analogy ("You built a decision! — like a doorman with
+   a guest list: on the list? come in. Not on it? turned away.").
 5. **Survive the disruption** — a late parcel arrives with a blank name and no RSVP. Your
    flow still runs "green" but silently returns a real guest. You must add a guard for the
    missing value and route it to human **Review**.
