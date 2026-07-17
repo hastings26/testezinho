@@ -23,6 +23,13 @@ travelled on their own. Then the Great Disconnection shattered it. You are a you
 6. **Face the review** — **The Auditor** quizzes you on *why* it works (trigger type, empty
    vs. null, silent failure, human safety). Pass to rank up **Spark → Connector**.
 
+**Learning clarity** is built in so you always know what you're learning and what's next:
+a persistent **objective tracker** (current quest + a `Learning:` chip row + the next step),
+a labeled **mastery → next-rank** bar, a full **roadmap** view (press `M`) showing the n8n
+curriculum as done / current / locked with real node mappings, plus a **training** card at
+quest start, a **teachable-moment card** the first time each concept unlocks ("Jessa's Split
+Out ≈ the n8n Split Out node"), and a **what-you-learned recap** after the Auditor.
+
 Everything the doc calls out is modelled: the **companion system**, the **Flowfolio**
 journal (every concept has *Tale / Mechanism / Real World* views), the impatient hint
 creature **Bug** (Nudge → Clue → Reveal, costing mastery), infinite-loop detection, and
