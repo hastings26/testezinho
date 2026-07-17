@@ -151,14 +151,25 @@
   .delbtn{margin-top:auto; background:#2a1520; border:2px solid #5a2130; color:var(--red); font-family:'VT323'; font-size:17px; padding:7px; cursor:pointer}
   .delbtn:hover{background:#3a1a28}
 
+  /* live coach bar */
+  .coachbar{display:flex; align-items:center; gap:10px; padding:9px 12px; background:#101a2e; border-top:2px solid var(--edge); border-left:5px solid var(--sky); min-height:44px}
+  .coachbar.good{border-left-color:var(--green); background:#0f1f18}
+  .coachbar.bad{border-left-color:var(--red); background:#1f1214}
+  .coachbar.done{border-left-color:var(--gold); background:#1c1a10}
+  .coach-face{font-size:22px; flex:0 0 auto; animation:bugbob 1.4s ease-in-out infinite}
+  @keyframes bugbob{50%{transform:translateY(-3px)}}
+  .runresult{flex:1; font-size:18px; color:var(--text); line-height:1.3}
+  .runresult .k{color:var(--gold); font-weight:bold}
+  .runresult .port-t{color:var(--green); font-weight:bold} .runresult .port-f{color:var(--red); font-weight:bold}
+  .runresult.ok{color:var(--green)} .runresult.bad{color:var(--red)}
+
   .builder-foot{display:flex; align-items:center; gap:10px; padding:9px 12px; background:#0a0e1a; border-top:2px solid var(--edge)}
   .runbtn{font-family:'Press Start 2P'; font-size:11px; padding:11px 16px; border:none; cursor:pointer; background:var(--green); color:#062012; box-shadow:3px 3px 0 #2f6b3f}
   .runbtn:hover{filter:brightness(1.08)}
   .runbtn.busy{background:#4a5578; box-shadow:3px 3px 0 #2a3350; cursor:wait}
-  .runresult{flex:1; font-size:17px; color:var(--dim); line-height:1.3}
-  .runresult.ok{color:var(--green)} .runresult.bad{color:var(--red)}
   .hintbtn{font-family:'VT323'; font-size:18px; padding:8px 12px; background:#182036; border:2px solid var(--edge); color:var(--sky); cursor:pointer}
   .hintbtn:hover{border-color:var(--sky)}
+  @media (prefers-reduced-motion: reduce){ .coach-face{animation:none} }
 
   /* sink readout */
   .sinks{display:flex; gap:8px; flex-wrap:wrap; padding:8px 12px; background:#0c1120; border-top:2px solid var(--edge); font-size:15px; max-height:96px; overflow-y:auto}
@@ -317,10 +328,14 @@
         </div>
       </div>
       <div class="sinks" id="sinks"></div>
+      <div class="coachbar" id="coachBar">
+        <span class="coach-face" id="coachFace">🐞</span>
+        <span class="runresult" id="runResult">Build the flow, then run it. Watch where every parcel lands.</span>
+      </div>
       <div class="builder-foot">
         <button class="runbtn" id="runBtn">▶ RUN THE FLOW</button>
         <button class="hintbtn" id="hintBtn">💡 Ask Bug</button>
-        <div class="runresult" id="runResult">Build the flow, then run it. Watch where every parcel lands.</div>
+        <button class="hintbtn" id="howBtn">❔ How do I build?</button>
       </div>
     </div>
   </div>
@@ -1095,11 +1110,11 @@ function openBuilder(which){
   addNode('trigger', 40, 150, true);
   buildPalette(ch.palette);
   renderSinks(null);
-  $('runResult').textContent='Build the flow, then run it. Watch where every parcel lands.';
-  $('runResult').className='runresult';
   show($('builderModal'));
   inputLocked=true;
   renderNodes(); renderWires();
+  updateCoach();
+  if(!state.flags.sawBuilderHelp){ state.flags.sawBuilderHelp=true; save(); showBuilderIntro(); }
 }
 function closeBuilder(){ hide($('builderModal')); inputLocked=false; pumpReveal(); }
 
@@ -1111,11 +1126,11 @@ function buildPalette(list){
     el.style.borderLeftColor=nt.color;
     el.innerHTML=`<span class="pn-ic">${nt.ic}</span><span><span class="pn-name">${nt.title}</span><br><span class="pn-sp">${nt.spirit?SPIRITS[nt.spirit].name:'Delivery'}</span></span>`;
     if(!owned){ el.style.opacity=.4; el.title='Recruit '+SPIRITS[nt.spirit].name+' first'; }
-    else el.onclick=()=>{ addNode(key, 180+((B.nodes.length*20)%160), 60+((B.nodes.length*54)%300)); renderNodes(); renderWires(); };
+    else el.onclick=()=>{ const p=nextNodePos(); addNode(key, p.x, p.y); renderNodes(); renderWires(); updateCoach(NODE_ADD_TIP[key]); };
     p.appendChild(el);
   });
   const note=document.createElement('div'); note.className='palnote';
-  note.textContent='Click a node to add it. Click an output ● then an input ● to connect. Click a node to configure it in the Inspector.';
+  note.textContent='Click a node to add it. Click an output ● then an input ● to connect. Click a node to configure it in the Inspector. 🐞 Bug guides you below.';
   p.appendChild(note);
 }
 
@@ -1126,11 +1141,91 @@ function addNode(type,x,y,fixed){
   B.nodes.push(node);
   return node;
 }
+// tidy left-to-right, top-to-bottom placement so a fresh canvas reads cleanly
+function nextNodePos(){
+  const n=B.nodes.filter(nd=>nd.type!=='trigger').length; // exclude fixed trigger at far left
+  const col=Math.floor(n/3), row=n%3;
+  return { x:200+col*170, y:40+row*112 };
+}
 function defaultCfg(type){
   if(type==='split') return {field:'parcels'};
   if(type==='ifn') return {field:'rsvp', op:'is true', value:''};
   if(type==='send') return {dest:''};
   return {};
+}
+
+/* --------- live coach (Bug guides you as you build) --------- */
+const NODE_ADD_TIP={
+  split:'Split Out added — it opens the crate into separate parcels.',
+  ifn:'If added — a fork with a TRUE ● and a FALSE ● exit.',
+  send:'Deliver To added — now choose its destination in the Inspector.'
+};
+const FACE={tip:'🐞', good:'🐞', ok:'🎉', bad:'😟', done:'✨'};
+function showCoach(html, tone){
+  tone=tone||'tip';
+  const rr=$('runResult'); if(!rr) return;
+  rr.innerHTML=html;
+  rr.className='runresult'+((tone==='ok'||tone==='good'||tone==='done')?' ok':tone==='bad'?' bad':'');
+  const bar=$('coachBar'); if(bar) bar.className='coachbar'+((tone==='good'||tone==='ok')?' good':tone==='bad'?' bad':tone==='done'?' done':'');
+  const f=$('coachFace'); if(f) f.textContent=FACE[tone]||'🐞';
+}
+function bNodes(t){ return B.nodes.filter(n=>n.type===t); }
+function bConn(a,b,port){ return B.conns.some(c=>c.from===a&&c.to===b&&(port===undefined||c.fromPort===port)); }
+function destOf(id){ const n=B.nodes.find(x=>x.id===id); return n?n.cfg.dest:null; }
+function portTargets(id,port){ return B.conns.filter(c=>c.from===id&&c.fromPort===port).map(c=>c.to); }
+// returns [html, tone] — always points at the single most useful next move
+function guidanceBuild(){
+  const trig=bNodes('trigger')[0], split=bNodes('split')[0], iff=bNodes('ifn')[0];
+  if(!split) return ['The whole crate arrived as ONE item holding a list. Add <span class="k">Split Out</span> (left panel) to open it into one parcel per item.','tip'];
+  if(!trig||!bConn(trig.id,split.id)) return ['Wire it up: click the <span class="k">Trigger</span>\'s output ● (its right side), then <span class="k">Split Out</span>\'s input ● (its left side).','tip'];
+  if(!iff) return ['The parcels are separate now. Add an <span class="k">If</span> to sort them, then wire Split Out into it.','tip'];
+  if(!bConn(split.id,iff.id)) return ['Connect <span class="k">Split Out</span> ● into the <span class="k">If</span>\'s input ●.','tip'];
+  if(!(iff.cfg.field==='rsvp'&&iff.cfg.op==='is true')) return ['Click the <span class="k">If</span> node and set it to test <span class="k">rsvp</span> → <span class="k">is true</span> — that\'s the "did they say yes?" question.','tip'];
+  if(!portTargets(iff.id,'true').some(t=>destOf(t)==='Festival')) return ['The <span class="port-t">TRUE ●</span> exit means "coming!" — wire it to a <span class="k">Deliver To</span> set to <span class="k">Festival</span>.','tip'];
+  if(!portTargets(iff.id,'false').some(t=>destOf(t)==='Return')) return ['Now the <span class="port-f">FALSE ●</span> exit ("not coming") — wire it to a <span class="k">Deliver To</span> set to <span class="k">Return</span>. Never leave an exit unwired, or its parcels are lost!','tip'];
+  return ['That\'s a complete Flow! Press <span class="k">▶ RUN THE FLOW</span> to test it.','done'];
+}
+function guidanceDisrupt(){
+  const trig=bNodes('trigger')[0], split=bNodes('split')[0], ifs=bNodes('ifn');
+  if(!split) return ['Same first move as before: add <span class="k">Split Out</span> so each parcel is on its own.','tip'];
+  if(!trig||!bConn(trig.id,split.id)) return ['Wire the <span class="k">Trigger</span> ● into <span class="k">Split Out</span> ●.','tip'];
+  const guard=ifs.find(n=>n.cfg.field==='guest'&&n.cfg.op==='is empty');
+  if(!guard) return ['The broken parcel has a blank name. Add an <span class="k">If</span> that tests <span class="k">guest</span> → <span class="k">is empty</span> to catch it BEFORE the RSVP. Wire Split Out into it.','tip'];
+  if(!bConn(split.id,guard.id)) return ['Wire <span class="k">Split Out</span> ● into your <span class="k">guest is empty</span> If.','tip'];
+  if(!portTargets(guard.id,'true').some(t=>destOf(t)==='Review')) return ['A blank name can\'t be judged by a machine. Send the <span class="port-t">TRUE ●</span> (empty) ones to a <span class="k">Deliver To</span> set to <span class="k">Review</span> for a human.','tip'];
+  const rsvp=ifs.find(n=>n!==guard && n.cfg.field==='rsvp');
+  if(!rsvp) return ['The good parcels come out of the guard\'s <span class="port-f">FALSE ●</span>. Add a second <span class="k">If</span> testing <span class="k">rsvp is true</span> and feed it from there.','tip'];
+  if(!bConn(guard.id,rsvp.id,'false')) return ['Wire the guard\'s <span class="port-f">FALSE ●</span> into the <span class="k">rsvp</span> If.','tip'];
+  if(!portTargets(rsvp.id,'true').some(t=>destOf(t)==='Festival')) return ['<span class="port-t">TRUE ●</span> of the RSVP check → <span class="k">Deliver To</span> <span class="k">Festival</span>.','tip'];
+  if(!portTargets(rsvp.id,'false').some(t=>destOf(t)==='Return')) return ['<span class="port-f">FALSE ●</span> of the RSVP check → <span class="k">Deliver To</span> <span class="k">Return</span>.','tip'];
+  return ['Every path covered, nothing dropped — hit <span class="k">▶ RUN THE FLOW</span>!','done'];
+}
+function builderGuidance(){ return B.challenge==='disrupt'?guidanceDisrupt():guidanceBuild(); }
+function updateCoach(prefix){
+  const g=builderGuidance();
+  if(prefix) showCoach('<b style="color:var(--green)">✓ '+prefix+'</b> '+g[0], g[1]==='done'?'done':'good');
+  else showCoach(g[0], g[1]);
+}
+function cfgAffirm(node){
+  if(node.type==='split') return 'Splitting on the "'+node.cfg.field+'" list.';
+  if(node.type==='ifn') return 'This fork now tests '+node.cfg.field+' '+node.cfg.op+'.';
+  if(node.type==='send') return node.cfg.dest? ('This one delivers to '+node.cfg.dest+'.') : 'Choose a destination for this Deliver To.';
+  return 'Updated.';
+}
+function showBuilderIntro(){
+  const ch=CHALLENGES[B.challenge]; if(!ch) return;
+  showCard({
+    kind:'HOW TO REPAIR A FLOW', icon:'🔧', title:ch.title,
+    body:`<div>${ch.sub}</div>
+      <ul>
+        <li><b>Add</b> a node — click one in the left panel.</li>
+        <li><b>Connect</b> — click a node's output <b>●</b> (right edge), then another node's input <b>●</b> (left edge). A wire appears.</li>
+        <li><b>Set it up</b> — click a node to configure it in the Inspector on the right.</li>
+        <li><b>Run</b> — press ▶ RUN THE FLOW to send the parcels through and watch where they land.</li>
+      </ul>
+      <div class="n8nline">🐞 <b style="color:var(--sky)">Bug coaches you</b> along the bottom the whole time — follow its tips and you can't go far wrong.</div>`,
+    primary:'START BUILDING'
+  });
 }
 
 function renderNodes(){
@@ -1204,16 +1299,17 @@ function handlePortClick(p){
   const io=p.dataset.io, node=+p.dataset.node, port=p.dataset.port;
   if(io==='out'){
     B.linkFrom={node, port}; p.style.background='#ffcf5c';
-    $('runResult').textContent='Now click an INPUT ● on the node you want to feed.';
-    $('runResult').className='runresult';
+    const which = port==='true' ? 'the <span class="port-t">TRUE ●</span> exit' : port==='false' ? 'the <span class="port-f">FALSE ●</span> exit' : 'that output ●';
+    showCoach('Grabbed '+which+'. Now click the <span class="k">input ●</span> (left edge) of the node you want to feed.','tip');
   } else if(io==='in' && B.linkFrom){
-    if(B.linkFrom.node===node){ B.linkFrom=null; renderNodes(); renderWires(); return; }
-    // remove existing conn from same source port (n8n allows multiple, but keep clean: allow multiple out, single per exact pair)
+    if(B.linkFrom.node===node){ B.linkFrom=null; renderNodes(); renderWires(); updateCoach(); return; }
+    let added=false;
     if(!B.conns.some(c=>c.from===B.linkFrom.node&&c.fromPort===B.linkFrom.port&&c.to===node)){
       B.conns.push({from:B.linkFrom.node, fromPort:B.linkFrom.port, to:node});
-      sfx.wire();
+      sfx.wire(); added=true;
     }
     B.linkFrom=null; renderNodes(); renderWires();
+    if(added) updateCoach('Connected — data now flows down that wire.'); else updateCoach();
   }
 }
 
@@ -1242,7 +1338,7 @@ function renderWires(){
   svg.style.pointerEvents='none';
   svg.querySelectorAll('[data-conn]').forEach(pth=>{
     pth.style.pointerEvents='stroke';
-    pth.addEventListener('click',()=>{ B.conns.splice(+pth.dataset.conn,1); renderWires(); $('runResult').textContent='Connection removed.'; });
+    pth.addEventListener('click',()=>{ B.conns.splice(+pth.dataset.conn,1); renderWires(); updateCoach('Wire removed.'); });
   });
 }
 
@@ -1275,6 +1371,7 @@ function renderInspector(){
     inp.addEventListener('change',()=>{
       node.cfg[inp.dataset.k]=inp.value;
       renderNodes(); renderInspector(); highlightSel();
+      updateCoach(cfgAffirm(node));
     });
   });
   const del=$('delNode');
@@ -1282,6 +1379,7 @@ function renderInspector(){
     B.conns=B.conns.filter(c=>c.from!==node.id && c.to!==node.id);
     B.nodes=B.nodes.filter(n=>n.id!==node.id);
     B.sel=null; renderNodes(); renderWires(); renderInspector();
+    updateCoach('Node removed.');
   };
 }
 function field(label,inner){ return `<div class="field"><label>${label}</label>${inner}</div>`; }
@@ -1381,8 +1479,7 @@ function runFlow(){
   const res=simulate();
   if(res.error==='loop'){
     sfx.bad(); flash();
-    $('runResult').className='runresult bad';
-    $('runResult').textContent='⚠ Infinite loop! Your nodes feed each other in a circle. An Infinite Loop Serpent would love this. Break the cycle.';
+    showCoach('⚠ Infinite loop! Your nodes feed each other in a circle — an Infinite Loop Serpent would love this. Remove a wire to break the cycle.','bad');
     return;
   }
   renderSinks(res);
@@ -1396,17 +1493,15 @@ function runFlow(){
   if(res.lost>0){ pass=false; }
   if(pass && res.lost===0){
     sfx.ok(); flash();
-    $('runResult').className='runresult ok';
-    $('runResult').textContent='✅ Every parcel landed exactly where it should — and nothing was lost. The Flow lives again!';
+    showCoach('✅ Every parcel landed exactly where it should — and nothing was lost. The Flow lives again!','ok');
     setTimeout(()=>onChallengePass(B.challenge), 900);
   } else {
     sfx.bad();
-    $('runResult').className='runresult bad';
     let msg='❌ Not right yet. ';
-    if(res.lost>0) msg+=res.lost+' parcel(s) fell into the void — an output port has items but no wire (or a Deliver node has no destination). ';
-    if(notes.length) msg+='Wrong contents in: '+notes.join(', ')+'. ';
-    msg+='Inspect the pills above and try again.';
-    $('runResult').textContent=msg;
+    if(res.lost>0) msg+=res.lost+' parcel(s) fell into the void — an output ● has items but no wire, or a Deliver To has no destination. ';
+    if(notes.length) msg+='Wrong contents in: <b>'+notes.join(', ')+'</b>. ';
+    msg+='Check the boxes above — then follow my next tip: '+builderGuidance()[0];
+    showCoach(msg,'bad');
   }
 }
 
@@ -1435,16 +1530,16 @@ function addMastery(n){
   state.mastery=Math.min(100, state.mastery+n); save(); renderHUD();
 }
 
-/* --------- hints (Bug) --------- */
+/* --------- hints (Bug) — escalating, shown right in the coach bar --------- */
 function askBug(){
   const ch=CHALLENGES[B.challenge]; if(!ch) return;
-  const h=ch.hints[Math.min(B.hintLevel,ch.hints.length-1)];
+  const lvl=Math.min(B.hintLevel,ch.hints.length-1);
   const labels=['NUDGE','CLUE','REVEAL'];
-  say([{name:'Bug', icon:'🐞', text:'('+labels[Math.min(B.hintLevel,2)]+') '+h+(B.hintLevel>=2?' ...Using a full reveal will cost you some mastery.':'')}],()=>{
-    if(B.hintLevel>=2){ state.mastery=Math.max(0,state.mastery-5); save(); renderHUD(); }
-    B.hintLevel=Math.min(B.hintLevel+1, ch.hints.length-1+1);
-    inputLocked=true; // stay in builder
-  });
+  const h=ch.hints[lvl];
+  let msg='<b class="k">'+labels[Math.min(lvl,2)]+':</b> '+h;
+  if(lvl>=2 && !B.revealTaken){ state.mastery=Math.max(0,state.mastery-5); save(); renderHUD(); B.revealTaken=true; msg+=' <span style="color:var(--dim)">(−5 mastery for a full reveal)</span>'; }
+  showCoach(msg,'tip');
+  B.hintLevel=Math.min(B.hintLevel+1, ch.hints.length-1);
 }
 
 /* ================================================================== *
@@ -1665,6 +1760,7 @@ $('soundBtn').onclick=()=>{ soundOn=!soundOn; state.soundOn=soundOn; save(); $('
 $('builderClose').onclick=closeBuilder;
 $('runBtn').onclick=runFlow;
 $('hintBtn').onclick=askBug;
+$('howBtn').onclick=showBuilderIntro;
 $('rkContinue').onclick=()=>{ hide($('rankOverlay')); inputLocked=false; worldActive=true;
   toast('SLICE COMPLETE — thanks for playing the Soleil demo!', 'rank'); };
 
