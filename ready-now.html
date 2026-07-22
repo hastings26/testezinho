@@ -858,14 +858,42 @@
 </div>
 
 <script>
-/* ---------- SCORM-safe TES contract (stubs; no-op standalone) ---------- */
+/* ---------- TES contract with real SCORM bridge (1.2 + 2004; standalone no-op) ---------- */
 window.TES = window.TES || (function(){
-  var st=null;
+  var st=null, api=null, is12=false;
+  function find(win,name){ var n=0;
+    try{ while(win && !win[name] && win.parent && win.parent!==win && n++<12) win=win.parent;
+      return (win && win[name]) ? win[name] : null; }catch(e){ return null; } }
+  api = find(window,'API_1484_11') || (window.opener ? find(window.opener,'API_1484_11') : null);
+  if(!api){ api = find(window,'API') || (window.opener ? find(window.opener,'API') : null); if(api) is12=true; }
+  function call(f12,f04,a,b){ try{ if(!api) return null; var f=api[is12?f12:f04];
+    return (b===undefined) ? f.call(api,a) : f.call(api,a,b); }catch(e){ return null; } }
+  function sv(k,v){ call('LMSSetValue','SetValue',k,''+v); }
+  if(api){
+    call('LMSInitialize','Initialize','');
+    var sd = call('LMSGetValue','GetValue','cmi.suspend_data');
+    if(sd){ try{ st=JSON.parse(sd); }catch(e){} }
+    var ls = call('LMSGetValue','GetValue', is12?'cmi.core.lesson_status':'cmi.completion_status');
+    if(!ls || /not attempted|unknown/.test(ls))
+      sv(is12?'cmi.core.lesson_status':'cmi.completion_status','incomplete');
+    call('LMSCommit','Commit','');
+    addEventListener('beforeunload',function(){ call('LMSCommit','Commit',''); call('LMSFinish','Terminate',''); });
+  }
   return {
-    ready:function(){document.dispatchEvent(new CustomEvent('tes:ready'));},
-    complete:function(score){document.dispatchEvent(new CustomEvent('tes:complete',{detail:{score:score}}));},
-    saveState:function(s){st=s;document.dispatchEvent(new CustomEvent('tes:progress',{detail:{state:s}}));},
-    loadState:function(){return st;}
+    ready:function(){ document.dispatchEvent(new CustomEvent('tes:ready')); },
+    complete:function(score){
+      if(api){ var s=Math.max(0,Math.min(100,Math.round(score)));
+        if(is12){ sv('cmi.core.score.min',0); sv('cmi.core.score.max',100); sv('cmi.core.score.raw',s);
+          sv('cmi.core.lesson_status', s>=80?'passed':'completed'); }
+        else { sv('cmi.score.min',0); sv('cmi.score.max',100); sv('cmi.score.raw',s);
+          sv('cmi.score.scaled',(s/100).toFixed(2)); sv('cmi.completion_status','completed');
+          if(s>=80) sv('cmi.success_status','passed'); }
+        call('LMSCommit','Commit',''); }
+      document.dispatchEvent(new CustomEvent('tes:complete',{detail:{score:score}})); },
+    saveState:function(s){ st=s;
+      if(api){ try{ sv('cmi.suspend_data',JSON.stringify(s).slice(0,4000)); call('LMSCommit','Commit',''); }catch(e){} }
+      document.dispatchEvent(new CustomEvent('tes:progress',{detail:{state:s}})); },
+    loadState:function(){ return st; }
   };
 })();
 
