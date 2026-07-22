@@ -519,8 +519,8 @@
     <div class="sound-toggle" id="soundToggle" title="Sound on/off">&#128266;</div>
     <div class="kick reveal in" style="text-align:center;">The vault &middot; retrieval drill</div>
     <h2 class="reveal in" style="text-align:center;">Say It or Seal It</h2>
-    <p class="lead reveal in" style="text-align:center;margin:14px auto 0;max-width:56ch;">Three rounds &mdash; <b style="color:#fff">Sell</b>, <b style="color:#fff">Build</b>, <b style="color:#fff">Deliver</b>. Each one briefs the topic, then tests you on it. Keep your streak alive across all twelve calls and rank up.</p>
-    <div class="roundprogress reveal in" id="roundProg" style="margin-top:22px;"><i></i><i></i><i></i></div>
+    <p class="lead reveal in" style="text-align:center;margin:14px auto 0;max-width:56ch;">Four rounds &mdash; <b style="color:#fff">Sell</b>, <b style="color:#fff">Build</b>, <b style="color:#fff">Deliver</b>, <b style="color:#fff">Horizon</b>. Each one briefs the topic, then tests you on it. Keep your streak alive across all sixteen calls and rank up.</p>
+    <div class="roundprogress reveal in" id="roundProg" style="margin-top:22px;"><i></i><i></i><i></i><i></i></div>
 
     <!-- START -->
     <div id="vaultStart" class="reveal in">
@@ -532,7 +532,7 @@
       <div class="startcard">
         <div class="startrules">
           <div><b>&#9201; 10s a call</b><span>Answer fast &mdash; speed = points</span></div>
-          <div><b>&#128293; Combo</b><span>Streaks carry across all 3 rounds</span></div>
+          <div><b>&#128293; Combo</b><span>Streaks carry across all 4 rounds</span></div>
           <div><b>&#127942; Rank</b><span>Can you hit VAULT MASTER?</span></div>
         </div>
         <button class="startbtn" id="startBtn">&#9654;&nbsp; Enter the vault</button>
@@ -714,14 +714,22 @@ var ROUNDS=[
       {a:'MIP Playbook',c:'The deep mechanics of the program.',k:'seal',why:'<b>Internal, read‑only.</b> Prep material — do not forward or screenshare.'},
       {a:'"The MIP Assessment decides if you’re a Broker or a Builder"',c:'Explained to a partner up front.',k:'say',why:'<b>External.</b> The assessment and the Broker/Builder shape are the partner‑facing story.'}
     ]},
-  { tag:'Round 3 · DELIVER', color:'#00D09C', title:'MIS & the horizon — sell today, point at tomorrow',
-    intro:'MIS <em>delivers</em> the outcome. Two services sell from day one; others are gated behind the play. And the roadmap? Point at the direction — never promise it. Call each one:',
+  { tag:'Round 3 · DELIVER', color:'#00D09C', title:'Managed Intelligence Services — sell today, own the client',
+    intro:'MIS <em>delivers</em> the outcome — the partner sells and invoices, Pax8 delivers behind. Two services sell from day one; one is gated behind the play; the competitive grid is yours alone. Call each one:',
     cards:[
-      {a:'Copilot Readiness Assessment — sell it from day one',c:'First MIS deal with a Copilot‑curious partner.',k:'say',why:'<b>No gating, global.</b> This and M365 Data Protection are the lowest‑friction first sale.'},
+      {a:'Copilot Readiness Assessment — sell it from day one',c:'First MIS deal with a Copilot‑curious partner.',k:'say',why:'<b>No gating, global.</b> One of the lowest‑friction first sales on the floor.'},
+      {a:'Microsoft 365 Data Protection — sell it from day one',c:'Partner wants a quick, sellable security win.',k:'say',why:'<b>No gating, global.</b> Purview Information Protection + DLP — sellable day one.'},
       {a:'"Workflow Automation & Agent Builds — any partner can sell it today"',c:'Pitched as ready off the shelf.',k:'care',why:'<b>Gated.</b> Needs the Discover AND Manage plays first, and it’s Americas + EMEA only.'},
-      {a:'"Agent Orchestration ships next quarter"',c:'Said to a partner to help close.',k:'care',why:'<b>Roadmap = directional.</b> Limited beta, no committed date. Point at it, don’t promise it.'},
       {a:'The competitive snapshot vs Ingram, TD SYNNEX, Sherweb',c:'Sent to a partner to win a bake‑off.',k:'seal',why:'<b>Internal.</b> Competitive positioning is your prep — never hand the grid to a partner.'}
-    ]}
+    ]},
+  { tag:'Round 4 · HORIZON', color:'#8B5CF6', title:'The horizon — point, don’t promise',
+    intro:'This is where deals get lost. The roadmap is real — <b>Agent 365</b>, <b>Gateway</b>, <b>Orchestration</b>, <b>Agentic Purchasing</b> — but it’s <em>directional</em>. You can point at the destination; you can’t commit it. And the tracking? That stays inside. Call each one:',
+    cards:[
+      {a:'"Agent Orchestration ships next quarter"',c:'Said to a partner to help close.',k:'care',why:'<b>Roadmap = directional.</b> Limited beta, no committed date. Point at it, don’t promise it.'},
+      {a:'"Agent 365 Multi‑Tenant is available now"',c:'Positioned as ready to buy.',k:'care',why:'<b>Private preview.</b> Not GA — don’t present it as available today.'},
+      {a:'"Agentic Purchasing is coming — I’ll commit to it"',c:'Used as a deal sweetener.',k:'care',why:'<b>Coming soon ≠ committed.</b> Mention the direction; never guarantee delivery.'},
+      {a:'The internal launch‑tracking PowerBI dashboard',c:'A partner asks to see the adoption numbers.',k:'seal',why:'<b>Internal.</b> Adoption and margin tracking is ours — it never leaves the building.'}
+    ]},
 ];
 var TOTAL_CARDS=ROUNDS.reduce(function(s,r){return s+r.cards.length;},0);
 
@@ -865,7 +873,7 @@ var TOTAL_CARDS=ROUNDS.reduce(function(s,r){return s+r.cards.length;},0);
   function finish(){ cancelAnimationFrame(raf); var rk=rankFor(correctCount);
     el('rankBadge').textContent=rk.b; el('rankName').textContent=rk.n; el('finalScore').textContent=score.toLocaleString();
     el('finalStats').innerHTML='<div><b>'+correctCount+'/'+TOTAL_CARDS+'</b>accuracy</div><div><b>🔥 x'+bestStreak+'</b>best combo</div>';
-    var msgs={ 'FLAWLESS — VAULT LEGEND':'Twelve for twelve across all three rounds. When a partner asks, you won’t hesitate for a second. Go set the floor on fire.',
+    var msgs={ 'FLAWLESS — VAULT LEGEND':'A clean sweep — every call, all four rounds. When a partner asks, you won’t hesitate for a second. Go set the floor on fire.',
       'VAULT MASTER':'You’ve got the reflex. A miss or two to tighten — but you’re floor‑ready.',
       'CLOSER':'Solid. One more run on the amber calls (roadmap = direction; gated needs the play) and you’re sharp.',
       'RISING REP':'Getting there — the boundary is starting to stick. One more run locks it in.',
