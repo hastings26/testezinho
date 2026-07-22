@@ -450,6 +450,59 @@
     #vault.playing .vault-wrap>.roundprogress{display:flex;}
   }
 
+
+  /* ================= BLUEPRINT PUZZLE ================= */
+  .bp-board{display:grid;gap:9px;margin-top:14px;}
+  .bp-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+  @media(max-width:760px){.bp-row3{grid-template-columns:1fr;}}
+  .dz{position:relative;border:1.5px dashed rgba(120,140,220,.35);border-radius:14px;
+    padding:9px 11px;background:rgba(13,18,48,.35);transition:border-color .2s,background .2s,box-shadow .2s;}
+  .dz-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+  .dz-label small{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:none;}
+  .dz-fill{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;min-height:26px;align-content:flex-start;}
+  .bp-row3 .dz{min-height:118px;}
+  .dz.hover{border-color:var(--teal);background:rgba(0,208,156,.07);box-shadow:0 0 24px -8px var(--glow-teal);}
+  .dz.ok{animation:dzok .5s ease;}
+  @keyframes dzok{0%{box-shadow:0 0 0 0 rgba(0,208,156,.5)}100%{box-shadow:0 0 0 14px rgba(0,208,156,0)}}
+  .dz.no{animation:dzno .4s ease;border-color:rgba(239,68,68,.7);}
+  @keyframes dzno{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(5px)}50%{transform:translateX(-5px)}}
+  .z-horizon .dz-label{color:#a78bfa;} .z-sell .dz-label{color:#7c9aff;}
+  .z-build .dz-label{color:var(--cyan);} .z-deliver .dz-label{color:var(--teal);}
+  .z-foundation .dz-label{color:#c9cdd6;}
+  .bp-tray{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;justify-content:center;}
+  .bp-piece{font-family:var(--font);font-size:12px;font-weight:600;color:#dfe3ec;
+    background:rgba(17,23,57,.85);border:1px solid rgba(120,140,220,.4);border-radius:18px;
+    padding:7px 12px;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;
+    transition:transform .15s,opacity .15s,border-color .15s;}
+  .bp-piece:hover{border-color:var(--teal);transform:translateY(-2px);}
+  .bp-piece.lifting{opacity:.25;}
+  .bp-piece.sel{border-color:var(--amber);box-shadow:0 0 0 2px rgba(234,179,8,.35);}
+  .bp-piece.placed{cursor:default;font-size:10.5px;padding:4px 9px;background:rgba(0,208,156,.1);
+    border-color:rgba(0,208,156,.45);color:#a9f4de;transform:none;}
+  .bp-piece.placed:hover{transform:none;border-color:rgba(0,208,156,.45);}
+  .bp-ghost{position:fixed;z-index:999;pointer-events:none;margin:0;
+    box-shadow:0 18px 40px -10px rgba(0,0,0,.8),0 0 0 1.5px var(--teal);transform:scale(1.06);}
+  .bp-status{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:11px;
+    font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.06em;min-height:30px;flex-wrap:wrap;}
+  .bp-status b{color:#fff;}
+  .bp-hint{font-family:var(--font);font-size:12.5px;color:#ffdd57;min-height:18px;text-align:center;
+    margin-top:6px;letter-spacing:0;}
+  .bp-reset{background:transparent;border:1px solid rgba(120,140,220,.4);color:#cfd4de;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;padding:6px 13px;border-radius:16px;
+    cursor:pointer;transition:.2s;text-transform:uppercase;}
+  .bp-reset:hover{border-color:var(--teal);color:#fff;}
+  #bpWin{display:none;text-align:center;margin-top:10px;}
+  #bpWin .wb{font-size:clamp(30px,5vw,44px);line-height:1;animation:badgein .6s cubic-bezier(.2,1.5,.4,1);}
+  #bpWin .wt{font-weight:800;font-size:clamp(17px,2.4vw,23px);margin-top:6px;
+    background:linear-gradient(90deg,var(--teal),#22C55E,var(--cyan));-webkit-background-clip:text;
+    background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+  #bpWin .wm{font-size:13px;color:#c9cdd6;margin-top:5px;}
+  .bp-conf{position:absolute;width:8px;height:5px;pointer-events:none;z-index:50;opacity:0;
+    animation:bconf 1.1s ease-out forwards;}
+  @keyframes bconf{0%{opacity:1;transform:translate(0,0) rotate(0)}
+    100%{opacity:0;transform:translate(var(--cx),var(--cy)) rotate(300deg)}}
+
 </style>
 </head>
 <body>
@@ -572,6 +625,49 @@
 </section>
 
 <!-- VAULT GAME -->
+<!-- BLUEPRINT PUZZLE -->
+<section id="blueprint">
+  <div class="kick blue reveal">The blueprint &middot; structure drill</div>
+  <h2 class="reveal">Puzzle: assemble the launch</h2>
+  <p class="lead reveal">Fourteen pieces, five layers. Drag each piece to where it lives &mdash; when the picture snaps together, you know exactly what Pax8 is offering and where every piece sits.</p>
+  <div class="bp-board reveal">
+    <div class="dz z-horizon" data-z="horizon"><div class="dz-label"><span>Horizon &middot; point, don&rsquo;t promise</span><small id="c-horizon">0/2</small></div><div class="dz-fill"></div></div>
+    <div class="bp-row3">
+      <div class="dz z-sell" data-z="sell"><div class="dz-label"><span>&#9312; Sell &middot; day&#8209;one revenue</span><small id="c-sell">0/2</small></div><div class="dz-fill"></div></div>
+      <div class="dz z-build" data-z="build"><div class="dz-label"><span>&#9313; Build &middot; grow the capability</span><small id="c-build">0/3</small></div><div class="dz-fill"></div></div>
+      <div class="dz z-deliver" data-z="deliver"><div class="dz-label"><span>&#9314; Deliver &middot; Pax8 behind you</span><small id="c-deliver">0/4</small></div><div class="dz-fill"></div></div>
+    </div>
+    <div class="dz z-foundation" data-z="foundation"><div class="dz-label"><span>Foundation &middot; already running today</span><small id="c-foundation">0/3</small></div><div class="dz-fill"></div></div>
+  </div>
+  <div class="bp-tray reveal" id="bpTray">
+    <button class="bp-piece" data-z="deliver" data-hint="It&rsquo;s a packaged MIS service &mdash; the partner sells it, Pax8 delivers it.">M365 Data Protection</button>
+    <button class="bp-piece" data-z="sell" data-hint="It&rsquo;s the catalogue partners buy from on day one.">Agent Store</button>
+    <button class="bp-piece" data-z="foundation" data-hint="Rewards on what partners already transact &mdash; it was there before today.">Voyager Alliance Rewards</button>
+    <button class="bp-piece" data-z="build" data-hint="Discover &rarr; Manage: the backbone partners master inside MIP.">The 6 plays</button>
+    <button class="bp-piece" data-z="horizon" data-hint="Private preview &mdash; you can point at it, not sell it.">Agent 365 Multi&#8209;Tenant</button>
+    <button class="bp-piece" data-z="deliver" data-hint="A day&#8209;one MIS service &mdash; sold by the partner, delivered by Pax8.">Copilot Readiness Assessment</button>
+    <button class="bp-piece" data-z="foundation" data-hint="Connect once &mdash; it&rsquo;s part of the ground floor partners already run.">Integrations Hub</button>
+    <button class="bp-piece" data-z="build" data-hint="The assessment assigns these paths &mdash; they live inside the MIP Program.">Broker &amp; Builder paths</button>
+    <button class="bp-piece" data-z="horizon" data-hint="Directional roadmap &mdash; the horizon. Never a promise.">Purchasing &middot; Gateway &middot; Orchestration</button>
+    <button class="bp-piece" data-z="sell" data-hint="That&rsquo;s what&rsquo;s inside the store you sell from today.">13 vendors &middot; 5 categories</button>
+    <button class="bp-piece" data-z="deliver" data-hint="An MIS service tied to the Discover play &mdash; Pax8 delivers it.">Transformation Discovery Agent</button>
+    <button class="bp-piece" data-z="foundation" data-hint="The operational layer partners already run &mdash; nothing new to buy.">Pax8 Marketplace</button>
+    <button class="bp-piece" data-z="build" data-hint="Every partner starts here &mdash; it&rsquo;s the front door of the programme.">The MIP Assessment</button>
+    <button class="bp-piece" data-z="deliver" data-hint="A gated MIS service &mdash; built and delivered by Pax8 PS.">Workflow Automation &amp; Agent Builds</button>
+  </div>
+  <div class="bp-status reveal" id="bpStatus">
+    <span><b id="bpDone">0</b>/14 placed</span><span><b id="bpMiss">0</b> misses</span>
+    <button class="bp-reset" id="bpReset">&#8635; reset</button>
+  </div>
+  <div class="bp-hint" id="bpHint"></div>
+  <div id="bpWin">
+    <div class="wb" id="bpWinB">&#127942;</div>
+    <div class="wt" id="bpWinT"></div>
+    <div class="wm" id="bpWinM"></div>
+    <div style="margin-top:10px;"><button class="bp-reset" id="bpReset2">&#8635; run it again</button></div>
+  </div>
+</section>
+
 <section id="vault">
   <canvas id="fxCanvas" class="fxCanvas"></canvas>
   <div class="vflash" id="vFlash"></div>
@@ -840,7 +936,7 @@ var TOTAL_CARDS=ROUNDS.reduce(function(s,r){return s+r.cards.length;},0);
   function sFanfare(big){ if(muted)return; var n=big?[523,659,784,1046,1318,1568]:[523,659,784];
     n.forEach(function(f,i){setTimeout(function(){tone(f,0.24,'triangle',0.15);},i*125);}); }
   var st=el('soundToggle');
-  st.addEventListener('click',function(){muted=!muted;st.innerHTML=muted?'&#128263;':'&#128266;';st.classList.toggle('off',muted);});
+  st.addEventListener('click',function(){muted=!muted;window.__sfxMuted=muted;st.innerHTML=muted?'&#128263;':'&#128266;';st.classList.toggle('off',muted);});
 
   /* ---- confetti ---- */
   var parts=[], confAnim=0, CONF=['#00D09C','#1D4ED8','#0EA5E9','#EAB308','#22C55E','#EC4899','#ffffff'];
@@ -964,6 +1060,113 @@ var TOTAL_CARDS=ROUNDS.reduce(function(s,r){return s+r.cards.length;},0);
 
   el('startBtn').addEventListener('click',function(){ var a=actx(); if(a&&a.state==='suspended')a.resume(); document.getElementById('vault').classList.add('playing'); showRoundIntro(); });
   addEventListener('resize',function(){sizeCanvas();},{passive:true});
+})();
+
+/* ---------- BLUEPRINT PUZZLE ---------- */
+(function(){
+  var sec=document.getElementById('blueprint'); if(!sec)return;
+  var tray=document.getElementById('bpTray');
+  var pieces=[].slice.call(sec.querySelectorAll('.bp-piece'));
+  var zones=[].slice.call(sec.querySelectorAll('.dz'));
+  var TOTAL=pieces.length, placed=0, miss=0, sel=null, homes=[];
+  pieces.forEach(function(p){homes.push({p:p,next:p.nextSibling});});
+
+  var AC=null;
+  function tone(f,d,t,v,s){ if(window.__sfxMuted)return;
+    try{ if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+      var o=AC.createOscillator(),g=AC.createGain(); o.type=t||'sine'; o.frequency.value=f;
+      if(s)o.frequency.exponentialRampToValueAtTime(s,AC.currentTime+d);
+      g.gain.value=v||0.13; g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+d);
+      o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d);}catch(e){} }
+  function sSnap(){tone(740,0.09,'triangle',0.14);setTimeout(function(){tone(1108,0.12,'triangle',0.13);},70);}
+  function sNo(){tone(200,0.28,'sawtooth',0.13,90);}
+  function sWin(){[523,659,784,1046,1318].forEach(function(f,i){setTimeout(function(){tone(f,0.22,'triangle',0.14);},i*110);});}
+
+  var hint=document.getElementById('bpHint'), hintT=0;
+  function showHint(t){ hint.textContent=t; clearTimeout(hintT); hintT=setTimeout(function(){hint.textContent='';},3800); }
+  function counters(){ document.getElementById('bpDone').textContent=placed;
+    document.getElementById('bpMiss').textContent=miss;
+    zones.forEach(function(z){ var c=document.getElementById('c-'+z.dataset.z); if(!c)return;
+      var cap=c.textContent.split('/')[1]; c.textContent=z.querySelector('.dz-fill').children.length+'/'+cap; }); }
+
+  function confetti(){ var CONF=['#00D09C','#1D4ED8','#0EA5E9','#EAB308','#EC4899','#fff'];
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    var host=sec.querySelector('.bp-board'), r=host.getBoundingClientRect();
+    for(var i=0;i<46;i++){ var s=document.createElement('i'); s.className='bp-conf';
+      s.style.background=CONF[i%CONF.length];
+      s.style.left=(10+Math.random()*80)+'%'; s.style.top='40%';
+      s.style.setProperty('--cx',((Math.random()-0.5)*320)+'px');
+      s.style.setProperty('--cy',((Math.random()-0.9)*300)+'px');
+      s.style.animationDelay=(Math.random()*0.25)+'s';
+      host.appendChild(s); setTimeout(function(el){return function(){el.remove();};}(s),1600); } }
+
+  function place(p,z){ p.classList.remove('sel'); sel=null;
+    p.classList.add('placed'); p.disabled=true;
+    z.querySelector('.dz-fill').appendChild(p);
+    z.classList.remove('hover'); z.classList.add('ok'); setTimeout(function(){z.classList.remove('ok');},520);
+    placed++; sSnap(); counters();
+    if(placed>=TOTAL)finish(); }
+  function wrong(p,z){ miss++; counters(); z.classList.remove('hover'); z.classList.add('no');
+    setTimeout(function(){z.classList.remove('no');},420); sNo(); showHint('\u{1F4A1} '+p.dataset.hint); }
+
+  function finish(){ var st=document.getElementById('bpStatus'); st.style.display='none';
+    var w=document.getElementById('bpWin'); w.style.display='block';
+    var b,t,m;
+    if(miss===0){b='\u{1F3C6}';t='PERFECT BLUEPRINT';m='Fourteen for fourteen, zero misses. You don’t just know the pieces — you see the whole machine.';}
+    else if(miss<=3){b='\u{1F525}';t='ARCHITECT';m='The structure is in your head. One more clean run and it’s reflex.';}
+    else if(miss<=7){b='\u{1F4D0}';t='APPRENTICE ARCHITECT';m='Almost — rerun it once and watch how the layers snap: foundation → sell → build → deliver → horizon.';}
+    else{b='\u{1F9E9}';t='RUN IT BACK';m='No shame — assembling it once more is exactly how the structure sticks.';}
+    document.getElementById('bpWinB').textContent=b;
+    document.getElementById('bpWinT').textContent=t;
+    document.getElementById('bpWinM').textContent=m;
+    confetti(); sWin();
+    try{TES.saveState({blueprint:{misses:miss}});}catch(e){} }
+
+  function reset(){ placed=0;miss=0;sel=null;
+    homes.forEach(function(h){ h.p.classList.remove('placed','sel','lifting'); h.p.disabled=false;
+      tray.insertBefore(h.p,null); });
+    document.getElementById('bpStatus').style.display='flex';
+    document.getElementById('bpWin').style.display='none';
+    hint.textContent=''; counters(); }
+  document.getElementById('bpReset').addEventListener('click',reset);
+  document.getElementById('bpReset2').addEventListener('click',reset);
+
+  /* drag (pointer events, transform-safe via elementFromPoint) + tap-select fallback */
+  var drag=null;
+  function zoneAt(x,y){ var el=document.elementFromPoint(x,y); return el?el.closest('.dz'):null; }
+  sec.addEventListener('pointerdown',function(e){
+    var p=e.target.closest('.bp-piece'); if(!p||p.classList.contains('placed'))return;
+    e.preventDefault();
+    var r=p.getBoundingClientRect();
+    drag={p:p,x0:e.clientX,y0:e.clientY,dx:e.clientX-r.left,dy:e.clientY-r.top,moved:false,c:null,w:r.width};
+  });
+  addEventListener('pointermove',function(e){ if(!drag)return;
+    if(!drag.moved&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)<7)return;
+    if(!drag.moved){ drag.moved=true;
+      var c=drag.p.cloneNode(true); c.classList.add('bp-ghost'); c.style.width=drag.w+'px';
+      document.body.appendChild(c); drag.c=c; drag.p.classList.add('lifting'); }
+    drag.c.style.left=(e.clientX-drag.dx)+'px'; drag.c.style.top=(e.clientY-drag.dy)+'px';
+    var z=zoneAt(e.clientX,e.clientY);
+    zones.forEach(function(zz){zz.classList.toggle('hover',zz===z);});
+  },{passive:false});
+  addEventListener('pointerup',function(e){ if(!drag)return;
+    var d=drag; drag=null;
+    if(d.c)d.c.remove(); d.p.classList.remove('lifting');
+    zones.forEach(function(z){z.classList.remove('hover');});
+    if(d.moved){ var z=zoneAt(e.clientX,e.clientY);
+      if(z){ (z.dataset.z===d.p.dataset.z)?place(d.p,z):wrong(d.p,z); }
+    } else { /* tap: select piece, or place selected on zone tap */
+      if(sel===d.p){ d.p.classList.remove('sel'); sel=null; }
+      else { if(sel)sel.classList.remove('sel'); sel=d.p; sel.classList.add('sel');
+        showHint('Now tap the layer where it lives.'); }
+    }
+  });
+  zones.forEach(function(z){ z.addEventListener('click',function(e){
+    if(!sel||e.target.closest('.bp-piece'))return;
+    var p=sel; (z.dataset.z===p.dataset.z)?place(p,z):wrong(p,z);
+    if(p.classList.contains('placed')){} else {p.classList.remove('sel');} sel=null;
+  }); });
+  counters();
 })();
 
 /* ---------- pitch builder ---------- */
