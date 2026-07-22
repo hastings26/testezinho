@@ -370,6 +370,27 @@
   .cta.ghost{border-color:rgba(120,140,220,.45);color:#dfe3ec;}
   .cta.ghost:hover{background:rgba(120,140,220,.16);color:#fff;box-shadow:none;}
 
+
+  /* ===== ROUND-BASED VAULT ===== */
+  .startbtn.small{font-size:16px;padding:15px 34px;}
+  .roundtag{display:inline-flex;gap:10px;align-items:center;font-family:var(--mono);font-size:12px;
+    font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;}
+  .roundtag .rt-dot{width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor;}
+  #roundIntro,#roundDone{text-align:center;}
+  #roundIntro .introcard{text-align:left;}
+  .introcard .asset{margin-bottom:12px;}
+  .introtext{font-size:16px;color:#c9cdd6;line-height:1.62;}
+  .introtext b{color:#fff;} .introtext em{font-style:normal;color:var(--teal);}
+  .roundpips{display:flex;gap:8px;margin-top:20px;}
+  .roundpips i{width:28px;height:5px;border-radius:5px;background:rgba(255,255,255,.14);}
+  .roundpips i.on{background:linear-gradient(90deg,var(--teal),#22C55E);}
+  .hud .rtag{font-weight:800;letter-spacing:.12em;}
+  .rdTitle{font-family:var(--font);font-weight:800;font-size:clamp(22px,4vw,32px);margin-top:6px;}
+  .roundprogress{display:flex;gap:7px;justify-content:center;margin:2px 0 4px;}
+  .roundprogress i{width:34px;height:6px;border-radius:6px;background:rgba(255,255,255,.13);transition:.3s;}
+  .roundprogress i.done{background:linear-gradient(90deg,var(--teal),#22C55E);}
+  .roundprogress i.active{background:var(--cyan);box-shadow:0 0 12px var(--glow-blue);}
+
 </style>
 </head>
 <body>
@@ -498,11 +519,12 @@
     <div class="sound-toggle" id="soundToggle" title="Sound on/off">&#128266;</div>
     <div class="kick reveal in" style="text-align:center;">The vault &middot; retrieval drill</div>
     <h2 class="reveal in" style="text-align:center;">Say It or Seal It</h2>
-    <p class="lead reveal in" style="text-align:center;margin:14px auto 0;max-width:54ch;">Twelve calls. Beat the clock, stack your streak, don't blow the vault. Miss one and the combo's gone. How high can you rank?</p>
+    <p class="lead reveal in" style="text-align:center;margin:14px auto 0;max-width:56ch;">Three rounds &mdash; <b style="color:#fff">Sell</b>, <b style="color:#fff">Build</b>, <b style="color:#fff">Deliver</b>. Each one briefs the topic, then tests you on it. Keep your streak alive across all twelve calls and rank up.</p>
+    <div class="roundprogress reveal in" id="roundProg" style="margin-top:22px;"><i></i><i></i><i></i></div>
 
     <!-- START -->
     <div id="vaultStart" class="reveal in">
-      <div class="legend" style="margin-top:26px;">
+      <div class="legend" style="margin-top:20px;">
         <div class="lg-say">&#9989; SAY IT &mdash; share with partners</div>
         <div class="lg-care">&#9888;&#65039; CAREFUL &mdash; direction, never a promise</div>
         <div class="lg-seal">&#128274; SEAL IT &mdash; internal only</div>
@@ -510,7 +532,7 @@
       <div class="startcard">
         <div class="startrules">
           <div><b>&#9201; 10s a call</b><span>Answer fast &mdash; speed = points</span></div>
-          <div><b>&#128293; Combo</b><span>Every streak multiplies your score</span></div>
+          <div><b>&#128293; Combo</b><span>Streaks carry across all 3 rounds</span></div>
           <div><b>&#127942; Rank</b><span>Can you hit VAULT MASTER?</span></div>
         </div>
         <button class="startbtn" id="startBtn">&#9654;&nbsp; Enter the vault</button>
@@ -518,10 +540,21 @@
       </div>
     </div>
 
-    <!-- GAME -->
+    <!-- ROUND INTRO -->
+    <div id="roundIntro" style="display:none;">
+      <div class="roundtag" id="riTag"><span class="rt-dot"></span><span id="riTagText"></span></div>
+      <div class="qcard introcard">
+        <div class="asset" id="riTitle"></div>
+        <div class="introtext" id="riText"></div>
+        <div class="roundpips" id="riPips"></div>
+      </div>
+      <button class="startbtn small" id="riBegin" style="margin-top:22px;">Begin round &rarr;</button>
+    </div>
+
+    <!-- GAME (per card) -->
     <div id="vaultGame" style="display:none;">
       <div class="hud">
-        <div>Call <b id="qNum">1</b> <span class="muted">/ 12</span></div>
+        <div><span class="rtag" id="hudRound">SELL</span> <span class="muted">&middot;</span> Call <b id="qNum">1</b><span class="muted">/<span id="qTot">4</span></span></div>
         <div class="combo" id="comboWrap"><span id="comboX">x1</span><em id="comboLabel"></em></div>
         <div>Score <b id="qScore">0</b></div>
       </div>
@@ -540,7 +573,15 @@
       <button class="nextbtn" id="qNext">Next call &rarr;</button>
     </div>
 
-    <!-- DONE -->
+    <!-- ROUND DONE -->
+    <div id="roundDone" style="display:none;">
+      <div class="rankbadge" id="rdBadge" style="font-size:clamp(46px,9vw,72px);">&#9989;</div>
+      <div class="rdTitle" id="rdTitle">Round cleared</div>
+      <div class="finalstats" id="rdStats"></div>
+      <button class="startbtn small" id="rdNext" style="margin-top:22px;">Next round &rarr;</button>
+    </div>
+
+    <!-- FINALE -->
     <div id="vaultDone">
       <div class="rankbadge" id="rankBadge">&#127942;</div>
       <div class="big" id="finalScore">0</div>
@@ -655,40 +696,58 @@ var vendors=['pia','rewst','ConnectWise','SuperOps','Microsoft 365','Egnyte','Co
 var vp=document.getElementById('vendorPills');
 vendors.forEach(function(v,i){var s=document.createElement('span');s.className='pill';s.innerHTML='<b>'+String(i+1).padStart(2,'0')+'</b>&nbsp; '+v;vp.appendChild(s);});
 
-/* ---------- VAULT GAME (gamified) ---------- */
-var items=[
-  {a:'Comprehensive Sales Slides',c:'The full launch deck Jessica shared.',k:'say',why:'Marked <b>External</b>. This is the shareable spine of the whole story.'},
-  {a:'Agent Store Sizzle Video',c:'The short hype clip for the catalogue.',k:'say',why:'Marked <b>External</b>. Made to be seen by partners — lead with it.'},
-  {a:'MIP Program Overview (one‑pager)',c:'High‑level value + intent of the program.',k:'say',why:'Marked <b>External</b>. Value and intent — safe to hand over.'},
-  {a:'Agent Store Demo',c:'The guided click‑through walkthrough.',k:'seal',why:'<b>Internal.</b> It exists to make <em>you</em> fluent, not as a partner asset.'},
-  {a:'MIP Program Battlecard',c:'Positioning + objection handling.',k:'seal',why:'<b>Internal.</b> Battlecards are your prep — they never leave the building.'},
-  {a:'MIP Playbook',c:'The deep mechanics of the program.',k:'seal',why:'<b>Internal, read‑only.</b> Prep material — do not forward or screenshare.'},
-  {a:'"Agent Orchestration ships next quarter"',c:'Said to a partner to help close.',k:'care',why:'<b>Roadmap = directional.</b> Limited beta, no committed date. Point at it, don’t promise it.'},
-  {a:'"Agentic Purchasing is coming — I’ll commit to it"',c:'Used as a deal sweetener.',k:'care',why:'<b>Coming soon ≠ committed.</b> Mention the direction; never guarantee delivery.'},
-  {a:'"Agent 365 Multi‑Tenant is available now"',c:'Positioned as ready to buy.',k:'care',why:'<b>Private preview.</b> Not GA — don’t present it as available today.'},
-  {a:'Copilot Readiness Assessment — sell it from day one',c:'First MIS deal with a Copilot‑curious partner.',k:'say',why:'<b>No gating, global.</b> This and M365 Data Protection are the lowest‑friction first sale.'},
-  {a:'"Workflow Automation & Agent Builds — any partner can sell it today"',c:'Pitched as ready off the shelf.',k:'care',why:'<b>Gated.</b> Needs the Discover AND Manage plays first, and it’s Americas + EMEA only.'},
-  {a:'The competitive snapshot vs Ingram, TD SYNNEX, Sherweb',c:'Sent to a partner to win a bake‑off.',k:'seal',why:'<b>Internal.</b> Competitive positioning is your prep — never hand the grid to a partner.'}
+/* ---------- VAULT GAME (gamified, 3 rounds) ---------- */
+var ROUNDS=[
+  { tag:'Round 1 · SELL', color:'#4d7cff', title:'Agent Store — what ships, what stays',
+    intro:'Agent Store is your day-one <em>sell</em>. The <b>Sales Slides</b>, <b>Overview</b> and <b>Sizzle Video</b> are yours to share — the guided <b>Demo</b> makes <em>you</em> fluent but stays inside. Call each one:',
+    cards:[
+      {a:'Comprehensive Sales Slides',c:'The full launch deck Jessica shared.',k:'say',why:'Marked <b>External</b>. The shareable spine of the whole story.'},
+      {a:'Agent Store Sizzle Video',c:'The short hype clip for the catalogue.',k:'say',why:'Marked <b>External</b>. Built to be seen by partners — lead with it.'},
+      {a:'Agent Store Demo',c:'The guided click‑through walkthrough.',k:'seal',why:'<b>Internal.</b> It exists to make <em>you</em> fluent, not as a partner asset.'},
+      {a:'"13 vendors are live in the Agent Store today"',c:'Said to a partner as a hook.',k:'say',why:'<b>External / fact.</b> Thirteen vendors live on day one — a great, concrete opener.'}
+    ]},
+  { tag:'Round 2 · BUILD', color:'#0EA5E9', title:'MIP Program — vision out, mechanics in',
+    intro:'MIP builds the <em>practice</em>. The <b>Overview</b> and the <b>assessment</b> story sell the vision — but the <b>Battlecard</b> and <b>Playbook</b> sharpen you and never leave the building. Call each one:',
+    cards:[
+      {a:'MIP Program Overview (one‑pager)',c:'High‑level value + intent of the program.',k:'say',why:'Marked <b>External</b>. Value and intent — safe to hand over.'},
+      {a:'MIP Program Battlecard',c:'Positioning + objection handling.',k:'seal',why:'<b>Internal.</b> Battlecards are your prep — they never leave the building.'},
+      {a:'MIP Playbook',c:'The deep mechanics of the program.',k:'seal',why:'<b>Internal, read‑only.</b> Prep material — do not forward or screenshare.'},
+      {a:'"The MIP Assessment decides if you’re a Broker or a Builder"',c:'Explained to a partner up front.',k:'say',why:'<b>External.</b> The assessment and the Broker/Builder shape are the partner‑facing story.'}
+    ]},
+  { tag:'Round 3 · DELIVER', color:'#00D09C', title:'MIS & the horizon — sell today, point at tomorrow',
+    intro:'MIS <em>delivers</em> the outcome. Two services sell from day one; others are gated behind the play. And the roadmap? Point at the direction — never promise it. Call each one:',
+    cards:[
+      {a:'Copilot Readiness Assessment — sell it from day one',c:'First MIS deal with a Copilot‑curious partner.',k:'say',why:'<b>No gating, global.</b> This and M365 Data Protection are the lowest‑friction first sale.'},
+      {a:'"Workflow Automation & Agent Builds — any partner can sell it today"',c:'Pitched as ready off the shelf.',k:'care',why:'<b>Gated.</b> Needs the Discover AND Manage plays first, and it’s Americas + EMEA only.'},
+      {a:'"Agent Orchestration ships next quarter"',c:'Said to a partner to help close.',k:'care',why:'<b>Roadmap = directional.</b> Limited beta, no committed date. Point at it, don’t promise it.'},
+      {a:'The competitive snapshot vs Ingram, TD SYNNEX, Sherweb',c:'Sent to a partner to win a bake‑off.',k:'seal',why:'<b>Internal.</b> Competitive positioning is your prep — never hand the grid to a partner.'}
+    ]}
 ];
+var TOTAL_CARDS=ROUNDS.reduce(function(s,r){return s+r.cards.length;},0);
 
 (function(){
   var TIME=10000; // ms per call
-  var qi=0, score=0, correctCount=0, streak=0, bestStreak=0, answered=false;
-  var startT=0, raf=0, lastTick=-1;
+  var ri=0, ci=0;                 // round index, card index within round
+  var score=0, correctCount=0, answeredTotal=0, streak=0, bestStreak=0;
+  var roundScore=0, roundCorrect=0, answered=false, startT=0, raf=0, lastTick=-1;
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   var el=function(id){return document.getElementById(id);};
-  var startScreen=el('vaultStart'), game=el('vaultGame'), done=el('vaultDone');
-  var qAsset=el('qAsset'),qCtx=el('qCtx'),qNum=el('qNum'),qScore=el('qScore'),qFb=el('qFb'),qNext=el('qNext');
-  var comboWrap=el('comboWrap'),comboX=el('comboX'),comboLabel=el('comboLabel'),timerFill=el('timerFill');
-  var qCard=el('qCard'),pointPop=el('pointPop'),answersBox=document.querySelector('#vaultGame .answers');
-  var vFlash=el('vFlash'), canvas=el('fxCanvas'), ctx=canvas&&canvas.getContext?canvas.getContext('2d'):null;
   var LABEL={say:'Say it',care:'Careful',seal:'Seal it'};
+  var screens={start:el('vaultStart'),intro:el('roundIntro'),game:el('vaultGame'),rdone:el('roundDone'),done:el('vaultDone')};
+  var qAsset=el('qAsset'),qCtx=el('qCtx'),qNum=el('qNum'),qTot=el('qTot'),qScore=el('qScore'),qFb=el('qFb'),qNext=el('qNext');
+  var comboWrap=el('comboWrap'),comboX=el('comboX'),comboLabel=el('comboLabel'),timerFill=el('timerFill');
+  var qCard=el('qCard'),pointPop=el('pointPop'),answersBox=document.querySelector('#vaultGame .answers'),hudRound=el('hudRound');
+  var vFlash=el('vFlash'), canvas=el('fxCanvas'), ctx=canvas&&canvas.getContext?canvas.getContext('2d'):null;
+  var progEls=el('roundProg')?el('roundProg').children:[];
+
+  function show(name){ for(var k in screens){ if(screens[k]) screens[k].style.display=(k===name?'block':'none'); } }
+  function setProg(){ for(var i=0;i<progEls.length;i++){ progEls[i].className=(i<ri?'done':(i===ri?'active':'')); } }
 
   /* ---- personal best ---- */
   var BEST_KEY='pax8_vault_best';
   function getBest(){try{return JSON.parse(localStorage.getItem(BEST_KEY))||null;}catch(e){return null;}}
   function setBest(o){try{localStorage.setItem(BEST_KEY,JSON.stringify(o));}catch(e){}}
-  (function(){var b=getBest();if(b&&el('bestHint'))el('bestHint').textContent='Best on this device: '+b.score.toLocaleString()+' pts · '+b.acc+'/12';})();
+  (function(){var b=getBest();if(b&&el('bestHint'))el('bestHint').textContent='Best on this device: '+b.score.toLocaleString()+' pts · '+b.acc+'/'+TOTAL_CARDS;})();
 
   /* ---- synthesized sound ---- */
   var AC=null, muted=false;
@@ -703,6 +762,7 @@ var items=[
   function sWrong(){tone(190,0.34,'sawtooth',0.16,80);}
   function sTimeout(){tone(320,0.42,'sawtooth',0.14,110);}
   function sTick(){tone(900,0.05,'square',0.05);}
+  function sRound(){[523,784,1046].forEach(function(f,i){setTimeout(function(){tone(f,0.16,'triangle',0.13);},i*90);});}
   function sFanfare(big){ if(muted)return; var n=big?[523,659,784,1046,1318,1568]:[523,659,784];
     n.forEach(function(f,i){setTimeout(function(){tone(f,0.24,'triangle',0.15);},i*125);}); }
   var st=el('soundToggle');
@@ -724,104 +784,111 @@ var items=[
       ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);ctx.restore();}
     if(!alive){cancelAnimationFrame(confAnim);confAnim=0;ctx.clearRect(0,0,canvas.width,canvas.height);parts=[];}}
   function cardBurst(n){var r=qCard.getBoundingClientRect(),pr=secRect();burst(r.left-pr.left+r.width*0.5,r.top-pr.top+34,n);}
-
-  function flashScreen(color){ if(reduce||!vFlash)return; vFlash.style.background=color;
-    vFlash.style.transition='none';vFlash.style.opacity='0.5';
+  function flashScreen(c){ if(reduce||!vFlash)return; vFlash.style.background=c;vFlash.style.transition='none';vFlash.style.opacity='0.5';
     requestAnimationFrame(function(){vFlash.style.transition='opacity .5s ease';vFlash.style.opacity='0';}); }
   function vibrate(p){ if(navigator.vibrate){try{navigator.vibrate(p);}catch(e){}} }
 
   /* ---- combo ---- */
   var COMBO_LABELS={2:'NICE',3:'🔥 ON FIRE',4:'🔥 BLAZING',5:'🌋 UNSTOPPABLE',6:'🚀 GODLIKE',7:'💫 LEGENDARY'};
   function showCombo(){ if(streak>=2){comboWrap.classList.add('show');comboX.textContent='x'+streak;
-      comboLabel.textContent=COMBO_LABELS[Math.min(streak,7)];
-      comboWrap.classList.toggle('hot',streak>=4);
+      comboLabel.textContent=COMBO_LABELS[Math.min(streak,7)];comboWrap.classList.toggle('hot',streak>=4);
       comboWrap.classList.remove('pump');void comboWrap.offsetWidth;comboWrap.classList.add('pump');}
     else{comboWrap.classList.remove('show','hot');} }
 
-  /* ---- timer loop ---- */
+  /* ---- timer ---- */
   function tick(now){ if(answered)return; var left=Math.max(0,TIME-(now-startT)), frac=left/TIME;
-    timerFill.style.transform='scaleX('+frac+')';
-    timerFill.className=frac<0.25?'danger':(frac<0.5?'warn':'');
+    timerFill.style.transform='scaleX('+frac+')'; timerFill.className=frac<0.25?'danger':(frac<0.5?'warn':'');
     var sec=Math.ceil(left/1000); if(sec<=3&&sec!==lastTick){lastTick=sec;if(sec>0)sTick();}
     if(left<=0){timeUp();return;} raf=requestAnimationFrame(tick); }
 
-  function render(){ answered=false;lastTick=-1;
-    qFb.className='fb';qFb.innerHTML='';qNext.className='nextbtn';
-    qCard.className='qcard';answersBox.className='answers';
-    var btns=document.querySelectorAll('.abtn'); btns.forEach(function(b){b.classList.remove('dim','right');});
-    var it=items[qi];qAsset.innerHTML=it.a;qCtx.textContent=it.c;qNum.textContent=qi+1;
+  /* ---- round intro ---- */
+  function showRoundIntro(){ var R=ROUNDS[ri]; setProg();
+    el('riTag').style.color=R.color; el('riTagText').textContent=R.tag;
+    el('riTitle').textContent=R.title; el('riText').innerHTML=R.intro;
+    var pips=''; for(var i=0;i<R.cards.length;i++)pips+='<i></i>'; el('riPips').innerHTML=pips;
+    show('intro');
+  }
+  el('riBegin').addEventListener('click',function(){ ci=0;roundScore=0;roundCorrect=0; show('game'); render(); });
+
+  /* ---- card render ---- */
+  function render(){ var R=ROUNDS[ri], it=R.cards[ci]; answered=false;lastTick=-1;
+    qFb.className='fb';qFb.innerHTML='';qNext.className='nextbtn';qCard.className='qcard';answersBox.className='answers';
+    document.querySelectorAll('.abtn').forEach(function(b){b.classList.remove('dim','right');});
+    hudRound.textContent=R.tag.split('· ')[1]||R.tag; hudRound.style.color=R.color;
+    qAsset.innerHTML=it.a;qCtx.textContent=it.c;qNum.textContent=ci+1;qTot.textContent=R.cards.length;
+    var pip=el('riPips'); if(pip){for(var i=0;i<pip.children.length;i++)pip.children[i].className=(i<ci?'on':'');}
     timerFill.style.transform='scaleX(1)';timerFill.className='';
     startT=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(tick); }
 
   function lockAnswers(pickEl,it){ answered=true;cancelAnimationFrame(raf);answersBox.classList.add('locked');
-    document.querySelectorAll('.abtn').forEach(function(b){
-      if(b.dataset.choice===it.k)b.classList.add('right'); else if(b!==pickEl)b.classList.add('dim'); }); }
+    document.querySelectorAll('.abtn').forEach(function(b){ if(b.dataset.choice===it.k)b.classList.add('right'); else if(b!==pickEl)b.classList.add('dim'); }); }
 
-  function answer(pick,pickEl){ if(answered)return; var it=items[qi], ok=(pick===it.k);
-    var frac=Math.max(0,(TIME-(performance.now()-startT))/TIME);
-    lockAnswers(pickEl,it);
-    if(ok){ streak++; bestStreak=Math.max(bestStreak,streak); correctCount++;
-      var speed=Math.round(frac*150), pts=Math.round((100+speed)*streak);
-      score+=pts; qScore.textContent=score.toLocaleString();
-      qCard.classList.add('correct');
-      pointPop.textContent='+'+pts;pointPop.style.color='#00D09C';
-      pointPop.classList.remove('go');void pointPop.offsetWidth;pointPop.classList.add('go');
+  function answer(pick,pickEl){ if(answered)return; var it=ROUNDS[ri].cards[ci], ok=(pick===it.k);
+    var frac=Math.max(0,(TIME-(performance.now()-startT))/TIME); answeredTotal++; lockAnswers(pickEl,it);
+    if(ok){ streak++; bestStreak=Math.max(bestStreak,streak); correctCount++; roundCorrect++;
+      var speed=Math.round(frac*150), pts=Math.round((100+speed)*streak); score+=pts; roundScore+=pts;
+      qScore.textContent=score.toLocaleString(); qCard.classList.add('correct');
+      pointPop.textContent='+'+pts;pointPop.style.color='#00D09C';pointPop.classList.remove('go');void pointPop.offsetWidth;pointPop.classList.add('go');
       showCombo(); sCorrect(); if(streak>=3)sCombo(streak);
       cardBurst(streak>=4?64:34); flashScreen('rgba(0,208,156,.16)'); vibrate(streak>=4?[10,30,10]:20);
-      qFb.className='fb ok';
-      qFb.innerHTML='✅ <b>+'+pts+' pts</b>'+(streak>=3?' · 🔥 x'+streak+' combo':'')+' — '+it.why;
-    } else { streak=0; showCombo(); qCard.classList.add('wrong');
-      sWrong(); flashScreen('rgba(239,68,68,.16)'); vibrate([40,40,40]);
-      qFb.className='fb no';
-      qFb.innerHTML='✋ <b>Combo lost.</b> That one is <b>'+LABEL[it.k]+'</b> — '+it.why;
-    }
-    qNext.className='nextbtn show'; try{TES.saveState({card:qi+1,score:score});}catch(e){} }
+      qFb.className='fb ok'; qFb.innerHTML='✅ <b>+'+pts+' pts</b>'+(streak>=3?' · 🔥 x'+streak+' combo':'')+' — '+it.why;
+    } else { streak=0; showCombo(); qCard.classList.add('wrong'); sWrong(); flashScreen('rgba(239,68,68,.16)'); vibrate([40,40,40]);
+      qFb.className='fb no'; qFb.innerHTML='✋ <b>Combo lost.</b> That one is <b>'+LABEL[it.k]+'</b> — '+it.why; }
+    qNext.className='nextbtn show'; try{TES.saveState({round:ri+1,card:ci+1,score:score});}catch(e){} }
 
-  function timeUp(){ if(answered)return; var it=items[qi]; streak=0;showCombo();
+  function timeUp(){ if(answered)return; var it=ROUNDS[ri].cards[ci]; streak=0;showCombo();answeredTotal++;
     lockAnswers(null,it); qCard.classList.add('wrong'); sTimeout(); flashScreen('rgba(239,68,68,.16)'); vibrate([60,40,60]);
-    qFb.className='fb no';
-    qFb.innerHTML='⏱ <b>Time’s up — combo lost.</b> That one is <b>'+LABEL[it.k]+'</b> — '+it.why;
-    qNext.className='nextbtn show'; try{TES.saveState({card:qi+1,score:score});}catch(e){} }
+    qFb.className='fb no'; qFb.innerHTML='⏱ <b>Time’s up — combo lost.</b> That one is <b>'+LABEL[it.k]+'</b> — '+it.why;
+    qNext.className='nextbtn show'; }
 
   document.querySelectorAll('.abtn').forEach(function(b){ b.addEventListener('click',function(){answer(b.dataset.choice,b);}); });
-  qNext.addEventListener('click',function(){ qi++; if(qi>=items.length)finish(); else render(); });
+  qNext.addEventListener('click',function(){ ci++; if(ci>=ROUNDS[ri].cards.length) showRoundDone(); else render(); });
 
+  /* ---- round done ---- */
+  function showRoundDone(){ cancelAnimationFrame(raf); var R=ROUNDS[ri], len=R.cards.length, flawless=(roundCorrect===len);
+    el('rdBadge').textContent=flawless?'🔥':(roundCorrect>=Math.ceil(len/2)?'✅':'📈');
+    el('rdTitle').textContent=flawless?(R.tag.split('· ')[1]+' — flawless round!'):(R.tag.split('· ')[1]+' — round cleared');
+    el('rdStats').innerHTML='<div><b>+'+roundScore.toLocaleString()+'</b>this round</div><div><b>'+roundCorrect+'/'+len+'</b>correct</div><div><b>'+score.toLocaleString()+'</b>total</div>';
+    el('rdNext').innerHTML=(ri>=ROUNDS.length-1)?'See my rank &rarr;':'Next round &rarr;';
+    show('rdone'); sRound(); if(flawless){setProg();var pr=secRect();for(var s=0;s<3;s++){(function(step){setTimeout(function(){burst(pr.width*(0.3+Math.random()*0.4),60,26);},step*160);})(s);}}
+    ri++; setProg(); }
+  el('rdNext').addEventListener('click',function(){ if(ri>=ROUNDS.length) finish(); else showRoundIntro(); });
+
+  /* ---- finale ---- */
   function rankFor(acc){
-    if(acc===12)return {b:'🏆',n:'FLAWLESS — VAULT LEGEND',big:true};
-    if(acc>=10) return {b:'🔥',n:'VAULT MASTER',big:true};
-    if(acc>=8)  return {b:'💼',n:'CLOSER',big:false};
-    if(acc>=6)  return {b:'📈',n:'RISING REP',big:false};
+    if(acc===TOTAL_CARDS)return {b:'🏆',n:'FLAWLESS — VAULT LEGEND',big:true};
+    if(acc>=TOTAL_CARDS-2) return {b:'🔥',n:'VAULT MASTER',big:true};
+    if(acc>=Math.round(TOTAL_CARDS*0.66)) return {b:'💼',n:'CLOSER',big:false};
+    if(acc>=Math.round(TOTAL_CARDS*0.5))  return {b:'📈',n:'RISING REP',big:false};
     return {b:'🎧',n:'ROOKIE',big:false};
   }
-  function finish(){ cancelAnimationFrame(raf); game.style.display='none'; done.style.display='block';
-    var rk=rankFor(correctCount);
-    el('rankBadge').innerHTML=rk.b; el('rankName').textContent=rk.n; el('finalScore').textContent=score.toLocaleString();
-    el('finalStats').innerHTML='<div><b>'+correctCount+'/12</b>accuracy</div><div><b>🔥 x'+bestStreak+'</b>best combo</div>';
-    var msgs={ 'FLAWLESS — VAULT LEGEND':'Twelve for twelve. When a partner asks, you won’t hesitate for a second. Go set the floor on fire.',
+  function finish(){ cancelAnimationFrame(raf); var rk=rankFor(correctCount);
+    el('rankBadge').textContent=rk.b; el('rankName').textContent=rk.n; el('finalScore').textContent=score.toLocaleString();
+    el('finalStats').innerHTML='<div><b>'+correctCount+'/'+TOTAL_CARDS+'</b>accuracy</div><div><b>🔥 x'+bestStreak+'</b>best combo</div>';
+    var msgs={ 'FLAWLESS — VAULT LEGEND':'Twelve for twelve across all three rounds. When a partner asks, you won’t hesitate for a second. Go set the floor on fire.',
       'VAULT MASTER':'You’ve got the reflex. A miss or two to tighten — but you’re floor‑ready.',
-      'CLOSER':'Solid. One more run on the amber cards (roadmap = direction; gated needs the play) and you’re sharp.',
+      'CLOSER':'Solid. One more run on the amber calls (roadmap = direction; gated needs the play) and you’re sharp.',
       'RISING REP':'Getting there — the boundary is starting to stick. One more run locks it in.',
       'ROOKIE':'No shame — this is exactly the drill that saves you on a live call. Run it back.' };
     el('finalMsg').textContent=msgs[rk.n];
     var prev=getBest(), isBest=!prev||score>prev.score;
     if(isBest){ setBest({score:score,acc:correctCount,combo:bestStreak});
       var nb=document.createElement('div');nb.className='newbest';nb.textContent='★ NEW PERSONAL BEST';el('finalStats').appendChild(nb); }
+    show('done');
     if(!reduce&&ctx){ sizeCanvas(); var w=canvas.width, per=rk.big?54:24;
       for(var s=0;s<5;s++){(function(step){setTimeout(function(){burst(w*(0.18+Math.random()*0.64),40+Math.random()*50,per);},step*170);})(s);} }
-    sFanfare(rk.big);
-    try{TES.complete(Math.round(correctCount/12*100));}catch(e){}
+    sFanfare(rk.big); try{TES.complete(Math.round(correctCount/TOTAL_CARDS*100));}catch(e){}
   }
 
-  el('replayBtn').addEventListener('click',function(){ qi=0;score=0;correctCount=0;streak=0;bestStreak=0;
-    qScore.textContent='0';comboWrap.classList.remove('show','hot');done.style.display='none';game.style.display='block';render(); });
+  el('replayBtn').addEventListener('click',function(){ ri=0;ci=0;score=0;correctCount=0;answeredTotal=0;streak=0;bestStreak=0;
+    qScore.textContent='0';comboWrap.classList.remove('show','hot'); showRoundIntro(); });
   el('shareBtn').addEventListener('click',function(){ var rk=rankFor(correctCount);
-    var txt='🔒 Say It or Seal It (Pax8 floor drop) — I scored '+score.toLocaleString()+' pts · '+correctCount+'/12 · 🔥 x'+bestStreak+' combo · '+rk.n+'. Beat me.';
+    var txt='🔒 Say It or Seal It (Pax8 floor drop) — I scored '+score.toLocaleString()+' pts · '+correctCount+'/'+TOTAL_CARDS+' · 🔥 x'+bestStreak+' combo · '+rk.n+'. Beat me.';
     var btn=this; function ok(){btn.innerHTML='✓ Copied!';setTimeout(function(){btn.innerHTML='↡ Copy my score';},1600);}
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,function(){window.prompt('Copy your score:',txt);});}
     else{window.prompt('Copy your score:',txt);} });
 
-  el('startBtn').addEventListener('click',function(){ var a=actx(); if(a&&a.state==='suspended')a.resume();
-    startScreen.style.display='none'; game.style.display='block'; render(); });
+  el('startBtn').addEventListener('click',function(){ var a=actx(); if(a&&a.state==='suspended')a.resume(); showRoundIntro(); });
   addEventListener('resize',function(){sizeCanvas();},{passive:true});
 })();
 
