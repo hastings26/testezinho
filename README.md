@@ -1,3 +1,24 @@
+## 🧭 MIP Compass — partner-readiness judgement game
+
+`mip-compass.html` is a five-to-eight minute game for Channel Account Managers.
+Five fictional partners, four decisions each — read their AI maturity, choose a
+commercial route, pick the next MIP play on an illustrated map, and choose the
+strongest discovery question. Partial credit throughout, because most of these
+answers are early or misaligned rather than wrong.
+
+- Interactive **MIP Landscape** — an original SVG world with the six plays
+  (Discover, Sell, Buy, Build, Implement, Manage)
+- Twelve editable scenarios, five drawn at random per mission
+- Password-gated content admin at `mip-compass-admin.html` (default `mip-admin`)
+- No build step, no dependencies, keyboard-operable, works on mobile
+
+⚠️ **The five maturity stages are placeholders** and need replacing with approved
+MIP wording before internal launch — a one-file edit, no mechanical changes.
+
+Full documentation: [`mip-compass/README.md`](mip-compass/README.md)
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
