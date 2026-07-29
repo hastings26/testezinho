@@ -663,7 +663,10 @@
       return;
     }
 
-    const base = window.location.href.replace(/mip-compass-admin\.html.*$/, 'mip-compass.html');
+    /* Works whether we are the separate admin page or the bundled single file. */
+    const base = window.location.href
+      .split('#')[0].split('?')[0]
+      .replace(/mip-compass-admin\.html$/, 'mip-compass.html');
     const list = h('div', { class: 'scenario-list' });
     tags.forEach(function (t) {
       const row = h('div', { class: 'scenario-row' });
