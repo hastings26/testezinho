@@ -4,8 +4,8 @@
 built to the "MIP for Sellers 101 experience blueprint". Open the file in a browser.
 
 **The spine is one sentence.** The learner tries to say it at minute one and fails. They are
-given it at minute three, use it six times under escalating pressure, and say it one last
-time — cold, unprompted — at minute thirty-three. Screen 10 shows their first attempt sitting
+given it a few minutes later, use it six times under escalating pressure, and say it one last
+time — cold, unprompted — in the corridor. The payoff screen shows their first attempt sitting
 above their last one. That before/after is the entire payoff; there is no score and no confetti.
 
 **Fifteen screens, ~45 minutes**, one decision each:
