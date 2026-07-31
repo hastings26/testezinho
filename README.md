@@ -134,3 +134,17 @@ Everything in `localStorage` under `questGameStateV1`. Sound preference under `q
 - F11 / fullscreen looks great
 - Click **PRESS START** to open the door — feels like a real game intro
 - Mark a checkpoint complete during the demo — the burst + level-up moment is the wow
+
+### Stakeholder documents
+
+Three companion files sit alongside the build in `mip-sellers/`:
+
+- **`MIP-for-Sellers-101_Build-Status_Kipp.pptx`** — 12-slide build-status deck, Pax8 brand, with real screenshots of the
+  running experience. Ends on the three decisions needed.
+- **`MIP-for-Sellers-101_Content-Skills-Alignment.xlsx`** — 8 sheets: alignment matrix, content and skills map, seller
+  capability matrix, review-feedback tracker, build contract and QA evidence, dependencies, and the measurement plan.
+- **`MIP-for-Sellers-101_Briefing-Note.docx`** — the written brief: what it is, why, how the review feedback was
+  addressed, what's blocked and on whom, and the decisions required.
+
+The alignment sheet's themes are **inferred from published MIP programme material, not quoted from any stakeholder
+document** — column A is built to be replaced with the real requirements. This is flagged in all three files.
