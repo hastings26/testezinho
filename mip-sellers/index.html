@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>MIP for Sellers 101 — Pax8</title>
+<style>
+/* ============================================================
+   MIP for Sellers (101) — Transformation Experience
+   Pax8 EMEA · Transformation Experience Studio
+   Single file. No CDN. No localStorage. SCORM-safe.
+   ============================================================ */
+
+:root{
+  --ink:#000000;
+  --deep:#0B1140;
+  --white:#FFFFFF;
+  --muted:#808080;
+  --blue:#1D4ED8;
+  --teal:#00D09C;
+  --card:#111318;
+  --card-deep:#141B4D;
+  --line:rgba(255,255,255,.14);
+  --font:'Plus Jakarta Sans','Nunito Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --pad:clamp(20px,5.5vw,44px);
+  --maxw:680px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--ink);
+  color:var(--white);
+  font-family:var(--font);
+  font-size:17px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+body.deep{background:var(--deep)}
+button{font:inherit;color:inherit;margin:0}
+textarea{font:inherit}
+
+/* ---------- progress rail ---------- */
+.rail{
+  position:fixed;top:0;left:0;right:0;height:3px;
+  background:rgba(255,255,255,.08);z-index:60;
+  transition:opacity .3s ease;
+}
+.rail.off{opacity:0}
+.rail i{
+  display:block;height:100%;width:0;
+  background:var(--teal);
+  transition:width .5s cubic-bezier(.2,.7,.2,1);
+}
+
+/* ---------- persistent chrome ---------- */
+.chrome{
+  position:fixed;left:0;right:0;bottom:0;z-index:55;
+  display:flex;align-items:center;gap:14px;
+  padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));
+  pointer-events:none;
+  background:linear-gradient(to top,rgba(0,0,0,.85),rgba(0,0,0,0));
+}
+body.deep .chrome{background:linear-gradient(to top,rgba(11,17,64,.9),rgba(11,17,64,0))}
+.chrome svg{width:38px;height:auto;flex:none;opacity:.9}
+.chrome .copy{
+  font-size:10px;font-style:italic;color:var(--muted);
+  margin:0 auto 0 0;transform:translateY(1px);
+}
+
+/* ---------- stage / screens ---------- */
+.stage{position:relative}
+.screen{
+  display:none;
+  min-height:100vh;min-height:100svh;
+  padding:clamp(56px,12vh,110px) var(--pad) 108px;
+}
+.screen.on{display:block}
+.wrap{max-width:var(--maxw);margin:0 auto}
+.wrap.center{text-align:center}
+
+/* ---------- motion: one language only ---------- */
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.rise{opacity:0;animation:rise 240ms cubic-bezier(.2,.7,.2,1) forwards}
+@media (prefers-reduced-motion:reduce){
+  .rise{animation-duration:1ms}
+  .rail i{transition:none}
+}
+
+/* ---------- type ---------- */
+h1,h2,h3,p,ul{margin:0}
+.kicker{
+  font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:14px;
+}
+.kicker.blue{color:#8FB0FF}
+h1{font-size:clamp(32px,7.6vw,52px);font-weight:800;line-height:1.08;letter-spacing:-.02em}
+h2{font-size:clamp(25px,5.6vw,36px);font-weight:800;line-height:1.14;letter-spacing:-.015em}
+h3{font-size:19px;font-weight:700;line-height:1.3}
+.lede{font-size:clamp(17px,2.6vw,19px);color:rgba(255,255,255,.82);margin-top:16px}
+.sub{font-size:15px;color:var(--muted);margin-top:14px}
+.small{font-size:13px;color:var(--muted)}
+.tiny{font-size:12px;color:var(--muted);font-style:italic}
+.stack>*+*{margin-top:20px}
+.stack-s>*+*{margin-top:12px}
+strong{font-weight:800}
+
+/* rainbow line — used exactly twice: screen 0 and screen 10 */
+.rainbow{
+  height:4px;border-radius:2px;margin:26px auto;max-width:340px;
+  background:linear-gradient(90deg,#1D4ED8,#00D09C,#22C55E,#8B5CF6,#EC4899,#F472B6,#EAB308,#EF4444);
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  -webkit-appearance:none;appearance:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:56px;padding:16px 30px;
+  border-radius:999px;border:0;cursor:pointer;
+  background:var(--blue);color:#fff;
+  font-size:16px;font-weight:700;letter-spacing:.01em;
+  transition:transform .16s ease,opacity .16s ease,background .16s ease;
+  touch-action:manipulation;
+}
+.btn:hover{background:#2A5BE8}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.32)}
+.btn.ghost:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+.btn.teal{background:var(--teal);color:#04201A}
+.btn.teal:hover{background:#25E3B3}
+.btn[disabled]{opacity:.32;pointer-events:none}
+.btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn-row.c{justify-content:center}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
+/* headings are focus targets for screen readers only — never show a ring on them */
+[tabindex="-1"]:focus,[tabindex="-1"]:focus-visible{outline:none}
+
+/* ---------- the motif: partner left / you right ---------- */
+.said{max-width:88%;padding:18px 20px;border-radius:16px;font-size:17px;line-height:1.45}
+.said.partner{
+  background:var(--card);color:#fff;
+  border:1px solid var(--line);border-left:3px solid rgba(255,255,255,.5);
+  border-radius:16px 16px 16px 4px;margin-right:auto;
+}
+body.deep .said.partner{background:rgba(255,255,255,.07)}
+.said.you{
+  background:var(--blue);color:#fff;
+  border-radius:16px 16px 4px 16px;margin-left:auto;
+}
+.said .who{
+  display:block;font-size:10px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;opacity:.55;margin-bottom:8px;
+}
+.said.think{
+  background:transparent;border:1px dashed rgba(255,255,255,.28);
+  color:rgba(255,255,255,.72);font-style:italic;
+  margin-left:auto;border-radius:16px;
+}
+
+/* ---------- tap options ---------- */
+.opts{display:grid;gap:10px;margin-top:20px}
+.opt{
+  -webkit-appearance:none;appearance:none;
+  display:block;width:100%;text-align:left;
+  min-height:60px;padding:16px 18px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line);border-radius:14px;
+  color:#fff;font-size:16px;line-height:1.4;font-weight:600;
+  cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .15s ease;
+  touch-action:manipulation;
+}
+.opt:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.34)}
+.opt:active{transform:scale(.99)}
+.opt.picked{border-color:var(--blue);background:rgba(29,78,216,.24)}
+.opt.right{border-color:var(--teal);background:rgba(0,208,156,.14)}
+.opts.done .opt{pointer-events:none}
+.opts.done .opt:not(.picked):not(.right){opacity:.34}
+
+/* ---------- feedback ---------- */
+.fb{
+  margin-top:18px;padding:16px 18px;border-radius:12px;
+  background:rgba(255,255,255,.05);border-left:3px solid var(--teal);
+  font-size:16px;line-height:1.45;
+}
+.fb .pt{display:block;margin-top:10px;font-size:13px;color:var(--teal);font-weight:700}
+.fb.blue{border-left-color:var(--blue)}
+
+/* ---------- misc blocks ---------- */
+.box{
+  padding:22px;border-radius:16px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+}
+.box.teal{border-color:rgba(0,208,156,.45);background:rgba(0,208,156,.09)}
+.rule{height:1px;background:var(--line);margin:34px 0}
+.hide{display:none !important}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:26px}
+.grid2 div{background:#0A0C10;padding:14px 16px;font-size:15px}
+body.deep .grid2 div{background:var(--deep)}
+.grid2 .hd{font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.grid2 .hd.mip{color:var(--teal)}
+
+/* ---------- press and hold ---------- */
+.hold{
+  position:relative;overflow:hidden;
+  width:100%;min-height:64px;
+  border:1px solid rgba(0,208,156,.5);border-radius:999px;
+  background:rgba(0,208,156,.08);color:#fff;
+  font-size:16px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  touch-action:none;user-select:none;-webkit-user-select:none;
+}
+.hold .fill{
+  position:absolute;left:0;top:0;bottom:0;width:0;
+  background:var(--teal);opacity:.28;
+}
+.hold .lbl{position:relative;z-index:1;padding:0 18px;text-align:center}
+.hold.done{border-color:var(--teal);background:rgba(0,208,156,.2);cursor:default}
+
+/* ---------- free text ---------- */
+.ta{
+  width:100%;min-height:150px;padding:18px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line);border-radius:14px;
+  color:#fff;font-size:17px;line-height:1.5;resize:vertical;
+}
+.ta::placeholder{color:rgba(255,255,255,.3)}
+.ta:focus{outline:none;border-color:var(--blue);background:rgba(255,255,255,.07)}
+
+/* ---------- placement tool ---------- */
+.place{margin-top:24px;padding:20px;border-radius:16px;border:1px dashed rgba(255,255,255,.24);text-align:center}
+.place .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.place .name{font-size:26px;font-weight:800;margin-top:8px;color:rgba(255,255,255,.35)}
+.place.live{border-style:solid;border-color:var(--teal);background:rgba(0,208,156,.09)}
+.place.live .name{color:var(--teal)}
+.place .move{margin-top:10px;font-size:16px;color:rgba(255,255,255,.85)}
+
+/* ---------- the door diagram ---------- */
+.door{margin:30px 0;text-align:center}
+.door .node{
+  display:inline-block;padding:16px 24px;border-radius:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,.05);
+}
+.door .node.top{border-color:var(--teal);background:rgba(0,208,156,.1)}
+.door .node .t{font-weight:800;font-size:16px;letter-spacing:.01em}
+.door .node .d{font-size:12px;color:var(--muted);margin-top:5px}
+.door .stem{width:1px;height:26px;background:var(--line);margin:0 auto}
+/* two routes stay two routes at every width — never a stacked list */
+.door .branch{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:28px}
+.door .branch::before{content:'';position:absolute;top:0;left:25%;right:25%;height:1px;background:var(--line)}
+.door .branch>.node{position:relative;display:flex;flex-direction:column;justify-content:center;padding:16px 12px}
+.door .branch>.node::before{content:'';position:absolute;top:-28px;left:50%;width:1px;height:28px;background:var(--line)}
+
+/* ---------- record builder ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.chip{
+  -webkit-appearance:none;appearance:none;
+  min-height:48px;padding:12px 18px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(255,255,255,.05);
+  color:#fff;font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation;
+}
+.chip:hover{background:rgba(255,255,255,.1)}
+.chip.used{opacity:.28;pointer-events:none}
+.rec{margin-top:22px;padding:20px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.rec .row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+.rec .row:last-child{border-bottom:0}
+.rec .row b{font-weight:700;color:var(--muted);font-size:13px;letter-spacing:.02em}
+.rec .row span{color:rgba(255,255,255,.28);text-align:right}
+.rec .row.set span{color:var(--teal);font-weight:700}
+
+/* ---------- insertion zone ---------- */
+.zone{
+  margin-top:26px;padding:18px 20px;border-radius:12px;
+  border:1px dashed rgba(234,179,8,.55);background:rgba(234,179,8,.06);
+}
+.zone .z{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#EAB308}
+.zone p{font-size:14px;color:rgba(255,255,255,.72);margin-top:8px}
+
+/* ---------- transcript ---------- */
+.script{display:grid;gap:12px;margin-top:22px}
+.script .said{font-size:15px;padding:14px 16px}
+
+/* ---------- screen 9: the corridor ---------- */
+#s9{padding-top:clamp(70px,16vh,150px)}
+#s9 .scene{font-size:clamp(18px,3.4vw,21px);line-height:1.55;color:rgba(255,255,255,.66);font-style:italic}
+
+/* ---------- screen 10: the payoff ---------- */
+.then{
+  padding:18px 20px;border-radius:14px;border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.42);font-size:15px;line-height:1.45;
+}
+.now{
+  padding:24px;border-radius:16px;border:1px solid rgba(0,208,156,.4);
+  background:rgba(0,208,156,.07);
+  color:#fff;font-size:clamp(19px,3.4vw,23px);font-weight:600;line-height:1.4;
+}
+.stamp{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.stamp.teal{color:var(--teal)}
+
+/* ---------- keep cards ---------- */
+.keep{display:grid;gap:14px;margin-top:26px}
+.keep .k{padding:20px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.keep .k .n{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
+.keep .k h3{margin-top:8px}
+.keep .k p{font-size:15px;color:rgba(255,255,255,.75);margin-top:8px}
+.quote-card{margin-top:14px;padding:16px;border-radius:12px;background:rgba(29,78,216,.2);border:1px solid rgba(29,78,216,.5);font-size:16px;font-weight:600;line-height:1.45}
+.mini{min-height:46px;padding:11px 20px;font-size:14px;margin-top:14px}
+
+/* ---------- print-only rep card ---------- */
+#repcard{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  .rail,.chrome,.stage{display:none !important}
+  #repcard{display:block;font-size:11pt;padding:0}
+  #repcard h1{font-size:20pt;color:#000}
+  #repcard h2{font-size:13pt;margin-top:16pt;color:#1D4ED8}
+  #repcard p,#repcard li{font-size:10.5pt;line-height:1.4}
+  #repcard ul{padding-left:16pt}
+  #repcard .q{border-left:3px solid #1D4ED8;padding-left:10pt;font-weight:700}
+}
+
+@media (max-width:400px){
+  .door .node .t{font-size:14px}
+  .door .node .d{font-size:11px}
+  .door .branch{gap:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="rail" id="rail"><i id="railFill"></i></div>
+
+<main class="stage" id="stage">
+
+<!-- ══════════════════════════════ SCREEN 0 · ENTRY ══════════════════════════════ -->
+<section class="screen" id="s0" aria-label="Start">
+  <div class="wrap center stack">
+    <div class="rise">
+      <svg viewBox="0 0 120 70" width="54" aria-hidden="true">
+        <path d="M20 58 A16 16 0 0 1 22 28 A23 23 0 0 1 64 22 A18 18 0 0 1 96 34 A13 13 0 0 1 98 58 Z"
+              fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+        <text x="59" y="51" text-anchor="middle" font-size="21" font-weight="800" fill="#fff">pax8</text>
+      </svg>
+    </div>
+    <h1 class="rise" tabindex="-1">“So what’s this Managed Intelligence thing?”</h1>
+    <div class="rainbow rise"></div>
+    <p class="sub rise">A partner will ask you this in Copenhagen.<br>This takes 34 minutes.</p>
+    <div class="btn-row c rise"><button class="btn" data-go="1">Start</button></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 1 · THE 60-SECOND TEST ══════════════════════════════ -->
+<section class="screen" id="s1" aria-label="The 60-second test">
+  <div class="wrap stack">
+    <p class="kicker rise">Module 1</p>
+    <h2 class="rise" tabindex="-1">Before anything else — in one sentence, what is a Managed Intelligence Provider?</h2>
+    <p class="lede rise">Type it as you’d say it to a partner.</p>
+    <div class="rise">
+      <textarea class="ta" id="ans1" placeholder="A Managed Intelligence Provider is…" aria-label="Your one-sentence definition"></textarea>
+      <p class="tiny" style="margin-top:10px">No one sees this but you. It comes back at the end.</p>
+    </div>
+    <div class="btn-row rise"><button class="btn" id="lock1" disabled>Lock it in</button></div>
+    <div id="held1" class="hide">
+      <p class="lede rise" style="font-style:italic;font-size:22px">“Hold that thought.”</p>
+      <div class="btn-row rise"><button class="btn ghost" data-go="2">Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 2 · THE SENTENCE ══════════════════════════════ -->
+<section class="screen" id="s2" aria-label="The sentence">
+  <div class="wrap stack">
+    <p class="kicker rise">Module 1</p>
+    <h2 id="s2a" class="hide" tabindex="-1">A Managed Intelligence Provider goes beyond infrastructure support and ticket resolution.</h2>
+    <h2 id="s2b" class="hide">Instead of software, you deploy intelligence and manage outcomes.</h2>
+    <div id="s2c" class="hide">
+      <div class="box teal">
+        <p class="stamp teal">The corridor version</p>
+        <p style="font-size:clamp(20px,4vw,26px);font-weight:800;line-height:1.28">“You manage their IT. Now you manage their intelligence.”</p>
+      </div>
+      <p class="tiny" style="margin-top:12px">Pax8’s own published definition. This is the wording our partners can already read.</p>
+    </div>
+
+    <div id="s2d" class="hide">
+      <button class="hold" id="hold" aria-label="Press and hold for three seconds while you say the sentence out loud">
+        <i class="fill" id="holdFill"></i>
+        <span class="lbl" id="holdLbl">Hold while you say it out loud</span>
+      </button>
+      <p class="tiny" style="margin-top:10px;text-align:center" id="holdHint">Three seconds. Out loud. Yes, really.</p>
+    </div>
+
+    <div id="s2e" class="hide">
+      <div class="grid2">
+        <div class="hd">MSP</div><div class="hd mip">MIP</div>
+        <div>Reactive</div><div>Proactive</div>
+        <div>Deploys software</div><div>Deploys intelligence</div>
+        <div>Manages tickets</div><div>Manages outcomes</div>
+      </div>
+      <p class="lede" style="margin-top:24px"><strong>You’re not becoming a consultancy. You’re becoming a more valuable MSP.</strong></p>
+      <div class="btn-row"><button class="btn" data-go="3">Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 3 · WHAT THEY'RE REALLY AFRAID OF ══════════════════════════════ -->
+<section class="screen" id="s3" aria-label="What they are really afraid of">
+  <div class="wrap stack">
+    <p class="kicker rise">Module 2</p>
+    <h2 class="rise" tabindex="-1">What they’re really afraid of</h2>
+    <p class="lede rise">Every MIP conversation reduces risk, buys back time, or grows the business. If it does none of those, it isn’t a MIP conversation.</p>
+    <div class="rule rise"></div>
+    <div id="q3" aria-live="polite"></div>
+    <div id="s3end" class="hide stack">
+      <div class="box teal rise">
+        <p style="font-size:18px;line-height:1.45"><strong>A CAM who hears the fear stops arguing and starts helping.</strong> That single shift does more than any product knowledge.</p>
+      </div>
+      <p class="lede rise">Nearly nine in ten small businesses are already using or experimenting with AI. Almost none have a strategy. <strong>That gap is the whole opportunity.</strong></p>
+      <div class="btn-row rise"><button class="btn" data-go="4">Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 4 · HEAR THEIR LEVEL ══════════════════════════════ -->
+<section class="screen" id="s4" aria-label="Hear their level">
+  <div class="wrap stack">
+    <p class="kicker rise">Module 3</p>
+    <h2 class="rise" tabindex="-1">You don’t need to define these four levels. You need to hear them.</h2>
+    <div class="rule rise"></div>
+    <div id="q4" aria-live="polite"></div>
+    <div id="s4end" class="hide">
+      <div class="btn-row rise"><button class="btn" data-go="5">Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 5 · TWO QUESTIONS ══════════════════════════════ -->
+<section class="screen" id="s5" aria-label="Two questions that place them">
+  <div class="wrap stack">
+    <p class="kicker rise">Module 4</p>
+    <h2 class="rise" tabindex="-1">You don’t need a framework. You need two questions.</h2>
+    <div class="rise stack-s">
+      <div class="said you"><span class="who">You ask</span>“Does anyone in your leadership team own AI as a priority — or is it still left to individual technicians?”</div>
+      <div class="said you"><span class="who">You ask</span>“Have you sold any AI service to a client, even once? What did you charge?”</div>
+    </div>
+    <div class="rule rise"></div>
+    <p class="small rise" id="p5round">Partner one. Pick what they say back.</p>
+    <div id="p5q1"></div>
+    <div id="p5q2"></div>
+    <div class="place" id="p5out">
+      <p class="lab">Where they sit</p>
+      <p class="name" id="p5name">—</p>
+      <p class="move" id="p5move">Answer both questions and this resolves.</p>
+    </div>
+    <div id="p5again" class="hide"><div class="btn-row"><button class="btn ghost" id="p5re">Run it again — different partner</button></div></div>
+    <div id="s5end" class="hide"><div class="btn-row"><button class="btn" data-go="6">Continue</button></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 6 · CONVERSATION ONE ══════════════════════════════ -->
+<section class="screen" id="s6" aria-label="Conversation one"><div class="wrap"><div id="conv1"></div></div></section>
+
+<!-- ══════════════════════════════ SCREEN 7 · CONVERSATION TWO ══════════════════════════════ -->
+<section class="screen" id="s7" aria-label="Conversation two"><div class="wrap"><div id="conv2"></div></div></section>
+
+<!-- ══════════════════════════════ SCREEN 8 · ONE DOOR, TWO ROUTES ══════════════════════════════ -->
+<section class="screen" id="s8" aria-label="One door, two routes">
+  <div class="wrap stack">
+    <p class="kicker rise">Module 6</p>
+    <h2 class="rise" tabindex="-1">One door, two routes</h2>
+
+    <div class="door rise">
+      <div class="node top"><div class="t">Agent Store</div><div class="d">the entry point</div></div>
+      <div class="stem"></div>
+      <div class="branch">
+        <div class="node"><div class="t">MIP Program</div><div class="d">they build it</div></div>
+        <div class="node"><div class="t">Managed Intelligence Services</div><div class="d">Pax8 ProServ delivers</div></div>
+      </div>
+    </div>
+
+    <div class="box rise">
+      <p style="font-size:18px;line-height:1.45">“I like this but I don’t have the people” → <strong>that’s MIS.</strong></p>
+      <p class="small" style="margin-top:10px">It is the single most useful sentence on this screen.</p>
+    </div>
+
+    <div class="rule rise"></div>
+
+    <h2 class="rise">A conversation that isn’t logged didn’t happen.</h2>
+    <p class="lede rise">Log the partner you just left. Four taps — tap only what belongs in the record.</p>
+    <div class="chips rise" id="recChips"></div>
+    <div class="rec rise" id="recOut"></div>
+    <div id="recDone" class="hide">
+      <div class="box teal rise"><p style="font-size:17px">That’s the whole record. Four things, under a minute, and the pipeline is real.</p></div>
+      <div class="zone rise">
+        <p class="z">Insertion zone — awaiting RevOps</p>
+        <p>Exact PBF / Salesforce logging steps to be inserted here once RevOps confirms the fields and the path. Deliberately not invented.</p>
+      </div>
+      <div class="btn-row rise"><button class="btn" data-go="9">Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 9 · THE CORRIDOR ══════════════════════════════ -->
+<section class="screen" id="s9" aria-label="The corridor">
+  <div class="wrap stack">
+    <p class="scene rise" tabindex="-1">You’re in the Bella Center. Coffee in one hand. Someone you half-recognise walks over.</p>
+    <div class="said partner rise" style="font-size:clamp(20px,4vw,25px);font-weight:700;line-height:1.32">
+      <span class="who">They say</span>“So what’s this Managed Intelligence thing everyone’s on about?”
+    </div>
+    <div class="rise">
+      <textarea class="ta" id="ans9" placeholder="" aria-label="What you say"></textarea>
+    </div>
+    <div class="btn-row rise"><button class="btn" id="say9" disabled>Say it.</button></div>
+    <div id="s9end" class="hide">
+      <div class="box teal rise">
+        <p style="font-size:18px;line-height:1.5">That’s the one you’ll need. If you’re ever not sure — <strong>you don’t invent.</strong> You hand it to someone who knows, and you take their details.</p>
+      </div>
+      <div class="btn-row rise"><button class="btn" data-go="10">Continue</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 10 · YOUR TWO ANSWERS ══════════════════════════════ -->
+<section class="screen" id="s10" aria-label="Your two answers">
+  <div class="wrap stack">
+    <div class="rise">
+      <p class="stamp">34 minutes ago</p>
+      <div class="then" id="was">—</div>
+    </div>
+    <div class="rise">
+      <p class="stamp teal">Just now</p>
+      <div class="now" id="now">—</div>
+    </div>
+    <div class="rainbow rise"></div>
+    <h2 class="rise" style="text-align:center" tabindex="-1">That’s the difference this made.</h2>
+    <div class="btn-row c hide" id="s10btn"><button class="btn" data-go="11">Continue</button></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCREEN 11 · WHAT YOU KEEP ══════════════════════════════ -->
+<section class="screen" id="s11" aria-label="What you keep">
+  <div class="wrap stack">
+    <p class="kicker rise">What you keep</p>
+    <h2 class="rise" tabindex="-1">Three things. No more.</h2>
+
+    <div class="keep">
+      <div class="k rise">
+        <p class="n">01</p>
+        <h3>The sentence</h3>
+        <div class="quote-card" id="sentence">You manage their IT. Now you manage their intelligence. A Managed Intelligence Provider goes beyond infrastructure support and ticket resolution — instead of software, you deploy intelligence and manage outcomes.</div>
+        <button class="btn teal mini" id="copyBtn">Copy to clipboard</button>
+      </div>
+
+      <div class="k rise">
+        <p class="n">02</p>
+        <h3>The rep card</h3>
+        <p>One page: the three drivers, the four levels, the two questions, the two routes, and the handoff rule.</p>
+        <div class="zone" style="margin-top:16px">
+          <p class="z">Insertion zone — rep card PDF</p>
+          <p>The designed one-page PDF drops in here. Until it lands, the interim card below prints from this page.</p>
+        </div>
+        <button class="btn ghost mini" id="printBtn">Print the interim card</button>
+      </div>
+
+      <div class="k rise">
+        <p class="n">03</p>
+        <h3>What’s next</h3>
+        <p>The podcast · the assistant · the 201 lab.</p>
+        <p style="color:var(--teal);font-weight:700;margin-top:12px">Beyond Copenhagen · 18–20 October</p>
+      </div>
+    </div>
+
+    <div class="box rise" style="margin-top:26px">
+      <p style="font-size:18px;line-height:1.5">You’re not expected to know everything. You’re expected to <strong>open the conversation</strong> — and never invent an answer.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="chrome">
+  <svg viewBox="0 0 120 70" aria-label="Pax8">
+    <path d="M20 58 A16 16 0 0 1 22 28 A23 23 0 0 1 64 22 A18 18 0 0 1 96 34 A13 13 0 0 1 98 58 Z"
+          fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+    <text x="59" y="52" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">pax8</text>
+  </svg>
+  <p class="copy">Copyright ©2026 Pax8 | All rights reserved</p>
+</footer>
+
+<!-- print-only interim rep card -->
+<div id="repcard">
+  <h1>MIP for Sellers — rep card</h1>
+  <h2>The sentence</h2>
+  <p class="q">You manage their IT. Now you manage their intelligence.</p>
+  <p>A Managed Intelligence Provider goes beyond infrastructure support and ticket resolution. Instead of software, you deploy intelligence and manage outcomes.</p>
+  <h2>The three drivers</h2>
+  <p>Every MIP conversation reduces risk, buys back time, or grows the business. If it does none of those, it isn’t a MIP conversation.</p>
+  <h2>The four levels — hear them, don’t define them</h2>
+  <ul>
+    <li><b>Chatbots</b> — individuals prompting tools. → Education first.</li>
+    <li><b>Assistants</b> — AI inside a workflow, suggesting. → Agent Store.</li>
+    <li><b>Digital Labor</b> — work completed end to end. → Build offers.</li>
+    <li><b>Digital Workforce</b> — multiple functions running. → Outcome pricing. Bring help.</li>
+  </ul>
+  <h2>The two questions that place anyone</h2>
+  <ul>
+    <li>“Does anyone in your leadership team own AI as a priority — or is it still left to individual technicians?”</li>
+    <li>“Have you sold any AI service to a client, even once? What did you charge?”</li>
+  </ul>
+  <p><b>Early Discovery</b> (no owner, no sales) — education first, don’t lead with product.<br>
+     <b>Exploring</b> (champion or pilots, no revenue) — Agent Store bundles + a ProServ pilot.<br>
+     <b>Investing</b> (named owner, budget, revenue) — deeper conversation, bring help.</p>
+  <h2>One door, two routes</h2>
+  <p>Agent Store is the entry point. From there: <b>MIP Program</b> (they build it) or <b>Managed Intelligence Services</b> (Pax8 ProServ delivers). “I like this but I don’t have the people” → that’s MIS.</p>
+  <h2>Log it</h2>
+  <p>Partner name · roughly where they are · what you offered · what you owe them. A conversation that isn’t logged didn’t happen.</p>
+  <h2>The handoff rule</h2>
+  <p class="q">You don’t invent. You hand it to someone who knows, and you take their details.</p>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ═══════════════════ SCORM / TES CONTRACT ═══════════════════
+   Stubs only — a wrapper may define window.TES first and we never clobber it.
+   Every call also fires a matching CustomEvent. No localStorage anywhere. */
+var ns = window.TES = window.TES || {};
+if(!ns.ready)     ns.ready     = function(){ return null; };
+if(!ns.saveState) ns.saveState = function(){ return false; };
+if(!ns.loadState) ns.loadState = function(){ return null; };
+if(!ns.complete)  ns.complete  = function(){ return false; };
+
+function fire(name, detail){
+  try{ document.dispatchEvent(new CustomEvent(name,{detail:detail})); }catch(e){}
+}
+function tesReady(){
+  var restored = null;
+  try{ restored = ns.ready(); }catch(e){}
+  fire('tes:ready');
+  if(restored == null){ try{ restored = ns.loadState(); }catch(e){} }
+  return restored;
+}
+function tesSave(){
+  var st = {v:1, screen:S.screen, first:S.first, last:S.last};
+  try{ ns.saveState(st); }catch(e){}
+  fire('tes:progress',{state:st});
+}
+var completed = false;
+function tesComplete(score){
+  if(completed) return; completed = true;
+  try{ ns.complete(score); }catch(e){}
+  fire('tes:complete',{score:score});
+}
+
+/* ═══════════════════ STATE (in memory only) ═══════════════════ */
+var S = { screen:0, first:'', last:'' };
+var SCREENS = 12;
+
+/* ═══════════════════ HELPERS ═══════════════════ */
+function $(sel,root){ return (root||document).querySelector(sel); }
+function el(tag,cls,html){
+  var n=document.createElement(tag);
+  if(cls) n.className=cls;
+  if(html!=null) n.innerHTML=html;
+  return n;
+}
+function esc(s){
+  return String(s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+  });
+}
+/* re-trigger the one motion language on anything newly visible */
+function play(root){
+  var items = root.querySelectorAll('.rise');
+  for(var i=0;i<items.length;i++){
+    var n = items[i];
+    n.style.animation='none';
+    /* jshint -W030 */ n.offsetHeight; /* jshint +W030 */
+    n.style.animation='';
+    n.style.animationDelay = Math.min(i*70,420)+'ms';
+  }
+}
+function reveal(node,delay){
+  window.setTimeout(function(){
+    node.classList.remove('hide');
+    if(node.querySelectorAll('.rise').length){
+      play(node);                      /* children carry the motion */
+    } else {
+      node.classList.add('rise');      /* the node itself carries it */
+      node.style.animation='none';
+      /* jshint -W030 */ node.offsetHeight; /* jshint +W030 */
+      node.style.animation='';
+    }
+  }, delay||0);
+}
+
+/* ═══════════════════ ROUTER ═══════════════════ */
+function go(n){
+  n = Math.max(0, Math.min(SCREENS-1, n));
+  var cur = document.querySelector('.screen.on');
+  if(cur) cur.classList.remove('on');
+  var next = document.getElementById('s'+n);
+  next.classList.add('on');
+  S.screen = n;
+
+  /* conversation screens are a different place */
+  document.body.classList.toggle('deep', n===6 || n===7);
+
+  /* the corridor shows no navigation */
+  document.getElementById('rail').classList.toggle('off', n===0 || n===9);
+  document.getElementById('railFill').style.width = (n/(SCREENS-1)*100)+'%';
+
+  window.scrollTo(0,0);
+  play(next);
+  var h = next.querySelector('[tabindex="-1"]');
+  if(h) { try{ h.focus({preventScroll:true}); }catch(e){ h.focus(); } }
+
+  if(ENTER[n]) ENTER[n]();
+  tesSave();
+}
+document.addEventListener('click', function(e){
+  var t = e.target.closest ? e.target.closest('[data-go]') : null;
+  if(t) go(parseInt(t.getAttribute('data-go'),10));
+});
+
+/* ═══════════════════ SCREEN 1 · THE 60-SECOND TEST ═══════════════════ */
+var ans1 = $('#ans1'), lock1 = $('#lock1');
+ans1.addEventListener('input', function(){ lock1.disabled = !ans1.value.trim(); });
+lock1.addEventListener('click', function(){
+  S.first = ans1.value.trim();
+  ans1.setAttribute('readonly','readonly');
+  lock1.classList.add('hide');
+  reveal($('#held1'), 260);   /* no marking. no feedback. */
+  tesSave();
+});
+
+/* ═══════════════════ SCREEN 2 · THE SENTENCE ═══════════════════ */
+var s2started = false;
+function enter2(){
+  if(s2started) return; s2started = true;
+  reveal($('#s2a'), 200);
+  reveal($('#s2b'), 1100);
+  reveal($('#s2c'), 2200);
+  reveal($('#s2d'), 3100);
+}
+
+/* press-and-hold — three seconds, out loud, deliberately awkward */
+(function(){
+  var btn=$('#hold'), fill=$('#holdFill'), lbl=$('#holdLbl'), hint=$('#holdHint');
+  var HOLD=3000, t0=0, raf=0, done=false, keyDown=false;
+
+  function tick(){
+    var p = Math.min(1, (Date.now()-t0)/HOLD);
+    fill.style.width = (p*100)+'%';
+    if(p>=1){ finish(); return; }
+    raf = window.requestAnimationFrame(tick);
+  }
+  function start(){
+    if(done) return;
+    t0 = Date.now();
+    hint.textContent = 'Keep holding. Say it.';
+    raf = window.requestAnimationFrame(tick);
+  }
+  function stop(){
+    if(done) return;
+    window.cancelAnimationFrame(raf);
+    fill.style.width='0%';
+    hint.textContent = 'Let go too early. Three full seconds.';
+  }
+  function finish(){
+    done = true;
+    window.cancelAnimationFrame(raf);
+    fill.style.width='100%';
+    btn.classList.add('done');
+    lbl.textContent = 'Said out loud. Good.';
+    hint.textContent = 'That is the only version you need to remember.';
+    reveal($('#s2e'), 320);
+  }
+  btn.addEventListener('pointerdown', function(e){ e.preventDefault(); btn.setPointerCapture && btn.setPointerCapture(e.pointerId); start(); });
+  btn.addEventListener('pointerup', stop);
+  btn.addEventListener('pointercancel', stop);
+  btn.addEventListener('pointerleave', stop);
+  btn.addEventListener('keydown', function(e){
+    if((e.key===' '||e.key==='Enter') && !keyDown){ e.preventDefault(); keyDown=true; start(); }
+  });
+  btn.addEventListener('keyup', function(e){
+    if(e.key===' '||e.key==='Enter'){ keyDown=false; stop(); }
+  });
+})();
+
+/* ═══════════════════ SHARED · SEQUENTIAL TAP QUIZ ═══════════════════
+   One item at a time. Wrong answers explain and continue — never block.
+   No score is kept and none is shown. */
+function runQuiz(mount, items, onEnd){
+  var host = $(mount); host.innerHTML=''; var i=0;
+
+  function step(){
+    if(i >= items.length){ onEnd(); return; }
+    var it = items[i];
+    var block = el('div','stack');
+    block.style.marginBottom='34px';
+
+    var said = el('div','said partner rise','<span class="who">A partner says</span>'+esc(it.say));
+    block.appendChild(said);
+
+    var opts = el('div','opts rise');
+    it.options.forEach(function(o,idx){
+      var b = el('button','opt', esc(o.t));
+      b.type='button';
+      b.addEventListener('click', function(){
+        opts.classList.add('done');
+        b.classList.add(idx===it.answer ? 'right' : 'picked');
+        if(idx!==it.answer) opts.children[it.answer].classList.add('right');
+        var fb = el('div','fb rise','<span>'+esc(o.fb)+'</span>'+(it.point?'<span class="pt">Where it points: '+esc(it.point)+'</span>':''));
+        block.appendChild(fb); play(fb);
+        i++;
+        window.setTimeout(step, 420);
+      });
+      opts.appendChild(b);
+    });
+    block.appendChild(opts);
+    host.appendChild(block);
+    play(block);
+  }
+  step();
+}
+
+/* ── SCREEN 3 · match the fear ── */
+var FEARS = [
+  { say:'We’re not ready for this yet.', answer:1,
+    options:[
+      {t:'Not interested', fb:'Not it — “not ready” almost never means “not interested”. It means they don’t want to be seen getting it wrong.'},
+      {t:'Fear of getting it wrong', fb:'That’s the one. “Not ready” is fear of being exposed, not lack of appetite.'},
+      {t:'Too busy',        fb:'Busy is the cover story. Underneath it is the fear of getting it wrong in front of their clients.'}
+    ]},
+  { say:'Which platform should we be betting on?', answer:1,
+    options:[
+      {t:'Wants a demo',    fb:'No — nobody asks for a bet when they want a demo. They’re asking you to de-risk a decision.'},
+      {t:'Fear of backing the wrong horse', fb:'Yes. The word “betting” gave it away. They’re afraid of choosing wrong in public.'},
+      {t:'Price shopping',  fb:'Not price — the word is “betting”. That’s fear of backing the wrong horse.'}
+    ]},
+  { say:'How would we even charge for this?', answer:1,
+    options:[
+      {t:'Not commercial',  fb:'The opposite — they’re thinking commercially. They just can’t see how the money works yet.'},
+      {t:'Fear of sunk cost', fb:'Right. They can picture spending on it. They can’t picture getting it back.'},
+      {t:'Wants a discount', fb:'Not a discount — they’re asking how the revenue works at all. That’s sunk-cost fear.'}
+    ]}
+];
+
+/* ── SCREEN 4 · hear the level ── */
+var LEVELS = ['Chatbots','Assistants','Digital Labor','Digital Workforce'];
+function lvlOptions(fbs){
+  return LEVELS.map(function(name,ix){ return {t:name, fb:fbs[ix]}; });
+}
+var HEARS = [
+  { say:'We use Copilot to draft emails.', answer:0, point:'Education. Don’t lead with product.',
+    options: lvlOptions([
+      'Chatbots. Individual people, individual prompts, nothing joined up.',
+      'Higher than they are — an assistant sits inside a workflow. People typing prompts is Chatbots.',
+      'Well above them — nothing is being completed here. That’s Chatbots.',
+      'Nowhere near — a workforce runs functions. Drafting emails is Chatbots.'
+    ])},
+  { say:'AI summarises our service-desk tickets automatically.', answer:1, point:'Agent Store — small, specific agents.',
+    options: lvlOptions([
+      'Above that — nobody is prompting it, it runs on its own. That’s Assistants.',
+      'Assistants. It sits inside a workflow and does one useful thing without being asked.',
+      'Not yet — summarising isn’t resolving. Labor means the work gets finished.',
+      'Too far — one helpful step inside a workflow is Assistants.'
+    ])},
+  { say:'We’ve got AI closing Level 1 tickets end to end and feeding our PSA.', answer:2, point:'Building offers. This partner can package.',
+    options: lvlOptions([
+      'Far past that — no one is typing prompts. Closing tickets end to end is Digital Labor.',
+      'Beyond assisting — an assistant suggests, this one closes. Digital Labor.',
+      'Digital Labor. Work completed, not just helped along.',
+      'Close — but a workforce runs several functions. One function end to end is Digital Labor.'
+    ])},
+  { say:'AI runs our client onboarding, billing reconciliation and security monitoring.', answer:3, point:'Outcome pricing. Bring help.',
+    options: lvlOptions([
+      'Nowhere near — this is three business functions running themselves.',
+      'Well past assisting — nothing here is waiting for a human nudge.',
+      'One step under — labor is one function; this is three. That’s a Digital Workforce.',
+      'Digital Workforce. Multiple functions running, not one clever task.'
+    ])}
+];
+
+/* ═══════════════════ SCREEN 5 · THE PLACEMENT TOOL ═══════════════════ */
+var OWNER = [
+  {t:'“No one really. The techs pick it up if they’re interested.”', v:0},
+  {t:'“One of the directors has taken it on, on top of everything else.”', v:1},
+  {t:'“Yes — we’ve got a named AI lead and a budget line for it.”', v:2}
+];
+var SALES = [
+  {t:'“No, never. Not once.”', v:0},
+  {t:'“We ran a pilot for one client. Didn’t charge for it.”', v:1},
+  {t:'“Yes — we bill two clients monthly for it.”', v:2}
+];
+var PLACES = [
+  {n:'Early Discovery', m:'Education first. Don’t lead with product.'},
+  {n:'Exploring',       m:'Agent Store bundles + a ProServ pilot.'},
+  {n:'Investing',       m:'This is a deeper conversation. Bring help.'}
+];
+var p5 = {round:1, o:null, s:null, prev:null};
+
+function buildP5(){
+  var q1=$('#p5q1'), q2=$('#p5q2');
+  q1.innerHTML=''; q2.innerHTML='';
+  p5.o=null; p5.s=null;
+  $('#p5out').classList.remove('live');
+  $('#p5name').textContent='—';
+  $('#p5move').textContent='Answer both questions and this resolves.';
+  $('#p5again').classList.add('hide');
+  $('#p5round').textContent = p5.round===1 ? 'Partner one. Pick what they say back.' : 'Partner two. Pick differently and watch it move.';
+
+  function group(host, label, data, key){
+    var lab = el('p','small rise', esc(label));
+    lab.style.marginTop='22px';
+    host.appendChild(lab);
+    var opts = el('div','opts rise');
+    data.forEach(function(o){
+      var b = el('button','opt', esc(o.t)); b.type='button';
+      b.addEventListener('click', function(){
+        for(var i=0;i<opts.children.length;i++) opts.children[i].classList.remove('picked');
+        b.classList.add('picked');
+        p5[key]=o.v;
+        resolveP5();
+      });
+      opts.appendChild(b);
+    });
+    host.appendChild(opts);
+    play(host);
+  }
+  group(q1,'They answer the ownership question…', OWNER,'o');
+  group(q2,'They answer the revenue question…',  SALES,'s');
+}
+
+function resolveP5(){
+  if(p5.o===null || p5.s===null) return;
+  var total = p5.o + p5.s;
+  var ix = total<=1 ? 0 : (total<=3 ? 1 : 2);
+  /* a named owner with real revenue is the only route to Investing */
+  if(ix===2 && !(p5.o===2 && p5.s===2)) ix = 1;
+  var out=$('#p5out');
+  out.classList.add('live');
+  $('#p5name').textContent = PLACES[ix].n;
+  $('#p5move').textContent = PLACES[ix].m;
+
+  if(p5.round===1){
+    p5.prev = p5.o+'-'+p5.s;
+    $('#p5again').classList.remove('hide');
+  } else {
+    if(p5.o+'-'+p5.s === p5.prev){
+      $('#p5move').textContent = PLACES[ix].m + ' — same answers as last time. Try moving one of them.';
+      return;
+    }
+    $('#s5end').classList.remove('hide');
+    play($('#s5end'));
+  }
+}
+$('#p5re').addEventListener('click', function(){ p5.round=2; buildP5(); });
+
+/* ═══════════════════ SCREENS 6 & 7 · BRANCHING CONVERSATIONS ═══════════════════
+   grade: 'good' | 'fair' | 'weak'. Weak choices don't fail — the partner just
+   gets harder, and the next line switches to its alt. */
+var CONVS = {
+  conv1: {
+    kicker:'Module 5 · Conversation one',
+    title:'The partner who tried and stopped',
+    beats:[
+      { kind:'say',
+        partner:'Honestly? We tried Copilot last year and it didn’t really stick.',
+        prompt:'What do you say?',
+        options:[
+          {t:'“Most partners are exactly there. The way we look at it now — you manage their IT, now you manage their intelligence. Beyond infrastructure and ticket resolution: instead of software, you deploy intelligence and manage outcomes.”',
+           g:'good', fb:'[Sits back] Manage their intelligence. Nobody’s put it to me like that. Go on.'},
+          {t:'“What made it not stick?”',
+           g:'fair', fb:'Licence cost, mostly. And people stopped opening it after about a month.'},
+          {t:'“There’s been a big update since then — worth another look.”',
+           g:'weak', fb:'[Flat] We’ve had that call already. Twice, from other vendors.'}
+        ]},
+      { kind:'read',
+        partner:'We put it in front of about fifteen people. A few use it for drafting emails. That’s genuinely it.',
+        partnerAlt:'Look — I’ve got four minutes. It’s fifteen licences and a couple of people drafting emails. What’s different?',
+        prompt:'What you’re thinking — where are they actually?',
+        point:'Education first. Don’t lead with product.',
+        answer:0,
+        options: lvlOptions([
+          'Chatbots. Individual people, individual prompts, nothing joined up.',
+          'Higher than they are — an assistant lives inside a workflow. This is Chatbots.',
+          'Well above them — nothing is being completed here. Chatbots.',
+          'Nowhere near — a workforce runs functions. This is Chatbots.'
+        ])},
+      { kind:'say',
+        partner:'So what would we actually do differently? It’s the same tool.',
+        partnerAlt:'So what would we actually do differently? Because so far this sounds like the same tool.',
+        prompt:'What do you say?',
+        options:[
+          {t:'“Don’t roll a tool out again. Pair Copilot with one workflow — pick a single process, put the AI inside it, and measure what comes out the other end. That’s the difference between deploying software and deploying intelligence.”',
+           g:'good', fb:'[Nods slowly] One process. That I could actually sell internally.'},
+          {t:'“Honestly, a lot of it’s adoption — your team needs proper training on it.”',
+           g:'fair', fb:'Maybe. Feels like paying to teach people a tool they never asked for.'},
+          {t:'“You’d probably want a different platform.”',
+           g:'weak', fb:'[Sighs] So the answer is buy something else. Right.'}
+        ]},
+      { kind:'say',
+        partner:'Alright. What’s the actual next step?',
+        prompt:'Offer one thing. Only one.',
+        options:[
+          {t:'“One thing: there’s a partner education session on this. No product in it, no pitch. Let me get you a place and follow up after.”',
+           g:'good', fb:'That I’ll take. Send it over.'},
+          {t:'“Let me get you into the Agent Store so you can have a look around.”',
+           g:'fair', fb:'We’re not buying agents yet. We haven’t worked out what we’d do with one.'},
+          {t:'“I’ll send our MIP program pricing over.”',
+           g:'weak', fb:'Pricing? We’ve not got past “does this even work”.'}
+        ]}
+    ],
+    close:'That was <strong>Early Discovery</strong>. You placed them, you offered one thing, and you didn’t oversell.',
+    next:7
+  },
+
+  conv2: {
+    kicker:'Module 5 · Conversation two',
+    title:'The partner who’s ahead of you',
+    beats:[
+      { kind:'say',
+        partner:'Funny you should bring it up — Sherweb already gave us an AI roadmap.',
+        prompt:'What do you say?',
+        options:[
+          {t:'“Good — a roadmap’s worth having. What I’d want to know is what’s connected to execution: who builds it, who delivers it, and how you charge for it. That’s usually where roadmaps stall.”',
+           g:'good', fb:'[Pause] …It’s a slide deck, if I’m honest.'},
+          {t:'“How far through it have you got?”',
+           g:'fair', fb:'Far enough to know it’s mostly a slide deck.'},
+          {t:'“Ours goes a lot further than theirs.”',
+           g:'weak', fb:'[Half-smile] Course it does. Everyone’s does.'}
+        ]},
+      { kind:'read',
+        partner:'We’re not standing still, though. We’ve got AI closing Level 1 tickets end to end and writing the outcome back into the PSA.',
+        prompt:'What you’re thinking — where are they actually?',
+        point:'Ready to build offers — and too big to carry alone.',
+        answer:2,
+        options: lvlOptions([
+          'Far past that — nobody is typing prompts here.',
+          'Beyond assisting — an assistant suggests; this one closes. Digital Labor.',
+          'Digital Labor. Work completed end to end, not just helped along.',
+          'Close — but a workforce runs several functions. One function is Digital Labor.'
+        ])},
+      { kind:'say',
+        partner:'So why would we run any of this through you rather than just carry on?',
+        partnerAlt:'So — why would we run any of this through you rather than just carry on? And be quick.',
+        prompt:'One commercial hook. One.',
+        options:[
+          {t:'“One reason, and I’ll only give you one: you only pay when the agent works.”',
+           g:'good', fb:'[Looks up] Say that again.'},
+          {t:'“There’s the Agent Store, the MIP program, ProServ delivery, outcome-based pricing—”',
+           g:'fair', fb:'You’ve just listed four things. Which one actually matters?'},
+          {t:'“We could look at improving your margin on the Pax8 side.”',
+           g:'weak', fb:'I’m not here for a discount.'}
+        ]},
+      { kind:'say',
+        partner:'Alright. I’m interested enough to keep talking.',
+        prompt:'Agree the next step — and say you’ll record it.',
+        options:[
+          {t:'“Then let me get one of our Managed Intelligence people in front of you this week. I’ll write up where you’ve got to so you don’t have to say it all again.”',
+           g:'good', fb:'Do that. And don’t send me a generic deck.'},
+          {t:'“I’ll send you some links to read through.”',
+           g:'fair', fb:'I’ve read plenty. That’s rather the problem.'},
+          {t:'“Leave it with me and I’ll have a think.”',
+           g:'weak', fb:'Right. So will I.'}
+        ]}
+    ],
+    close:'That one you had to work for. <strong>Note what you actually said</strong> — you’ll want it in Copenhagen.',
+    next:8
+  }
+};
+
+function runConv(mountId, key){
+  var C = CONVS[key], host = $(mountId);
+  host.innerHTML='';
+  var i = 0, mood = 1, script = [];   /* mood drops on weak choices */
+
+  var head = el('div','stack');
+  head.appendChild(el('p','kicker blue rise', esc(C.kicker)));
+  var h = el('h2','rise', esc(C.title)); h.setAttribute('tabindex','-1');
+  head.appendChild(h);
+  head.appendChild(el('div','rule rise'));
+  host.appendChild(head);
+
+  var feed = el('div','');
+  host.appendChild(feed);
+  play(head);
+
+  function step(){
+    if(i >= C.beats.length){ finish(); return; }
+    var b = C.beats[i];
+    var line = (mood<1 && b.partnerAlt) ? b.partnerAlt : b.partner;
+    script.push({who:'partner', t:line});
+
+    var block = el('div','stack');
+    block.style.marginBottom='36px';
+    var said = el('div','said partner rise','<span class="who">They say</span>'+esc(line));
+    block.appendChild(said);
+
+    var p = el('p','small rise', esc(b.prompt));
+    p.style.marginTop='18px';
+    block.appendChild(p);
+
+    var opts = el('div','opts rise');
+    b.options.forEach(function(o,ix){
+      var btn = el('button','opt', esc(o.t)); btn.type='button';
+      btn.addEventListener('click', function(){
+        opts.classList.add('done');
+
+        var right = (b.kind==='read') ? (ix===b.answer) : (o.g==='good');
+        btn.classList.add(right ? 'right' : 'picked');
+        if(b.kind==='read' && !right) opts.children[b.answer].classList.add('right');
+        if(b.kind==='say'){
+          if(o.g==='weak') mood = 0;
+          else if(o.g==='good' && mood<1) mood = 1;
+        }
+
+        /* the learner's line joins the transcript in their own voice */
+        var echo;
+        if(b.kind==='say'){
+          /* spoken options are long — clear them away so only what was said remains */
+          opts.parentNode.removeChild(opts);
+          p.parentNode.removeChild(p);
+          script.push({who:'you', t:o.t});
+          echo = el('div','said you rise','<span class="who">You say</span>'+esc(o.t));
+        } else {
+          script.push({who:'think', t:'(read: '+o.t+')'});
+          echo = el('div','said think rise', esc('You read them as: '+o.t));
+        }
+        block.appendChild(echo);
+
+        var fb = el('div','fb rise'+(b.kind==='say'?'':' blue'),
+          '<span>'+esc(o.fb)+'</span>'+(b.point?'<span class="pt">Where it points: '+esc(b.point)+'</span>':''));
+        block.appendChild(fb);
+        play(echo); play(fb);
+
+        i++;
+        window.setTimeout(step, 700);
+      });
+      opts.appendChild(btn);
+    });
+    block.appendChild(opts);
+    feed.appendChild(block);
+    play(block);
+  }
+
+  function finish(){
+    var end = el('div','stack');
+    end.appendChild(el('p','kicker rise','What you actually said'));
+    var sc = el('div','script rise');
+    script.forEach(function(l){
+      if(l.who==='partner') sc.appendChild(el('div','said partner','<span class="who">Them</span>'+esc(l.t)));
+      else if(l.who==='you') sc.appendChild(el('div','said you','<span class="who">You</span>'+esc(l.t)));
+      else sc.appendChild(el('div','said think', esc(l.t)));
+    });
+    end.appendChild(sc);
+    var box = el('div','box teal rise','<p style="font-size:18px;line-height:1.45">'+C.close+'</p>');
+    end.appendChild(box);
+    var row = el('div','btn-row rise');
+    var b = el('button','btn','Continue'); b.type='button';
+    b.setAttribute('data-go', String(C.next));
+    row.appendChild(b);
+    end.appendChild(row);
+    feed.appendChild(end);
+    play(end);
+  }
+  step();
+}
+
+/* ═══════════════════ SCREEN 8 · THE RECORD ═══════════════════ */
+var REC_FIELDS = [
+  {k:'Partner',        want:true },
+  {k:'Where they are', want:true },
+  {k:'What you offered',want:true },
+  {k:'What you owe them',want:true }
+];
+/* the four taps log the partner from conversation two, so the record assembles into
+   something real rather than four field labels */
+var REC_CHIPS = [
+  {t:'Partner name',            f:'Partner',            v:'Northlight IT'},
+  {t:'Their budget',            f:null, no:'Not yours to guess, and it isn’t what the record is for.'},
+  {t:'Roughly where they are',  f:'Where they are',     v:'Digital Labor · Investing'},
+  {t:'A full transcript',       f:null, no:'Nobody reads it. Four lines beat four paragraphs.'},
+  {t:'What you offered',        f:'What you offered',   v:'Intro to the Managed Intelligence team'},
+  {t:'What you owe them',       f:'What you owe them',  v:'Written handover, before Thursday'},
+  {t:'How the meeting felt',    f:null, no:'Feelings don’t route. The next person needs facts.'}
+];
+var recState = {};
+function buildRec(){
+  var chips=$('#recChips'), out=$('#recOut');
+  chips.innerHTML=''; out.innerHTML=''; recState={};
+
+  REC_FIELDS.forEach(function(f){
+    var row = el('div','row','<b>'+esc(f.k)+'</b><span>—</span>');
+    row.setAttribute('data-f', f.k);
+    out.appendChild(row);
+  });
+
+  REC_CHIPS.forEach(function(c){
+    var b = el('button','chip', esc(c.t)); b.type='button';
+    b.addEventListener('click', function(){
+      if(c.f){
+        b.classList.add('used');
+        recState[c.f]=true;
+        var row = out.querySelector('[data-f="'+c.f+'"]');
+        row.classList.add('set');
+        row.querySelector('span').textContent = c.v;
+        if(Object.keys(recState).length === REC_FIELDS.length){
+          reveal($('#recDone'), 300);
+        }
+      } else {
+        b.classList.add('used');
+        var note = el('p','tiny', esc(c.no));
+        note.style.marginTop='10px';
+        chips.parentNode.insertBefore(note, out);
+      }
+    });
+    chips.appendChild(b);
+  });
+}
+
+/* ═══════════════════ SCREEN 9 · THE CORRIDOR ═══════════════════ */
+var ans9=$('#ans9'), say9=$('#say9');
+ans9.addEventListener('input', function(){ say9.disabled = !ans9.value.trim(); });
+
+/* once it's said, it stops being an input and becomes what you said out loud */
+function lockCorridor(){
+  if(!ans9.parentNode) return;
+  var bubble = el('div','said you rise','<span class="who">You say</span>'+esc(S.last));
+  ans9.parentNode.replaceChild(bubble, ans9);
+  say9.classList.add('hide');
+}
+say9.addEventListener('click', function(){
+  S.last = ans9.value.trim();
+  lockCorridor();
+  reveal($('#s9end'), 300);
+  tesSave();
+});
+
+/* ═══════════════════ SCREEN 10 · THE PAYOFF ═══════════════════ */
+function enter10(){
+  $('#was').textContent = S.first || '(left blank)';
+  $('#now').textContent = S.last  || '(left blank)';
+  var row = $('#s10btn');
+  row.classList.add('hide');
+  reveal(row, 3000);                 /* no button for three seconds — let them look at it */
+}
+
+/* ═══════════════════ SCREEN 11 · WHAT YOU KEEP ═══════════════════ */
+$('#copyBtn').addEventListener('click', function(){
+  var txt = $('#sentence').textContent.trim(), btn=this;
+  function ok(){ btn.textContent='Copied'; window.setTimeout(function(){ btn.textContent='Copy to clipboard'; },1800); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok, fallback);
+  } else fallback();
+  function fallback(){
+    var ta=document.createElement('textarea');
+    ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); ok(); }catch(e){ btn.textContent='Select and copy above'; }
+    document.body.removeChild(ta);
+  }
+});
+$('#printBtn').addEventListener('click', function(){ window.print(); });
+
+/* ═══════════════════ SCREEN ENTRY HOOKS ═══════════════════ */
+var built = {};
+var ENTER = {
+  2: enter2,
+  3: function(){ if(built[3]) return; built[3]=true;
+       runQuiz('#q3', FEARS, function(){ reveal($('#s3end'), 260); }); },
+  4: function(){ if(built[4]) return; built[4]=true;
+       runQuiz('#q4', HEARS, function(){ reveal($('#s4end'), 260); }); },
+  5: function(){ if(built[5]) return; built[5]=true; buildP5(); },
+  6: function(){ if(built[6]) return; built[6]=true; runConv('#conv1','conv1'); },
+  7: function(){ if(built[7]) return; built[7]=true; runConv('#conv2','conv2'); },
+  8: function(){ if(built[8]) return; built[8]=true; buildRec(); },
+  10: enter10,
+  11: function(){ tesComplete(100); }
+};
+
+/* ═══════════════════ BOOT ═══════════════════ */
+var restored = tesReady();
+if(restored && typeof restored === 'object' && restored.v === 1){
+  S.first = restored.first || '';
+  S.last  = restored.last  || '';
+  if(S.first){ ans1.value = S.first; ans1.setAttribute('readonly','readonly'); lock1.classList.add('hide'); $('#held1').classList.remove('hide'); }
+  if(S.last){ lockCorridor(); $('#s9end').classList.remove('hide'); }
+  go(Math.max(0, Math.min(SCREENS-1, restored.screen|0)));
+} else {
+  go(0);
+}
+})();
+</script>
+</body>
+</html>
