@@ -8,27 +8,40 @@ given it at minute three, use it six times under escalating pressure, and say it
 time — cold, unprompted — at minute thirty-three. Screen 10 shows their first attempt sitting
 above their last one. That before/after is the entire payoff; there is no score and no confetti.
 
-**Twelve screens, ~34 minutes**, one decision each:
+**Fifteen screens, ~45 minutes**, one decision each:
 
-0. Entry — the question they're afraid of, nothing else
+0. Entry — the question they're afraid of. An optional "what this is" route for anyone who wants the overview first.
 1. **Productive failure** — define a MIP in one sentence, before any teaching. Not graded, on purpose.
-2. The sentence, revealed in stages, plus a **press-and-hold** that won't advance until it's held for three seconds and said out loud
-3. Match the fear — three partner quotes, three fears underneath them
-4. Hear their level — Chatbots → Assistants → Digital Labor → Digital Workforce
-5. **The placement tool** — two questions resolve a partner live into Early Discovery / Exploring / Investing, run twice
-6–7. **Two branching conversations** — the partner who tried and stopped, then the partner who's ahead of you. Weak choices don't fail; the partner just gets harder and switches to a colder line
-8. One door, two routes (Agent Store → MIP Program / Managed Intelligence Services), then a four-tap logging build
-9. **The corridor** — Bella Center, no options, no hints, no progress bar
-10. Their two answers, side by side
-11. What you keep — the sentence, the rep card, what's next
+2. **Module 1 hub** — what the module is, why it matters, what you leave with. Placed *after* the 60-second test so the failure still lands.
+3. The sentence, revealed in stages, plus a **press-and-hold** that won't advance until it's held for three seconds and said out loud
+4. **Module 2 context** — the Agentic Inflection Point, margin compression to 2027, what partners keep telling us, why sellers are being asked to build this
+5. Match the fear — three partner quotes, three fears underneath them
+6. **Module 3 concepts** — what a chatbot, an assistant, Digital Labor and a Digital Workforce actually are, and where Copilot sits
+7. Hear their level — Chatbots → Assistants → Digital Labor → Digital Workforce
+8. **The placement tool** — two questions resolve a partner live into Early Discovery / Exploring / Investing, run twice
+9–10. **Two branching conversations** — the partner who tried and stopped, then the partner who's ahead of you. Weak choices don't fail; the partner just gets harder and switches to a colder line
+11. One door, two routes (Agent Store → MIP Program / Managed Intelligence Services), then a four-tap logging build
+12. **The corridor** — Bella Center, no options, no hints, no progress bar
+13. Their two answers, side by side
+14. What you keep — the sentence, the rep card, what's next
+
+**The learning hub.** Every module offers the same four ways in — a short video, a podcast, a written guide, or straight to the
+exercise. Modules 1–3 get a full context screen; every module is also reachable from a persistent **Resources** drawer that adapts
+to wherever the learner is. The core message lives in the screen copy itself, so format choice never changes what anyone receives.
+
+**Languages.** A working switcher across seven EMEA locales. `CONTENT[locale]` swaps every data-driven string and `UI[locale]`
+swaps any static node carrying `data-i18n` — English is complete, and a vendor populates one object per locale. Non-English
+selections switch the interface and show a clear "translation in review" state rather than machine-translating Pax8's approved
+definition.
 
 **Build contract** — single file, no CDN, no `localStorage`, no native `<select>`, finger-sized
 tap targets, tested at 320/375/1280px. SCORM-safe: exposes `window.TES.ready()`,
 `saveState()`, `loadState()`, `complete(score)` plus matching `tes:*` CustomEvents, with
 no-op stubs so it runs standalone.
 
-Two insertion zones are marked rather than invented: the PBF / Salesforce logging steps
-(screen 8) and the rep-card PDF (screen 11, with a print fallback in the interim).
+Insertion zones are marked rather than invented: the PBF / Salesforce logging steps, the rep-card PDF (with a print fallback in
+the interim), every video and podcast asset, live Partner Insights data, Infinity Group case-study assets, and the mapping of the
+four levels to Microsoft's published AI strategy — which needs a confirmed Product Marketing source before it goes near a seller.
 
 ---
 
