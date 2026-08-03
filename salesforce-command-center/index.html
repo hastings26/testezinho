@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Salesforce Command Center — EMEA Sales</title>
+  <meta name="description" content="The governed operating system for Salesforce execution across EMEA Sales. Prototype." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <canvas id="lights" aria-hidden="true"></canvas>
+
+  <!-- ===================================================== prototype notice -->
+  <div class="proto-bar" role="note">
+    <span class="proto-bar__tag">Prototype</span>
+    <p>
+      Illustrative content only. Every owner, date, target, version and policy on this site is a
+      <strong>placeholder</strong> and is not approved Pax8 guidance.
+      <button type="button" class="linkish" data-nav="#/about">How to read this prototype</button>
+    </p>
+  </div>
+
+  <!-- ================================================================ header -->
+  <header class="masthead">
+    <div class="masthead__bar">
+      <a class="brand" href="#/home" data-nav="#/home">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28" focusable="false">
+            <path d="M4 20a6 6 0 0 1 5.2-5.95A8 8 0 0 1 24.6 13 5.5 5.5 0 0 1 24 24H10a6 6 0 0 1-6-4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand__text">
+          <span class="brand__title">Salesforce Command Center</span>
+          <span class="brand__sub">EMEA Sales</span>
+        </span>
+      </a>
+
+      <div class="masthead__tools">
+        <div class="role-picker">
+          <label for="roleSelect">Your role</label>
+          <select id="roleSelect" aria-describedby="roleNote">
+            <!-- populated by app.js -->
+          </select>
+        </div>
+        <a class="btn btn--slack" id="slackTop" href="#/assistant" data-nav="#/assistant">
+          <span aria-hidden="true">💬</span> Ask in Slack
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav">
+          <span aria-hidden="true">☰</span> Menu
+        </button>
+      </div>
+    </div>
+    <p class="role-note" id="roleNote"></p>
+
+    <nav class="primary-nav" id="primaryNav" aria-label="Primary">
+      <ul>
+        <li><a href="#/home"            data-nav="#/home">Home</a></li>
+        <li><a href="#/rules"           data-nav="#/rules">Rules of the Game</a></li>
+        <li><a href="#/good"            data-nav="#/good">What Good Looks Like</a></li>
+        <li><a href="#/measure"         data-nav="#/measure">Track and Measure</a></li>
+        <li><a href="#/resources"       data-nav="#/resources">Resources and Enablement</a></li>
+        <li><a href="#/lanes"           data-nav="#/lanes">Lane Workspaces</a></li>
+        <li><a href="#/registry"        data-nav="#/registry">Topic Registry</a></li>
+        <li><a href="#/governance"      data-nav="#/governance">Governance</a></li>
+        <li><a href="#/assistant"       data-nav="#/assistant">Ask the Assistant</a></li>
+        <li><a href="#/gap"             data-nav="#/gap">Report Missing Guidance</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ================================================================== main -->
+  <main id="main" tabindex="-1">
+    <div id="view" class="view"><!-- rendered by app.js --></div>
+  </main>
+
+  <!-- ================================================================ footer -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div>
+        <p class="site-footer__title">Salesforce Command Center</p>
+        <p class="muted">The governed operating system for Salesforce execution across EMEA Sales.</p>
+      </div>
+      <ul class="site-footer__links">
+        <li><a href="#/registry" data-nav="#/registry">Topic Registry</a></li>
+        <li><a href="#/governance" data-nav="#/governance">Governance and change history</a></li>
+        <li><a href="#/gap" data-nav="#/gap">Report missing or incorrect guidance</a></li>
+        <li><a href="#/links" data-nav="#/links">Link inventory</a></li>
+        <li><a href="#/about" data-nav="#/about">About this prototype</a></li>
+      </ul>
+      <p class="muted small">
+        Prototype for review. Placeholder content throughout — not approved guidance.<br />
+        Copyright ©2026 Pax8 | All rights reserved
+      </p>
+    </div>
+  </footer>
+
+  <!-- =============================================================== toaster -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- links.js first: it supplies the real URLs consumed by data.js and app.js -->
+  <script src="links.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

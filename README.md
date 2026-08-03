@@ -1,3 +1,17 @@
+## 🛰️ EMEA Salesforce Command Center — governed Highspot operating environment
+
+[`salesforce-command-center/`](salesforce-command-center/) is a working prototype of a governed Salesforce
+operating environment for EMEA Sales, plus the strategy, information architecture, governance model and
+Highspot build mapping to implement it. Open `salesforce-command-center/index.html` in a browser.
+
+Role-relevant guidance, a Topic Registry that makes absent ownership impossible to hide, an unmistakable
+internal / partner-facing split, and a specified handoff to the *existing* Slack assistant — including the
+states where it refuses to answer. All content is illustrative placeholder, not approved guidance.
+
+Start with [`salesforce-command-center/README.md`](salesforce-command-center/README.md).
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
