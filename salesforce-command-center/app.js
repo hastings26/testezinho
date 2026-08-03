@@ -2015,14 +2015,17 @@ function initPointerParallax() {
 }
 
 /* ------------------------------------------------------------------ lights */
-/* A few small coloured lights drifting slowly upward behind the page, with a
-   gentle scroll parallax per light. Pure decoration: under reduced motion a
-   single static frame is drawn and nothing moves. */
+/* A handful of large, soft bokeh orbs in the Pax8 palette. Left alone they
+   drift slowly upward; near the cursor they are drawn into a gentle orbit
+   around it — a spring toward each orb's own ring plus a tangential swirl,
+   heavily damped so nothing ever darts. Pure decoration: under reduced
+   motion a single static frame is drawn and nothing moves. */
 
 const LIGHT_COLORS = ['#1D4ED8', '#0EA5E9', '#00D09C', '#22C55E', '#8B5CF6', '#EC4899', '#EAB308'];
 
 const lights = {
   canvas: null, ctx: null, particles: [], raf: null, last: 0, w: 0, h: 0,
+  lastScroll: 0, mx: null, my: null,
 
   rgba(hex, alpha) {
     const n = parseInt(hex.slice(1), 16);
@@ -2037,54 +2040,95 @@ const lights = {
   },
 
   spawn() {
-    const count = Math.max(8, Math.min(34, Math.round(this.w * this.h / 46000)));
+    const count = Math.max(7, Math.min(16, Math.round(this.w * this.h / 95000)));
     this.particles = Array.from({ length: count }, (_, i) => {
-      const deep = Math.random();
+      const big = i % 5 === 0;
       return {
         x: Math.random() * this.w,
         y: Math.random() * this.h,
-        r: 1.4 + deep * 3.2,
-        speed: 5 + deep * 13,
-        sway: 6 + Math.random() * 16,
+        vx: 0, vy: 0,
+        r: big ? 34 + Math.random() * 18 : 13 + Math.random() * 14,
+        alpha: big ? 0.13 + Math.random() * 0.07 : 0.26 + Math.random() * 0.14,
+        drift: 7 + Math.random() * 9,
+        sway: 4 + Math.random() * 8,
         phase: Math.random() * Math.PI * 2,
-        depth: 0.05 + deep * 0.2,
-        color: LIGHT_COLORS[i % LIGHT_COLORS.length],
-        alpha: 0.16 + deep * 0.26
+        wobble: 0.4 + Math.random() * 0.5,
+        depth: 0.05 + Math.random() * 0.16,
+        orbitR: 70 + Math.random() * 90,
+        swirl: (Math.random() < 0.5 ? -1 : 1) * (0.6 + Math.random() * 0.5),
+        color: LIGHT_COLORS[i % LIGHT_COLORS.length]
       };
     });
+  },
+
+  step(dt) {
+    const { w, h, mx, my } = this;
+    const scroll = window.scrollY;
+    const dScroll = scroll - this.lastScroll;
+    this.lastScroll = scroll;
+
+    for (const p of this.particles) {
+      p.y -= dScroll * p.depth;
+
+      /* base drift: slow rise with a sideways sway */
+      let ax = Math.cos(p.phase) * p.sway;
+      let ay = -p.drift;
+
+      /* near the cursor, spring onto a personal ring and swirl around it */
+      if (mx !== null) {
+        const dx = p.x - mx, dy = p.y - my;
+        const dist = Math.hypot(dx, dy) || 1;
+        if (dist < 400) {
+          const nx = dx / dist, ny = dy / dist;
+          const pull = (p.orbitR - dist) * 1.9;
+          ax += nx * pull;
+          ay += ny * pull;
+          ax += -ny * p.swirl * 55;
+          ay += nx * p.swirl * 55;
+        }
+      }
+
+      p.vx += ax * dt; p.vy += ay * dt;
+      p.vx *= 1 - 2.1 * dt; p.vy *= 1 - 2.1 * dt;
+      const sp = Math.hypot(p.vx, p.vy), max = 75;
+      if (sp > max) { p.vx = p.vx / sp * max; p.vy = p.vy / sp * max; }
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      p.phase += dt * p.wobble;
+
+      if (p.y < -70) { p.y = h + 60; p.x = Math.random() * w; p.vx = 0; p.vy = 0; }
+      else if (p.y > h + 70) p.y = -60;
+      if (p.x < -70) p.x = w + 60;
+      else if (p.x > w + 70) p.x = -60;
+    }
+  },
+
+  paint() {
+    const { ctx, w, h } = this;
+    ctx.clearRect(0, 0, w, h);
+    for (const p of this.particles) {
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+      g.addColorStop(0, this.rgba(p.color, p.alpha));
+      g.addColorStop(0.55, this.rgba(p.color, p.alpha * 0.45));
+      g.addColorStop(1, this.rgba(p.color, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
+    }
   },
 
   frame(t) {
     const dt = Math.min(0.05, (t - this.last) / 1000 || 0.016);
     this.last = t;
-    this.draw(dt);
+    this.step(dt);
+    this.paint();
     this.raf = requestAnimationFrame(ts => this.frame(ts));
-  },
-
-  draw(dt) {
-    const { ctx, w, h } = this;
-    const span = h + 80;
-    const scroll = window.scrollY;
-    ctx.clearRect(0, 0, w, h);
-    for (const p of this.particles) {
-      if (dt) { p.y -= p.speed * dt; p.phase += dt * 0.6; }
-      const x = p.x + Math.sin(p.phase) * p.sway;
-      const y = (((p.y - scroll * p.depth) % span) + span) % span - 40;
-      const glow = ctx.createRadialGradient(x, y, 0, x, y, p.r * 3.2);
-      glow.addColorStop(0, this.rgba(p.color, p.alpha));
-      glow.addColorStop(1, this.rgba(p.color, 0));
-      ctx.fillStyle = glow;
-      ctx.beginPath(); ctx.arc(x, y, p.r * 3.2, 0, 7); ctx.fill();
-      ctx.fillStyle = this.rgba(p.color, Math.min(0.85, p.alpha + 0.28));
-      ctx.beginPath(); ctx.arc(x, y, p.r * 0.85, 0, 7); ctx.fill();
-    }
   },
 
   refresh() {
     if (!this.canvas) return;
     if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
     this.size(); this.spawn();
-    if (REDUCED_MOTION.matches) { this.draw(0); return; }
+    this.lastScroll = window.scrollY;
+    if (REDUCED_MOTION.matches) { this.paint(); return; }
     this.last = 0;
     this.raf = requestAnimationFrame(ts => { this.last = ts; this.frame(ts); });
   },
@@ -2094,6 +2138,8 @@ const lights = {
     if (!this.canvas) return;
     this.ctx = this.canvas.getContext('2d');
     window.addEventListener('resize', () => this.refresh());
+    window.addEventListener('pointermove', ev => { this.mx = ev.clientX; this.my = ev.clientY; });
+    document.documentElement.addEventListener('mouseleave', () => { this.mx = null; this.my = null; });
     this.refresh();
   }
 };
