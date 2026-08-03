@@ -61,26 +61,26 @@ const APPROVAL = {
 /* Lanes. The Salesforce lane is built out; the rest demonstrate reuse. */
 const LANES = [
   {
-    id: 'salesforce', name: 'Salesforce', tagline: 'The system of record and the rules that govern it.',
-    owner: 'RevOps — EMEA (placeholder)', status: 'published',
-    desc: 'Standards, processes, required fields, stage definitions and hygiene expectations for Salesforce across EMEA Sales.'
+    id: 'salesforce', name: 'Salesforce', tagline: 'The system of record, and the rules that govern it.',
+    owner: 'Marco Bueno Carpio', ownerRole: 'Revenue Enablement Programs Manager, Frankfurt',
+    status: 'published', accent: 'blue',
+    desc: 'Standards, processes, required fields, stage definitions, forecasting and hygiene for Salesforce across EMEA Sales.',
+    covers: ['Pipeline and opportunity management', 'Forecasting and stage definitions', 'Data quality and hygiene', 'Dashboards, cases and handoffs']
   },
   {
-    id: 'pipeline-opportunity', name: 'Pipeline and Opportunity Management', tagline: 'How pipeline is built, progressed and forecast.',
-    owner: 'Sales Leadership — EMEA (placeholder)', status: 'published',
-    desc: 'Coverage, progression, qualification, forecast categories and inspection rhythm.'
+    id: 'ai-mip', name: 'AI and MIP', tagline: 'The Managed Intelligence Provider motion, and how we talk about AI.',
+    owner: 'Alex Hastings', ownerRole: 'Revenue Enablement Programs Manager, EMEA',
+    status: 'in-review', accent: 'teal',
+    desc: 'The MIP programme, the Agentic Inflection Point thesis, Agent Store, and what may be said to partners about AI.',
+    covers: ['MIP programme and plays', 'Agentic Inflection Point narrative', 'Agent Store', 'Approved AI messaging for partner conversations']
   },
   {
-    id: 'mip', name: 'MIP', tagline: 'Managed Intelligence Provider motion.',
-    owner: 'Product Marketing (placeholder)', status: 'published',
-    desc: 'Positioning, partner readiness, commercial guidance and partner-facing materials for the MIP motion.'
-  },
-  { id: 'microsoft', name: 'Microsoft', tagline: 'Microsoft vendor motion.', owner: 'Vendor Alliances (placeholder)', status: 'in-review', desc: 'Vendor programme rules, incentives, co-sell process and approved partner materials.' },
-  { id: 'ai', name: 'AI', tagline: 'AI enablement and responsible use.', owner: 'Revenue Enablement (placeholder)', status: 'in-review', desc: 'AI capability build, approved tooling, responsible-use expectations and partner conversation guides.' },
-  { id: 'security', name: 'Security', tagline: 'Security motion and partner maturity.', owner: 'Security Practice (placeholder)', status: 'draft', desc: 'Security portfolio guidance, assessment approach and approved partner-facing collateral.' },
-  { id: 'professional-services', name: 'Professional Services', tagline: 'Scoping, delivery and hand-off.', owner: 'Professional Services (placeholder)', status: 'draft', desc: 'Engagement types, scoping standards, Salesforce treatment and delivery hand-off.' },
-  { id: 'transformation', name: 'Transformation', tagline: 'Partner business transformation.', owner: 'Partner Development (placeholder)', status: 'draft', desc: 'Transformation frameworks, maturity models and partner planning resources.' },
-  { id: 'partner-maturity', name: 'Partner Maturity', tagline: 'Segmentation and maturity progression.', owner: 'Partner Strategy (placeholder)', status: 'draft', desc: 'Maturity model, segmentation rules, progression plays and measurement.' }
+    id: 'programmes', name: 'Programmes and Onboarding', tagline: 'How sellers are grown, ramped and measured.',
+    owner: 'Fabrizio Papa', ownerRole: 'Revenue Enablement Programs Manager, Zwolle',
+    status: 'in-review', accent: 'violet',
+    desc: 'The Farmers and Hunters programmes, and the onboarding path that takes a new seller to productivity.',
+    covers: ['Farmers Programme', 'Hunters Programme', 'Seller onboarding and ramp', 'Certification and progression']
+  }
 ];
 
 /* ------------------------------------------------------------------- topics */
@@ -93,7 +93,7 @@ const TOPICS = [
     id: 'pipeline-management',
     ref: 'SF-001',
     name: 'Pipeline Management',
-    lane: 'pipeline-opportunity',
+    lane: 'salesforce',
     priority: true,
     short: 'How pipeline is built, qualified, progressed and kept trustworthy enough to forecast from.',
     definition: {
@@ -230,7 +230,7 @@ const TOPICS = [
     id: 'opportunity-management',
     ref: 'SF-002',
     name: 'Opportunity Management',
-    lane: 'pipeline-opportunity',
+    lane: 'salesforce',
     priority: true,
     short: 'What must be recorded on an opportunity, when, and to what standard.',
     definition: {
@@ -352,7 +352,7 @@ const TOPICS = [
     id: 'forecasting',
     ref: 'SF-003',
     name: 'Forecasting',
-    lane: 'pipeline-opportunity',
+    lane: 'salesforce',
     priority: true,
     short: 'Forecast categories, commit standards and the evidence required behind each call.',
     definition: {
@@ -963,7 +963,7 @@ const TOPICS = [
     id: 'pipeline-inspection',
     ref: 'SF-009',
     name: 'Pipeline Inspection',
-    lane: 'pipeline-opportunity',
+    lane: 'salesforce',
     priority: true,
     short: 'How managers inspect pipeline consistently, and what sellers should have ready.',
     definition: {
@@ -1330,7 +1330,7 @@ const TOPICS = [
     id: 'partner-ai-conversations',
     ref: 'SF-014',
     name: 'AI Conversations with Partners',
-    lane: 'ai',
+    lane: 'ai-mip',
     priority: false,
     short: 'Draft guidance on discussing AI capability with partners. Not approved. Do not use.',
     definition: {
@@ -1378,7 +1378,572 @@ const TOPICS = [
       slackQuestions: ['What can I say to a partner about AI?', 'Is there approved AI messaging for partner calls?'],
       changes: [{ date: '2026-07-15', version: '0.3', summary: 'Draft circulated for review.', reason: 'Rising volume of unanswered Slack questions on AI messaging.', affects: 'CAM, CGS, SAM, TPS', comms: 'None', training: 'Not started', indexed: false }]
     }
+  },
+  /* ================================================== LANE: AI AND MIP ==== */
+
+  {
+    id: 'mip-programme',
+    ref: 'MIP-001',
+    name: 'MIP Programme',
+    lane: 'ai-mip',
+    priority: true,
+    short: 'What a Managed Intelligence Provider is, how the programme works, and what may be said to partners today.',
+    definition: {
+      what: 'The MIP (Managed Intelligence Provider) Programme supports partners evolving from managing devices and licences to orchestrating AI agents and delivering intelligence-driven outcomes for SMB clients.',
+      why: 'Traditional MSP margins are under pressure and partners are already being asked about AI. Sellers need one consistent, confident message rather than improvising in partner meetings.',
+      inScope: [
+        'What MIP is, in partner language',
+        'The programme stages and how partners join',
+        'Approved value drivers and proof points',
+        'What may and may not be committed to a partner today'
+      ],
+      outOfScope: [
+        'Agent Store commercial terms — see Agent Store',
+        'The underlying market thesis — see Agentic Inflection Point',
+        'Individual partner business plans'
+      ],
+      roles: ['cam', 'cgs', 'sam', 'tps', 'manager'],
+      related: ['agentic-inflection-point', 'agent-store', 'partner-ai-conversations']
+    },
+    rules: {
+      mandatory: [
+        { title: 'Use the current battlecard as the source for partner conversations', detail: 'The battlecard is what reps are using now. Do not build your own version. Placeholder — confirm the current battlecard version with Revenue Enablement.' },
+        { title: 'Do not commit to Agent Store availability dates with a partner', detail: 'Availability is managed centrally. Refer date questions to the programme mailbox.' },
+        { title: 'Route partner programme questions to the MIP mailbox', detail: 'One route in, so questions are answered consistently and gaps become visible.' }
+      ],
+      recommended: [
+        { title: 'Lead with the three value drivers, not the technology', detail: 'Grow the business, increase efficiency, reduce risk. Partners buy the outcome, not the agent.' },
+        { title: 'Use the published case study rather than a hypothetical', detail: 'One real transition story is worth more than a projection.' }
+      ],
+      optional: [
+        { title: 'Use the AIP report as pre-reading for strategic partners', detail: 'Useful for partners who want the full thesis.' }
+      ],
+      exceptions: [
+        { title: 'Pilot partners', detail: 'Partners already in the pilot follow the pilot communications, not the general programme guidance. Placeholder.' }
+      ]
+    },
+    good: [
+      { context: 'Framing the shift', bad: 'Leading with "AI agents" and a technology explanation the partner did not ask for.', good: 'Leading with the partner’s own margin and capacity pressure, then showing what changes when outcomes are delivered rather than licences resold.' },
+      { context: 'Handling readiness', bad: 'Pushing every partner towards the programme regardless of where they are.', good: 'Qualifying honestly, and telling a partner who is not ready what would have to be true first.' },
+      { context: 'Proof', bad: 'Quoting market projections as though they were Pax8 results.', good: 'Using the published case study, and being clear about what is a projection and what is evidence.' }
+    ],
+    coaching: [
+      'Explain MIP to me in two sentences, in the partner’s language, without using the word agent.',
+      'Which of your partners is genuinely ready, and what is the evidence?',
+      'What did you promise in that meeting that we cannot yet deliver?'
+    ],
+    mistakes: [
+      'Presenting the framework as settled when the source documents still disagree.',
+      'Treating MIP as a product rather than a business model change.',
+      'Over-promising on timing to keep momentum in a conversation.'
+    ],
+    warnings: [
+      'Reps building their own MIP slides because the approved ones do not answer partner questions.',
+      'The same partner question arriving repeatedly through different channels.'
+    ],
+    metrics: [
+      { name: 'Partner Programme Engagement', what: 'Partners who have engaged with the programme after an introduction conversation.', why: 'Distinguishes interest from movement.', dashboard: 'MIP Programme Tracking', dashboardToken: 'dashboard', owner: 'Revenue Enablement (placeholder)', cadence: 'Monthly', threshold: 'To be set (placeholder)', action: 'Where engagement stalls after introduction, review the conversation quality before adding communications.' },
+      { name: 'Seller Confidence', what: 'Self-reported confidence in holding a MIP conversation unaided.', why: 'The original problem was reps being asked MIP questions without a confident script. This measures whether that is fixed.', dashboard: 'Enablement Adoption', dashboardToken: 'dashboard', owner: 'Revenue Enablement (placeholder)', cadence: 'Quarterly', threshold: 'To be set (placeholder)', action: 'Low confidence in a specific question type points at a missing talk track, not a training gap.' }
+    ],
+    resources: {
+      training: [
+        { title: 'MIP in ten minutes', type: 'Video · 10 min', desc: 'The shift, the three value drivers, and the two questions partners always ask.', token: 'highspotAsset', share: 'internal-only' },
+        { title: 'MIP conversation practice', type: 'Live session', desc: 'Practice session with partner objections.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      documentation: [
+        { title: 'MIP Playbook', type: 'Canonical source', desc: 'The programme playbook. See the governance note on framework consistency.', token: 'canonical', share: 'internal-only' },
+        { title: 'MIP Programme Battlecard', type: 'Battlecard', desc: 'What reps are using in live conversations now.', token: 'highspotAsset', share: 'internal-only' },
+        { title: 'MIP talk track and FAQ', type: 'Talk track', desc: 'Question-by-question script for partner conversations.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      dashboards: [
+        { title: 'MIP Programme Tracking', desc: 'Partner engagement and programme progression.', audience: 'Sellers, managers, enablement', frequency: 'Monthly', token: 'dashboard' }
+      ],
+      faqs: [
+        { q: 'What is MIP, in one sentence?', a: 'A Managed Intelligence Provider orchestrates AI agents and delivers business outcomes, rather than managing devices and reselling licences. Placeholder wording — confirm against the current approved talk track.' },
+        { q: 'How many plays are in the framework?', a: 'The source documents currently disagree, so there is no approved answer to this question yet. Do not present either version as definitive. This is an open governance item, tracked on this page.' },
+        { q: 'Can I tell a partner when Agent Store will be available to them?', a: 'No. Availability is managed centrally — route the question to the programme mailbox. Placeholder rule.' }
+      ],
+      contacts: [
+        { role: 'Content owner', name: 'Alex Hastings — Revenue Enablement, EMEA', note: 'Owns this lane and the EMEA MIP enablement content.' },
+        { role: 'Escalation', name: 'Kipp Johnson — Sr Director, Revenue Enablement EMEA', note: 'Escalate framework conflicts and message inconsistency.' },
+        { role: 'Programme contact', name: 'MIP programme mailbox', note: 'All partner programme questions route here.' }
+      ]
+    },
+    internal: [
+      { title: 'MIP Playbook (canonical)', type: 'Document', desc: 'The programme playbook.', share: 'internal-only', token: 'canonical' },
+      { title: 'MIP Programme Battlecard', type: 'Battlecard', desc: 'Live rep-facing battlecard.', share: 'internal-only', token: 'highspotAsset' },
+      { title: 'What not to promise on AI capability', type: 'Internal guidance', desc: 'The gap between narrative and product, stated plainly, with safe language.', share: 'internal-only', token: 'highspotAsset' },
+      { title: 'MIP commercial guidance', type: 'Commercial guidance', desc: 'Margin and packaging implications.', share: 'restricted', token: 'highspotAsset' }
+    ],
+    partner: [
+      { title: 'MIP partner overview', type: 'Presentation', desc: 'The approved partner-facing introduction to the programme.', share: 'external-approved', token: 'highspotAsset' },
+      { title: 'MSP to MIP transition case study', type: 'Case study', desc: 'A real partner transition story. Currently the primary EMEA proof point.', share: 'external-approved', token: 'highspotAsset' },
+      { title: 'MIP readiness conversation guide', type: 'Conversation guide', desc: 'Questions to test whether a partner is genuinely ready.', share: 'conditional', condition: 'Use as your own prompt sheet. The internal scoring notes version must not be shared.', token: 'highspotAsset' },
+      { title: 'MIP partner Digital Room', type: 'Digital Room', desc: 'Curated partner-facing collection for MIP conversations.', share: 'external-approved', token: 'digitalRoom', digitalRoom: true }
+    ],
+    governance: {
+      source: 'MIP Playbook (placeholder — see conflict note)',
+      contentOwner: 'Alex Hastings (Revenue Enablement, EMEA)',
+      processOwner: 'AI Adoption (placeholder — global owner to be confirmed)',
+      approver: 'Kipp Johnson (placeholder)',
+      enablementOwner: 'Alex Hastings',
+      escalation: 'Kipp Johnson — Sr Director, Revenue Enablement EMEA',
+      approvalStatus: 'provisional',
+      publication: 'Published in Highspot',
+      version: '2.0',
+      approvalDate: '2026-07-06',
+      lastReview: '2026-07-06',
+      nextReview: '2026-10-06',
+      cadence: 'Every 3 months',
+      lifecycle: 'in-review',
+      shareability: 'internal-only',
+      indexed: true,
+      conflict: 'The playbook and the battlecard describe a different number of plays, and a third document uses different naming. There is no approved answer until this is reconciled. Sellers must not present either version as definitive.',
+      keywords: ['mip', 'managed intelligence provider', 'msp', 'plays', 'programme', 'agentic', 'ai partner'],
+      slackQuestions: [
+        'What is MIP?',
+        'How many plays are in the MIP framework?',
+        'What can I share with a partner about MIP?'
+      ],
+      changes: [
+        { date: '2026-07-06', version: '2.0', summary: 'Programme guidance updated for full partner rollout.', reason: 'Programme moved from pilot to general availability.', affects: 'CAM, CGS, SAM, TPS', comms: 'EMEA sales call', training: 'Video updated', indexed: true },
+        { date: '2026-04-07', version: '1.0', summary: 'Pilot guidance published.', reason: 'Programme soft-launched to a curated partner group.', affects: 'Pilot-facing sellers', comms: 'Direct to pilot sellers', training: 'Session delivered', indexed: true }
+      ]
+    }
+  },
+
+  {
+    id: 'agentic-inflection-point',
+    ref: 'MIP-002',
+    name: 'Agentic Inflection Point',
+    lane: 'ai-mip',
+    priority: true,
+    short: 'The market thesis behind MIP: why the partner model is changing, and how to make it land without overstating it.',
+    definition: {
+      what: 'The Agentic Inflection Point is the thesis that AI agents are moving from passive assistance to autonomous execution, and that this changes what partners sell and how they earn.',
+      why: 'The thesis is the "why" behind every MIP conversation. Without it, MIP sounds like a product launch. With it, it is a business case a partner can act on.',
+      inScope: ['The market thesis and its evidence', 'How to use it in a partner conversation', 'What is projection and what is evidence'],
+      outOfScope: ['Programme mechanics — see MIP Programme', 'Product capability — see Agent Store'],
+      roles: ['cam', 'cgs', 'sam', 'manager'],
+      related: ['mip-programme', 'agent-store']
+    },
+    rules: {
+      mandatory: [
+        { title: 'Distinguish projection from evidence every time', detail: 'Market projections must be described as projections. Presenting them as Pax8 results is a credibility risk. Placeholder rule.' },
+        { title: 'Use the approved figures only', detail: 'Do not construct your own market statistics. Figures come from the published report.' }
+      ],
+      recommended: [
+        { title: 'Anchor the thesis in the partner’s own numbers', detail: 'A general market claim moves nobody. The partner’s own margin trend does.' },
+        { title: 'Give the shift a deadline', detail: 'Inspiration without a deadline produces interest, not change.' }
+      ],
+      optional: [
+        { title: 'Share the full report with strategic partners', detail: 'Useful pre-reading for partners who want depth.' }
+      ],
+      exceptions: []
+    },
+    good: [
+      { context: 'Using data', bad: '"The market says margins will collapse."', good: '"Independent projections suggest margin compression through 2027. Here is what your own renewal margin has done over eight quarters."' },
+      { context: 'Urgency', bad: 'A visionary conversation that ends with the partner agreeing it is interesting.', good: 'A conversation that ends with a dated next step the partner has committed to.' }
+    ],
+    coaching: [
+      'Which number did you use, and can you cite where it came from?',
+      'What did the partner agree to do, and by when?'
+    ],
+    mistakes: ['Presenting the thesis as settled fact.', 'Using the report as a deck rather than a conversation.'],
+    warnings: ['High interest, no dated commitments — the signal that urgency is missing.'],
+    metrics: [
+      { name: 'Thesis to Action Conversion', what: 'Introductory conversations that produce a dated partner commitment.', why: 'Separates a good conversation from a real one.', dashboard: 'MIP Programme Tracking', dashboardToken: 'dashboard', owner: 'Revenue Enablement (placeholder)', cadence: 'Monthly', threshold: 'To be set (placeholder)', action: 'Low conversion points at a missing deadline, not a missing argument.' }
+    ],
+    resources: {
+      training: [{ title: 'Making the thesis land', type: 'Video · 8 min', desc: 'How to use the thesis without overstating it.', token: 'highspotAsset', share: 'internal-only' }],
+      documentation: [{ title: 'Agentic Inflection Point Report', type: 'Canonical source', desc: 'The published market thesis.', token: 'canonical', share: 'internal-only' },
+        { title: 'AIP talk track and FAQ', type: 'Talk track', desc: 'Four-page script for the conversation.', token: 'highspotAsset', share: 'internal-only' }],
+      dashboards: [{ title: 'MIP Programme Tracking', desc: 'Engagement and progression.', audience: 'Sellers and managers', frequency: 'Monthly', token: 'dashboard' }],
+      faqs: [
+        { q: 'Is the thesis Pax8’s opinion or independent research?', a: 'It is a Pax8 point of view built on external market data. Describe it that way — do not present it as independent research. Placeholder answer.' }
+      ],
+      contacts: [{ role: 'Content owner', name: 'Alex Hastings — Revenue Enablement, EMEA', note: 'Owns the EMEA enablement view of the thesis.' }]
+    },
+    internal: [
+      { title: 'Agentic Inflection Point Report (canonical)', type: 'Document', desc: 'The published thesis.', share: 'internal-only', token: 'canonical' },
+      { title: 'Which figures are approved for external use', type: 'Internal guidance', desc: 'The approved figures, and the ones that must not leave the building.', share: 'internal-only', token: 'highspotAsset' }
+    ],
+    partner: [
+      { title: 'Market shift partner briefing', type: 'Presentation', desc: 'Partner-facing version of the thesis.', share: 'external-approved', token: 'highspotAsset' },
+      { title: 'Partner margin self-assessment', type: 'Template', desc: 'Lets a partner run the numbers on their own business.', share: 'external-approved', token: 'highspotAsset' }
+    ],
+    governance: {
+      source: 'Agentic Inflection Point Report (placeholder)',
+      contentOwner: 'Alex Hastings (Revenue Enablement, EMEA)',
+      processOwner: 'Product Marketing (placeholder)',
+      approver: 'Kipp Johnson (placeholder)',
+      enablementOwner: 'Alex Hastings',
+      escalation: 'Kipp Johnson — Sr Director, Revenue Enablement EMEA',
+      approvalStatus: 'approved',
+      publication: 'Published in Highspot',
+      version: '1.3',
+      approvalDate: '2026-06-15',
+      lastReview: '2026-06-15',
+      nextReview: '2026-12-15',
+      cadence: 'Every 6 months',
+      lifecycle: 'published',
+      shareability: 'internal-only',
+      indexed: true,
+      keywords: ['aip', 'agentic', 'inflection', 'thesis', 'market', 'margin', 'why'],
+      slackQuestions: ['What is the Agentic Inflection Point?', 'Which AI market figures can I quote to a partner?'],
+      changes: [{ date: '2026-06-15', version: '1.3', summary: 'Added the approved-figures guidance.', reason: 'Reps were constructing their own market statistics.', affects: 'All partner-facing roles', comms: 'Manager cascade', training: 'Video updated', indexed: true }]
+    }
+  },
+
+  {
+    id: 'agent-store',
+    ref: 'MIP-003',
+    name: 'Agent Store',
+    lane: 'ai-mip',
+    priority: true,
+    short: 'What Agent Store is, what may be said about availability, and how it connects to the MIP motion.',
+    definition: {
+      what: 'Agent Store is the addition to the Pax8 Marketplace through which partners discover and deploy AI agents.',
+      why: 'Agent Store is the most common partner question in a MIP conversation. Sellers need a consistent answer, particularly on what is available and when.',
+      inScope: ['What Agent Store is', 'What may be said about availability', 'How it relates to the MIP programme'],
+      outOfScope: ['Individual agent capability and support', 'Marketplace commercial terms'],
+      roles: ['cam', 'cgs', 'sam', 'tps'],
+      related: ['mip-programme', 'agentic-inflection-point']
+    },
+    rules: {
+      mandatory: [
+        { title: 'Do not commit availability dates to a partner', detail: 'Route date questions to the programme mailbox. Placeholder rule — confirm with the programme owner.' },
+        { title: 'Do not demonstrate capability that is not in general availability', detail: 'Early-access material is internal.' }
+      ],
+      recommended: [{ title: 'Answer the "what changes for me" question first', detail: 'Partners ask about the store, but they mean their business model.' }],
+      optional: [],
+      exceptions: [{ title: 'Early-access partners', detail: 'Partners in early access follow their own communications. Placeholder.' }]
+    },
+    good: [
+      { context: 'Availability questions', bad: '"It should be live for you in a few weeks."', good: '"I will not guess on timing. I will get you the confirmed position from the programme team this week."' }
+    ],
+    coaching: ['What did you say about timing, and where did that come from?'],
+    mistakes: ['Guessing at dates to keep momentum in a conversation.'],
+    warnings: ['Partners quoting availability dates back to us that we cannot trace.'],
+    metrics: [],
+    resources: {
+      training: [{ title: 'Agent Store: what to say today', type: 'Video · 5 min', desc: 'The approved position, and the questions to deflect.', token: 'highspotAsset', share: 'internal-only' }],
+      documentation: [{ title: 'Agent Store Positioning Note', type: 'Canonical source', desc: 'The approved position on Agent Store.', token: 'canonical', share: 'internal-only' }],
+      dashboards: [],
+      faqs: [{ q: 'When will Agent Store be available to my partner?', a: 'Availability is managed centrally and there is no approved date to share. Route the question to the programme mailbox. Placeholder answer.' }],
+      contacts: [{ role: 'Content owner', name: 'Alex Hastings — Revenue Enablement, EMEA', note: 'Owns the enablement view.' }]
+    },
+    internal: [
+      { title: 'Agent Store Positioning Note (canonical)', type: 'Document', desc: 'The approved position.', share: 'internal-only', token: 'canonical' },
+      { title: 'Early access material', type: 'Internal demonstration', desc: 'Early-access capability. Internal only.', share: 'restricted', token: 'highspotAsset' }
+    ],
+    partner: [
+      { title: 'Agent Store partner overview', type: 'Document', desc: 'The approved partner-facing overview.', share: 'conditional', condition: 'Shareable as published. Do not add timing commitments of your own.', token: 'highspotAsset' }
+    ],
+    governance: {
+      source: 'Agent Store Positioning Note (placeholder)',
+      contentOwner: 'Alex Hastings (Revenue Enablement, EMEA)',
+      processOwner: 'Product Marketing (placeholder)',
+      approver: 'Kipp Johnson (placeholder)',
+      enablementOwner: 'Alex Hastings',
+      escalation: 'MIP programme mailbox',
+      approvalStatus: 'provisional',
+      publication: 'Published in Highspot',
+      version: '0.9',
+      approvalDate: '2026-07-20',
+      lastReview: '2026-07-20',
+      nextReview: '2026-10-20',
+      cadence: 'Every 3 months',
+      lifecycle: 'in-review',
+      shareability: 'internal-only',
+      indexed: true,
+      keywords: ['agent store', 'marketplace', 'agents', 'availability', 'ga'],
+      slackQuestions: ['What is Agent Store?', 'When is Agent Store available?'],
+      changes: [{ date: '2026-07-20', version: '0.9', summary: 'Interim positioning published while general availability is confirmed.', reason: 'Partner questions were being answered inconsistently.', affects: 'CAM, CGS, SAM, TPS', comms: 'Slack announcement', training: 'Video added', indexed: true }]
+    }
+  },
+
+  /* ======================================== LANE: PROGRAMMES AND ONBOARDING */
+
+  {
+    id: 'farmers-programme',
+    ref: 'PRG-001',
+    name: 'Farmers Programme',
+    lane: 'programmes',
+    priority: true,
+    short: 'How we grow existing partners: the motion, the expectations and how growth is measured.',
+    definition: {
+      what: 'The Farmers Programme is the motion for growing revenue and capability within an existing partner base, through planning, cross-sell and deepening the relationship.',
+      why: 'Existing partners are the most reliable source of growth, and the least consistently worked. The programme sets a common standard for what "working the base" means.',
+      inScope: ['Partner segmentation for the farming motion', 'Account planning expectations', 'Cross-sell and attach plays', 'Cadence and review'],
+      outOfScope: ['New partner acquisition — see Hunters Programme', 'Salesforce record standards — see the Salesforce lane'],
+      roles: ['cam', 'sam', 'manager'],
+      related: ['hunters-programme', 'seller-onboarding', 'pipeline-management']
+    },
+    rules: {
+      mandatory: [
+        { title: 'Every named partner has a current account plan', detail: 'Reviewed quarterly with the manager. Placeholder cadence — confirm with the lane owner.' },
+        { title: 'Growth conversations are logged against the partner account', detail: 'See Event Logging for the standard.' },
+        { title: 'Attach plays are run from the approved play list', detail: 'Do not build local variants.' }
+      ],
+      recommended: [
+        { title: 'Plan the year with the partner, not for them', detail: 'A plan the partner has not agreed to is a forecast, not a plan.' }
+      ],
+      optional: [{ title: 'Use the quarterly business review template', detail: 'Structure for the partner-facing review.' }],
+      exceptions: [{ title: 'Partners in transition', detail: 'Partners undergoing ownership change follow a lighter plan until the transition completes. Placeholder.' }]
+    },
+    good: [
+      { context: 'Account planning', bad: 'A plan written once at the start of the year and never opened again.', good: 'A plan reviewed each quarter against what actually happened, with the next three actions dated.' },
+      { context: 'Cross-sell', bad: 'Pitching whatever is being promoted this month.', good: 'Proposing the next product the partner’s own client base can absorb, with the evidence for it.' }
+    ],
+    coaching: [
+      'Show me the account plan for your largest partner. When did it last change?',
+      'Which partner grew most this quarter, and what did you do differently?'
+    ],
+    mistakes: ['Confusing frequent contact with account development.', 'Planning around our targets rather than the partner’s capacity.'],
+    warnings: ['Flat revenue with high activity — effort going into relationship maintenance rather than growth.'],
+    metrics: [
+      { name: 'Partner Revenue Growth', what: 'Year-on-year growth across the named partner base.', why: 'The programme exists to produce it.', dashboard: 'Partner Growth', dashboardToken: 'dashboard', owner: 'Sales Leadership (placeholder)', cadence: 'Monthly', threshold: 'To be set (placeholder)', action: 'Flat growth with an active plan means the plan is not addressing the constraint.' },
+      { name: 'Product Attach', what: 'Average number of product families per active partner.', why: 'Attach is the clearest measure of deepening a relationship.', dashboard: 'Partner Growth', dashboardToken: 'dashboard', owner: 'RevOps (placeholder)', cadence: 'Monthly', threshold: 'To be set (placeholder)', action: 'Low attach with high satisfaction usually means we have not asked.' }
+    ],
+    resources: {
+      training: [
+        { title: 'Account planning that survives contact with reality', type: 'Workday course', desc: 'Building a plan the partner agrees to.', token: 'workday', share: 'internal-only' },
+        { title: 'Running a partner QBR', type: 'Video · 12 min', desc: 'Structure and the three questions that matter.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      documentation: [
+        { title: 'Farmers Programme Standard', type: 'Canonical source', desc: 'The authoritative programme definition.', token: 'canonical', share: 'internal-only' },
+        { title: 'Account plan template', type: 'Template', desc: 'The approved planning structure.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      dashboards: [{ title: 'Partner Growth', desc: 'Growth, attach and plan currency across your base.', audience: 'Sellers and managers', frequency: 'Monthly', token: 'dashboard' }],
+      faqs: [
+        { q: 'How often should an account plan be reviewed?', a: 'Quarterly with your manager, and whenever something material changes at the partner. Placeholder cadence.' },
+        { q: 'Which partners are in the farming motion?', a: 'Assignment follows the segmentation model held by the lane owner. Placeholder answer.' }
+      ],
+      contacts: [
+        { role: 'Content owner', name: 'Fabrizio Papa — Revenue Enablement, Zwolle', note: 'Owns this lane and the programme enablement.' },
+        { role: 'Process owner', name: 'Sales Leadership EMEA — to be confirmed', note: 'Owns the programme design.' }
+      ]
+    },
+    internal: [
+      { title: 'Farmers Programme Standard (canonical)', type: 'Document', desc: 'The programme definition.', share: 'internal-only', token: 'canonical' },
+      { title: 'Account plan template', type: 'Template', desc: 'The approved structure.', share: 'internal-only', token: 'highspotAsset' },
+      { title: 'Segmentation and assignment rules', type: 'Commercial guidance', desc: 'Which partners sit in which motion, and why.', share: 'restricted', token: 'highspotAsset' }
+    ],
+    partner: [
+      { title: 'Joint business plan template', type: 'Template', desc: 'The plan you build with the partner.', share: 'external-approved', token: 'highspotAsset' },
+      { title: 'QBR pack', type: 'Presentation', desc: 'Partner-facing quarterly review structure.', share: 'external-approved', token: 'highspotAsset' }
+    ],
+    governance: {
+      source: 'Farmers Programme Standard (placeholder)',
+      contentOwner: 'Fabrizio Papa (Revenue Enablement, Zwolle)',
+      processOwner: 'Sales Leadership EMEA (placeholder)',
+      approver: 'Kipp Johnson (placeholder)',
+      enablementOwner: 'Fabrizio Papa',
+      escalation: 'Kipp Johnson — Sr Director, Revenue Enablement EMEA',
+      approvalStatus: 'approved',
+      publication: 'Published in Highspot',
+      version: '1.2',
+      approvalDate: '2026-05-11',
+      lastReview: '2026-05-11',
+      nextReview: '2026-11-11',
+      cadence: 'Every 6 months',
+      lifecycle: 'published',
+      shareability: 'internal-only',
+      indexed: true,
+      keywords: ['farmers', 'farming', 'account plan', 'growth', 'attach', 'qbr', 'existing partners'],
+      slackQuestions: ['What is the Farmers Programme?', 'How often do I review an account plan?'],
+      changes: [{ date: '2026-05-11', version: '1.2', summary: 'Quarterly plan review made mandatory.', reason: 'Plans were written once and never revisited.', affects: 'CAM, SAM, Sales Manager', comms: 'Manager cascade', training: 'Course updated', indexed: true }]
+    }
+  },
+
+  {
+    id: 'hunters-programme',
+    ref: 'PRG-002',
+    name: 'Hunters Programme',
+    lane: 'programmes',
+    priority: true,
+    short: 'How we win new partners: targeting, outreach standards and what qualifies as a real opportunity.',
+    definition: {
+      what: 'The Hunters Programme is the motion for acquiring new partners, covering targeting, outreach, qualification and the handover into the farming motion.',
+      why: 'New partner acquisition is the hardest motion to do consistently, and the easiest to fake with activity. The programme defines what genuine progress looks like.',
+      inScope: ['Target definition and prioritisation', 'Outreach standards and cadence', 'Qualification criteria', 'Handover to the farming motion'],
+      outOfScope: ['Growing existing partners — see Farmers Programme', 'Marketing-sourced leads — see MQL Process'],
+      roles: ['cgs', 'cam', 'manager'],
+      related: ['farmers-programme', 'mql-process', 'pipeline-management']
+    },
+    rules: {
+      mandatory: [
+        { title: 'Work from the approved target list', detail: 'Self-selected targets outside the list need manager agreement recorded. Placeholder rule.' },
+        { title: 'A new partner is only qualified when the qualification criteria are met', detail: 'Signed up is not the same as qualified.' },
+        { title: 'Handover to the farming motion happens at the defined trigger', detail: 'With a documented handover, not an introduction email.' }
+      ],
+      recommended: [
+        { title: 'Research before outreach', detail: 'Generic outreach produces generic response rates.' },
+        { title: 'Kill fast and record why', detail: 'A well-reasoned no is more valuable than a slow maybe.' }
+      ],
+      optional: [{ title: 'Use the approved outreach sequences', detail: 'Tested sequences by segment.' }],
+      exceptions: [{ title: 'Inbound partner approaches', detail: 'Partners approaching us follow a shortened qualification path. Placeholder.' }]
+    },
+    good: [
+      { context: 'Outreach', bad: 'High volume of identical messages, measured by activity count.', good: 'Fewer, researched approaches, measured by conversations that reach qualification.' },
+      { context: 'Qualification', bad: 'Counting a signup as a win.', good: 'Counting the first transaction and a documented plan as the win.' },
+      { context: 'Handover', bad: 'An introduction email and hope.', good: 'A documented handover with the plan, the history and the commitments already made.' }
+    ],
+    coaching: [
+      'Of your approaches this month, how many reached a real conversation?',
+      'What is the actual reason the last three targets said no?'
+    ],
+    mistakes: ['Measuring effort instead of progression.', 'Handing over a partner without the context that was promised to them.'],
+    warnings: ['High signup numbers with low first-transaction conversion.'],
+    metrics: [
+      { name: 'New Partner Acquisition', what: 'New partners reaching qualified status in the period.', why: 'The output the programme exists for.', dashboard: 'Partner Acquisition', dashboardToken: 'dashboard', owner: 'Sales Leadership (placeholder)', cadence: 'Monthly', threshold: 'To be set (placeholder)', action: 'Below target, examine conversation quality before adding activity.' },
+      { name: 'Time to First Transaction', what: 'Days from signup to first transaction.', why: 'The clearest signal of whether onboarding is working.', dashboard: 'Partner Acquisition', dashboardToken: 'dashboard', owner: 'RevOps (placeholder)', cadence: 'Monthly', threshold: 'To be set (placeholder)', action: 'Lengthening times usually point at the onboarding path, not the seller.' }
+    ],
+    resources: {
+      training: [
+        { title: 'Prospecting that earns a conversation', type: 'Workday course', desc: 'Research, relevance and the first ninety seconds.', token: 'workday', share: 'internal-only' },
+        { title: 'Qualifying a new partner', type: 'Video · 9 min', desc: 'The criteria, and how to apply them honestly.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      documentation: [
+        { title: 'Hunters Programme Standard', type: 'Canonical source', desc: 'The authoritative programme definition.', token: 'canonical', share: 'internal-only' },
+        { title: 'Qualification criteria card', type: 'Checklist', desc: 'One card, applied consistently.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      dashboards: [{ title: 'Partner Acquisition', desc: 'Pipeline, qualification and time to first transaction.', audience: 'Sellers and managers', frequency: 'Monthly', token: 'dashboard' }],
+      faqs: [
+        { q: 'When does a new partner move to the farming motion?', a: 'At the defined handover trigger, with a documented handover. Placeholder answer — confirm the trigger with the lane owner.' },
+        { q: 'Can I approach a target outside the list?', a: 'Yes, with your manager’s agreement recorded. The list is a prioritisation tool, not a boundary.' }
+      ],
+      contacts: [
+        { role: 'Content owner', name: 'Fabrizio Papa — Revenue Enablement, Zwolle', note: 'Owns this lane and the programme enablement.' },
+        { role: 'Process owner', name: 'Sales Leadership EMEA — to be confirmed', note: 'Owns targeting and the programme design.' }
+      ]
+    },
+    internal: [
+      { title: 'Hunters Programme Standard (canonical)', type: 'Document', desc: 'The programme definition.', share: 'internal-only', token: 'canonical' },
+      { title: 'Qualification criteria card', type: 'Checklist', desc: 'The criteria, on one card.', share: 'internal-only', token: 'highspotAsset' },
+      { title: 'Approved outreach sequences', type: 'Template', desc: 'Tested sequences by segment.', share: 'manager-approval', token: 'highspotAsset' },
+      { title: 'Target list and prioritisation', type: 'Commercial guidance', desc: 'The current target list and the logic behind it.', share: 'restricted', token: 'highspotAsset' }
+    ],
+    partner: [
+      { title: 'Why partner with us', type: 'Presentation', desc: 'The approved first-conversation deck.', share: 'external-approved', token: 'highspotAsset' },
+      { title: 'Getting started overview', type: 'Document', desc: 'What a new partner can expect in the first 90 days.', share: 'external-approved', token: 'highspotAsset' }
+    ],
+    governance: {
+      source: 'Hunters Programme Standard (placeholder)',
+      contentOwner: 'Fabrizio Papa (Revenue Enablement, Zwolle)',
+      processOwner: 'Sales Leadership EMEA (placeholder)',
+      approver: 'Kipp Johnson (placeholder)',
+      enablementOwner: 'Fabrizio Papa',
+      escalation: 'Kipp Johnson — Sr Director, Revenue Enablement EMEA',
+      approvalStatus: 'approved',
+      publication: 'Published in Highspot',
+      version: '1.1',
+      approvalDate: '2026-06-08',
+      lastReview: '2026-06-08',
+      nextReview: '2026-12-08',
+      cadence: 'Every 6 months',
+      lifecycle: 'published',
+      shareability: 'internal-only',
+      indexed: true,
+      keywords: ['hunters', 'hunting', 'new partner', 'acquisition', 'prospecting', 'outreach', 'targets'],
+      slackQuestions: ['What is the Hunters Programme?', 'When does a new partner move to farming?'],
+      changes: [{ date: '2026-06-08', version: '1.1', summary: 'Documented handover made mandatory at the farming trigger.', reason: 'Partners were arriving in the farming motion with no history.', affects: 'CGS, CAM, Sales Manager', comms: 'Manager cascade', training: 'Video updated', indexed: true }]
+    }
+  },
+
+  {
+    id: 'seller-onboarding',
+    ref: 'PRG-003',
+    name: 'Onboarding',
+    lane: 'programmes',
+    priority: true,
+    short: 'The first 90 days: what a new seller learns, in what order, and how readiness is confirmed.',
+    definition: {
+      what: 'Onboarding is the structured path that takes a new EMEA seller from first day to independent productivity, covering systems, standards, motion and partner conversations.',
+      why: 'Ramp time is the single largest controllable cost in a growing sales team, and inconsistent onboarding is the largest cause of inconsistent behaviour later.',
+      inScope: ['The 30, 60 and 90 day path', 'Mandatory learning and certification', 'Manager responsibilities during ramp', 'Readiness confirmation'],
+      outOfScope: ['Recruitment and offer', 'Ongoing capability development after ramp'],
+      roles: ['cam', 'cgs', 'rsm', 'sam', 'tps', 'manager', 'enablement'],
+      related: ['farmers-programme', 'hunters-programme', 'pipeline-management', 'opportunity-management']
+    },
+    rules: {
+      mandatory: [
+        { title: 'Complete the day-30 systems and standards path before working live pipeline', detail: 'Includes Salesforce standards, stage definitions and hygiene. Placeholder rule.' },
+        { title: 'The manager holds a weekly ramp review for the first 12 weeks', detail: 'Structured, not ad hoc.' },
+        { title: 'Readiness is confirmed against the checklist, not by elapsed time', detail: 'Ninety days passing is not evidence of readiness.' }
+      ],
+      recommended: [
+        { title: 'Pair every new seller with a buddy in week one', detail: 'The fastest route to the unwritten rules.' },
+        { title: 'Shadow three partner conversations before running one', detail: 'Observation before performance.' }
+      ],
+      optional: [{ title: 'Use the ramp journal', detail: 'A record of what was learned and what is still unclear.' }],
+      exceptions: [{ title: 'Internal transfers', detail: 'Sellers moving from another Pax8 role follow a shortened path, confirmed by the manager. Placeholder.' }]
+    },
+    good: [
+      { context: 'Ramp reviews', bad: 'A check-in that asks how the new starter is feeling and nothing else.', good: 'A review against the checklist, with the next week’s learning objectives named.' },
+      { context: 'Readiness', bad: 'Declared ready because 90 days have passed.', good: 'Declared ready because the checklist is complete and the manager has observed the behaviour.' },
+      { context: 'Learning order', bad: 'Product training in week one, systems and standards whenever there is time.', good: 'Systems and standards first, because everything else is recorded through them.' }
+    ],
+    coaching: [
+      'What is the one thing your new starter is still guessing at?',
+      'Which part of the path did they find least useful, and why?'
+    ],
+    mistakes: ['Treating onboarding as a content delivery exercise rather than a behaviour one.', 'Letting live pipeline pressure interrupt the first 30 days.'],
+    warnings: ['New starters producing activity quickly but with poor record quality — a sign standards were skipped.'],
+    metrics: [
+      { name: 'Time to Productivity', what: 'Weeks from start date to first independently closed deal.', why: 'The headline measure of whether onboarding works.', dashboard: 'Onboarding and Ramp', dashboardToken: 'dashboard', owner: 'Revenue Enablement (placeholder)', cadence: 'Monthly', threshold: 'To be set (placeholder)', action: 'Lengthening ramp times point at the path or the manager rhythm, not the hire.' },
+      { name: 'Onboarding Completion', what: 'Percentage completing the mandatory path within 90 days.', why: 'Incomplete onboarding predicts inconsistent behaviour for years.', dashboard: 'Onboarding and Ramp', dashboardToken: 'dashboard', owner: 'Revenue Enablement (placeholder)', cadence: 'Monthly', threshold: '100% (placeholder)', action: 'Non-completion is a manager conversation, not a learner one.' }
+    ],
+    resources: {
+      training: [
+        { title: 'EMEA Sales Onboarding path', type: 'Workday course', desc: 'The full structured path across 90 days.', token: 'workday', share: 'internal-only' },
+        { title: 'Salesforce essentials for new starters', type: 'Workday course', desc: 'Systems and standards, delivered first.', token: 'workday', share: 'internal-only' },
+        { title: 'Manager guide to running a ramp', type: 'Live session', desc: 'For managers taking a new starter.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      documentation: [
+        { title: 'Onboarding Standard and Checklist', type: 'Canonical source', desc: 'The authoritative onboarding path and readiness checklist.', token: 'canonical', share: 'internal-only' },
+        { title: '30-60-90 day plan template', type: 'Template', desc: 'The plan the manager and new starter agree in week one.', token: 'highspotAsset', share: 'internal-only' }
+      ],
+      dashboards: [{ title: 'Onboarding and Ramp', desc: 'Completion, ramp time and readiness by cohort.', audience: 'Managers and enablement', frequency: 'Monthly', token: 'dashboard' }],
+      faqs: [
+        { q: 'When can a new starter work live pipeline?', a: 'After the day-30 systems and standards path is complete. Placeholder rule — confirm with the lane owner.' },
+        { q: 'Who confirms readiness?', a: 'The manager, against the checklist, with Revenue Enablement recording completion.' }
+      ],
+      contacts: [
+        { role: 'Content owner', name: 'Fabrizio Papa — Revenue Enablement, Zwolle', note: 'Owns onboarding design and delivery.' },
+        { role: 'Escalation', name: 'Kipp Johnson — Sr Director, Revenue Enablement EMEA', note: 'For ramp exceptions.' }
+      ]
+    },
+    internal: [
+      { title: 'Onboarding Standard and Checklist (canonical)', type: 'Document', desc: 'The path and the readiness checklist.', share: 'internal-only', token: 'canonical' },
+      { title: '30-60-90 day plan template', type: 'Template', desc: 'Agreed in week one.', share: 'internal-only', token: 'highspotAsset' },
+      { title: 'Manager ramp review guide', type: 'Manager guidance', desc: 'How to run the weekly review.', share: 'internal-only', token: 'highspotAsset' }
+    ],
+    partner: [],
+    governance: {
+      source: 'Onboarding Standard and Checklist (placeholder)',
+      contentOwner: 'Fabrizio Papa (Revenue Enablement, Zwolle)',
+      processOwner: 'Revenue Enablement EMEA (placeholder)',
+      approver: 'Kipp Johnson (placeholder)',
+      enablementOwner: 'Fabrizio Papa',
+      escalation: 'Kipp Johnson — Sr Director, Revenue Enablement EMEA',
+      approvalStatus: 'approved',
+      publication: 'Published in Highspot',
+      version: '3.1',
+      approvalDate: '2026-07-13',
+      lastReview: '2026-07-13',
+      nextReview: '2027-01-13',
+      cadence: 'Every 6 months',
+      lifecycle: 'published',
+      shareability: 'internal-only',
+      indexed: true,
+      keywords: ['onboarding', 'ramp', 'new starter', 'induction', '30 60 90', 'new hire', 'readiness'],
+      slackQuestions: ['What does onboarding cover?', 'When can a new starter work live pipeline?'],
+      changes: [{ date: '2026-07-13', version: '3.1', summary: 'Systems and standards moved ahead of product training in the path.', reason: 'New starters were building habits before learning the standards those habits are recorded through.', affects: 'All new sellers and their managers', comms: 'Manager forum', training: 'Path rebuilt', indexed: true }]
+    }
   }
+
 ];
 
 /* --------------------------------------------------- content gap demo cases */
@@ -1392,7 +1957,7 @@ const CONTENT_GAPS = [
     source: 'MIP Partner Guidance, version 3.2 (placeholder)',
     lastReview: '2026-07-29',
     owner: 'Product Marketing (placeholder)',
-    lane: 'mip',
+    lane: 'ai-mip',
     note: 'This answer comes from an approved source document that has not yet been published in the MIP lane in Highspot.'
   },
   {

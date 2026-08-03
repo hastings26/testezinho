@@ -27,7 +27,7 @@ Deployed with the rest of the repository via GitHub Pages.
 
 | Try this | What it demonstrates |
 |---|---|
-| Footer → **Link inventory** | All 109 link slots, live status, CSV export — the handover checklist |
+| Footer → **Link inventory** | All 165 link slots, live status, CSV export — the handover checklist |
 | Change the role selector in the masthead | Role relevance — what is *primary* changes, what is *reachable* never does |
 | Registry → filter **Has governance gaps** | Ownership and review gaps are derived, so they cannot be hidden |
 | Topic → *AI Conversations with Partners* | How the system refuses to present unowned, unapproved content as authoritative |
@@ -78,13 +78,20 @@ Break that direction and you have created the competing version you were trying 
 
 ## What is in the prototype
 
-**14 topics** across 9 lanes, 13 of them priority topics, each following the same six-section template:
+**20 topics** across **3 owned lanes**, each following the same six-section template:
 definition and scope · targets, standards and policies · what good looks like · track and measure ·
 resources and enablement · governance and change history.
 
+| Lane | Owner | Topics |
+|---|---|---|
+| **Salesforce** | Marco Bueno Carpio — Revenue Enablement Programs Manager, Frankfurt | 13 |
+| **AI and MIP** | Alex Hastings — Revenue Enablement Programs Manager, EMEA | 4 |
+| **Programmes and Onboarding** | Fabrizio Papa — Revenue Enablement Programs Manager, Zwolle | 3 |
+
 **Deliberate failure states**, because a governance system is only credible if you can see it refuse:
-one unowned draft topic · two topics past their review date · one search that returns nothing · one
-assistant question with an approved-but-unpublished source · one with no approved answer at all.
+one unowned draft topic · two topics past their review date · one topic whose sources openly contradict each
+other · one search that returns nothing · one assistant question with an approved-but-unpublished source ·
+one with no approved answer at all.
 
 **Files**
 
@@ -94,7 +101,7 @@ assistant question with an approved-but-unpublished source · one with no approv
 | `styles.css` | Design system. Dark navigation, light canvas, restrained Pax8 accents. No external fonts or assets. |
 | `app.js` | Hash router, role relevance, search index and ranking, registry filters, assistant logic, gap workflow |
 | `data.js` | The Topic Registry. Every topic, asset, metric, FAQ and governance record. **Replace this file with real records.** |
-| `links.js` | **The only file you edit to connect real URLs.** 109 pre-listed slots, grouped and commented. |
+| `links.js` | **The only file you edit to connect real URLs.** 165 pre-listed slots, grouped and commented. |
 
 `data.js` is the whole content model. To add a topic, add a record — every view derives from it.
 
@@ -114,7 +121,7 @@ never requested twice.
 | `'TBC'` | To be created — the document does not exist yet | Amber placeholder, "to be created" |
 | `'https://…'` | Connected | A real link |
 
-The **Link Inventory** page (footer, or `#/links`) shows live status of all 109 slots, filters by state and
+The **Link Inventory** page (footer, or `#/links`) shows live status of all 165 slots, filters by state and
 category, and exports a CSV with an empty URL column to send to the content owner.
 
 Full process: [docs/11-link-inventory-guide.md](docs/11-link-inventory-guide.md).

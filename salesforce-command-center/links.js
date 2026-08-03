@@ -30,8 +30,26 @@ const LINKS = {
   'GLOBAL/slack': '',
 
   /* ────────────────────────────────────────────────────────────────────────
-     CANONICAL SOURCES  (13)
+     CANONICAL SOURCES  (19)
      ──────────────────────────────────────────────────────────────────────── */
+
+  // MIP Playbook (placeholder — see conflict note)
+  'MIP-001/canonical': '',
+
+  // Agentic Inflection Point Report (placeholder)
+  'MIP-002/canonical': '',
+
+  // Agent Store Positioning Note (placeholder)
+  'MIP-003/canonical': '',
+
+  // Farmers Programme Standard (placeholder)
+  'PRG-001/canonical': '',
+
+  // Hunters Programme Standard (placeholder)
+  'PRG-002/canonical': '',
+
+  // Onboarding Standard and Checklist (placeholder)
+  'PRG-003/canonical': '',
 
   // Pipeline Management Standard — EMEA (placeholder)
   'SF-001/canonical': '',
@@ -73,8 +91,26 @@ const LINKS = {
   'SF-013/canonical': '',
 
   /* ────────────────────────────────────────────────────────────────────────
-     HIGHSPOT TOPIC PAGES  (14)
+     HIGHSPOT TOPIC PAGES  (20)
      ──────────────────────────────────────────────────────────────────────── */
+
+  // MIP Programme — Highspot page
+  'MIP-001/topic': '',
+
+  // Agentic Inflection Point — Highspot page
+  'MIP-002/topic': '',
+
+  // Agent Store — Highspot page
+  'MIP-003/topic': '',
+
+  // Farmers Programme — Highspot page
+  'PRG-001/topic': '',
+
+  // Hunters Programme — Highspot page
+  'PRG-002/topic': '',
+
+  // Onboarding — Highspot page
+  'PRG-003/topic': '',
 
   // Pipeline Management — Highspot page
   'SF-001/topic': '',
@@ -119,7 +155,7 @@ const LINKS = {
   'SF-014/topic': '',
 
   /* ────────────────────────────────────────────────────────────────────────
-     DASHBOARDS  (16)
+     DASHBOARDS  (20)
      ──────────────────────────────────────────────────────────────────────── */
 
   // Activity and Engagement — Salesforce dashboard · used in 2 topics
@@ -137,7 +173,7 @@ const LINKS = {
   // EMEA Pipeline Health — Salesforce dashboard · used in 2 topics
   'DASHBOARD/emea-pipeline-health': '',
 
-  // Enablement Adoption — Salesforce dashboard
+  // Enablement Adoption — Salesforce dashboard · used in 2 topics
   'DASHBOARD/enablement-adoption': '',
 
   // Forecast Submission Status — Salesforce dashboard
@@ -145,6 +181,18 @@ const LINKS = {
 
   // Manager Rhythm — Salesforce dashboard
   'DASHBOARD/manager-rhythm': '',
+
+  // MIP Programme Tracking — Salesforce dashboard · used in 2 topics
+  'DASHBOARD/mip-programme-tracking': '',
+
+  // Onboarding and Ramp — Salesforce dashboard
+  'DASHBOARD/onboarding-and-ramp': '',
+
+  // Partner Acquisition — Salesforce dashboard
+  'DASHBOARD/partner-acquisition': '',
+
+  // Partner Growth — Salesforce dashboard
+  'DASHBOARD/partner-growth': '',
 
   // Pipeline Ageing and Stagnation — Salesforce dashboard
   'DASHBOARD/pipeline-ageing-and-stagnation': '',
@@ -171,11 +219,20 @@ const LINKS = {
   'DASHBOARD/vendor-programme-compliance': '',
 
   /* ────────────────────────────────────────────────────────────────────────
-     TRAINING  (18)
+     TRAINING  (29)
      ──────────────────────────────────────────────────────────────────────── */
+
+  // Account planning that survives contact with reality — Workday course
+  'TRAINING/account-planning-that-survives-contact-with-reality': '',
+
+  // Agent Store: what to say today — Video · 5 min
+  'TRAINING/agent-store-what-to-say-today': '',
 
   // Dashboard tour for sellers — Video · 9 min
   'TRAINING/dashboard-tour-for-sellers': '',
+
+  // EMEA Sales Onboarding path — Workday course
+  'TRAINING/emea-sales-onboarding-path': '',
 
   // Evidence-based Forecasting — Workday course
   'TRAINING/evidence-based-forecasting': '',
@@ -186,11 +243,23 @@ const LINKS = {
   // Logging activity that is worth reading — Video · 5 min
   'TRAINING/logging-activity-that-is-worth-reading': '',
 
+  // Making the thesis land — Video · 8 min
+  'TRAINING/making-the-thesis-land': '',
+
   // Manager coaching: challenging a commit — Live session
   'TRAINING/manager-coaching-challenging-a-commit': '',
 
   // Manager coaching session: pipeline inspection — Live session
   'TRAINING/manager-coaching-session-pipeline-inspection': '',
+
+  // Manager guide to running a ramp — Live session
+  'TRAINING/manager-guide-to-running-a-ramp': '',
+
+  // MIP conversation practice — Live session
+  'TRAINING/mip-conversation-practice': '',
+
+  // MIP in ten minutes — Video · 10 min
+  'TRAINING/mip-in-ten-minutes': '',
 
   // Opportunity Management in Salesforce — Workday course
   'TRAINING/opportunity-management-in-salesforce': '',
@@ -200,6 +269,12 @@ const LINKS = {
 
   // Pipeline Management Essentials — Workday course
   'TRAINING/pipeline-management-essentials': '',
+
+  // Prospecting that earns a conversation — Workday course
+  'TRAINING/prospecting-that-earns-a-conversation': '',
+
+  // Qualifying a new partner — Video · 9 min
+  'TRAINING/qualifying-a-new-partner': '',
 
   // Raising a good TPS request — Video · 5 min
   'TRAINING/raising-a-good-tps-request': '',
@@ -213,8 +288,14 @@ const LINKS = {
   // Required fields walkthrough — Video · 6 min
   'TRAINING/required-fields-walkthrough': '',
 
+  // Running a partner QBR — Video · 12 min
+  'TRAINING/running-a-partner-qbr': '',
+
   // Running an evidence-based inspection — Live session
   'TRAINING/running-an-evidence-based-inspection': '',
+
+  // Salesforce essentials for new starters — Workday course
+  'TRAINING/salesforce-essentials-for-new-starters': '',
 
   // Stage definitions and exit criteria — Workday course
   'TRAINING/stage-definitions-and-exit-criteria': '',
@@ -229,8 +310,17 @@ const LINKS = {
   'TRAINING/working-an-mql-well': '',
 
   /* ────────────────────────────────────────────────────────────────────────
-     DOCUMENTATION  (9)
+     DOCUMENTATION  (15)
      ──────────────────────────────────────────────────────────────────────── */
+
+  // 30-60-90 day plan template — Template
+  'DOC/30-60-90-day-plan-template': '',
+
+  // Account plan template — Template
+  'DOC/account-plan-template': '',
+
+  // AIP talk track and FAQ — Talk track
+  'DOC/aip-talk-track-and-faq': '',
 
   // Closed-lost reason definitions — Guide
   'DOC/closed-lost-reason-definitions': '',
@@ -244,8 +334,17 @@ const LINKS = {
   // Hygiene checklist — Checklist
   'DOC/hygiene-checklist': '',
 
+  // MIP Programme Battlecard — Battlecard
+  'DOC/mip-programme-battlecard': '',
+
+  // MIP talk track and FAQ — Talk track
+  'DOC/mip-talk-track-and-faq': '',
+
   // Pipeline build process map — Process map
   'DOC/pipeline-build-process-map': '',
+
+  // Qualification criteria card — Checklist
+  'DOC/qualification-criteria-card': '',
 
   // Required field reference card — Guide
   'DOC/required-field-reference-card': '',
@@ -260,11 +359,20 @@ const LINKS = {
   'DOC/weekly-pipeline-review-checklist': '',
 
   /* ────────────────────────────────────────────────────────────────────────
-     INTERNAL ASSETS  (25)
+     INTERNAL ASSETS  (37)
      ──────────────────────────────────────────────────────────────────────── */
+
+  // 30-60-90 day plan template — Template — Internal only
+  'ASSET/30-60-90-day-plan-template': '',
+
+  // Account plan template — Template — Internal only
+  'ASSET/account-plan-template': '',
 
   // Approved MQL outreach templates — Template — Internal only
   'ASSET/approved-mql-outreach-templates': '',
+
+  // Approved outreach sequences — Template — Internal only
+  'ASSET/approved-outreach-sequences': '',
 
   // Commit evidence checklist — Checklist — Internal only
   'ASSET/commit-evidence-checklist': '',
@@ -280,6 +388,9 @@ const LINKS = {
 
   // Dispute escalation path — Internal guidance — Internal only
   'ASSET/dispute-escalation-path': '',
+
+  // Early access material — Internal demonstration — Internal only
+  'ASSET/early-access-material': '',
 
   // Escalation path for late slippage — Internal guidance — Internal only
   'ASSET/escalation-path-for-late-slippage': '',
@@ -302,14 +413,26 @@ const LINKS = {
   // Leadership reporting pack — Leadership reporting — Internal only
   'ASSET/leadership-reporting-pack': '',
 
+  // Manager ramp review guide — Manager guidance — Internal only
+  'ASSET/manager-ramp-review-guide': '',
+
   // Manager review guide: record quality — Manager guidance — Internal only
   'ASSET/manager-review-guide-record-quality': '',
 
   // Manager scorecard — Leadership reporting — Internal only
   'ASSET/manager-scorecard': '',
 
+  // MIP commercial guidance — Commercial guidance — Internal only
+  'ASSET/mip-commercial-guidance': '',
+
+  // MIP Programme Battlecard — Battlecard — Internal only
+  'ASSET/mip-programme-battlecard': '',
+
   // Programme margin guidance — Commercial guidance — Internal only
   'ASSET/programme-margin-guidance': '',
+
+  // Qualification criteria card — Checklist — Internal only
+  'ASSET/qualification-criteria-card': '',
 
   // Rejection reason definitions — Guide — Internal only
   'ASSET/rejection-reason-definitions': '',
@@ -317,8 +440,14 @@ const LINKS = {
   // Required field reference card — Guide — Internal only
   'ASSET/required-field-reference-card': '',
 
+  // Segmentation and assignment rules — Commercial guidance — Internal only
+  'ASSET/segmentation-and-assignment-rules': '',
+
   // Stage exit criteria card — Checklist — Internal only
   'ASSET/stage-exit-criteria-card': '',
+
+  // Target list and prioritisation — Commercial guidance — Internal only
+  'ASSET/target-list-and-prioritisation': '',
 
   // Validation rule catalogue — RevOps reference — Internal only
   'ASSET/validation-rule-catalogue': '',
@@ -332,21 +461,36 @@ const LINKS = {
   // What not to promise in a demonstration — Internal guidance — Internal only
   'ASSET/what-not-to-promise-in-a-demonstration': '',
 
+  // What not to promise on AI capability — Internal guidance — Internal only
+  'ASSET/what-not-to-promise-on-ai-capability': '',
+
   // What not to promise on timelines — Internal guidance — Internal only
   'ASSET/what-not-to-promise-on-timelines': '',
+
+  // Which figures are approved for external use — Internal guidance — Internal only
+  'ASSET/which-figures-are-approved-for-external-use': '',
 
   // Draft AI conversation guidance — Draft document — Internal only
   'SF-014/canonical': '',
 
   /* ────────────────────────────────────────────────────────────────────────
-     PARTNER-FACING ASSETS  (12)
+     PARTNER-FACING ASSETS  (22)
      ──────────────────────────────────────────────────────────────────────── */
+
+  // Agent Store partner overview — Document — Partner-facing
+  'ASSET/agent-store-partner-overview': '',
 
   // Deal registration overview for partners — Document — Partner-facing
   'ASSET/deal-registration-overview-for-partners': '',
 
+  // Getting started overview — Document — Partner-facing
+  'ASSET/getting-started-overview': '',
+
   // Growth planning discovery questions — Conversation guide — Partner-facing
   'ASSET/growth-planning-discovery-questions': '',
+
+  // Joint business plan template — Template — Partner-facing
+  'ASSET/joint-business-plan-template': '',
 
   // Joint close-plan template — Template — Partner-facing
   'ASSET/joint-close-plan-template': '',
@@ -357,17 +501,35 @@ const LINKS = {
   // Joint sales process overview — Document — Partner-facing
   'ASSET/joint-sales-process-overview': '',
 
+  // Market shift partner briefing — Presentation — Partner-facing
+  'ASSET/market-shift-partner-briefing': '',
+
+  // MIP partner overview — Presentation — Partner-facing
+  'ASSET/mip-partner-overview': '',
+
+  // MIP readiness conversation guide — Conversation guide — Partner-facing
+  'ASSET/mip-readiness-conversation-guide': '',
+
+  // MSP to MIP transition case study — Case study — Partner-facing
+  'ASSET/msp-to-mip-transition-case-study': '',
+
   // Mutual action plan guide — Conversation guide — Partner-facing
   'ASSET/mutual-action-plan-guide': '',
 
   // Partner deal review template — Template — Partner-facing
   'ASSET/partner-deal-review-template': '',
 
+  // Partner margin self-assessment — Template — Partner-facing
+  'ASSET/partner-margin-self-assessment': '',
+
   // Partner pipeline review agenda — Template — Partner-facing
   'ASSET/partner-pipeline-review-agenda': '',
 
   // Programme eligibility summary — Document — Partner-facing
   'ASSET/programme-eligibility-summary': '',
+
+  // QBR pack — Presentation — Partner-facing
+  'ASSET/qbr-pack': '',
 
   // Solution overview deck — Presentation — Partner-facing
   'ASSET/solution-overview-deck': '',
@@ -378,9 +540,15 @@ const LINKS = {
   // Vendor programme overview for partners — Document — Partner-facing
   'ASSET/vendor-programme-overview-for-partners': '',
 
+  // Why partner with us — Presentation — Partner-facing
+  'ASSET/why-partner-with-us': '',
+
   /* ────────────────────────────────────────────────────────────────────────
-     DIGITAL ROOMS  (1)
+     DIGITAL ROOMS  (2)
      ──────────────────────────────────────────────────────────────────────── */
+
+  // MIP partner Digital Room — Digital Room — Partner-facing
+  'ROOM/mip-partner-digital-room': '',
 
   // Pipeline planning Digital Room — Digital Room — Partner-facing
   'ROOM/pipeline-planning-digital-room': '',

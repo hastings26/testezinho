@@ -256,6 +256,35 @@ function priorityTopicCard(topic) {
   </button>`;
 }
 
+function initials(name) {
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+}
+
+function ownerBlock(lane) {
+  return `<div class="owner">
+    <span class="owner__avatar" aria-hidden="true">${esc(initials(lane.owner))}</span>
+    <span>
+      <span class="owner__name">${esc(lane.owner)}</span>
+      <span class="owner__role">${esc(lane.ownerRole)}</span>
+    </span>
+  </div>`;
+}
+
+function laneCard(lane) {
+  const count = TOPICS.filter(t => t.lane === lane.id).length;
+  return `
+  <button type="button" class="card card--link lane-card" data-accent="${esc(lane.accent)}" data-nav="#/lane/${esc(lane.id)}">
+    <div class="badge-row" style="margin-bottom:.5rem">
+      ${lifecycleBadge(lane.status)}
+      ${badge('info', '◆', count + ' topic' + (count === 1 ? '' : 's'))}
+    </div>
+    <h3>${esc(lane.name)}</h3>
+    <p class="small muted">${esc(lane.tagline)}</p>
+    ${ownerBlock(lane)}
+    <ul class="covers">${lane.covers.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
+  </button>`;
+}
+
 function renderHome() {
   const role = state.role;
   const relevant = topicsForRole(role).filter(t => t.priority);
@@ -264,19 +293,80 @@ function renderHome() {
 
   return `
   <section class="hero">
-    <p class="eyebrow" style="color:#7fe8c6">Salesforce Command Center</p>
+    <div class="hero__layers" aria-hidden="true">
+      <span class="hero__orb hero__orb--a" data-par="0.16"></span>
+      <span class="hero__orb hero__orb--b" data-par="0.26"></span>
+      <span class="hero__orb hero__orb--c" data-par="0.10"></span>
+      <span class="hero__grid" data-par="0.05"></span>
+      <span class="hero__sheen" data-par="0.34"></span>
+    </div>
+    <div class="hero__inner">
+    <div>
+    <p class="eyebrow">Salesforce Command Center · EMEA Sales</p>
     <h1>Know the rule. See what good looks like. Take the right action.</h1>
     <hr class="rule-line" />
     <p class="hero__lede">
-      This is the approved home for Salesforce standards, processes, performance measures, training and
-      partner-safe resources across EMEA Sales. Every topic here has one canonical source, one accountable
+      The approved home for Salesforce standards, processes, performance measures, training and
+      partner-safe resources across EMEA Sales. Every topic has one canonical source, one accountable
       owner and one current version. If it is not here, it is not approved.
     </p>
     ${trustList()}
     ${searchBlock()}
+    </div>
+
+    <aside class="hero__aside" aria-hidden="true">
+      <div class="float-card" data-par="0.06">
+        <div class="float-card__head">
+          <span class="float-card__ref">SF-003 · Salesforce</span>
+          <span class="float-chip">✓ Approved</span>
+        </div>
+        <h3>Forecasting</h3>
+        <p>Forecast categories, commit standards and the evidence required behind each call.</p>
+        <dl>
+          <dt>Owner</dt><dd>Revenue Enablement</dd>
+          <dt>Version</dt><dd>5.0</dd>
+          <dt>Reviewed</dt><dd>1 July 2026</dd>
+          <dt>Source</dt><dd>EMEA Forecast Standard</dd>
+        </dl>
+      </div>
+      <div class="float-card" data-par="0.12">
+        <div class="float-card__head">
+          <span class="float-card__ref">Shareability</span>
+          <span class="float-chip float-chip--stop">⛔ Internal only</span>
+        </div>
+        <p style="margin:0">Commit criteria must not be shared with a partner. The joint close-plan template may.</p>
+      </div>
+      <div class="float-card" data-par="0.19">
+        <div class="float-card__head">
+          <span class="float-card__ref">MIP-001 · AI and MIP</span>
+          <span class="float-chip float-chip--warn">⏰ In review</span>
+        </div>
+        <p style="margin:0">Sources currently disagree on the number of plays. No approved answer yet.</p>
+      </div>
+    </aside>
+    </div>
+
+    <div class="figure-row">
+      <div class="figure"><p class="figure__n">${TOPICS.length}</p><p class="figure__l">Governed topics</p></div>
+      <div class="figure"><p class="figure__n">${LANES.length}</p><p class="figure__l">Lanes, one owner each</p></div>
+      <div class="figure"><p class="figure__n">${TOPICS.filter(t => t.governance.approvalStatus === 'approved').length}</p><p class="figure__l">Approved and published</p></div>
+      <div class="figure"><p class="figure__n">1</p><p class="figure__l">Source of truth per topic</p></div>
+    </div>
   </section>
 
-  <section class="section">
+  <section class="section reveal">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">Lane workspaces</p>
+        <h2>Three lanes, three accountable owners</h2>
+        <p class="small muted">Same structure everywhere. Internal execution on the left, partner-approved material on the right.</p>
+      </div>
+      <a class="btn btn--ghost btn--sm" href="#/lanes" data-nav="#/lanes">See how a lane is built</a>
+    </div>
+    <div class="grid grid--3">${LANES.map(laneCard).join('')}</div>
+  </section>
+
+  <section class="section reveal">
     <div class="section__head">
       <div>
         <p class="eyebrow">Start here</p>
@@ -317,7 +407,7 @@ function renderHome() {
     </div>
   </section>
 
-  <section class="section">
+  <section class="section reveal">
     <div class="section__head">
       <div>
         <p class="eyebrow">Priority topics</p>
@@ -337,7 +427,7 @@ function renderHome() {
       </details>` : ''}
   </section>
 
-  <section class="section">
+  <section class="section reveal">
     <div class="grid grid--2">
       <article class="card">
         <h3>Ask the Salesforce Assistant in Slack</h3>
@@ -618,18 +708,7 @@ function renderLanes() {
     structure: internal execution on the left, partner-approved material on the right, and the same governance
     metadata on every item.
   </p>
-  <div class="grid grid--3">
-    ${LANES.map(lane => {
-      const count = TOPICS.filter(t => t.lane === lane.id).length;
-      return `
-      <button type="button" class="card card--link" data-nav="#/lane/${esc(lane.id)}">
-        <div class="badge-row">${lifecycleBadge(lane.status)} ${badge('info', '◆', count + ' topic' + (count === 1 ? '' : 's'))}</div>
-        <h3>${esc(lane.name)}</h3>
-        <p class="small muted">${esc(lane.desc)}</p>
-        <div class="card__meta"><dl><dt>Lane owner</dt><dd>${esc(lane.owner)}</dd></dl></div>
-      </button>`;
-    }).join('')}
-  </div>`;
+  <div class="grid grid--3">${LANES.map(laneCard).join('')}</div>`;
 }
 
 function laneAssetCard(a, topic) {
@@ -665,18 +744,22 @@ function renderLane(route) {
     <a href="#/lanes" data-nav="#/lanes">Lane Workspaces</a><span>/</span>${esc(lane.name)}
   </nav>
 
-  <p class="eyebrow">Lane workspace</p>
-  <h1>${esc(lane.name)}</h1>
-  <hr class="rule-line" />
-  <p class="muted" style="max-width:70ch">${esc(lane.desc)}</p>
-  <div class="badge-row">
-    ${lifecycleBadge(lane.status)}
-    ${badge('neutral', '👤', 'Lane owner: ' + lane.owner)}
-    ${badge('info', '◆', laneTopics.length + ' governed topic' + (laneTopics.length === 1 ? '' : 's'))}
+  <div class="lane-band" data-accent="${esc(lane.accent)}">
+    <span class="lane-band__grid" data-par="0.08" aria-hidden="true"></span>
+    <p class="eyebrow" style="color:#7fe8c6">Lane workspace</p>
+    <h1>${esc(lane.name)}</h1>
+    <hr class="rule-line" />
+    <p style="max-width:66ch">${esc(lane.desc)}</p>
+    ${ownerBlock(lane)}
+    <div class="badge-row">
+      ${lifecycleBadge(lane.status)}
+      ${badge('info', '◆', laneTopics.length + ' governed topic' + (laneTopics.length === 1 ? '' : 's'))}
+      ${badge('neutral', '⛔', 'Internal by default')}
+    </div>
   </div>
 
   ${laneTopics.length ? `
-  <section class="section" style="margin-top:1.75rem">
+  <section class="section reveal" style="margin-top:1.75rem">
     <h2>Topics in this lane</h2>
     <div class="grid grid--3">
       ${laneTopics.map(t => `
@@ -762,6 +845,11 @@ function renderTopic(route) {
     <strong>Not approved guidance.</strong> This topic is at ${esc(LIFECYCLE[g.lifecycle] ? LIFECYCLE[g.lifecycle].label.toLowerCase() : 'draft')}
     status with no recorded approval. Do not act on it, quote it or share it. It appears here so that the gap is
     visible and can be closed.
+  </div>` : ''}
+
+  ${g.conflict ? `
+  <div class="notice notice--conflict">
+    <strong>Sources currently disagree.</strong> ${esc(g.conflict)}
   </div>` : ''}
 
   ${rs.key === 'overdue' && !notApproved ? `
@@ -1872,6 +1960,9 @@ function renderNotFound() {
 /* ------------------------------------------------------------ after render */
 
 function afterRender(route) {
+  initMotion();
+  initPointerParallax();
+
   if (route.name === 'links') {
     ['lState', 'lCat', 'lText'].forEach(id => {
       const node = $('#' + id);
@@ -1972,6 +2063,72 @@ function afterRender(route) {
   }
 }
 
+/* ------------------------------------------------------------------ motion */
+/* Parallax and reveal are decoration only. Under prefers-reduced-motion both
+   are skipped entirely, and nothing that carries meaning is lost. */
+
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+let parallaxNodes = [];
+let parallaxTicking = false;
+
+function applyParallax() {
+  parallaxTicking = false;
+  const y = window.scrollY;
+  for (let i = 0; i < parallaxNodes.length; i++) {
+    const node = parallaxNodes[i];
+    node.style.transform = `translate3d(0, ${(y * node._rate).toFixed(2)}px, 0)`;
+  }
+}
+
+function onScroll() {
+  document.body.classList.toggle('is-scrolled', window.scrollY > 8);
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - doc.clientHeight;
+  const bar = $('#scrollProgress');
+  if (bar) bar.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+  if (!parallaxTicking && parallaxNodes.length && !REDUCED_MOTION.matches) {
+    parallaxTicking = true;
+    requestAnimationFrame(applyParallax);
+  }
+}
+
+function initMotion() {
+  parallaxNodes = $$('[data-par]');
+  parallaxNodes.forEach(n => { n._rate = parseFloat(n.dataset.par) || 0; });
+  if (REDUCED_MOTION.matches) {
+    $$('.reveal').forEach(n => n.classList.add('is-in'));
+    onScroll();
+    return;
+  }
+  applyParallax();
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('is-in'); obs.unobserve(entry.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
+  $$('.reveal').forEach(n => observer.observe(n));
+  onScroll();
+}
+
+/* Pointer parallax on the hero — small, and only where a hero exists. */
+function initPointerParallax() {
+  if (REDUCED_MOTION.matches) return;
+  const hero = $('.hero, .lane-band');
+  if (!hero) return;
+  hero.addEventListener('pointermove', ev => {
+    const rect = hero.getBoundingClientRect();
+    const dx = (ev.clientX - rect.left) / rect.width - 0.5;
+    const dy = (ev.clientY - rect.top) / rect.height - 0.5;
+    $$('[data-par]', hero).forEach(node => {
+      const depth = (node._rate || 0) * 90;
+      node.style.marginLeft = (dx * depth).toFixed(1) + 'px';
+      node.style.marginTop = (dy * depth * 0.6).toFixed(1) + 'px';
+    });
+  });
+}
+
 /* --------------------------------------------------------------- global wiring */
 
 function toast(message) {
@@ -2032,6 +2189,9 @@ $('#navToggle').addEventListener('click', () => {
   $('#navToggle').setAttribute('aria-expanded', String(open));
 });
 
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
+REDUCED_MOTION.addEventListener('change', initMotion);
 window.addEventListener('hashchange', navigate);
 
 initRoles();
