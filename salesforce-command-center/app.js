@@ -88,10 +88,25 @@ function reviewBadge(topic) {
   return badge(r.tone, r.icon, r.label);
 }
 
-/* Placeholder link. Never a silent "#". Clicking states the token. */
-function ph(tokenKey, label) {
+/* Every link resolves through its slot. Supply a URL in links.js and the
+   placeholder becomes a real link — no page or code change required.
+   Never a silent "#": an unsupplied slot states its own ID when clicked. */
+function link(slotId, tokenKey, label) {
   const token = PLACEHOLDER_TOKENS[tokenKey] || PLACEHOLDER_TOKENS.highspotAsset;
-  return `<button type="button" class="ph" data-token="${esc(token)}">${esc(label)}</button>`;
+  const resolved = linkFor(slotId);
+  if (resolved.state === 'connected') {
+    return `<a class="btn btn--sm" href="${esc(resolved.url)}" target="_blank" rel="noopener noreferrer">${esc(label)} <span aria-hidden="true">↗</span></a>`;
+  }
+  if (resolved.state === 'tbc') {
+    return `<button type="button" class="ph ph--tbc" data-token="${esc(token)}" data-slot="${esc(slotId)}">${esc(label)} — to be created</button>`;
+  }
+  return `<button type="button" class="ph" data-token="${esc(token)}" data-slot="${esc(slotId)}">${esc(label)}</button>`;
+}
+
+/* Used only for the illustrative example on the About page. */
+function phDemo(tokenKey, label) {
+  const token = PLACEHOLDER_TOKENS[tokenKey] || PLACEHOLDER_TOKENS.highspotAsset;
+  return `<button type="button" class="ph" data-token="${esc(token)}" data-slot="EXAMPLE/demo">${esc(label)}</button>`;
 }
 
 function laneName(id) {
@@ -147,7 +162,8 @@ const routes = {
   'gap': renderGap,
   'search': renderSearch,
   'topic': renderTopic,
-  'about': renderAbout
+  'about': renderAbout,
+  'links': renderLinks
 };
 
 function parseHash() {
@@ -183,7 +199,8 @@ function syncNav(route) {
   const titles = { home: 'Home', rules: 'Rules of the Game', good: 'What Good Looks Like',
     measure: 'Track and Measure', resources: 'Resources and Enablement', lanes: 'Lane Workspaces',
     lane: 'Lane', registry: 'Topic Registry', governance: 'Governance', assistant: 'Ask the Assistant',
-    gap: 'Report Missing Guidance', search: 'Search', topic: 'Topic', about: 'About this prototype' };
+    gap: 'Report Missing Guidance', search: 'Search', topic: 'Topic', about: 'About this prototype',
+    links: 'Link Inventory' };
   document.title = `${titles[route.name] || 'Not found'} — Salesforce Command Center`;
 }
 
@@ -330,7 +347,7 @@ function renderHome() {
         </p>
         <div class="btn-row">
           <a class="btn btn--slack" href="#/assistant" data-nav="#/assistant"><span aria-hidden="true">💬</span> See how it answers</a>
-          ${ph('slack', 'Open Slack assistant')}
+          ${link(slotFor('slack'), 'slack', 'Open Slack assistant')}
         </div>
       </article>
       <article class="card">
@@ -464,7 +481,7 @@ function kpiCard(metric, topic) {
       <dt>Reviewed</dt><dd>${esc(metric.cadence)}</dd>
       <dt>If outside range</dt><dd>${esc(metric.action)}</dd>
     </dl>
-    <div class="btn-row">${ph(metric.dashboardToken || 'dashboard', 'Open ' + metric.dashboard)}</div>
+    <div class="btn-row">${link(slotFor('dashboard', { title: metric.dashboard }, topic), 'dashboard', 'Open ' + metric.dashboard)}</div>
   </article>`;
 }
 
@@ -496,7 +513,7 @@ function renderMeasure() {
 
 /* ------------------------------------------------------------ resources view */
 
-function resourceItem(r, kindLabel) {
+function resourceItem(r, kindLabel, topic, kind) {
   return `
   <div class="item">
     <p class="item__type">${esc(r.type || kindLabel)}</p>
@@ -504,7 +521,7 @@ function resourceItem(r, kindLabel) {
     <p>${esc(r.desc || '')}</p>
     ${r.audience ? `<p class="tiny muted">Audience: ${esc(r.audience)} · Use: ${esc(r.frequency || '—')}</p>` : ''}
     <div class="badge-row">${r.share ? shareBadge(r.share) : ''}</div>
-    <div class="btn-row">${ph(r.token || 'highspotAsset', 'Open resource')}</div>
+    <div class="btn-row">${link(slotFor(kind || 'doc', r, topic), r.token || 'highspotAsset', 'Open resource')}</div>
   </div>`;
 }
 
@@ -538,20 +555,20 @@ function renderResources() {
     <h2>Training</h2>
     <p class="small muted">Courses, videos and live sessions. All internal.</p>
     <div class="grid grid--3">${training.map(({ r, t }) =>
-      `<div>${resourceItem(r, 'Training')}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)}</p></div>`).join('') || '<p class="muted">No training attached to your topics yet.</p>'}</div>
+      `<div>${resourceItem(r, 'Training', t, 'training')}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)}</p></div>`).join('') || '<p class="muted">No training attached to your topics yet.</p>'}</div>
   </section>
 
   <section class="section">
     <h2>Documentation</h2>
     <p class="small muted">Canonical sources, guides, process maps and checklists.</p>
     <div class="grid grid--3">${docs.map(({ r, t }) =>
-      `<div>${resourceItem(r, 'Documentation')}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)}</p></div>`).join('')}</div>
+      `<div>${resourceItem(r, 'Documentation', t, 'doc')}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)}</p></div>`).join('')}</div>
   </section>
 
   <section class="section">
     <h2>Dashboards</h2>
     <p class="small muted">Approved dashboards only. Private reports are for personal working, not for reporting upward.</p>
-    <div class="grid grid--3">${uniqueDash.map(({ r }) => resourceItem(r, 'Dashboard')).join('')}</div>
+    <div class="grid grid--3">${uniqueDash.map(({ r, t }) => resourceItem(r, 'Dashboard', t, 'dashboard')).join('')}</div>
   </section>
 
   <section class="section">
@@ -561,7 +578,7 @@ function renderResources() {
       "External approved" may be shared without further checks. Conditional assets carry a stated condition.
     </div>
     <div class="grid grid--3">${partner.length ? partner.map(({ r, t }) =>
-      `<div>${resourceItem(r, 'Partner asset')}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)}</p></div>`).join('')
+      `<div>${resourceItem(r, 'Partner asset', t, 'asset')}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)}</p></div>`).join('')
       : '<p class="muted">No partner-facing assets are attached to your topics.</p>'}</div>
   </section>
 
@@ -615,7 +632,7 @@ function renderLanes() {
   </div>`;
 }
 
-function laneAssetCard(a) {
+function laneAssetCard(a, topic) {
   return `
   <div class="item">
     <p class="item__type">${esc(a.type)}</p>
@@ -624,7 +641,7 @@ function laneAssetCard(a) {
     ${a.condition ? `<p class="item__cond"><strong>Condition:</strong> ${esc(a.condition)}</p>` : ''}
     <div class="badge-row">${shareBadge(a.share)}</div>
     <div class="btn-row">
-      ${ph(a.token || 'highspotAsset', a.digitalRoom ? 'Open Digital Room' : 'Open in Highspot')}
+      ${link(slotFor('asset', a, topic), a.token || 'highspotAsset', a.digitalRoom ? 'Open Digital Room' : 'Open in Highspot')}
       ${a.share === 'external-approved' || a.share === 'conditional'
         ? `<button type="button" class="btn btn--sm" data-share="${esc(a.title)}">Add to Digital Room</button>` : ''}
     </div>
@@ -697,7 +714,7 @@ function renderLane(route) {
             explicitly classified as shareable.
           </p>
           ${internal.length ? internal.map(({ a, t }) =>
-            `<div>${laneAssetCard(a)}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)} · Owner: ${esc(t.governance.contentOwner || 'Not assigned')}</p></div>`).join('')
+            `<div>${laneAssetCard(a, t)}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)} · Owner: ${esc(t.governance.contentOwner || 'Not assigned')}</p></div>`).join('')
             : '<p class="muted small">No internal assets published in this lane yet.</p>'}
         </div>
       </section>
@@ -713,7 +730,7 @@ function renderLane(route) {
             classification. Read the classification before sharing — some carry conditions.
           </p>
           ${partner.length ? partner.map(({ a, t }) =>
-            `<div>${laneAssetCard(a)}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)} · Owner: ${esc(t.governance.contentOwner || 'Not assigned')}</p></div>`).join('')
+            `<div>${laneAssetCard(a, t)}<p class="tiny muted" style="margin:.3rem 0 0">Topic: ${esc(t.name)} · Owner: ${esc(t.governance.contentOwner || 'Not assigned')}</p></div>`).join('')
             : `<div class="state"><h3>No partner-facing assets approved yet</h3>
                  <p class="muted small">Nothing in this lane has been approved for external use. Do not assume internal material is safe to share.</p>
                  <div class="btn-row"><a class="btn btn--sm" href="#/gap" data-nav="#/gap">Request a partner-facing asset</a></div></div>`}
@@ -770,8 +787,8 @@ function renderTopic(route) {
   </div>
 
   <div class="btn-row" style="margin-bottom:1.5rem">
-    ${ph('canonical', 'Open the canonical source')}
-    ${ph('slack', 'Ask about this topic in Slack')}
+    ${link(slotFor('canonical', null, t), 'canonical', 'Open the canonical source')}
+    ${link(slotFor('slack'), 'slack', 'Ask about this topic in Slack')}
     <a class="btn btn--sm" href="#/gap?topic=${esc(t.id)}" data-nav="#/gap?topic=${esc(t.id)}">Report an issue with this topic</a>
   </div>
 
@@ -842,14 +859,14 @@ function renderTopic(route) {
         <div class="panel__head"><p class="eyebrow" style="margin:0">For you</p><h3>Execute internally</h3></div>
         <div class="panel__body">
           <p class="panel__warn panel__warn--danger"><span aria-hidden="true">⛔</span> Internal materials must not be shared externally unless explicitly classified as shareable.</p>
-          ${(t.internal || []).length ? t.internal.map(laneAssetCard).join('') : '<p class="muted small">No internal assets published.</p>'}
+          ${(t.internal || []).length ? t.internal.map(a => laneAssetCard(a, t)).join('') : '<p class="muted small">No internal assets published.</p>'}
         </div>
       </section>
       <section class="panel panel--partner">
         <div class="panel__head"><p class="eyebrow" style="margin:0;color:#0f6f4c">For partners</p><h3>Approved to use or share</h3></div>
         <div class="panel__body">
           <p class="panel__warn panel__warn--ok"><span aria-hidden="true">✓</span> Read the classification on each item before sharing.</p>
-          ${(t.partner || []).length ? t.partner.map(laneAssetCard).join('')
+          ${(t.partner || []).length ? t.partner.map(a => laneAssetCard(a, t)).join('')
             : `<div class="state"><h3>No partner-facing assets</h3><p class="muted small">Nothing on this topic has been approved for external use.</p></div>`}
         </div>
       </section>
@@ -861,7 +878,7 @@ function renderTopic(route) {
         ${t.resources.training.length ? t.resources.training.map(r => `
           <div class="item" style="margin-bottom:.5rem">
             <p class="item__type">${esc(r.type)}</p><h4>${esc(r.title)}</h4>
-            <p>${esc(r.desc)}</p><div class="btn-row">${ph(r.token, 'Open')}</div>
+            <p>${esc(r.desc)}</p><div class="btn-row">${link(slotFor('training', r, t), r.token || 'workday', 'Open')}</div>
           </div>`).join('') : '<p class="muted small">None published.</p>'}
       </article>
       <article class="card">
@@ -869,7 +886,7 @@ function renderTopic(route) {
         ${t.resources.documentation.map(r => `
           <div class="item" style="margin-bottom:.5rem">
             <p class="item__type">${esc(r.type)}</p><h4>${esc(r.title)}</h4>
-            <p>${esc(r.desc)}</p><div class="btn-row">${ph(r.token, 'Open')}</div>
+            <p>${esc(r.desc)}</p><div class="btn-row">${link(slotFor('doc', r, t), r.token || 'highspotAsset', 'Open')}</div>
           </div>`).join('') || '<p class="muted small">None published.</p>'}
       </article>
       <article class="card">
@@ -878,7 +895,7 @@ function renderTopic(route) {
           <div class="item" style="margin-bottom:.5rem">
             <h4>${esc(r.title)}</h4><p>${esc(r.desc)}</p>
             <p class="tiny muted">Audience: ${esc(r.audience)} · Use: ${esc(r.frequency)}</p>
-            <div class="btn-row">${ph('dashboard', 'Open dashboard')}</div>
+            <div class="btn-row">${link(slotFor('dashboard', r, t), 'dashboard', 'Open dashboard')}</div>
           </div>`).join('') || '<p class="muted small">None published.</p>'}
       </article>
     </div>
@@ -909,7 +926,7 @@ function renderTopic(route) {
       <table>
         <caption>Governance record for ${esc(t.name)} (${esc(t.ref)})</caption>
         <tbody>
-          <tr><th scope="row">Canonical source</th><td>${esc(g.source)} ${g.source !== 'Not yet established' ? ph('canonical', 'Open source') : ''}</td></tr>
+          <tr><th scope="row">Canonical source</th><td>${esc(g.source)} ${g.source !== 'Not yet established' ? link(slotFor('canonical', null, t), 'canonical', 'Open source') : ''}</td></tr>
           <tr><th scope="row">Content owner</th><td>${esc(g.contentOwner || '— not assigned —')}</td></tr>
           <tr><th scope="row">Process owner</th><td>${esc(g.processOwner || '— not assigned —')}</td></tr>
           <tr><th scope="row">Approver</th><td>${esc(g.approver || '— not assigned —')}</td></tr>
@@ -1379,7 +1396,7 @@ function sourceBlock(topic, question) {
     </dl>
     <div class="btn-row" style="margin-top:0">
       <a class="btn btn--sm btn--primary" href="#/topic/${esc(topic.id)}" data-nav="#/topic/${esc(topic.id)}">Open ${esc(topic.name)} in Highspot</a>
-      ${ph('highspotTopic', 'Highspot topic URL')}
+      ${link(slotFor('topic', null, topic), 'highspotTopic', 'Highspot topic URL')}
     </div>
   </div>`;
 }
@@ -1475,7 +1492,7 @@ function renderAssistant(route) {
         <li>Return restricted material to someone without permission</li>
         <li>Quote a draft, an archived version or an unowned document</li>
       </ul>
-      <div class="btn-row">${ph('slack', 'Open the real assistant in Slack')}</div>
+      <div class="btn-row">${link(slotFor('slack'), 'slack', 'Open the real assistant in Slack')}</div>
     </article>
   </div>
 
@@ -1640,7 +1657,7 @@ function renderAbout() {
         <li>All links, which appear as visible tokens rather than silent dead links</li>
         <li>The assistant itself — the real one lives in Slack and is not rebuilt here</li>
       </ul>
-      <div class="btn-row">${ph('highspotTopic', 'Example placeholder link')}</div>
+      <div class="btn-row">${phDemo('highspotTopic', 'Example placeholder link')}</div>
     </article>
   </div>
 
@@ -1660,7 +1677,14 @@ function renderAbout() {
   </section>
 
   <section class="section">
-    <h2>Placeholder link tokens used</h2>
+    <h2>Connecting real content</h2>
+    <div class="notice notice--info">
+      <strong>Every link has its own slot.</strong> Supply a URL once in <code>links.js</code> and it
+      connects everywhere that thing appears — no page or code changes. Click any purple placeholder to see
+      the slot ID it needs.
+      <a href="#/links" data-nav="#/links">Open the Link Inventory</a> for live status of all slots.
+    </div>
+    <h3>Placeholder link tokens used</h3>
     <div class="table-scroll">
       <table>
         <thead><tr><th scope="col">Token</th><th scope="col">Replaced at implementation with</th></tr></thead>
@@ -1678,6 +1702,164 @@ function renderAbout() {
   </section>`;
 }
 
+/* ------------------------------------------------------- link inventory view */
+
+const SLOT_CATEGORY_ORDER = ['Slack assistant', 'Canonical sources', 'Highspot topic pages',
+  'Dashboards', 'Training', 'Documentation', 'Internal assets', 'Partner-facing assets',
+  'Digital Rooms'];
+
+function renderLinks() {
+  const slots = collectSlots();
+  const counts = { connected: 0, tbc: 0, missing: 0 };
+  slots.forEach(s => { counts[linkFor(s.id).state]++; });
+  const pct = Math.round((counts.connected / slots.length) * 100);
+
+  const grouped = {};
+  slots.forEach(s => { (grouped[s.category] = grouped[s.category] || []).push(s); });
+  const categories = SLOT_CATEGORY_ORDER.filter(c => grouped[c]);
+
+  return `
+  <p class="eyebrow">Link inventory</p>
+  <h1>Every link this site needs, and where each one stands</h1>
+  <hr class="rule-line" />
+  <p class="muted" style="max-width:72ch">
+    Each row below is one thing that needs a URL. Supply it once in
+    <code>links.js</code> and it connects everywhere it appears — the pages and the code do not change.
+    Slots are shared where the thing is shared, so the same dashboard used by four topics is asked for once.
+  </p>
+
+  <div class="grid grid--4" style="margin-bottom:1.25rem">
+    <article class="card"><p class="eyebrow">Connected</p><p class="kpi__threshold">${counts.connected}</p>
+      <p class="small muted">${pct}% of ${slots.length} slots have a real URL.</p></article>
+    <article class="card"><p class="eyebrow">Awaiting URL</p><p class="kpi__threshold">${counts.missing}</p>
+      <p class="small muted">The content exists somewhere; we need the link.</p></article>
+    <article class="card"><p class="eyebrow">To be created</p><p class="kpi__threshold">${counts.tbc}</p>
+      <p class="small muted">Marked <code>TBC</code> — the document does not exist yet.</p></article>
+    <article class="card"><p class="eyebrow">Total slots</p><p class="kpi__threshold">${slots.length}</p>
+      <p class="small muted">Across ${categories.length} categories.</p></article>
+  </div>
+
+  <div class="notice notice--info">
+    <strong>How to fill this in.</strong> Send this list to the content owner. Paste each URL into
+    <code>links.js</code> against its slot ID. Leave it empty if the link is not available yet; write
+    <code>TBC</code> where the document still has to be written — so "we have it, need the link" never gets
+    confused with "this does not exist yet".
+  </div>
+
+  <div class="filters">
+    <div class="field">
+      <label for="lState">Show</label>
+      <select id="lState">
+        <option value="">Everything</option>
+        <option value="missing">Awaiting URL</option>
+        <option value="tbc">To be created</option>
+        <option value="connected">Connected</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="lCat">Category</label>
+      <select id="lCat"><option value="">All categories</option>
+        ${categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('')}</select>
+    </div>
+    <div class="field">
+      <label for="lText">Find</label>
+      <input type="search" id="lText" placeholder="Slot ID, title or topic" />
+    </div>
+    <button type="button" class="btn btn--sm" id="lCsv">Download as CSV</button>
+    <button type="button" class="btn btn--sm" id="lCopy">Copy outstanding slot IDs</button>
+    <p class="count-note" id="lCount" aria-live="polite"></p>
+  </div>
+
+  <div class="table-scroll">
+    <table id="linkTable">
+      <caption>Link inventory — generated from the content model, so it cannot drift out of date.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Status</th><th scope="col">Slot ID</th><th scope="col">What it is</th>
+          <th scope="col">Category</th><th scope="col">Type</th><th scope="col">Audience</th>
+          <th scope="col">Appears in</th><th scope="col">Token</th>
+        </tr>
+      </thead>
+      <tbody id="linkBody"></tbody>
+    </table>
+  </div>
+
+  <section class="section" style="margin-top:1.5rem">
+    <h2>Who supplies what</h2>
+    <div class="grid grid--3">
+      <article class="card"><h3>Already exists in the business</h3><p class="small muted">
+        Canonical sources, dashboards and Workday courses that are live today. These only need someone to
+        send the URL — usually the process owner or RevOps.</p></article>
+      <article class="card"><h3>Exists but must move into Highspot</h3><p class="small muted">
+        Material living in SharePoint, decks or Teams. Supply the current link now, then replace it with the
+        Highspot URL once published. The slot does not change.</p></article>
+      <article class="card"><h3>Does not exist yet</h3><p class="small muted">
+        Mark <code>TBC</code>. These become the content backlog, and the count above is the honest size of
+        the writing job.</p></article>
+    </div>
+  </section>`;
+}
+
+function linkRows() {
+  const stateFilter = $('#lState').value;
+  const catFilter = $('#lCat').value;
+  const text = $('#lText').value.trim().toLowerCase();
+  const slots = collectSlots();
+
+  const rows = slots.filter(s => {
+    const st = linkFor(s.id).state;
+    if (stateFilter && st !== stateFilter) return false;
+    if (catFilter && s.category !== catFilter) return false;
+    if (text) {
+      const hay = [s.id, s.label, s.category, s.type, s.topic, s.where.join(' ')].join(' ').toLowerCase();
+      if (!hay.includes(text)) return false;
+    }
+    return true;
+  });
+
+  $('#linkBody').innerHTML = rows.map(s => {
+    const r = linkFor(s.id);
+    const status = r.state === 'connected' ? badge('ok', '✓', 'Connected')
+      : r.state === 'tbc' ? badge('warn', '✎', 'To be created')
+      : badge('danger', '○', 'Awaiting URL');
+    return `<tr>
+      <td>${status}</td>
+      <td><code>${esc(s.id)}</code></td>
+      <td>${esc(s.label)}${r.state === 'connected' ? `<br><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" class="tiny">${esc(r.url)}</a>` : ''}</td>
+      <td>${esc(s.category)}</td>
+      <td>${esc(s.type || '—')}</td>
+      <td>${esc(s.audience || '—')}</td>
+      <td>${s.where.length > 1 ? esc(s.where.length + ' topics') : esc((s.where[0] || '').replace('Topic: ', ''))}</td>
+      <td><code class="tiny">${esc(PLACEHOLDER_TOKENS[s.token] || '')}</code></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="8">No slots match these filters.</td></tr>';
+
+  $('#lCount').textContent = `${rows.length} of ${slots.length} slots shown`;
+}
+
+function downloadCsv() {
+  const slots = collectSlots();
+  const cell = v => `"${String(v === undefined || v === null ? '' : v).replace(/"/g, '""')}"`;
+  const header = ['Slot ID', 'Status', 'What it is', 'Category', 'Type', 'Audience',
+    'Appears in', 'Placeholder token', 'URL (paste here)'];
+  const lines = [header.map(cell).join(',')];
+  slots.forEach(s => {
+    const r = linkFor(s.id);
+    lines.push([s.id,
+      r.state === 'connected' ? 'Connected' : r.state === 'tbc' ? 'To be created' : 'Awaiting URL',
+      s.label, s.category, s.type || '', s.audience || '', s.where.join(' | '),
+      PLACEHOLDER_TOKENS[s.token] || '', r.url].map(cell).join(','));
+  });
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'salesforce-command-center-link-inventory.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
 function renderNotFound() {
   return `
   <div class="state">
@@ -1690,6 +1872,24 @@ function renderNotFound() {
 /* ------------------------------------------------------------ after render */
 
 function afterRender(route) {
+  if (route.name === 'links') {
+    ['lState', 'lCat', 'lText'].forEach(id => {
+      const node = $('#' + id);
+      node.addEventListener('input', linkRows);
+      node.addEventListener('change', linkRows);
+    });
+    $('#lCsv').addEventListener('click', downloadCsv);
+    $('#lCopy').addEventListener('click', () => {
+      const outstanding = collectSlots()
+        .filter(s => linkFor(s.id).state !== 'connected')
+        .map(s => `'${s.id}': '',   // ${s.label}`).join('\n');
+      navigator.clipboard.writeText(outstanding).then(
+        () => toast('Outstanding slot IDs copied. Paste them into <code>links.js</code> and add the URLs.'),
+        () => toast('Could not access the clipboard. Use Download as CSV instead.'));
+    });
+    linkRows();
+  }
+
   if (route.name === 'registry') {
     ['fLane', 'fRole', 'fStatus', 'fText'].forEach(id => {
       const node = $('#' + id);
@@ -1813,7 +2013,11 @@ document.addEventListener('click', ev => {
   }
   const phBtn = ev.target.closest('.ph');
   if (phBtn) {
-    toast(`Placeholder link. At implementation this resolves to <code>${esc(phBtn.dataset.token)}</code>.`);
+    const slot = phBtn.dataset.slot || '';
+    const tbc = phBtn.classList.contains('ph--tbc');
+    toast(tbc
+      ? `This document does not exist yet. It is marked <code>TBC</code> against slot <code>${esc(slot)}</code>.`
+      : `Awaiting a URL. Paste it into <code>links.js</code> against slot <code>${esc(slot)}</code> and this becomes a real link everywhere it appears.`);
     return;
   }
   const shareBtn = ev.target.closest('[data-share]');

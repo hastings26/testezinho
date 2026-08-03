@@ -27,6 +27,7 @@ Deployed with the rest of the repository via GitHub Pages.
 
 | Try this | What it demonstrates |
 |---|---|
+| Footer → **Link inventory** | All 109 link slots, live status, CSV export — the handover checklist |
 | Change the role selector in the masthead | Role relevance — what is *primary* changes, what is *reachable* never does |
 | Registry → filter **Has governance gaps** | Ownership and review gaps are derived, so they cannot be hidden |
 | Topic → *AI Conversations with Partners* | How the system refuses to present unowned, unapproved content as authoritative |
@@ -53,6 +54,7 @@ Deployed with the rest of the repository via GitHub Pages.
 | 9 | Acceptance Criteria | [docs/08-acceptance-criteria.md](docs/08-acceptance-criteria.md) |
 | 10 | Risks and Mitigations | [docs/09-risks-and-mitigations.md](docs/09-risks-and-mitigations.md) |
 | — | Red-Team Review | [docs/10-red-team-review.md](docs/10-red-team-review.md) |
+| — | Link Inventory guide | [docs/11-link-inventory-guide.md](docs/11-link-inventory-guide.md) |
 
 ---
 
@@ -92,10 +94,30 @@ assistant question with an approved-but-unpublished source · one with no approv
 | `styles.css` | Design system. Dark navigation, light canvas, restrained Pax8 accents. No external fonts or assets. |
 | `app.js` | Hash router, role relevance, search index and ranking, registry filters, assistant logic, gap workflow |
 | `data.js` | The Topic Registry. Every topic, asset, metric, FAQ and governance record. **Replace this file with real records.** |
+| `links.js` | **The only file you edit to connect real URLs.** 109 pre-listed slots, grouped and commented. |
 
 `data.js` is the whole content model. To add a topic, add a record — every view derives from it.
 
 ---
+
+## Connecting real content
+
+Every link has its own **slot** — a stable, unique ID. Supply a URL against a slot in `links.js` and it
+connects everywhere that thing appears. You never edit a page or the code.
+
+Slots are deduplicated by identity: one dashboard used by four topics is **one** slot, so the same URL is
+never requested twice.
+
+| Value in `links.js` | Means | Shown as |
+|---|---|---|
+| `''` | Awaiting a URL — the content exists, we need the link | Purple placeholder naming its slot |
+| `'TBC'` | To be created — the document does not exist yet | Amber placeholder, "to be created" |
+| `'https://…'` | Connected | A real link |
+
+The **Link Inventory** page (footer, or `#/links`) shows live status of all 109 slots, filters by state and
+category, and exports a CSV with an empty URL column to send to the content owner.
+
+Full process: [docs/11-link-inventory-guide.md](docs/11-link-inventory-guide.md).
 
 ## Technical notes
 
@@ -103,7 +125,9 @@ assistant question with an approved-but-unpublished source · one with no approv
 - Responsive from 390px; wide tables scroll inside their own container, the page never does
 - Keyboard navigable throughout, visible focus states, skip link, `aria-live` regions on dynamic content
 - Status is **never** conveyed by colour alone — every badge carries an icon and a text label
-- No silent `#` links. Placeholders render as visible tokens that state what they resolve to:
+- Every link resolves through a named slot — supply a URL in `links.js` and it connects everywhere that
+  thing appears, with no page or code change
+- No silent `#` links. Unfilled placeholders name the slot they need, and render as visible tokens:
   `{{HIGHSPOT_TOPIC_URL}}` · `{{HIGHSPOT_ASSET_URL}}` · `{{SLACK_ASSISTANT_URL}}` · `{{DASHBOARD_URL}}` ·
   `{{WORKDAY_COURSE_URL}}` · `{{DIGITAL_ROOM_URL}}` · `{{CANONICAL_SOURCE_URL}}`
 - Role selection and gap reports persist in `localStorage` only — nothing leaves the browser

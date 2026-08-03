@@ -229,6 +229,9 @@ a:hover { color: var(--blue-dark); }
 }
 .ph:hover { background: #ebe6ff; }
 .ph::before { content: "↗"; font-weight: 800; }
+.ph--tbc { background: var(--warn-bg); border-color: #d8b06a; color: #6b4200; }
+.ph--tbc:hover { background: #fbe9cd; }
+.ph--tbc::before { content: "✎"; }
 
 /* --------------------------------------------------------------------- hero */
 .hero {

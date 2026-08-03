@@ -1432,6 +1432,130 @@ const GOVERNANCE_STAGES = [
   { n: 10, name: 'Update, archive or retire', desc: 'The record is updated, archived or retired. Superseded material is removed from search.', owner: 'Content owner' }
 ];
 
+/* ============================================================================
+   LINK SLOTS
+   ----------------------------------------------------------------------------
+   Every link in this prototype has its own slot with a stable, unique ID.
+   Real URLs are supplied in links.js — that is the ONLY file you edit to
+   connect this prototype to real content. Nothing here needs to change.
+
+   Slots are deduplicated by identity, not by position: the same dashboard
+   appearing under four topics is ONE slot, so a URL is only ever asked for
+   once. Canonical sources collapse onto their topic's slot for the same
+   reason.
+   ========================================================================= */
+
+function slugify(value) {
+  return String(value).toLowerCase()
+    .replace(/\(.*?\)/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 64);
+}
+
+/* The single source of truth for slot IDs. Renderers and the inventory
+   generator both call this, so they can never disagree. */
+function slotFor(kind, item, topic) {
+  if (item && item.token === 'canonical' && topic) return topic.ref + '/canonical';
+  switch (kind) {
+    case 'topic':     return topic.ref + '/topic';
+    case 'canonical': return topic.ref + '/canonical';
+    case 'training':  return 'TRAINING/' + slugify(item.title);
+    case 'doc':       return 'DOC/' + slugify(item.title);
+    case 'dashboard': return 'DASHBOARD/' + slugify(item.title || item);
+    case 'asset':     return (item.digitalRoom ? 'ROOM/' : 'ASSET/') + slugify(item.title);
+    case 'slack':     return 'GLOBAL/slack';
+    default:          return 'GLOBAL/' + slugify(String(item));
+  }
+}
+
+/* Walks the whole content model and returns every link slot exactly once. */
+function collectSlots() {
+  const slots = [];
+  const seen = new Map();
+  const add = (id, record) => {
+    const existing = seen.get(id);
+    if (existing) {
+      /* Record the extra place it appears, so the inventory shows reuse. */
+      if (record.where && existing.where.indexOf(record.where) === -1) {
+        existing.where.push(record.where);
+      }
+      return;
+    }
+    const entry = Object.assign({}, record, { id, where: record.where ? [record.where] : [] });
+    seen.set(id, entry);
+    slots.push(entry);
+  };
+
+  add(slotFor('slack'), {
+    category: 'Slack assistant', label: 'Slack assistant deep link',
+    token: 'slack', where: 'Header, homepage, assistant page, every topic page',
+    note: 'One URL. Used everywhere the Ask in Slack button appears.'
+  });
+
+  TOPICS.forEach(t => {
+    add(slotFor('topic', null, t), {
+      category: 'Highspot topic pages', label: t.name + ' — Highspot page',
+      token: 'highspotTopic', where: 'Topic: ' + t.name, topic: t.name,
+      note: 'The page itself. Cited by the Slack assistant in every answer about this topic.'
+    });
+
+    if (t.governance.source && t.governance.source !== 'Not yet established') {
+      add(slotFor('canonical', null, t), {
+        category: 'Canonical sources', label: t.governance.source,
+        token: 'canonical', where: 'Topic: ' + t.name, topic: t.name,
+        note: 'The authoritative business record. Must exist before the topic is published.'
+      });
+    }
+
+    t.resources.training.forEach(r => add(slotFor('training', r, t), {
+      category: 'Training', label: r.title, token: r.token || 'workday',
+      where: 'Topic: ' + t.name, topic: t.name, type: r.type
+    }));
+
+    t.resources.documentation.forEach(r => add(slotFor('doc', r, t), {
+      category: 'Documentation', label: r.title, token: r.token || 'highspotAsset',
+      where: 'Topic: ' + t.name, topic: t.name, type: r.type
+    }));
+
+    t.resources.dashboards.forEach(d => add(slotFor('dashboard', d, t), {
+      category: 'Dashboards', label: d.title, token: 'dashboard',
+      where: 'Topic: ' + t.name, topic: t.name, type: 'Salesforce dashboard'
+    }));
+
+    t.metrics.forEach(m => add(slotFor('dashboard', { title: m.dashboard }, t), {
+      category: 'Dashboards', label: m.dashboard, token: 'dashboard',
+      where: 'Topic: ' + t.name, topic: t.name, type: 'Salesforce dashboard'
+    }));
+
+    (t.internal || []).forEach(a => add(slotFor('asset', a, t), {
+      category: 'Internal assets', label: a.title, token: a.token || 'highspotAsset',
+      where: 'Topic: ' + t.name, topic: t.name, type: a.type, audience: 'Internal only',
+      share: a.share
+    }));
+
+    (t.partner || []).forEach(a => add(slotFor('asset', a, t), {
+      category: a.digitalRoom ? 'Digital Rooms' : 'Partner-facing assets',
+      label: a.title, token: a.token || 'highspotAsset',
+      where: 'Topic: ' + t.name, topic: t.name, type: a.type, audience: 'Partner-facing',
+      share: a.share
+    }));
+  });
+
+  return slots;
+}
+
+/* Resolve a slot to a real URL, if one has been supplied in links.js.
+   '' (or missing)  → not supplied yet
+   'TBC'            → the document does not exist yet and must be created  */
+function linkFor(slotId) {
+  const table = (typeof LINKS !== 'undefined' && LINKS) ? LINKS : {};
+  const value = (table[slotId] || '').trim();
+  if (!value) return { state: 'missing', url: '' };
+  if (value.toUpperCase() === 'TBC') return { state: 'tbc', url: '' };
+  return { state: 'connected', url: value };
+}
+
 const PUBLICATION_CHECKLIST = [
   'Named content owner assigned',
   'Named process owner assigned',
