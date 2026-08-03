@@ -692,3 +692,90 @@ body.is-scrolled .role-note { display: none; }
 @media (min-width: 1100px) {
   .primary-nav a { padding: .68rem .58rem; font-size: .845rem; }
 }
+
+/* ============================================================================
+   HOME — one long hero, then three lanes and their links. Nothing else.
+   ========================================================================= */
+
+.hero--tall {
+  min-height: min(86vh, 780px);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(3rem, 8vh, 6rem) clamp(1.4rem, 4vw, 3.4rem);
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+.hero--tall h1 {
+  max-width: none; font-size: clamp(2.1rem, 1rem + 3.6vw, 4rem);
+  line-height: 1.08; margin-bottom: .9rem;
+}
+.hero--tall .rule-line { max-width: 420px; margin-bottom: 1.4rem; }
+.hero--tall .hero__lede { font-size: clamp(1.02rem, .95rem + .45vw, 1.28rem); margin-bottom: 2rem; max-width: 46ch; }
+.hero--tall .search { max-width: 860px; }
+.hero--tall .figure-row { margin-top: 2.4rem; gap: 1.4rem 3.4rem; }
+
+/* ------------------------------------------------------------- lane blocks */
+.lane-block { margin: 0 0 clamp(2.4rem, 5vw, 3.8rem); }
+.lane-block__head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+  padding-bottom: 1rem; margin-bottom: 1.4rem;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.lane-block__head::after {
+  content: ""; position: absolute; left: 0; bottom: -1px; width: 96px; height: 3px;
+  background: var(--accent, var(--blue)); border-radius: 2px;
+}
+.lane-block[data-accent="blue"]   { --accent: #1D4ED8; --accent-soft: #eaf0ff; --accent-ink: #1740b0; }
+.lane-block[data-accent="teal"]   { --accent: #00805f; --accent-soft: #e2f7f0; --accent-ink: #0f6f4c; }
+.lane-block[data-accent="violet"] { --accent: #6d4aff; --accent-soft: #f1edff; --accent-ink: #4b3a9c; }
+
+.lane-block h2 { font-size: clamp(1.5rem, 1.15rem + 1.3vw, 2.15rem); margin: 0 0 .2rem; letter-spacing: -.025em; }
+.lane-block__tag { margin: 0; color: var(--ink-2); font-size: .96rem; }
+.lane-block .owner { margin: 0; }
+
+.lane-links {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: .1rem 2rem;
+}
+.lane-links a {
+  display: flex; align-items: baseline; gap: .55rem;
+  padding: .72rem .2rem .72rem 0; text-decoration: none; color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  font-weight: 600; font-size: 1rem;
+  transition: color .18s var(--ease), padding-left .18s var(--ease);
+}
+.lane-links a::before {
+  content: ""; flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent, var(--blue)); transform: translateY(-2px);
+}
+.lane-links a:hover, .lane-links a:focus-visible { color: var(--accent-ink, var(--blue-dark)); padding-left: .35rem; }
+.lane-links__name { flex: 1 1 auto; }
+.lane-links__you {
+  font-size: .68rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--accent-ink, var(--blue-dark)); background: var(--accent-soft, var(--blue-tint));
+  border-radius: 999px; padding: .1rem .45rem; flex: 0 0 auto;
+}
+
+/* status is shown only where it changes what you should do */
+.lane-links a[data-flag]::after {
+  flex: 0 0 auto; font-size: .68rem; font-weight: 800; letter-spacing: .07em;
+  text-transform: uppercase; border-radius: 999px; padding: .1rem .5rem;
+}
+.lane-links a[data-flag="draft"]::after    { content: "Draft";    background: var(--neutral-bg); color: var(--neutral); }
+.lane-links a[data-flag="overdue"]::after  { content: "Overdue";  background: var(--danger-bg);  color: var(--danger); }
+.lane-links a[data-flag="conflict"]::after { content: "Conflict"; background: var(--danger-bg);  color: var(--danger); }
+.lane-links a[data-flag="review"]::after   { content: "In review";background: var(--warn-bg);    color: var(--warn); }
+
+.lane-block__more { margin: 1.3rem 0 0; }
+.lane-block__more a {
+  font-weight: 700; font-size: .92rem; text-decoration: none;
+  color: var(--accent-ink, var(--blue-dark));
+  border-bottom: 2px solid var(--accent, var(--blue)); padding-bottom: 2px;
+}
+.lane-block__more a::after { content: " →"; }
+
+@media (max-width: 620px) {
+  .lane-block__head { align-items: flex-start; }
+  .lane-links { grid-template-columns: 1fr; }
+}

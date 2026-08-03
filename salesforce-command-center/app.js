@@ -285,14 +285,42 @@ function laneCard(lane) {
   </button>`;
 }
 
-function renderHome() {
-  const role = state.role;
-  const relevant = topicsForRole(role).filter(t => t.priority);
-  const rest = otherTopics(role).filter(t => t.priority);
-  const roleLabel = role === 'all' ? 'all roles' : roleName(role);
-
+function laneBlock(lane) {
+  const topics = TOPICS.filter(t => t.lane === lane.id);
+  const relevant = new Set(topicsForRole(state.role).map(t => t.id));
   return `
-  <section class="hero">
+  <section class="lane-block reveal" data-accent="${esc(lane.accent)}">
+    <header class="lane-block__head">
+      <div>
+        <h2>${esc(lane.name)}</h2>
+        <p class="lane-block__tag">${esc(lane.tagline)}</p>
+      </div>
+      ${ownerBlock(lane)}
+    </header>
+    <ul class="lane-links">
+      ${topics.map(t => {
+        const rs = reviewState(t);
+        const flag = t.governance.lifecycle === 'draft' ? 'draft'
+          : t.governance.conflict ? 'conflict'
+          : rs.key === 'overdue' ? 'overdue'
+          : t.governance.lifecycle === 'in-review' ? 'review' : '';
+        return `<li>
+          <a href="#/topic/${esc(t.id)}" data-nav="#/topic/${esc(t.id)}"${flag ? ` data-flag="${flag}"` : ''}>
+            <span class="lane-links__name">${esc(t.name)}</span>
+            ${state.role !== 'all' && relevant.has(t.id) ? '<span class="lane-links__you">for you</span>' : ''}
+          </a>
+        </li>`;
+      }).join('')}
+    </ul>
+    <p class="lane-block__more">
+      <a href="#/lane/${esc(lane.id)}" data-nav="#/lane/${esc(lane.id)}">Open ${esc(lane.name)}</a>
+    </p>
+  </section>`;
+}
+
+function renderHome() {
+  return `
+  <section class="hero hero--tall">
     <div class="hero__layers" aria-hidden="true">
       <span class="hero__orb hero__orb--a" data-par="0.16"></span>
       <span class="hero__orb hero__orb--b" data-par="0.26"></span>
@@ -300,158 +328,25 @@ function renderHome() {
       <span class="hero__grid" data-par="0.05"></span>
       <span class="hero__sheen" data-par="0.34"></span>
     </div>
-    <div class="hero__inner">
-    <div>
+
     <p class="eyebrow">Salesforce Command Center · EMEA Sales</p>
-    <h1>Know the rule. See what good looks like. Take the right action.</h1>
+    <h1>Know the rule.<br />See what good looks like.<br />Take the right action.</h1>
     <hr class="rule-line" />
     <p class="hero__lede">
-      The approved home for Salesforce standards, processes, performance measures, training and
-      partner-safe resources across EMEA Sales. Every topic has one canonical source, one accountable
-      owner and one current version. If it is not here, it is not approved.
+      One approved source, one accountable owner and one current version for every topic.
     </p>
-    ${trustList()}
-    ${searchBlock()}
-    </div>
 
-    <aside class="hero__aside" aria-hidden="true">
-      <div class="float-card" data-par="0.06">
-        <div class="float-card__head">
-          <span class="float-card__ref">SF-003 · Salesforce</span>
-          <span class="float-chip">✓ Approved</span>
-        </div>
-        <h3>Forecasting</h3>
-        <p>Forecast categories, commit standards and the evidence required behind each call.</p>
-        <dl>
-          <dt>Owner</dt><dd>Revenue Enablement</dd>
-          <dt>Version</dt><dd>5.0</dd>
-          <dt>Reviewed</dt><dd>1 July 2026</dd>
-          <dt>Source</dt><dd>EMEA Forecast Standard</dd>
-        </dl>
-      </div>
-      <div class="float-card" data-par="0.12">
-        <div class="float-card__head">
-          <span class="float-card__ref">Shareability</span>
-          <span class="float-chip float-chip--stop">⛔ Internal only</span>
-        </div>
-        <p style="margin:0">Commit criteria must not be shared with a partner. The joint close-plan template may.</p>
-      </div>
-      <div class="float-card" data-par="0.19">
-        <div class="float-card__head">
-          <span class="float-card__ref">MIP-001 · AI and MIP</span>
-          <span class="float-chip float-chip--warn">⏰ In review</span>
-        </div>
-        <p style="margin:0">Sources currently disagree on the number of plays. No approved answer yet.</p>
-      </div>
-    </aside>
-    </div>
+    ${searchBlock()}
 
     <div class="figure-row">
-      <div class="figure"><p class="figure__n">${TOPICS.length}</p><p class="figure__l">Governed topics</p></div>
-      <div class="figure"><p class="figure__n">${LANES.length}</p><p class="figure__l">Lanes, one owner each</p></div>
-      <div class="figure"><p class="figure__n">${TOPICS.filter(t => t.governance.approvalStatus === 'approved').length}</p><p class="figure__l">Approved and published</p></div>
-      <div class="figure"><p class="figure__n">1</p><p class="figure__l">Source of truth per topic</p></div>
+      <div class="figure"><p class="figure__n">${TOPICS.length}</p><p class="figure__l">Topics</p></div>
+      <div class="figure"><p class="figure__n">${LANES.length}</p><p class="figure__l">Lanes</p></div>
+      <div class="figure"><p class="figure__n">${TOPICS.filter(t => t.governance.approvalStatus === 'approved').length}</p><p class="figure__l">Approved</p></div>
+      <div class="figure"><p class="figure__n">${TOPICS.filter(t => reviewState(t).key === 'overdue').length}</p><p class="figure__l">Overdue</p></div>
     </div>
   </section>
 
-  <section class="section reveal">
-    <div class="section__head">
-      <div>
-        <p class="eyebrow">Lane workspaces</p>
-        <h2>Three lanes, three accountable owners</h2>
-        <p class="small muted">Same structure everywhere. Internal execution on the left, partner-approved material on the right.</p>
-      </div>
-      <a class="btn btn--ghost btn--sm" href="#/lanes" data-nav="#/lanes">See how a lane is built</a>
-    </div>
-    <div class="grid grid--3">${LANES.map(laneCard).join('')}</div>
-  </section>
-
-  <section class="section reveal">
-    <div class="section__head">
-      <div>
-        <p class="eyebrow">Start here</p>
-        <h2>Three ways in</h2>
-      </div>
-    </div>
-    <div class="grid grid--3">
-      <button type="button" class="card card--link entry" data-nav="#/rules">
-        <h3>Rules of the Game</h3>
-        <p class="small muted">What is required of you, and what the targets are.</p>
-        <ul>
-          <li>Stage definitions and exit criteria</li>
-          <li>Required fields and validation</li>
-          <li>Forecast expectations and SLAs</li>
-          <li>Policies, exceptions and approvals</li>
-        </ul>
-      </button>
-      <button type="button" class="card card--link entry entry--good" data-nav="#/good">
-        <h3>What Good Looks Like</h3>
-        <p class="small muted">The same rules, expressed as observable behaviour.</p>
-        <ul>
-          <li>Healthy opportunities and pipeline</li>
-          <li>Evidence-based forecasting</li>
-          <li>Event logging worth reading</li>
-          <li>Manager coaching questions</li>
-        </ul>
-      </button>
-      <button type="button" class="card card--link entry entry--res" data-nav="#/resources">
-        <h3>Resources and Enablement</h3>
-        <p class="small muted">Training, guides, dashboards, contacts and partner-safe assets.</p>
-        <ul>
-          <li>Workday courses and short videos</li>
-          <li>Process maps, playbooks, checklists</li>
-          <li>Approved dashboards</li>
-          <li>Named contacts and Digital Rooms</li>
-        </ul>
-      </button>
-    </div>
-  </section>
-
-  <section class="section reveal">
-    <div class="section__head">
-      <div>
-        <p class="eyebrow">Priority topics</p>
-        <h2>Relevant to ${esc(roleLabel)}</h2>
-        <p class="small muted">${relevant.length} topic${relevant.length === 1 ? '' : 's'} shown. Change the role selector to see a different view.</p>
-      </div>
-      <a class="btn btn--ghost btn--sm" href="#/registry" data-nav="#/registry">Open the full Topic Registry</a>
-    </div>
-    <div class="grid grid--3">${relevant.map(priorityTopicCard).join('')}</div>
-    ${rest.length ? `
-      <details class="acc" style="margin-top:1rem">
-        <summary>Show ${rest.length} topic${rest.length === 1 ? '' : 's'} that are not primary for ${esc(roleLabel)}</summary>
-        <div>
-          <p class="small muted">These are published and available, but they are not the primary expectation for this role.</p>
-          <div class="grid grid--3">${rest.map(priorityTopicCard).join('')}</div>
-        </div>
-      </details>` : ''}
-  </section>
-
-  <section class="section reveal">
-    <div class="grid grid--2">
-      <article class="card">
-        <h3>Ask the Salesforce Assistant in Slack</h3>
-        <p class="small muted">
-          The existing Slack assistant answers from approved sources only. It cites the source, the version and
-          the review date, and it sends you to the exact page here. When there is no approved answer, it says so.
-        </p>
-        <div class="btn-row">
-          <a class="btn btn--slack" href="#/assistant" data-nav="#/assistant"><span aria-hidden="true">💬</span> See how it answers</a>
-          ${link(slotFor('slack'), 'slack', 'Open Slack assistant')}
-        </div>
-      </article>
-      <article class="card">
-        <h3>Something missing or wrong?</h3>
-        <p class="small muted">
-          A gap that nobody reports stays a gap. Reporting takes under a minute and routes to the named owner
-          for that lane.
-        </p>
-        <div class="btn-row">
-          <a class="btn btn--primary" href="#/gap" data-nav="#/gap">Report missing or incorrect guidance</a>
-        </div>
-      </article>
-    </div>
-  </section>`;
+  ${LANES.map(laneBlock).join('')}`;
 }
 
 /* ---------------------------------------------------------------- rules view */
