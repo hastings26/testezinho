@@ -44,16 +44,24 @@ def render_face(face: MultiPolygon, stamp: Stamp, px: int = 1600,
     return img
 
 
-def impression_preview(face_mirrored: MultiPolygon, stamp: Stamp,
+def impression_preview(face: MultiPolygon, stamp: Stamp,
                        px: int = 1600) -> Image.Image:
-    """What lands on the paper — the mirrored face, mirrored once more."""
-    from shapely.affinity import scale as sscale
+    """What lands on the paper.
 
-    unmirrored = sscale(face_mirrored, xfact=-1.0, yfact=1.0, origin=(0, 0))
-    if unmirrored.geom_type == "Polygon":
-        unmirrored = MultiPolygon([unmirrored])
-    return render_face(unmirrored, stamp, px=px, ink=(28, 32, 48),
+    The contact surface is the z = 0 plane and the part is already face-down,
+    so pressing it maps model (x, y) straight to paper (x, y). The face polygon
+    is therefore the impression as-is -- no flip.
+    """
+    return render_face(face, stamp, px=px, ink=(28, 32, 48),
                        paper=(252, 250, 244))
+
+
+def physical_face_preview(face: MultiPolygon, stamp: Stamp,
+                          px: int = 1600) -> Image.Image:
+    """The stamp face as the eye sees it when you pick the part up."""
+    from .build import mirrored
+
+    return render_face(mirrored(face), stamp, px=px)
 
 
 def inspection_map(repaired_mask: np.ndarray, scan, limits: Limits,

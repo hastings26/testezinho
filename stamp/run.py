@@ -26,7 +26,7 @@ def run(scan_path: str, outdir: Path, stamp: Stamp, limits: Limits) -> dict:
     scan = trace.load(scan_path, stamp.border_od_mm, stamp.border_width_mm)
     rep = repair_mod.repair(scan, limits, grey)
 
-    solid, face = build.insert(rep.polygons, stamp, mirror=True)
+    solid, face = build.insert(rep.polygons, stamp)
     checks = build.validate(solid, face, stamp)
     hold = build.holder(stamp)
 
@@ -40,7 +40,8 @@ def run(scan_path: str, outdir: Path, stamp: Stamp, limits: Limits) -> dict:
     except Exception as exc:  # noqa: BLE001 - report, don't abort the run
         step_note = f"FAILED: {exc}"
 
-    qc.render_face(face, stamp).save(outdir / "preview-stamp-face-mirrored.png")
+    qc.physical_face_preview(face, stamp).save(
+        outdir / "preview-stamp-face-mirrored.png")
     qc.impression_preview(face, stamp).save(outdir / "preview-impression-on-paper.png")
     insp, stats = qc.inspection_map(rep.repaired_mask, scan, limits, stamp)
     insp.save(outdir / "inspection.png")

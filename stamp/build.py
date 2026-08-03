@@ -19,14 +19,22 @@ from shapely.ops import unary_union
 from .limits import Stamp
 
 
-def face_geometry(calligraphy: MultiPolygon, stamp: Stamp,
-                  mirror: bool) -> MultiPolygon:
+def face_geometry(calligraphy: MultiPolygon, stamp: Stamp) -> MultiPolygon:
     """The 2-D stamp face: perfect border annulus + preserved calligraphy.
 
     The scanned border is discarded upstream; here it is replaced by a
     mathematically exact annulus. Calligraphy that ran past the old border --
     the descender does -- is clipped to the new outside diameter, so the
     silhouette is a true circle.
+
+    Orientation, which is easy to get backwards: the relief occupies z = 0..1
+    with the backing stacked *above* it, so the contact surface is the z = 0
+    plane and the face already points down. Pressing the part onto paper maps
+    model (x, y) straight to paper (x, y) with no flip, so this polygon is
+    defined in *impression* orientation -- what you want to read on the paper.
+    The physical face therefore looks mirrored when you pick the stamp up and
+    look at it, which is exactly how a stamp should look. Mirroring here would
+    mirror the impression itself.
     """
     r_out = stamp.border_od_mm / 2.0
     r_in = stamp.border_id_mm / 2.0
@@ -35,12 +43,17 @@ def face_geometry(calligraphy: MultiPolygon, stamp: Stamp,
 
     face = unary_union([annulus, calligraphy]).intersection(outer)
 
-    if mirror:
-        face = shapely_scale(face, xfact=-1.0, yfact=1.0, origin=(0, 0))
-
     if isinstance(face, Polygon):
         face = MultiPolygon([face])
     return face
+
+
+def mirrored(face: MultiPolygon) -> MultiPolygon:
+    """The face as the eye sees it, looking directly at the physical stamp."""
+    flipped = shapely_scale(face, xfact=-1.0, yfact=1.0, origin=(0, 0))
+    if isinstance(flipped, Polygon):
+        flipped = MultiPolygon([flipped])
+    return flipped
 
 
 def _extrude(face: MultiPolygon, height: float, z0: float) -> trimesh.Trimesh:
@@ -53,10 +66,10 @@ def _extrude(face: MultiPolygon, height: float, z0: float) -> trimesh.Trimesh:
     return mesh
 
 
-def insert(calligraphy: MultiPolygon, stamp: Stamp,
-           mirror: bool = True) -> tuple[trimesh.Trimesh, MultiPolygon]:
+def insert(calligraphy: MultiPolygon,
+           stamp: Stamp) -> tuple[trimesh.Trimesh, MultiPolygon]:
     """The TPU 95A stamp insert as a single watertight solid."""
-    face = face_geometry(calligraphy, stamp, mirror=mirror)
+    face = face_geometry(calligraphy, stamp)
 
     relief = _extrude(face, stamp.relief_mm, 0.0)
     backing = trimesh.creation.cylinder(
