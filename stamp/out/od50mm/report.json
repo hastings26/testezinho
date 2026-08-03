@@ -12,11 +12,11 @@
   },
   "repair": {
     "stroke_below_min_before_pct": 18.0,
-    "stroke_below_min_after_pct": 4.0,
-    "added_material_pct_of_ink": 4.26,
+    "stroke_below_min_after_pct": 4.2,
+    "added_material_pct_of_ink": 4.25,
     "isolated_dots_thickened": 1,
-    "merges_prevented": 0,
-    "gap_below_min_after_pct": 3.5,
+    "merges_prevented": 1,
+    "gap_below_min_after_pct": 3.7,
     "dots_below_min_after": 1
   },
   "checks": {
@@ -29,12 +29,12 @@
     "contours_closed": true,
     "no_self_intersection": true,
     "islands": 34,
-    "triangles": 293058,
+    "triangles": 292788,
     "thickness_ok": true,
     "diameter_ok": true
   },
   "step": "34 relief solids fused, simplified to 0.02 mm",
   "flags": [
-    "3.6% of the negative-space skeleton is below the 0.45 mm gap minimum. Not corrected: opening these gaps requires eroding the calligraphy either side."
+    "3.7% of the negative-space skeleton is below the 0.45 mm gap minimum. Not corrected: opening these gaps requires eroding the calligraphy either side."
   ]
 }

@@ -90,35 +90,41 @@ def insert(calligraphy: MultiPolygon,
 
 
 def holder(stamp: Stamp) -> trimesh.Trimesh:
-    """Optional rigid (PLA) holder with a recess for the TPU insert."""
-    body = trimesh.creation.cylinder(
-        radius=stamp.holder_od_mm / 2.0, height=stamp.holder_body_mm, sections=256
-    )
-    body.apply_translation([0, 0, stamp.holder_body_mm / 2.0])
+    """Optional rigid (PLA) holder with a recess for the TPU insert.
 
-    # Recess opens downward from z=0, receiving the insert's 2.2 mm backing.
-    recess = trimesh.creation.cylinder(
-        radius=stamp.holder_recess_mm / 2.0,
-        height=stamp.holder_recess_depth_mm * 2,
-        sections=256,
-    )
-    recess.apply_translation([0, 0, stamp.holder_recess_depth_mm])
+    Built as one solid of revolution, oriented for printing: the narrow grip end
+    sits on the build plate and the recess opens *upward*, so it needs no
+    supports and nothing has to bridge. Modelling the recess facing down instead
+    would leave its ceiling spanning the full recess diameter as an unsupported
+    bridge, which sags. In use the part is simply turned over.
 
-    knob = trimesh.creation.cylinder(
-        radius=stamp.holder_knob_mm / 2.0, height=stamp.holder_knob_mm, sections=128
-    )
-    knob.apply_translation(
-        [0, 0, stamp.holder_body_mm + stamp.holder_knob_mm / 2.0 - 0.01]
-    )
-    cap = trimesh.creation.icosphere(subdivisions=3, radius=stamp.holder_knob_mm / 2.0)
-    cap.apply_translation([0, 0, stamp.holder_body_mm + stamp.holder_knob_mm - 0.01])
+    The grip flares out to full diameter at about 38 deg from vertical, inside
+    the 45 deg an unsupported overhang can hold.
+    """
+    r_grip = stamp.holder_grip_mm / 2.0
+    r_base = stamp.holder_od_mm / 2.0
+    r_recess = stamp.holder_recess_mm / 2.0
+    h_taper = stamp.holder_taper_mm
+    h_total = stamp.holder_height_mm
+    z_recess = h_total - stamp.holder_recess_depth_mm
+    c = 0.6  # chamfer on the plate-side edge
 
-    solid = trimesh.boolean.union([body, knob, cap])
-    solid = trimesh.boolean.difference([solid, recess])
+    profile = np.array([
+        [0.0, 0.0],
+        [r_grip - c, 0.0],
+        [r_grip, c],
+        [r_base, h_taper],
+        [r_base, h_total],
+        [r_recess, h_total],
+        [r_recess, z_recess],
+        [0.0, z_recess],
+    ])
+
+    solid = trimesh.creation.revolve(profile, sections=256)
     solid.merge_vertices()
     solid.fix_normals()
     if not solid.is_watertight:
-        raise RuntimeError("holder is not watertight after boolean ops")
+        raise RuntimeError("holder is not watertight")
     return solid
 
 

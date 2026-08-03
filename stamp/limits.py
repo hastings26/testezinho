@@ -46,8 +46,9 @@ class Stamp:
     holder_clearance_mm: float = 0.3  # brief allows 30.2-30.4 on a 30 mm insert
     holder_wall_mm: float = 3.0
     holder_recess_depth_mm: float = 2.3
-    holder_body_mm: float = 6.0
-    holder_knob_mm: float = 16.0
+    holder_grip_mm: float = 34.0  # narrow end, sits on the build plate
+    holder_taper_mm: float = 14.0  # grip flares out to full diameter over this
+    holder_rim_mm: float = 6.0  # full-diameter section carrying the recess
 
     @property
     def total_mm(self) -> float:
@@ -64,3 +65,12 @@ class Stamp:
     @property
     def holder_od_mm(self) -> float:
         return self.holder_recess_mm + 2 * self.holder_wall_mm
+
+    @property
+    def holder_height_mm(self) -> float:
+        return self.holder_taper_mm + self.holder_rim_mm
+
+    @property
+    def holder_floor_mm(self) -> float:
+        """Solid material between the top of the recess and the taper."""
+        return self.holder_rim_mm - self.holder_recess_depth_mm

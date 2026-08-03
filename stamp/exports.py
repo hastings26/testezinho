@@ -97,9 +97,22 @@ def write_stl(mesh: trimesh.Trimesh, path: Path) -> None:
     mesh.export(str(path), file_type="stl")
 
 
-def write_3mf(meshes: dict[str, trimesh.Trimesh], path: Path) -> None:
-    """3MF carries millimetres natively, so slicers open it at true scale."""
+def write_3mf(meshes: dict[str, trimesh.Trimesh], path: Path,
+              gap_mm: float = 8.0) -> None:
+    """3MF carries millimetres natively, so slicers open it at true scale.
+
+    Parts are laid out side by side along X. Exporting them all at the origin
+    would have them interpenetrating when the file is opened in a slicer.
+    """
+    widths = [m.extents[0] for m in meshes.values()]
+    total = sum(widths) + gap_mm * (len(widths) - 1)
+
     scene = trimesh.Scene()
-    for name, m in meshes.items():
-        scene.add_geometry(m, geom_name=name, node_name=name)
+    cursor = -total / 2.0
+    for (name, m), w in zip(meshes.items(), widths):
+        placed = m.copy()
+        centre_x = (m.bounds[0][0] + m.bounds[1][0]) / 2.0
+        placed.apply_translation([cursor + w / 2.0 - centre_x, 0, 0])
+        scene.add_geometry(placed, geom_name=name, node_name=name)
+        cursor += w + gap_mm
     scene.export(str(path), file_type="3mf")

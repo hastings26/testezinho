@@ -111,7 +111,8 @@ eroding the strokes either side, so they are reported rather than silently fixed
 | Relief height above backing | 1.0 mm |
 | TPU backing thickness | 2.2 mm |
 | Total TPU thickness | 3.2 mm |
-| Holder recess | insert OD + 0.3 mm, 2.3 mm deep |
+| Holder recess | insert OD + 0.3 mm (50.3 mm), 2.3 mm deep |
+| Holder | 56.3 mm base tapering to a 34 mm grip, 20 mm tall |
 
 All raised contact surfaces are exactly coplanar at z = 0, and the rear
 mounting surface is flat. No decorative texture is added anywhere.
@@ -169,5 +170,8 @@ build raises rather than exports if the solid is not watertight.
 - Enclosure open (TPU, not ABS/ASA). No supports needed.
 - Light 400-grit sanding of the face afterwards improves ink uptake.
 
-Print the holder in PLA at normal settings. The insert's 2.2 mm backing seats
-in the 2.3 mm recess, leaving the 1.0 mm relief proud.
+Print the holder in PLA at normal settings, **as modelled** — narrow grip end
+on the plate, recess opening upward. It needs no supports and nothing bridges;
+the taper flares at 39 deg from vertical, inside the 45 deg an unsupported wall
+can hold. Turn it over to use it. The insert's 2.2 mm backing seats in the
+2.3 mm recess with 0.1 mm slack, leaving the 1.0 mm relief proud.
