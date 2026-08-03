@@ -98,7 +98,7 @@ one with no approved answer at all.
 | File | Contents |
 |---|---|
 | `index.html` | Semantic shell — masthead, role selector, navigation, view container, footer |
-| `styles.css` | Design system. Dark navigation, light canvas, restrained Pax8 accents. No external fonts or assets. |
+| `styles.css` | Design system. Light canvas, hairline rules, one accent per lane. No external fonts or assets. |
 | `app.js` | Hash router, role relevance, search index and ranking, registry filters, assistant logic, gap workflow |
 | `data.js` | The Topic Registry. Every topic, asset, metric, FAQ and governance record. **Replace this file with real records.** |
 | `links.js` | **The only file you edit to connect real URLs.** 165 pre-listed slots, grouped and commented. |

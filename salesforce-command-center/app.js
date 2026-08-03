@@ -320,15 +320,7 @@ function laneBlock(lane) {
 
 function renderHome() {
   return `
-  <section class="hero hero--tall">
-    <div class="hero__layers" aria-hidden="true">
-      <span class="hero__orb hero__orb--a" data-par="0.16"></span>
-      <span class="hero__orb hero__orb--b" data-par="0.26"></span>
-      <span class="hero__orb hero__orb--c" data-par="0.10"></span>
-      <span class="hero__grid" data-par="0.05"></span>
-      <span class="hero__sheen" data-par="0.34"></span>
-    </div>
-
+  <section class="hero">
     <p class="eyebrow">Salesforce Command Center · EMEA Sales</p>
     <h1>Know the rule.<br />See what good looks like.<br />Take the right action.</h1>
     <hr class="rule-line" />
@@ -640,8 +632,7 @@ function renderLane(route) {
   </nav>
 
   <div class="lane-band" data-accent="${esc(lane.accent)}">
-    <span class="lane-band__grid" data-par="0.08" aria-hidden="true"></span>
-    <p class="eyebrow" style="color:#7fe8c6">Lane workspace</p>
+    <p class="eyebrow">Lane workspace</p>
     <h1>${esc(lane.name)}</h1>
     <hr class="rule-line" />
     <p style="max-width:66ch">${esc(lane.desc)}</p>
@@ -1856,7 +1847,6 @@ function renderNotFound() {
 
 function afterRender(route) {
   initMotion();
-  initPointerParallax();
 
   if (route.name === 'links') {
     ['lState', 'lCat', 'lText'].forEach(id => {
