@@ -77,7 +77,7 @@ def run(scan_path: str, outdir: Path, stamp: Stamp, limits: Limits) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("scan")
-    ap.add_argument("--od", type=float, default=30.0)
+    ap.add_argument("--od", type=float, default=Stamp.border_od_mm)
     ap.add_argument("--outdir", default="stamp/out")
     args = ap.parse_args()
 

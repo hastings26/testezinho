@@ -30,7 +30,11 @@ class Limits:
 class Stamp:
     """Physical stamp geometry."""
 
-    border_od_mm: float = 30.0
+    # 50 mm is the chosen production size. It gives the best post-repair
+    # compliance of any diameter measured (4.4 % residual, all of it tapered
+    # stroke terminals) for only 4.3 % added material, and it still presses
+    # flat in one push on a standard ink pad. See README for the full sweep.
+    border_od_mm: float = 50.0
     border_width_mm: float = 0.8
     relief_mm: float = 1.0  # raised height above the backing
     backing_mm: float = 2.2
