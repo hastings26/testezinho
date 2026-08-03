@@ -41,6 +41,7 @@
   --radius-sm:   8px;
   --shadow:      0 1px 2px rgba(18, 22, 46, .06), 0 4px 14px rgba(18, 22, 46, .05);
   --shadow-lift: 0 2px 6px rgba(18, 22, 46, .09), 0 14px 30px rgba(18, 22, 46, .08);
+  --rainbow:     linear-gradient(90deg, #1D4ED8, #0EA5E9, #00D09C, #22C55E, #8B5CF6, #EC4899, #EAB308);
   --wrap:        1180px;
   --font: "Plus Jakarta Sans", "Nunito Sans", -apple-system, BlinkMacSystemFont,
           "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -113,6 +114,7 @@ a:hover { color: var(--blue-dark); }
 
 /* ------------------------------------------------------------------ header */
 .masthead { background: var(--surface); color: var(--ink); border-bottom: 1px solid var(--line); }
+.masthead::before { content: ""; display: block; height: 3px; background: var(--rainbow); }
 .masthead__bar {
   max-width: var(--wrap); margin: 0 auto;
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
@@ -166,7 +168,7 @@ a:hover { color: var(--blue-dark); }
 }
 .rule-line {
   height: 3px; border: 0; border-radius: 2px; margin: 0 0 1.2rem; max-width: 320px;
-  background: linear-gradient(90deg, #1D4ED8, #00D09C, #22C55E, #8B5CF6, #EC4899, #EAB308);
+  background: var(--rainbow);
 }
 
 .breadcrumbs { font-size: .82rem; color: var(--ink-2); margin-bottom: .8rem; }
@@ -244,7 +246,7 @@ a:hover { color: var(--blue-dark); }
   letter-spacing: -.032em; text-wrap: balance; margin-bottom: 1rem;
 }
 .hero__lede { color: var(--ink-2); max-width: 48ch; font-size: clamp(1.02rem, .96rem + .4vw, 1.2rem); }
-.hero .rule-line { max-width: 96px; height: 2px; background: var(--ink); margin-bottom: 1.5rem; }
+.hero .rule-line { max-width: 280px; height: 3px; background: var(--rainbow); margin-bottom: 1.5rem; }
 
 .trust { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.1rem 0 1.4rem; padding: 0; list-style: none; }
 .trust li {
@@ -474,10 +476,15 @@ legend { font-weight: 800; padding: 0 .4rem; font-size: .9rem; }
 
 .lane-block { margin: 0 0 clamp(2.6rem, 6vw, 4.5rem); }
 .lane-block__head {
+  position: relative;
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 1.5rem; flex-wrap: wrap;
   padding-bottom: 1rem; margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.lane-block__head::after {
+  content: ""; position: absolute; left: 0; bottom: -2px;
+  width: 150px; height: 3px; border-radius: 2px; background: var(--rainbow);
 }
 .lane-block[data-accent="blue"]   { --accent: #1D4ED8; --accent-soft: #eef2fd; --accent-ink: #1740b0; }
 .lane-block[data-accent="teal"]   { --accent: #00805f; --accent-soft: #e9f6f2; --accent-ink: #0f6f4c; }
@@ -551,12 +558,16 @@ legend { font-weight: 800; padding: 0 .4rem; font-size: .9rem; }
 .figure__l { font-size: .74rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: .11em; margin: .35rem 0 0; }
 
 /* ------------------------------------------------------------- lane heading */
-.lane-band { margin-bottom: 1.9rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--ink); }
+.lane-band { position: relative; margin-bottom: 1.9rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--line); }
+.lane-band::after {
+  content: ""; position: absolute; left: 0; bottom: -2px;
+  width: 150px; height: 3px; border-radius: 2px; background: var(--rainbow);
+}
 .lane-band[data-accent="blue"]   { --accent: #1D4ED8; --accent-ink: #1740b0; }
 .lane-band[data-accent="teal"]   { --accent: #00805f; --accent-ink: #0f6f4c; }
 .lane-band[data-accent="violet"] { --accent: #5b3fd6; --accent-ink: #4b3a9c; }
 .lane-band h1 { letter-spacing: -.03em; }
-.lane-band .rule-line { max-width: 96px; height: 2px; background: var(--accent, var(--ink)); margin-bottom: 1.1rem; }
+.lane-band .rule-line { max-width: 200px; margin-bottom: 1.1rem; }
 .lane-band p { color: var(--ink-2); }
 .lane-band .owner { margin: .9rem 0 .9rem; }
 
@@ -575,3 +586,13 @@ legend { font-weight: 800; padding: 0 .4rem; font-size: .9rem; }
   .card--link:hover { transform: none; }
   * { animation: none !important; }
 }
+
+
+/* ------------------------------------------------------------------ lights */
+/* Small coloured lights drifting upward behind the page. Decoration only —
+   removed entirely under prefers-reduced-motion (a static frame remains). */
+#lights {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
+.proto-bar, .masthead, main, .site-footer { position: relative; z-index: 1; }

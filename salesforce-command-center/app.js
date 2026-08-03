@@ -2014,6 +2014,90 @@ function initPointerParallax() {
   });
 }
 
+/* ------------------------------------------------------------------ lights */
+/* A few small coloured lights drifting slowly upward behind the page, with a
+   gentle scroll parallax per light. Pure decoration: under reduced motion a
+   single static frame is drawn and nothing moves. */
+
+const LIGHT_COLORS = ['#1D4ED8', '#0EA5E9', '#00D09C', '#22C55E', '#8B5CF6', '#EC4899', '#EAB308'];
+
+const lights = {
+  canvas: null, ctx: null, particles: [], raf: null, last: 0, w: 0, h: 0,
+
+  rgba(hex, alpha) {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+  },
+
+  size() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.w = window.innerWidth; this.h = window.innerHeight;
+    this.canvas.width = this.w * dpr; this.canvas.height = this.h * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  },
+
+  spawn() {
+    const count = Math.max(8, Math.min(34, Math.round(this.w * this.h / 46000)));
+    this.particles = Array.from({ length: count }, (_, i) => {
+      const deep = Math.random();
+      return {
+        x: Math.random() * this.w,
+        y: Math.random() * this.h,
+        r: 1.4 + deep * 3.2,
+        speed: 5 + deep * 13,
+        sway: 6 + Math.random() * 16,
+        phase: Math.random() * Math.PI * 2,
+        depth: 0.05 + deep * 0.2,
+        color: LIGHT_COLORS[i % LIGHT_COLORS.length],
+        alpha: 0.16 + deep * 0.26
+      };
+    });
+  },
+
+  frame(t) {
+    const dt = Math.min(0.05, (t - this.last) / 1000 || 0.016);
+    this.last = t;
+    this.draw(dt);
+    this.raf = requestAnimationFrame(ts => this.frame(ts));
+  },
+
+  draw(dt) {
+    const { ctx, w, h } = this;
+    const span = h + 80;
+    const scroll = window.scrollY;
+    ctx.clearRect(0, 0, w, h);
+    for (const p of this.particles) {
+      if (dt) { p.y -= p.speed * dt; p.phase += dt * 0.6; }
+      const x = p.x + Math.sin(p.phase) * p.sway;
+      const y = (((p.y - scroll * p.depth) % span) + span) % span - 40;
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, p.r * 3.2);
+      glow.addColorStop(0, this.rgba(p.color, p.alpha));
+      glow.addColorStop(1, this.rgba(p.color, 0));
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(x, y, p.r * 3.2, 0, 7); ctx.fill();
+      ctx.fillStyle = this.rgba(p.color, Math.min(0.85, p.alpha + 0.28));
+      ctx.beginPath(); ctx.arc(x, y, p.r * 0.85, 0, 7); ctx.fill();
+    }
+  },
+
+  refresh() {
+    if (!this.canvas) return;
+    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+    this.size(); this.spawn();
+    if (REDUCED_MOTION.matches) { this.draw(0); return; }
+    this.last = 0;
+    this.raf = requestAnimationFrame(ts => { this.last = ts; this.frame(ts); });
+  },
+
+  init() {
+    this.canvas = $('#lights');
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext('2d');
+    window.addEventListener('resize', () => this.refresh());
+    this.refresh();
+  }
+};
+
 /* --------------------------------------------------------------- global wiring */
 
 function toast(message) {
@@ -2077,8 +2161,10 @@ $('#navToggle').addEventListener('click', () => {
 window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', onScroll);
 REDUCED_MOTION.addEventListener('change', initMotion);
+REDUCED_MOTION.addEventListener('change', () => lights.refresh());
 window.addEventListener('hashchange', navigate);
 
 initRoles();
+lights.init();
 if (!location.hash) location.hash = '#/home';
 navigate();
