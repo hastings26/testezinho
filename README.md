@@ -24,8 +24,11 @@ by the product they need.
   grouped results, arrow-key navigation and match highlighting.
 - **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
 
-**Visual direction:** restrained liquid-glass over the Pax8 palette — deep blue and black grounds,
-Pax8 Blue and Teal accents, generous spacing, rounded cards, soft shadows, Plus Jakarta Sans.
+**Visual direction:** liquid glass — a soft grey studio canvas with faint colour blooms for the glass
+to refract, translucent surfaces with bright specular crowns, chromatic rims and real contact
+shadows, chunky rounded geometry, glossy blue accent controls, dark ink on light glass, Plus Jakarta
+Sans. Note this deliberately departs from the Pax8 deck guidelines (dark grounds): the portal is a
+light-glass interface, with Pax8 Blue and Teal carried through as accents.
 
 - Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing (`#/p/<id>/<tab>`).
 - **All products, assets and updates are illustrative placeholders** — this is a design artefact for
