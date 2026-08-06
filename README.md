@@ -24,11 +24,11 @@ by the product they need.
   grouped results, arrow-key navigation and match highlighting.
 - **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
 
-**Visual direction:** liquid glass — a soft grey studio canvas with faint colour blooms for the glass
-to refract, translucent surfaces with bright specular crowns, chromatic rims and real contact
-shadows, chunky rounded geometry, glossy blue accent controls, dark ink on light glass, Plus Jakarta
-Sans. Note this deliberately departs from the Pax8 deck guidelines (dark grounds): the portal is a
-light-glass interface, with Pax8 Blue and Teal carried through as accents.
+**Visual direction:** liquid-glass render — a clean pale-grey canvas lit from above, thick capsule
+glass with a visible inner wall (the double-edge line that gives it depth), glossy crowns, wide soft
+diffuse shadows, and tinted blue glass for primary controls (buttons, selected tab, avatar) with
+dark navy text. Dark ink on light glass throughout, Plus Jakarta Sans. Note this deliberately
+departs from the Pax8 deck guidelines (dark grounds): the portal is a light-glass interface.
 
 - Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing (`#/p/<id>/<tab>`).
 - **All products, assets and updates are illustrative placeholders** — this is a design artefact for
