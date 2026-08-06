@@ -24,11 +24,12 @@ by the product they need.
   grouped results, arrow-key navigation and match highlighting.
 - **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
 
-**Visual direction:** liquid-glass render — a clean pale-grey canvas lit from above, thick capsule
-glass with a visible inner wall (the double-edge line that gives it depth), glossy crowns, wide soft
-diffuse shadows, and tinted blue glass for primary controls (buttons, selected tab, avatar) with
-dark navy text. Dark ink on light glass throughout, Plus Jakarta Sans. Note this deliberately
-departs from the Pax8 deck guidelines (dark grounds): the portal is a light-glass interface.
+**Visual direction:** Neo-Apple — a warm cream canvas lit by a soft lamp glow, matte ivory cards
+with hairline borders and soft warm shadows, a cream pill search strip, and satin jewel-tone
+accents: emerald green for primary controls (solid green pill CTAs, selected tab, avatar) and
+amber/terracotta for the Use side. Each product carries its own satin icon tile. Dark ink on warm
+white throughout, Plus Jakarta Sans. Note this deliberately departs from the Pax8 deck guidelines
+(dark grounds): the portal is a warm light interface.
 
 - Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing (`#/p/<id>/<tab>`).
 - **All products, assets and updates are illustrative placeholders** — this is a design artefact for
