@@ -10,7 +10,7 @@
 <style>
 /* ============================================================
    Revenue Enablement Portal — design prototype
-   Learn on the left. Pay attention in the centre. Act on the right.
+   See the whole. Pick a lane. Go deep.
    Neumorphism: one warm-grey material for everything. Elements are
    extruded from the surface (light top-left, shade bottom-right) or
    pressed into it. No borders, no fills — colour only as stone-pastel
@@ -613,6 +613,34 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
 }
+
+/* ---------- single-page lanes layout ---------- */
+.aware-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px;align-items:start}
+@media (max-width:820px){.aware-grid{grid-template-columns:1fr}}
+.lanepick{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px;align-items:stretch}
+.lp-card{padding:30px;display:flex;flex-direction:column;gap:16px}
+.lane-intro{font-size:13px;color:var(--ink-2);line-height:1.6}
+.lp-list{display:flex;flex-direction:column;gap:10px;margin-top:2px}
+.lp-item{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;padding:11px 14px;border-radius:var(--r-sm);box-shadow:var(--down-sm)}
+.lp-item svg{width:15px;height:15px;flex:none}
+.lp-cta{
+  margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 22px;border-radius:var(--r-pill);
+  font-size:13px;font-weight:800;color:var(--ink-2);
+  background:var(--surface);box-shadow:var(--up-sm);
+  transition:box-shadow .2s var(--ease),color .2s var(--ease);
+}
+.lp-cta:hover{color:var(--ink);box-shadow:var(--up)}
+.lp-cta:active{box-shadow:var(--down-sm)}
+.lp-cta svg{width:14px;height:14px;color:var(--sage)}
+.lane-sec{scroll-margin-top:120px}
+.pblock{padding:30px;margin-bottom:28px;scroll-margin-top:120px}
+.pblock-head{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.pblock-title{margin:0 0 4px;font-size:20px;font-weight:800;letter-spacing:-.5px;color:#33322F}
+.tabs-sm{margin:22px 0 20px;padding:6px}
+.tabs-sm .tab{padding:9px 18px;font-size:12.5px}
+.lblock-title{margin:0 0 5px;font-size:15px;font-weight:800;letter-spacing:-.3px;color:#33322F}
+.lblock{padding:2px 0}
 </style>
 </head>
 <body>
@@ -708,7 +736,7 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
   <svg class="cloud" viewBox="0 0 60 42" fill="none" aria-hidden="true">
     <path d="M45 39H16.5C9.6 39 4 33.6 4 27s5.6-12 12.5-12c1 0 2 .1 2.9.4C21.7 9.2 27.4 5 34 5c8.6 0 15.6 6.9 15.6 15.4 0 .7 0 1.4-.1 2.1 4 1.4 6.5 5 6.5 9 0 4.7-4.2 7.5-11 7.5z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
   </svg>
-  <span>Learn on the left. Pay attention in the centre. Act on the right.</span>
+  <span>See the whole. Pick a lane. Go deep.</span>
   <span style="margin-left:auto"><i>Design prototype — all products, assets and updates shown are illustrative placeholders.</i></span>
 </footer>
 
@@ -1048,6 +1076,7 @@ function icon(id,cls=''){ return `<svg class="${cls}" aria-hidden="true"><use hr
 function badge(status){ const [c,l]=BADGE[status]||BADGE.draft; return `<span class="badge ${c}">${l}</span>`; }
 function byId(id){ return PRODUCTS.find(p=>p.id===id); }
 function ownerOf(p){ return OWNERS[p.owner]; }
+function fact(t){ return `<span class="fact">${esc(t)}</span>`; }
 
 let toastTimer;
 function toast(msg){
@@ -1066,387 +1095,47 @@ function wireStubs(root){
 }
 
 /* ============================================================
-   HOME
+   ONE PAGE — the whole company first, then three lanes, and every
+   lane's product detail lives inline below its lane heading.
    ============================================================ */
 
-function homeAware(){
-  // the centre column aggregates what every product owner flagged
-  return PRODUCTS.flatMap(p => p.aware.map(a => ({...a, product:p})));
-}
+const LANE_BLURB = {
+  alex:     'AI-led productivity: land Copilot, tell the Managed Intelligence story, and move partners up the value curve.',
+  marco:    'Defend and run: the security and continuity portfolio, plus the platform every partner transacts on.',
+  fabricio: 'Build and deliver: cloud infrastructure sizing and migrations, wrapped with professional and managed services.'
+};
 
-function renderHome(){
-  const aware = homeAware();
-
-  const learnRows = [
-    { t:'Copilot value conversation — certification', m:'Due in 9 days · <b>Required</b>', ic:'i-medal', go:'modern-work' },
-    { t:'Security objection handling', m:'Certification · <b>Required</b>', ic:'i-medal', go:'security' },
-    { t:'The MIP narrative in 5 minutes', m:'30 min · New this month', ic:'i-book', go:'mip' },
-    { t:'Cloud sizing — worked examples', m:'25 min · Recommended', ic:'i-wrench', go:'cloud' },
-    { t:'Platform walkthrough', m:'2 modules · Refreshed', ic:'i-book', go:'platform' },
-    { t:'Services essentials', m:'2 modules', ic:'i-book', go:'services' }
-  ];
-
-  const shareRows = [
-    { t:'Copilot adoption workshop deck', m:'Updated 2 days ago', s:'partner-ready', go:'modern-work' },
-    { t:'MIP narrative deck', m:'Newly partner-ready', s:'partner-ready', go:'mip' },
-    { t:'Continuity readiness assessment', m:'Rebuilt this month', s:'partner-ready', go:'security' },
-    { t:'Sizing guidance — partner version', m:'Rewritten', s:'partner-ready', go:'cloud' },
-    { t:'Services scoping guide', m:'Approved', s:'partner-ready', go:'services' }
-  ];
-
-  const noShareRows = [
-    { t:'Competitive battlecard', m:'Security & Continuity', s:'restricted', go:'security' },
-    { t:'Copilot margin and pricing guidance', m:'Modern Work & Copilot', s:'restricted', go:'modern-work' },
-    { t:'Next release preview', m:'Marketplace Platform', s:'restricted', go:'platform' },
-    { t:'Services catalogue', m:'Not signed off yet', s:'draft', go:'services' }
-  ];
-
-  const lanes = Object.keys(OWNERS).map(key=>{
-    const o = OWNERS[key];
-    const items = PRODUCTS.filter(p=>p.owner===key);
-    return `
-      <div class="lane">
-        <div class="lane-head">
-          <div class="owner-chip" style="--k2:${o.accent}">${o.initials}</div>
-          <div>
-            <b>${esc(o.name)}</b>
-            <span>${esc(o.role)}</span>
-          </div>
-          <span class="lane-count">${items.length} product${items.length===1?'':'s'}</span>
-        </div>
-        <div class="lane-rail">
-          ${items.map(productCard).join('')}
-        </div>
-      </div>`;
-  }).join('');
-
-  const recent = PRODUCTS
-    .flatMap(p => p.updates.map(u => ({...u, product:p})))
-    .sort((a,b)=>(RECENCY[a.when]??99)-(RECENCY[b.when]??99))
-    .slice(0,7);
-
-  view.innerHTML = `
-    <section class="masthead">
-      <div class="eyebrow">Revenue Enablement</div>
-      <h1 class="page">Find it by product,<br>not by person.</h1>
-      <p class="page-sub">
-        Knowledge is organised around the products you sell. Owners stay visible so you know who to ask —
-        but you navigate by what you need, not by who happens to own it.
-      </p>
-      <div class="principle">
-        <span><i style="background:var(--blue)"></i>Learn on the left</span>
-        <span><i style="background:var(--teal)"></i>Pay attention in the centre</span>
-        <span><i style="background:var(--violet)"></i>Act on the right</span>
-      </div>
-    </section>
-
-    <section class="triptych" aria-label="Portal homepage">
-
-      <!-- LEFT: LEARN -->
-      <div class="col glass" aria-labelledby="h-learn">
-        <div class="col-head">
-          <div class="col-mark" style="color:var(--blue)">${icon('i-book')}</div>
-          <div>
-            <h2 class="col-title" id="h-learn">Learn</h2>
-            <p class="col-note">Training, certifications and product knowledge — what you must do, and what will make you better.</p>
-          </div>
-        </div>
-
-        <div class="subhead">Required &amp; recommended</div>
-        <ul class="rows">
-          ${learnRows.map(r=>`
-            <li><a class="row" href="#/p/${r.go}/learn">
-              ${icon(r.ic,'row-ic')}
-              <span class="row-body">
-                <span class="row-title">${esc(r.t)}</span>
-                <span class="row-meta">${r.m}</span>
-              </span>
-            </a></li>`).join('')}
-        </ul>
-
-        <div class="subhead">Learning paths</div>
-        <ul class="rows">
-          <li><button class="row" data-stub="Learning path: New starter — 30 / 60 / 90 (prototype)">
-            ${icon('i-medal','row-ic')}
-            <span class="row-body"><span class="row-title">New starter — 30 / 60 / 90</span><span class="row-meta">6 steps · Sequenced across every product</span></span>
-          </button></li>
-          <li><button class="row" data-stub="Learning path: Partner-facing readiness (prototype)">
-            ${icon('i-medal','row-ic')}
-            <span class="row-body"><span class="row-title">Partner-facing readiness</span><span class="row-meta">4 certifications · Complete before first solo call</span></span>
-          </button></li>
-        </ul>
-      </div>
-
-      <!-- CENTRE: AWARENESS -->
-      <div class="col col-hero glass" aria-labelledby="h-aware">
-        <div class="col-head">
-          <div class="col-mark" style="color:var(--teal)">${icon('i-bell')}</div>
-          <div>
-            <h2 class="col-title" id="h-aware">What should I be aware of?</h2>
-            <p class="col-note">Launches, deadlines, required actions and messaging changes. This is the reason to come back.</p>
-          </div>
-        </div>
-
-        <div class="aware">
-          ${aware.map(a=>`
-            <a class="aware-item" href="#/p/${a.product.id}" style="--k:${a.k}">
-              <div class="aware-top">
-                <span class="aware-kind">${esc(a.kind)}</span>
-                <span class="aware-when">${esc(a.when)}</span>
-              </div>
-              <div class="aware-title">${esc(a.title)}</div>
-              <p class="aware-desc">${esc(a.desc)}</p>
-              <div class="aware-foot">
-                <span>${esc(a.product.name)}</span>
-                ${a.tags.map(t=>`<span class="dot"></span><span>${esc(t)}</span>`).join('')}
-              </div>
-            </a>`).join('')}
-        </div>
-      </div>
-
-      <!-- RIGHT: USE -->
-      <div class="col glass" aria-labelledby="h-use">
-        <div class="col-head">
-          <div class="col-mark" style="color:var(--violet)">${icon('i-share')}</div>
-          <div>
-            <h2 class="col-title" id="h-use">Use</h2>
-            <p class="col-note">What you take into the conversation — and what never leaves the building.</p>
-          </div>
-        </div>
-
-        <div class="split share">
-          <div class="split-head">${icon('i-share')} Share with partners</div>
-          <ul class="rows">
-            ${shareRows.map(r=>`
-              <li><a class="row" href="#/p/${r.go}/use">
-                ${icon('i-doc','row-ic')}
-                <span class="row-body">
-                  <span class="row-title">${esc(r.t)}</span>
-                  <span class="row-meta">${esc(r.m)}</span>
-                </span>
-                ${badge(r.s)}
-              </a></li>`).join('')}
-          </ul>
-        </div>
-
-        <div class="split noshare">
-          <div class="split-head">${icon('i-lock')} Do not share</div>
-          <ul class="rows">
-            ${noShareRows.map(r=>`
-              <li><a class="row" href="#/p/${r.go}/use">
-                ${icon('i-lock','row-ic')}
-                <span class="row-body">
-                  <span class="row-title">${esc(r.t)}</span>
-                  <span class="row-meta">${esc(r.m)}</span>
-                </span>
-                ${badge(r.s)}
-              </a></li>`).join('')}
-          </ul>
-          <p class="guard">Internal strategy, roadmap, pricing guidance and restricted recordings. If it is in this list, it does not go to a partner — not in a deck, not in a forward.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <h2>Products</h2>
-          <p>Owners stay visible. You still click the product.</p>
-        </div>
-        <div class="rainbow"></div>
-      </div>
-      ${lanes}
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <h2>Recently updated</h2>
-          <p>Everything that moved across the portal, newest first.</p>
-        </div>
-        <div class="rainbow"></div>
-      </div>
-      <div class="recent glass">
-        ${recent.map(u=>`
-          <a class="recent-row" href="#/p/${u.product.id}/updates">
-            <span class="recent-when">${esc(u.when)}</span>
-            <span class="recent-main">
-              <b>${esc(u.title)}</b>
-              <span>${esc(u.product.name)} · ${esc(ownerOf(u.product).name)}</span>
-            </span>
-            <span class="recent-side">
-              ${icon('i-chev','row-ic')}
-            </span>
-          </a>`).join('')}
-      </div>
-    </section>
-  `;
-  wireStubs(view);
-}
-
-function productCard(p){
-  const o = ownerOf(p);
-  return `
-    <a class="pcard" href="#/p/${p.id}" style="--k:${p.accent}55">
-      <div class="pcard-top">
-        <div class="pcard-ic" style="--k2:${p.accent}">${icon(p.icon)}</div>
-        <div>
-          <h3>${esc(p.name)}</h3>
-          <p class="pcard-purpose">${esc(p.purpose)}</p>
-        </div>
-      </div>
-      <div class="pcard-owner"><i style="background:${o.accent}"></i> Owner · ${esc(o.name)}</div>
-      <div class="pcard-latest">
-        <b>Latest update · ${esc(p.latest.when)}</b>
-        ${esc(p.latest.text)}
-      </div>
-      <div class="pcard-res">${p.resources.map(r=>`<span class="res-tag">${esc(r)}</span>`).join('')}</div>
-      <div class="pcard-foot">
-        <span class="open-cta">Open product ${icon('i-arrow')}</span>
-        ${badge(p.aware.some(a=>a.kind==='Draft')?'draft':'partner-ready')}
-      </div>
-    </a>`;
-}
-
-/* ============================================================
-   PRODUCT PAGE — same standard for every product
-   ============================================================ */
-
+/* per-product inline tabs */
 const TABS = [
-  ['overview','Overview'],
+  ['priorities','Priorities'],
   ['learn','Learn'],
   ['use','Use'],
   ['updates','Updates'],
   ['help','Help']
 ];
+const tabState = {};
 
-function renderProduct(id, tab){
-  const p = byId(id);
-  if(!p){ location.hash = '#/'; return; }
-  const o = ownerOf(p);
-  if(!TABS.some(t=>t[0]===tab)) tab = 'overview';
-
-  view.innerHTML = `
-    <nav class="crumbs" aria-label="Breadcrumb">
-      <a href="#/">Revenue Enablement</a>
-      ${icon('i-chev')}
-      <span>${esc(o.name)}</span>
-      ${icon('i-chev')}
-      <span style="color:var(--ink)">${esc(p.name)}</span>
-    </nav>
-
-    <header class="phead">
-      <div class="phead-ic" style="--k2:${p.accent}">${icon(p.icon)}</div>
-      <div class="phead-main">
-        <h1>${esc(p.name)}</h1>
-        <p class="phead-purpose">${esc(p.purpose)}</p>
-        <div class="phead-facts">
-          <span class="fact"><i style="width:7px;height:7px;border-radius:50%;background:${o.accent};display:inline-block"></i> Owner · ${esc(o.name)}</span>
-          <span class="fact">${icon('i-clock')} Updated ${esc(p.latest.when)}</span>
-          ${p.resources.map(r=>`<span class="fact">${esc(r)}</span>`).join('')}
-        </div>
-      </div>
-    </header>
-
-    <div class="tabs" role="tablist" aria-label="Product sections">
-      ${TABS.map(([k,label])=>`
-        <a class="tab" role="tab" aria-selected="${k===tab}" href="#/p/${p.id}/${k}">${label}</a>`).join('')}
-    </div>
-
-    <div class="panel" role="tabpanel">${panelFor(p,tab)}</div>
-  `;
-  wireStubs(view);
-  window.scrollTo({top:0,behavior:'instant' in window ? 'instant' : 'auto'});
-}
-
-function panelFor(p, tab){
-  if(tab==='learn')   return panelLearn(p);
-  if(tab==='use')     return panelUse(p);
-  if(tab==='updates') return panelUpdates(p);
-  if(tab==='help')    return panelHelp(p);
-  return panelOverview(p);
-}
-
-/* Overview keeps the homepage geometry: learn left, priorities centre, tools right */
-function panelOverview(p){
-  const learnPeek = [...p.learn.required, ...p.learn.recommended].slice(0,4);
-  const usePeek = p.use.partner.slice(0,4);
-
+function panelPriorities(p){
   return `
-    <div class="triptych">
-      <div class="col glass">
-        <div class="col-head">
-          <div class="col-mark" style="color:var(--blue)">${icon('i-book')}</div>
-          <div>
-            <h2 class="col-title">Learn</h2>
-            <p class="col-note">Get competent on this product.</p>
+    <div class="aware">
+      ${p.aware.map(a=>`
+        <div class="aware-item" style="--k:${a.k};cursor:default">
+          <div class="aware-top">
+            <span class="aware-kind">${esc(a.kind)}</span>
+            <span class="aware-when">${esc(a.when)}</span>
           </div>
-        </div>
-        <ul class="rows">
-          ${learnPeek.map(l=>`
-            <li><a class="row" href="#/p/${p.id}/learn">
-              ${icon(l.ic,'row-ic')}
-              <span class="row-body"><span class="row-title">${esc(l.t)}</span><span class="row-meta">${l.m}</span></span>
-            </a></li>`).join('')}
-        </ul>
-        <a class="row" href="#/p/${p.id}/learn" style="justify-content:space-between">
-          <span class="row-title">All learning for this product</span>${icon('i-arrow','row-ic')}
-        </a>
-      </div>
-
-      <div class="col col-hero glass">
-        <div class="col-head">
-          <div class="col-mark" style="color:var(--teal)">${icon('i-bell')}</div>
-          <div>
-            <h2 class="col-title">Current priorities</h2>
-            <p class="col-note">What changed, what is required, and what it replaces.</p>
-          </div>
-        </div>
-        <div class="aware">
-          ${p.aware.map(a=>`
-            <div class="aware-item" style="--k:${a.k};cursor:default">
-              <div class="aware-top">
-                <span class="aware-kind">${esc(a.kind)}</span>
-                <span class="aware-when">${esc(a.when)}</span>
-              </div>
-              <div class="aware-title">${esc(a.title)}</div>
-              <p class="aware-desc">${esc(a.desc)}</p>
-              <div class="aware-foot">${a.tags.map((t,i)=>`${i?'<span class="dot"></span>':''}<span>${esc(t)}</span>`).join('')}</div>
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <div class="col glass">
-        <div class="col-head">
-          <div class="col-mark" style="color:var(--violet)">${icon('i-share')}</div>
-          <div>
-            <h2 class="col-title">Use</h2>
-            <p class="col-note">Practical tools and customer-facing assets.</p>
-          </div>
-        </div>
-        <div class="split share">
-          <div class="split-head">${icon('i-share')} Share with partners</div>
-          <ul class="rows">
-            ${usePeek.map(u=>`
-              <li><button class="row" data-stub="Opens “${esc(u.t)}” in Highspot (prototype)">
-                ${icon(u.ic,'row-ic')}
-                <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
-                ${badge(u.s)}
-              </button></li>`).join('')}
-          </ul>
-        </div>
-        <a class="row" href="#/p/${p.id}/use" style="justify-content:space-between">
-          <span class="row-title">Everything in Use</span>${icon('i-arrow','row-ic')}
-        </a>
-      </div>
+          <div class="aware-title">${esc(a.title)}</div>
+          <p class="aware-desc">${esc(a.desc)}</p>
+          <div class="aware-foot">${a.tags.map((t,i)=>`${i?'<span class="dot"></span>':''}<span>${esc(t)}</span>`).join('')}</div>
+        </div>`).join('')}
     </div>`;
 }
 
 function learnBlock(title, note, items){
   if(!items || !items.length) return '';
   return `
-    <div class="card glass">
-      <h3 class="card-title">${esc(title)}</h3>
+    <div class="lblock">
+      <h4 class="lblock-title">${esc(title)}</h4>
       <p class="card-note">${esc(note)}</p>
       <ul class="rows">
         ${items.map(i=>`
@@ -1461,7 +1150,7 @@ function learnBlock(title, note, items){
 
 function panelLearn(p){
   return `
-    <div class="stack">
+    <div class="stack" style="gap:18px">
       ${learnBlock('Required training','Complete these to stay current on this product.',p.learn.required)}
       ${learnBlock('Recommended learning','Optional, but this is what separates a good conversation from a great one.',p.learn.recommended)}
       ${learnBlock('Recorded sessions','Sessions already delivered — watch back at your own pace.',p.learn.recordings)}
@@ -1470,9 +1159,9 @@ function panelLearn(p){
 
 function panelUse(p){
   return `
-    <div class="stack">
-      <div class="card glass">
-        <h3 class="card-title" style="color:var(--teal)">Share with partners</h3>
+    <div class="stack" style="gap:18px">
+      <div class="lblock">
+        <h4 class="lblock-title" style="color:var(--teal)">Share with partners</h4>
         <p class="card-note">Customer-ready assets, presentations, one-pagers, approved messaging, videos and assessments.</p>
         <ul class="rows">
           ${p.use.partner.map(u=>`
@@ -1483,9 +1172,8 @@ function panelUse(p){
             </button></li>`).join('')}
         </ul>
       </div>
-
-      <div class="card glass noshare">
-        <h3 class="card-title" style="color:var(--amber)">Do not share</h3>
+      <div class="lblock noshare">
+        <h4 class="lblock-title" style="color:var(--amber)">Do not share</h4>
         <p class="card-note">Internal strategy, roadmap, pricing guidance, internal recordings and restricted information.</p>
         <ul class="rows">
           ${p.use.internal.map(u=>`
@@ -1502,12 +1190,11 @@ function panelUse(p){
 
 function panelUpdates(p){
   return `
-    <div class="card glass">
-      <h3 class="card-title">Updates</h3>
+    <div class="lblock">
       <p class="card-note">What changed on this product, most recent first.</p>
       <ul class="timeline">
         ${p.updates.map((u,i)=>`
-          <li style="--k:${i===0?p.accent:'rgba(255,255,255,.28)'}">
+          <li style="--k:${i===0?p.accent:'#B7B4AC'}">
             <div class="tl-when">${esc(u.when)}</div>
             <div class="tl-title">${esc(u.title)}</div>
             <p class="tl-desc">${esc(u.desc)}</p>
@@ -1519,8 +1206,7 @@ function panelUpdates(p){
 function panelHelp(p){
   const o = ownerOf(p);
   return `
-    <div class="card glass">
-      <h3 class="card-title">Help</h3>
+    <div class="lblock">
       <p class="card-note">Who to ask, and the fastest route to an answer.</p>
       <div class="help-grid">
         ${p.help.map(h=>`
@@ -1529,40 +1215,235 @@ function panelHelp(p){
             <p>${esc(h.p)}</p>
             <div class="who">${icon('i-chat','row-ic')} ${esc(h.who)}</div>
           </div>`).join('')}
-      </div>
-      <div class="help-card" style="margin-top:14px;border-color:${o.accent}55;background:linear-gradient(140deg,${o.accent}1f,rgba(255,255,255,.03))">
-        <b>Something wrong on this page?</b>
-        <p>Out-of-date asset, broken link, or messaging that contradicts what you were told in a session — flag it and the owner sees it the same day.</p>
-        <div class="who">${icon('i-people','row-ic')} Owned by ${esc(o.name)}</div>
+        <div class="help-card">
+          <b>Something wrong here?</b>
+          <p>Out-of-date asset, broken link, or messaging that contradicts a session — flag it and the owner sees it the same day.</p>
+          <div class="who">${icon('i-people','row-ic')} Owned by ${esc(o.name)}</div>
+        </div>
       </div>
     </div>`;
 }
 
+function panelFor(p, tab){
+  if(tab==='learn')   return panelLearn(p);
+  if(tab==='use')     return panelUse(p);
+  if(tab==='updates') return panelUpdates(p);
+  if(tab==='help')    return panelHelp(p);
+  return panelPriorities(p);
+}
+
+function setTab(pid, tab){
+  const p = byId(pid);
+  const panel = $('#panel-'+pid);
+  if(!p || !panel) return;
+  tabState[pid] = tab;
+  panel.innerHTML = panelFor(p, tab);
+  wireStubs(panel);
+  $$(`[data-tabbtn][data-pid="${pid}"]`).forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===tab));
+}
+
+/* one product, in full, inline on the page */
+function productBlock(p){
+  const o = ownerOf(p);
+  const cur = tabState[p.id] || 'priorities';
+  return `
+    <article class="pblock glass" id="p-${p.id}">
+      <div class="pblock-head">
+        <div class="pcard-ic" style="--k2:${p.accent}">${icon(p.icon)}</div>
+        <div style="flex:1;min-width:240px">
+          <h3 class="pblock-title">${esc(p.name)}</h3>
+          <p class="pcard-purpose" style="max-width:70ch">${esc(p.purpose)}</p>
+          <div class="phead-facts" style="margin-top:12px">
+            ${fact('Owner · '+o.name)}
+            ${p.resources.map(fact).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="pcard-latest" style="margin-top:18px">
+        <b>Latest update · ${esc(p.latest.when)}</b>
+        ${esc(p.latest.text)}
+      </div>
+      <div class="tabs tabs-sm" role="tablist" aria-label="${esc(p.name)} sections">
+        ${TABS.map(([k,label])=>`
+          <button class="tab" role="tab" data-tabbtn data-pid="${p.id}" data-tab="${k}" aria-selected="${k===cur}">${label}</button>`).join('')}
+      </div>
+      <div class="panel" id="panel-${p.id}">${panelFor(p, cur)}</div>
+    </article>`;
+}
+
 /* ============================================================
-   SEARCH — flat index across everything
+   RENDER — everything on one page
+   ============================================================ */
+
+function renderAll(){
+  /* 1 · the whole company, before any lane is chosen */
+  const aware = PRODUCTS.flatMap(p => p.aware.map(a => ({...a, product:p})));
+
+  const companySection = `
+    <section class="section" id="company" style="margin-top:8px">
+      <div class="section-head">
+        <div>
+          <h2>What should the company be aware of?</h2>
+          <p>Every launch, deadline, required action and messaging change — across all three lanes, before you pick one.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="aware-grid">
+        ${aware.map(a=>`
+          <a class="aware-item" href="#p-${a.product.id}" style="--k:${a.k}">
+            <div class="aware-top">
+              <span class="aware-kind">${esc(a.kind)}</span>
+              <span class="aware-when">${esc(a.when)}</span>
+            </div>
+            <div class="aware-title">${esc(a.title)}</div>
+            <p class="aware-desc">${esc(a.desc)}</p>
+            <div class="aware-foot">
+              <span>${esc(ownerOf(a.product).role)}</span>
+              <span class="dot"></span>
+              <span>${esc(a.product.name)}</span>
+            </div>
+          </a>`).join('')}
+      </div>
+    </section>`;
+
+  /* 2 · the one choice: pick a lane */
+  const lanepickSection = `
+    <section class="section" id="pick">
+      <div class="section-head">
+        <div>
+          <h2>Now pick your lane</h2>
+          <p>Three lanes, three owners — every product and every conversation belongs to exactly one. This is the only choice to make: the full depth of each lane lives right below.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="lanepick">
+        ${Object.keys(OWNERS).map(key=>{
+          const o = OWNERS[key];
+          const items = PRODUCTS.filter(p=>p.owner===key);
+          return `
+            <div class="lp-card glass">
+              <div class="lane-head" style="margin-bottom:0">
+                <div class="owner-chip" style="--k2:${o.accent}">${o.initials}</div>
+                <div>
+                  <b>${esc(o.role)}</b>
+                  <span>Owner · ${esc(o.name)} · ${items.length} products</span>
+                </div>
+              </div>
+              <p class="lane-intro" style="margin:0">${esc(LANE_BLURB[key])}</p>
+              <div class="lp-list">
+                ${items.map(p=>`<span class="lp-item" style="color:${p.accent}">${icon(p.icon)} <span style="color:var(--ink-2)">${esc(p.name)}</span></span>`).join('')}
+              </div>
+              <a class="lp-cta" href="#lane-${key}">Enter this lane ${icon('i-arrow')}</a>
+            </div>`;
+        }).join('')}
+      </div>
+    </section>`;
+
+  /* 3 · the lanes themselves — each product's sub-page, inline */
+  const laneSections = Object.keys(OWNERS).map(key=>{
+    const o = OWNERS[key];
+    const items = PRODUCTS.filter(p=>p.owner===key);
+    return `
+      <section class="section lane-sec" id="lane-${key}">
+        <div class="section-head">
+          <div class="lane-head" style="margin-bottom:0">
+            <div class="owner-chip" style="--k2:${o.accent}">${o.initials}</div>
+            <div>
+              <b>${esc(o.role)}</b>
+              <span>Owner · ${esc(o.name)} — pick the product your conversation is about</span>
+            </div>
+          </div>
+          <div class="rainbow"></div>
+        </div>
+        ${items.map(productBlock).join('')}
+      </section>`;
+  }).join('');
+
+  /* 4 · recently updated, newest first across the portal */
+  const recent = PRODUCTS
+    .flatMap(p => p.updates.map(u => ({...u, product:p})))
+    .sort((a,b)=>(RECENCY[a.when]??99)-(RECENCY[b.when]??99))
+    .slice(0,7);
+
+  const recentSection = `
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Recently updated</h2>
+          <p>Everything that moved across the portal, newest first.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="recent glass">
+        ${recent.map(u=>`
+          <a class="recent-row" href="#p-${u.product.id}" data-goto-tab="updates" data-pid="${u.product.id}">
+            <span class="recent-when">${esc(u.when)}</span>
+            <span class="recent-main">
+              <b>${esc(u.title)}</b>
+              <span>${esc(u.product.name)} · ${esc(ownerOf(u.product).name)}</span>
+            </span>
+            <span class="recent-side">${icon('i-chev','row-ic')}</span>
+          </a>`).join('')}
+      </div>
+    </section>`;
+
+  view.innerHTML = `
+    <section class="masthead">
+      <div class="eyebrow">Revenue Enablement</div>
+      <h1 class="page">See the whole.<br>Then pick your lane.</h1>
+      <p class="page-sub">
+        Start with what matters across the company right now. Then choose one of the three lanes —
+        every product, asset and conversation belongs to exactly one of them, and everything you
+        need lives inside it, right on this page.
+      </p>
+      <div class="principle">
+        <span><i style="background:var(--sage)"></i>See the whole</span>
+        <span><i style="background:var(--ochre)"></i>Pick a lane</span>
+        <span><i style="background:var(--blush)"></i>Go deep</span>
+      </div>
+    </section>
+    ${companySection}
+    ${lanepickSection}
+    ${laneSections}
+    ${recentSection}
+  `;
+  wireStubs(view);
+}
+
+/* inline tab switching + jump-to-updates from the recent feed */
+view.addEventListener('click', e=>{
+  const tb = e.target.closest('[data-tabbtn]');
+  if(tb){ setTab(tb.dataset.pid, tb.dataset.tab); return; }
+  const g = e.target.closest('[data-goto-tab]');
+  if(g){ setTab(g.dataset.pid, g.dataset.gotoTab); }
+});
+
+/* ============================================================
+   SEARCH — flat index across everything; results jump on-page
    ============================================================ */
 
 function buildIndex(){
   const idx = [];
   PRODUCTS.forEach(p=>{
-    idx.push({ group:'Products', t:p.name, s:p.purpose, ic:p.icon, href:`#/p/${p.id}` });
+    const lane = ownerOf(p).role;
+    idx.push({ group:'Products', t:p.name, s:p.purpose, ic:p.icon, pid:p.id, tab:'priorities' });
 
     [...p.learn.required.map(x=>[x,'Required']),
      ...p.learn.recommended.map(x=>[x,'Recommended']),
      ...p.learn.recordings.map(x=>[x,'Recorded session'])
     ].forEach(([l,kind])=>{
-      idx.push({ group:'Learn', t:l.t, s:`${kind} · ${p.name}`, ic:l.ic, href:`#/p/${p.id}/learn` });
+      idx.push({ group:'Learn', t:l.t, s:`${kind} · ${p.name}`, ic:l.ic, pid:p.id, tab:'learn' });
     });
 
     p.use.partner.forEach(u=>{
-      idx.push({ group:'Share with partners', t:u.t, s:`${p.name} · Partner ready`, ic:u.ic, href:`#/p/${p.id}/use` });
+      idx.push({ group:'Share with partners', t:u.t, s:`${p.name} · Partner ready`, ic:u.ic, pid:p.id, tab:'use' });
     });
     p.use.internal.forEach(u=>{
-      idx.push({ group:'Do not share', t:u.t, s:`${p.name} · Internal`, ic:'i-lock', href:`#/p/${p.id}/use` });
+      idx.push({ group:'Do not share', t:u.t, s:`${p.name} · Internal`, ic:'i-lock', pid:p.id, tab:'use' });
     });
 
     p.updates.forEach(u=>{
-      idx.push({ group:'Updates', t:u.title, s:`${p.name} · ${u.when}`, ic:'i-bell', href:`#/p/${p.id}/updates` });
+      idx.push({ group:'Updates', t:u.title, s:`${p.name} · ${u.when}`, ic:'i-bell', pid:p.id, tab:'updates' });
     });
   });
   return idx;
@@ -1580,6 +1461,13 @@ function openSearch(){
 }
 function closeSearch(){
   overlay.classList.remove('on');
+}
+function goTo(el){
+  const pid = el.dataset.pid, tab = el.dataset.tab;
+  if(pid && tab) setTab(pid, tab);
+  closeSearch();
+  const target = document.getElementById('p-'+pid);
+  if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function hl(text,q){
   if(!q) return esc(text);
@@ -1602,16 +1490,16 @@ function runSearch(q){
   hits.forEach(h=>{
     if(h.group!==lastGroup){ html += `<div class="fgroup-label">${esc(h.group)}</div>`; lastGroup=h.group; }
     html += `
-      <a class="fresult${n===0?' sel':''}" data-i="${n}" href="${h.href}">
+      <button class="fresult${n===0?' sel':''}" data-i="${n}" data-pid="${h.pid}" data-tab="${h.tab}">
         ${icon(h.ic,'fic')}
         <span class="fresult-main"><b>${hl(h.t,q.trim())}</b><span>${esc(h.s)}</span></span>
         ${icon('i-chev','fic')}
-      </a>`;
+      </button>`;
     n++;
   });
   resultsEl.innerHTML = html;
   $$('.fresult',resultsEl).forEach(el=>{
-    el.addEventListener('click',closeSearch);
+    el.addEventListener('click',()=>goTo(el));
     el.addEventListener('mousemove',()=>select(+el.dataset.i));
   });
 }
@@ -1638,23 +1526,20 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='ArrowUp'){ e.preventDefault(); select(selIdx-1); }
   else if(e.key==='Enter'){
     const el = $$('.fresult',resultsEl)[selIdx];
-    if(el){ location.hash = el.getAttribute('href'); closeSearch(); }
+    if(el) goTo(el);
   }
 });
 
 /* ============================================================
-   ROUTER
+   BOOT — single page; hash anchors just scroll
    ============================================================ */
 
-function route(){
-  const raw = location.hash.replace(/^#\/?/,'');
-  const parts = raw.split('/').filter(Boolean);
-  if(parts[0]==='p' && parts[1]) renderProduct(parts[1], parts[2]);
-  else renderHome();
+renderAll();
+if(location.hash){
+  const el = document.getElementById(location.hash.slice(1));
+  if(el) setTimeout(()=>el.scrollIntoView({block:'start'}),60);
 }
-
-window.addEventListener('hashchange',route);
-route();
 </script>
+
 </body>
 </html>

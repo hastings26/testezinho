@@ -1,27 +1,29 @@
 ## 🧭 Revenue Enablement Portal — Highspot design prototype
 
-`highspot.html` is a standalone, clickable prototype of the Highspot homepage and product-page
-standard. Open the file in a browser (or serve the folder and visit `/highspot.html`).
+`highspot.html` is a standalone, clickable prototype of the Highspot portal as a single page.
+Open the file in a browser (or serve the folder and visit `/highspot.html`).
 
-**The guiding principle:** *Learn on the left. Pay attention in the centre. Act on the right.*
-Knowledge is organised around **products**, not people — owners stay visible, but users navigate
-by the product they need.
+**The guiding principle:** *See the whole. Pick a lane. Go deep.* The page shows what matters for
+the company as a whole first, then asks the user to choose one of the **three lanes** — every
+product and every conversation belongs to exactly one — and each lane's full product detail lives
+inline on the same page.
 
-**What the prototype contains:**
+**The page, top to bottom:**
 
-- **Homepage triptych** — **Learn** (required training, recommended learning, certifications,
-  recorded sessions, learning paths) · **What should I be aware of?** as the hero (launches,
-  deadlines, required actions, messaging changes — the reason people come back) · **Use**, split
-  into **Share with Partners** and **Do Not Share**.
-- **Product lanes** grouped under each owner (Alex, Marco, Fabrício). Every card shows the product
-  name, purpose, owner, latest update, available resources and an **Open product** action — you
-  click the product, not the person.
-- **Recently Updated** — every change across the portal, newest first.
-- **Product page standard** — the same five sections for every product: **Overview · Learn · Use ·
-  Updates · Help**. Overview repeats the homepage geometry: learning left, current priorities
-  centre, practical tools and customer assets right.
-- **Global search** — press `/` or `⌘K`, filters products, learning, assets and updates with
-  grouped results, arrow-key navigation and match highlighting.
+- **What should the company be aware of?** — every launch, deadline, required action and messaging
+  change across all three lanes, in one shared view, before any lane is chosen. Each card links to
+  its product below.
+- **Now pick your lane** — three cards, one per lane (Alex: Modern Work, AI & Managed Intelligence ·
+  Marco: Security, Continuity & Platform · Fabrício: Cloud Infrastructure & Services), each with its
+  owner, scope blurb, product list and an **Enter this lane** action that scrolls to the lane.
+- **The lanes themselves** — each lane heading followed by its products in full: purpose, owner,
+  resources, latest update, and inline tabs for **Priorities · Learn · Use · Updates · Help** (Use
+  keeps the **Share with Partners** / **Do Not Share** split). No sub-pages — everything is on the
+  main page.
+- **Recently Updated** — every change across the portal, newest first; rows jump to the product's
+  Updates tab.
+- **Global search** — press `/` or `⌘K`; results are grouped and jump straight to the right product
+  block with the right tab selected.
 - **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
 
 **Visual direction:** neumorphism (soft UI) — one warm-grey material for everything. Elements are
@@ -32,7 +34,8 @@ click. No borders, no fills; colour appears only as stone-pastel inks and pebble
 eucalyptus, ochre, olive, terracotta, blush). Soft dark-grey ink, Plus Jakarta Sans. Note this
 deliberately departs from the Pax8 deck guidelines (dark grounds).
 
-- Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing (`#/p/<id>/<tab>`).
+- Pure offline, no build step, no dependencies beyond Google Fonts. One page; anchors
+  (`#p-<id>`, `#lane-<owner>`) scroll, inline tabs switch without navigation.
 - **All products, assets and updates are illustrative placeholders** — this is a design artefact for
   reviewing structure and feel, not a content source.
 - Edit `PRODUCTS` and `OWNERS` at the top of the inline `<script>` to reshape the whole portal.
