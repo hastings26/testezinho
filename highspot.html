@@ -641,6 +641,38 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
 .tabs-sm .tab{padding:9px 18px;font-size:12.5px}
 .lblock-title{margin:0 0 5px;font-size:15px;font-weight:800;letter-spacing:-.3px;color:#33322F}
 .lblock{padding:2px 0}
+
+/* ---------- featured heroes ---------- */
+.heroes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px;align-items:stretch}
+.hero-card{
+  padding:30px;display:flex;flex-direction:column;gap:12px;
+  position:relative;overflow:hidden;
+  transition:transform .22s var(--ease),box-shadow .22s var(--ease);
+}
+.hero-card::after{
+  content:"";position:absolute;left:30px;right:30px;top:0;height:7px;border-radius:0 0 7px 7px;
+  background:var(--k,var(--sage));
+  box-shadow:inset -1px -1px 2px rgba(255,255,255,.4),inset 1px 1px 2px rgba(0,0,0,.15);
+}
+.hero-card:hover{transform:translateY(-3px);box-shadow:var(--up-lg)}
+.hero-card:active{transform:none;box-shadow:var(--down-sm)}
+.hero-kind{
+  align-self:flex-start;
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  padding:7px 13px;border-radius:var(--r-pill);
+  color:var(--k,var(--sage));
+  filter:saturate(1.1) brightness(.82);
+  box-shadow:var(--down-sm);
+  margin-top:10px;
+}
+.hero-title{margin:4px 0 0;font-size:20px;font-weight:800;letter-spacing:-.5px;line-height:1.25;color:#33322F}
+.hero-desc{margin:0;font-size:13px;line-height:1.6;color:var(--ink-2)}
+.hero-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;flex-wrap:wrap}
+.hero-when{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-4)}
+.hero-lane{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--ink-2)}
+.hero-lane svg{width:13px;height:13px;color:var(--sage);transition:transform .2s var(--ease)}
+.hero-card:hover .hero-lane svg{transform:translateX(4px)}
 </style>
 </head>
 <body>
@@ -759,18 +791,21 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
 
 <script>
 /* ============================================================
-   DATA — edit here to reshape the portal.
-   Every product follows the same page standard:
-   Overview · Learn · Use · Updates · Help
+   DATA — the real information architecture.
+
+   Revenue Enablement Homepage
+   ├── Featured Heroes
+   │   ├── Important programme
+   │   ├── Mandatory or time-sensitive activity
+   │   └── Major announcement or launch
+   ├── Farmers Programmes & Soft Skills  → dedicated lane subpage
+   ├── Salesforce & Technology           → dedicated lane subpage
+   └── MIP & AI                          → dedicated lane subpage
+
+   Every lane subpage follows the same standard:
+   Priorities · Learn · Use · Updates · Help
    ============================================================ */
 
-const OWNERS = {
-  alex:     { name:'Alex',     initials:'A',  role:'Modern Work, AI & Managed Intelligence', accent:'#7E9159' },
-  marco:    { name:'Marco',    initials:'M',  role:'Security, Continuity & Platform',        accent:'#D28E3F' },
-  fabricio: { name:'Fabrício', initials:'F',  role:'Cloud Infrastructure & Services',        accent:'#C97F63' }
-};
-
-/* status → badge class */
 const BADGE = {
   'partner-ready':['badge-partner','Partner Ready'],
   'internal':['badge-internal','Internal Only'],
@@ -778,290 +813,190 @@ const BADGE = {
   'draft':['badge-draft','Draft']
 };
 
-const PRODUCTS = [
+const LANES = [
   {
-    id:'modern-work', name:'Modern Work & Copilot', owner:'alex', icon:'i-spark', accent:'#7E9159',
-    purpose:'Help partners land, adopt and expand Microsoft 365 and Copilot with a repeatable adoption motion.',
-    latest:{ when:'2 days ago', text:'Copilot adoption playbook refreshed with the new partner-ready workshop deck.' },
-    resources:['12 assets','4 courses','2 certifications','6 recordings'],
+    id:'farmers',
+    name:'Farmers Programmes & Soft Skills',
+    owner:'Fabrício', initials:'F', accent:'#C97F63', icon:'i-people',
+    blurb:'Grow the accounts we already have: structured farmer programmes, and the soft skills that make every conversation land.',
+    purpose:'Structured development for account managers — long-running programmes, workshops and the human skills that turn renewals into expansion.',
+    resources:['9 assets','5 courses','1 programme','6 recordings'],
+    latest:{ when:'3 days ago', text:'Cohort 2 of the Farmers Excellence Programme opened for enrolment.' },
     aware:[
+      { kind:'Programme', k:'#8FA05A', when:'Closes Friday', title:'Farmers Excellence Programme — Cohort 2 enrolment open',
+        desc:'The twelve-week structured programme for account managers returns. Nominations need manager sign-off and close end of Friday — the next cohort starts in six weeks.',
+        tags:['Nominations open','12 weeks','Manager sign-off'] },
+      { kind:'Update', k:'#7E9159', when:'2 days ago', title:'Negotiation workshop moved to next Thursday',
+        desc:'The in-person negotiation workshop shifts one week to avoid the quarter-close crunch. Same venue, same pre-work — calendar invites already updated.',
+        tags:['Schedule change'] }
+    ],
+    learn:{
+      required:[
+        { t:'Discovery that opens doors', m:'45 min · <b>Required for Cohort 2</b>', ic:'i-medal' },
+        { t:'Objection handling foundations', m:'2 modules', ic:'i-book' }
+      ],
+      recommended:[
+        { t:'Storytelling for renewals', m:'18 min · Scenario practice', ic:'i-play' },
+        { t:'Difficult conversations with long-standing accounts', m:'25 min', ic:'i-book' },
+        { t:'Time management for account farming', m:'15 min', ic:'i-book' }
+      ],
+      recordings:[
+        { t:'Farmers forum — last session', m:'Recorded 1 week ago · 48 min', ic:'i-play' },
+        { t:'Soft skills clinic: listening under pressure', m:'Recorded last month · 32 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'QBR template', m:'Presentation · Co-brandable', s:'partner-ready', ic:'i-doc' },
+        { t:'Renewal conversation guide', m:'PDF · Approved messaging', s:'partner-ready', ic:'i-doc' },
+        { t:'Customer health check one-pager', m:'PDF · Leave-behind', s:'partner-ready', ic:'i-check' }
+      ],
+      internal:[
+        { t:'Account tiering guidance', m:'Internal only', s:'internal', ic:'i-lock' },
+        { t:'Commission accelerators FAQ', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
+        { t:'Coaching notes template', m:'For managers · Internal', s:'internal', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'3 days ago', title:'Cohort 2 enrolment opened', desc:'Nominations run to Friday. Cohort 1 graduates presented their account-growth results to leadership last week.' },
+      { when:'2 weeks ago', title:'QBR template refreshed', desc:'Rebuilt around outcomes rather than activity reporting. The old template is archived.' },
+      { when:'Last month', title:'Programme measures published', desc:'What the Farmers programme is accountable for, and how progress is measured per cohort.' }
+    ],
+    help:[
+      { b:'Lane owner', p:'Programme nominations, workshop logistics, soft-skills coaching requests.', who:'Fabrício' },
+      { b:'Ask the programmes channel', p:'Fastest route for enrolment and scheduling questions.', who:'#farmers-programmes' },
+      { b:'Nominate a colleague', p:'Managers can nominate for the next cohort at any time — the form takes two minutes.', who:'Nomination form' }
+    ]
+  },
+
+  {
+    id:'salesforce',
+    name:'Salesforce & Technology',
+    owner:'Marco', initials:'M', accent:'#D28E3F', icon:'i-grid',
+    blurb:'The systems the sale runs on: Salesforce, quoting, and the tools around them — kept current, kept clean.',
+    purpose:'Everything about the tools of the trade — how to run your pipeline properly, what changed in each release, and where to get unstuck.',
+    resources:['11 assets','4 courses','2 certifications','5 recordings'],
+    latest:{ when:'6 days ago', text:'Q3 release notes and the rebuilt pipeline-view guide published together.' },
+    aware:[
+      { kind:'Launch', k:'#6E8A7C', when:'This week', title:'Q3 Salesforce release — pipeline views change Thursday',
+        desc:'Stage names and pipeline views change Thursday night. Saved views built on the old stages must be rebuilt — the guide walks through it in ten minutes.',
+        tags:['Affects everyone','Action needed'] },
+      { kind:'Deadline', k:'#B98035', when:'Ends in 5 days', title:'Data hygiene sprint — mandatory field updates',
+        desc:'Every open opportunity needs the three new qualification fields filled before the sprint closes. Forecast reviews will use them from next month.',
+        tags:['Mandatory','Forecast dependency'] }
+    ],
+    learn:{
+      required:[
+        { t:'Pipeline management in Salesforce', m:'2 modules · <b>Required</b>', ic:'i-medal' },
+        { t:'Forecast hygiene essentials', m:'30 min', ic:'i-book' }
+      ],
+      recommended:[
+        { t:'Quoting without rework', m:'15 min', ic:'i-play' },
+        { t:'Reports that answer real questions', m:'20 min', ic:'i-book' }
+      ],
+      recordings:[
+        { t:'Q3 release briefing', m:'Recorded 6 days ago · 27 min', ic:'i-play' },
+        { t:'Clinic: cleaning a messy pipeline', m:'Recorded last month · 35 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'Proposal template', m:'Document · Co-brandable', s:'partner-ready', ic:'i-doc' },
+        { t:'Customer-facing security FAQ', m:'PDF · Approved', s:'partner-ready', ic:'i-doc' }
+      ],
+      internal:[
+        { t:'Discount approval matrix', m:'Commercial · <b>Do not forward</b>', s:'restricted', ic:'i-lock' },
+        { t:'Environment access guide', m:'Internal only', s:'internal', ic:'i-lock' },
+        { t:'Known issues and workarounds', m:'Internal · Updated weekly', s:'internal', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'6 days ago', title:'Q3 release notes published', desc:'Pipeline views and stage names change Thursday. The rebuilt guide ships alongside.' },
+      { when:'2 weeks ago', title:'New opportunity fields live', desc:'Three qualification fields added — they drive next month’s forecast reviews.' },
+      { when:'Last month', title:'Quoting tool patch', desc:'Fixed the currency rounding issue that forced manual corrections on multi-year quotes.' }
+    ],
+    help:[
+      { b:'Lane owner', p:'Release questions, tooling access, process exceptions.', who:'Marco' },
+      { b:'Ask the systems channel', p:'Quick answers on Salesforce, quoting and reporting.', who:'#sales-systems' },
+      { b:'Report an issue', p:'Something broken or blocking a deal — logged and triaged same day.', who:'Issue form' }
+    ]
+  },
+
+  {
+    id:'mip',
+    name:'MIP & AI',
+    owner:'Alex', initials:'A', accent:'#7E9159', icon:'i-spark',
+    blurb:'The Managed Intelligence story and the AI skills to tell it: Copilot, the MIP narrative, and partner-ready proof.',
+    purpose:'Move partners from managed services to managed intelligence — the narrative, the Copilot motion, and the certifications that make the conversation credible.',
+    resources:['14 assets','6 courses','3 certifications','7 recordings'],
+    latest:{ when:'Yesterday', text:'MIP narrative deck moved from draft to partner-ready after the EMEA review.' },
+    aware:[
+      { kind:'Mandatory', k:'#C4674E', when:'Due in 9 days', title:'Copilot value-conversation certification',
+        desc:'Everyone in a partner-facing role needs the refreshed certification before the next quarter push. Roughly 45 minutes end to end.',
+        tags:['Required training','All partner-facing roles'] },
       { kind:'Launch', k:'#7E9159', when:'This week', title:'Copilot adoption workshop is now partner-ready',
         desc:'The half-day workshop deck, facilitator notes and follow-up assessment are approved for partner delivery. Use these instead of the 2024 pilot materials.',
-        tags:['Required action','Replaces older assets'] },
-      { kind:'Deadline', k:'#B98035', when:'Ends in 9 days', title:'Complete the Copilot value-conversation certification',
-        desc:'Everyone in a partner-facing role needs the refreshed certification before the next quarter push. Roughly 45 minutes end to end.',
-        tags:['Required training'] }
+        tags:['Replaces older assets'] },
+      { kind:'Messaging change', k:'#6B7F4A', when:'Yesterday', title:'MSP → MIP narrative is now the approved framing',
+        desc:'Lead with the shift in what partners sell, not the technology. The old "AI-enabled MSP" framing is retired across all decks.',
+        tags:['Affects every partner conversation'] }
     ],
     learn:{
       required:[
         { t:'Copilot value conversation — certification', m:'45 min · <b>Due in 9 days</b>', ic:'i-medal' },
-        { t:'Modern Work foundations', m:'2 modules · Refreshed this month', ic:'i-book' }
+        { t:'The MIP narrative — how to tell it in 5 minutes', m:'30 min · Required for partner-facing roles', ic:'i-book' }
       ],
       recommended:[
-        { t:'Objection handling: “we already have AI”', m:'18 min · Scenario practice', ic:'i-play' },
-        { t:'Licensing traps that kill deals', m:'25 min · Product knowledge', ic:'i-book' }
+        { t:'Objection handling: "we already have AI"', m:'18 min · Scenario practice', ic:'i-play' },
+        { t:'MIP capability model walkthrough', m:'22 min', ic:'i-grid' },
+        { t:'Licensing traps that kill Copilot deals', m:'25 min', ic:'i-book' }
       ],
       recordings:[
-        { t:'EMEA enablement session — Copilot Q3 motion', m:'Recorded 12 days ago · 52 min', ic:'i-play' },
+        { t:'MIP launch briefing — EMEA', m:'Recorded 3 weeks ago · 44 min', ic:'i-play' },
         { t:'Partner clinic: adoption after the first 90 days', m:'Recorded last month · 38 min', ic:'i-play' }
       ]
     },
     use:{
       partner:[
-        { t:'Copilot adoption workshop deck', m:'Presentation · <b>Updated 2 days ago</b>', s:'partner-ready', ic:'i-doc' },
-        { t:'Modern Work one-pager', m:'PDF · Co-brandable', s:'partner-ready', ic:'i-doc' },
-        { t:'Adoption readiness assessment', m:'Interactive · 12 questions', s:'partner-ready', ic:'i-check' },
-        { t:'Customer story: 240-seat rollout', m:'Video · 3 min', s:'partner-ready', ic:'i-play' }
-      ],
-      internal:[
-        { t:'Copilot margin and pricing guidance', m:'Commercial · Do not forward', s:'restricted', ic:'i-lock' },
-        { t:'FY roadmap — Modern Work', m:'Strategy · Internal only', s:'internal', ic:'i-lock' },
-        { t:'Competitive teardown vs. Google Workspace', m:'Internal briefing', s:'internal', ic:'i-lock' }
-      ]
-    },
-    updates:[
-      { when:'2 days ago', title:'Workshop deck approved for partner use', desc:'Legal and product sign-off complete. The pilot deck is archived — remove it from any saved pitch.' },
-      { when:'2 weeks ago', title:'Certification refreshed', desc:'Value-conversation module rewritten around the new discovery questions. Prior completions do not carry over.' },
-      { when:'Last month', title:'Messaging change: “assistant” → “agent”', desc:'Align all partner-facing language with the current product naming. Updated in every partner-ready asset.' }
-    ],
-    help:[
-      { b:'Product owner', p:'Positioning, asset requests, exception approvals for partner-facing material.', who:'Alex' },
-      { b:'Ask the enablement channel', p:'Fastest route for “which asset do I send?” questions. Answered same day in working hours.', who:'#revenue-enablement' },
-      { b:'Report an out-of-date asset', p:'Flag anything that contradicts current messaging and it gets pulled or corrected.', who:'Portal feedback form' }
-    ]
-  },
-
-  {
-    id:'mip', name:'Managed Intelligence (MIP)', owner:'alex', icon:'i-people', accent:'#6E8A7C',
-    purpose:'Move partners from managed services to managed intelligence — the narrative, the capability model and the proof.',
-    latest:{ when:'Yesterday', text:'MIP narrative deck moved from draft to partner-ready after the EMEA review.' },
-    resources:['9 assets','3 courses','1 certification','4 recordings'],
-    aware:[
-      { kind:'Messaging change', k:'#6B7F4A', when:'Yesterday', title:'MSP → MIP narrative is now the approved framing',
-        desc:'Lead with the shift in what partners sell, not the technology. The old “AI-enabled MSP” framing is retired across all decks.',
-        tags:['Affects every partner conversation'] }
-    ],
-    learn:{
-      required:[
-        { t:'The MIP narrative — how to tell it in 5 minutes', m:'30 min · Required for partner-facing roles', ic:'i-book' }
-      ],
-      recommended:[
-        { t:'MIP capability model walkthrough', m:'22 min · Product knowledge', ic:'i-grid' },
-        { t:'Where MIP fits against the existing portfolio', m:'15 min · Internal guidance', ic:'i-book' }
-      ],
-      recordings:[
-        { t:'MIP launch briefing — EMEA', m:'Recorded 3 weeks ago · 44 min', ic:'i-play' }
-      ]
-    },
-    use:{
-      partner:[
         { t:'MIP narrative deck', m:'Presentation · <b>Newly partner-ready</b>', s:'partner-ready', ic:'i-doc' },
+        { t:'Copilot adoption workshop deck', m:'Presentation · Updated 2 days ago', s:'partner-ready', ic:'i-doc' },
         { t:'MSP to MIP — the one-page shift', m:'PDF · Leave-behind', s:'partner-ready', ic:'i-doc' },
-        { t:'Capability self-assessment', m:'Interactive · Partner-facing', s:'partner-ready', ic:'i-check' }
+        { t:'Adoption readiness assessment', m:'Interactive · 12 questions', s:'partner-ready', ic:'i-check' }
       ],
       internal:[
         { t:'MIP commercial model and margin assumptions', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
-        { t:'Programme roadmap and sequencing', m:'Strategy · Internal only', s:'internal', ic:'i-lock' },
-        { t:'Early partner feedback — unfiltered', m:'Internal recording', s:'internal', ic:'i-lock' }
+        { t:'Copilot pricing guidance', m:'Commercial · <b>Do not forward</b>', s:'restricted', ic:'i-lock' },
+        { t:'Programme roadmap and sequencing', m:'Strategy · Internal only', s:'internal', ic:'i-lock' }
       ]
     },
     updates:[
       { when:'Yesterday', title:'Narrative deck promoted to partner-ready', desc:'Cleared the EMEA review with two wording changes on the capability slide.' },
-      { when:'3 weeks ago', title:'Launch briefing recorded', desc:'Watch this before running your first MIP conversation.' }
+      { when:'2 days ago', title:'Workshop deck approved for partner use', desc:'Legal and product sign-off complete. The pilot deck is archived — remove it from any saved pitch.' },
+      { when:'2 weeks ago', title:'Certification refreshed', desc:'Value-conversation module rewritten around the new discovery questions. Prior completions do not carry over.' }
     ],
     help:[
-      { b:'Product owner', p:'Narrative questions, deck exceptions, partner escalations.', who:'Alex' },
-      { b:'Positioning clinic', p:'Weekly 30-minute slot to pressure-test how you are telling the story.', who:'Thursdays' }
-    ]
-  },
-
-  {
-    id:'security', name:'Security & Continuity', owner:'marco', icon:'i-shield', accent:'#D28E3F',
-    purpose:'Everything needed to sell, position and defend the security and continuity portfolio in a competitive deal.',
-    latest:{ when:'4 days ago', text:'New competitive battlecard published; two legacy comparison sheets retired.' },
-    resources:['15 assets','5 courses','3 certifications','8 recordings'],
-    aware:[
-      { kind:'Required action', k:'#C4674E', when:'Action needed', title:'Retire the 2024 comparison sheets',
-        desc:'Two legacy competitor comparisons contain pricing that is no longer accurate. Delete local copies and use the new battlecard.',
-        tags:['Compliance','Replaces older assets'] },
-      { kind:'Update', k:'#7E9159', when:'4 days ago', title:'Continuity assessment rebuilt around recovery objectives',
-        desc:'The assessment now opens with RPO and RTO rather than product features — it qualifies far better in the first call.',
-        tags:['Partner ready'] }
-    ],
-    learn:{
-      required:[
-        { t:'Security portfolio essentials', m:'3 modules · Required on join', ic:'i-book' },
-        { t:'Handling a security objection under pressure', m:'40 min · Certification', ic:'i-medal' }
-      ],
-      recommended:[
-        { t:'Continuity: explaining RPO and RTO without jargon', m:'16 min', ic:'i-play' },
-        { t:'Incident-response conversation guide', m:'20 min · Internal guidance', ic:'i-book' }
-      ],
-      recordings:[
-        { t:'Competitive session — the new battlecard in practice', m:'Recorded 4 days ago · 41 min', ic:'i-play' },
-        { t:'Partner panel: what actually closes security deals', m:'Recorded last month · 55 min', ic:'i-play' }
-      ]
-    },
-    use:{
-      partner:[
-        { t:'Security portfolio overview deck', m:'Presentation · Co-brandable', s:'partner-ready', ic:'i-doc' },
-        { t:'Continuity readiness assessment', m:'Interactive · <b>Rebuilt</b>', s:'partner-ready', ic:'i-check' },
-        { t:'Why continuity fails — 4-minute explainer', m:'Video', s:'partner-ready', ic:'i-play' },
-        { t:'Security one-pager', m:'PDF · Approved messaging', s:'partner-ready', ic:'i-doc' }
-      ],
-      internal:[
-        { t:'Competitive battlecard', m:'Internal only · <b>Do not forward</b>', s:'restricted', ic:'i-lock' },
-        { t:'Discount guardrails', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
-        { t:'Vendor roadmap briefing', m:'Under NDA · Internal recording', s:'internal', ic:'i-lock' }
-      ]
-    },
-    updates:[
-      { when:'4 days ago', title:'Battlecard published, legacy sheets retired', desc:'Old comparisons are removed from the portal. If you have a local copy, delete it.' },
-      { when:'2 weeks ago', title:'Assessment rebuilt', desc:'Now opens on recovery objectives. Average completion time dropped by half.' },
-      { when:'6 weeks ago', title:'Certification made mandatory', desc:'Required for anyone running security conversations without a specialist on the call.' }
-    ],
-    help:[
-      { b:'Product owner', p:'Competitive support, deal-specific positioning, asset approvals.', who:'Marco' },
-      { b:'Specialist support', p:'Bring a specialist into a live deal — request at least 48 hours ahead.', who:'Request form' },
-      { b:'Ask the enablement channel', p:'Quick answers on what is safe to share externally.', who:'#revenue-enablement' }
-    ]
-  },
-
-  {
-    id:'platform', name:'Marketplace Platform', owner:'marco', icon:'i-grid', accent:'#8FA05A',
-    purpose:'How the platform works, what changed this release, and how to show it convincingly in a demo.',
-    latest:{ when:'6 days ago', text:'Release notes and the refreshed demo script published together.' },
-    resources:['8 assets','2 courses','5 recordings'],
-    aware:[
-      { kind:'Release', k:'#8FA05A', when:'6 days ago', title:'Platform release — billing view has changed',
-        desc:'The billing screens in every existing demo recording are now out of date. Use the refreshed demo script until new recordings land.',
-        tags:['Affects demos'] }
-    ],
-    learn:{
-      required:[
-        { t:'Platform walkthrough for partner-facing roles', m:'2 modules · Refreshed', ic:'i-book' }
-      ],
-      recommended:[
-        { t:'Demo script — the 12-minute version', m:'12 min · Practice with a colleague', ic:'i-play' },
-        { t:'Common platform questions and honest answers', m:'Internal guidance', ic:'i-book' }
-      ],
-      recordings:[
-        { t:'Release briefing', m:'Recorded 6 days ago · 27 min', ic:'i-play' }
-      ]
-    },
-    use:{
-      partner:[
-        { t:'Platform overview one-pager', m:'PDF', s:'partner-ready', ic:'i-doc' },
-        { t:'Demo script — 12-minute version', m:'Document · <b>Refreshed</b>', s:'partner-ready', ic:'i-doc' },
-        { t:'Onboarding checklist for new partners', m:'PDF · Leave-behind', s:'partner-ready', ic:'i-check' }
-      ],
-      internal:[
-        { t:'Release notes — full detail', m:'Internal only', s:'internal', ic:'i-lock' },
-        { t:'Known issues and workarounds', m:'Internal only · Updated weekly', s:'internal', ic:'i-lock' },
-        { t:'Next release preview', m:'Roadmap · Restricted', s:'restricted', ic:'i-lock' }
-      ]
-    },
-    updates:[
-      { when:'6 days ago', title:'Release shipped', desc:'Billing view redesigned. Demo script updated the same day; recordings follow next week.' },
-      { when:'3 weeks ago', title:'Onboarding checklist added', desc:'Built from the questions partners actually asked in their first month.' }
-    ],
-    help:[
-      { b:'Product owner', p:'Platform questions, demo environment access, release timing.', who:'Marco' },
-      { b:'Demo environment', p:'Reset your demo tenant before a customer call — takes about 10 minutes.', who:'Self-service' }
-    ]
-  },
-
-  {
-    id:'cloud', name:'Cloud Infrastructure', owner:'fabricio', icon:'i-cloud', accent:'#C97F63',
-    purpose:'Position and size cloud infrastructure with confidence, from first conversation to migration plan.',
-    latest:{ when:'8 days ago', text:'Sizing calculator guidance rewritten after repeated partner confusion.' },
-    resources:['11 assets','4 courses','2 certifications','5 recordings'],
-    aware:[
-      { kind:'Guidance', k:'#6E8A7C', when:'8 days ago', title:'New sizing guidance — stop quoting from the old calculator',
-        desc:'The previous calculator under-sized storage in almost every migration scenario. The rewritten guidance walks through three worked examples.',
-        tags:['Required reading'] }
-    ],
-    learn:{
-      required:[
-        { t:'Cloud infrastructure foundations', m:'4 modules · Required on join', ic:'i-book' },
-        { t:'Migration conversation certification', m:'50 min', ic:'i-medal' }
-      ],
-      recommended:[
-        { t:'Sizing worked examples', m:'25 min · <b>New</b>', ic:'i-wrench' },
-        { t:'When not to migrate — qualifying out well', m:'14 min', ic:'i-play' }
-      ],
-      recordings:[
-        { t:'Migration planning clinic', m:'Recorded 8 days ago · 46 min', ic:'i-play' }
-      ]
-    },
-    use:{
-      partner:[
-        { t:'Cloud infrastructure overview deck', m:'Presentation · Co-brandable', s:'partner-ready', ic:'i-doc' },
-        { t:'Migration readiness assessment', m:'Interactive', s:'partner-ready', ic:'i-check' },
-        { t:'Sizing guidance — partner version', m:'PDF · <b>Rewritten</b>', s:'partner-ready', ic:'i-doc' }
-      ],
-      internal:[
-        { t:'Cost model and margin bands', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
-        { t:'Capacity and regional availability', m:'Internal only', s:'internal', ic:'i-lock' },
-        { t:'Sizing calculator — internal build', m:'Draft · Not for external use', s:'draft', ic:'i-lock' }
-      ]
-    },
-    updates:[
-      { when:'8 days ago', title:'Sizing guidance rewritten', desc:'Three worked examples replace the single abstract model that kept being misread.' },
-      { when:'1 month ago', title:'Assessment shortened', desc:'Cut from 24 questions to 11 with no loss of qualification accuracy.' }
-    ],
-    help:[
-      { b:'Product owner', p:'Sizing reviews, migration scoping, technical escalation.', who:'Fabrício' },
-      { b:'Architecture review', p:'Book a review before committing to a migration plan over 200 seats.', who:'Request form' }
-    ]
-  },
-
-  {
-    id:'services', name:'Professional & Managed Services', owner:'fabricio', icon:'i-wrench', accent:'#DCA9A4',
-    purpose:'Wrap services around every product sale — what is available, what it costs partners and how to scope it.',
-    latest:{ when:'2 weeks ago', text:'Scoping guide published; the services catalogue is still in draft.' },
-    resources:['7 assets','2 courses','3 recordings'],
-    aware:[
-      { kind:'Draft', k:'#6B7280', when:'In progress', title:'Services catalogue is still in draft',
-        desc:'Do not share the catalogue externally yet. The scoping guide is approved and safe to use in partner conversations.',
-        tags:['Do not share'] }
-    ],
-    learn:{
-      required:[
-        { t:'Services essentials', m:'2 modules', ic:'i-book' }
-      ],
-      recommended:[
-        { t:'Scoping a services engagement in one call', m:'20 min', ic:'i-play' },
-        { t:'Where services rescue a stalled deal', m:'12 min · Internal guidance', ic:'i-book' }
-      ],
-      recordings:[
-        { t:'Services scoping clinic', m:'Recorded 2 weeks ago · 33 min', ic:'i-play' }
-      ]
-    },
-    use:{
-      partner:[
-        { t:'Services scoping guide', m:'PDF · Approved', s:'partner-ready', ic:'i-doc' },
-        { t:'Engagement overview one-pager', m:'PDF', s:'partner-ready', ic:'i-doc' }
-      ],
-      internal:[
-        { t:'Services catalogue', m:'<b>Draft</b> · Not for external use', s:'draft', ic:'i-lock' },
-        { t:'Delivery capacity by region', m:'Internal only', s:'internal', ic:'i-lock' },
-        { t:'Rate card', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' }
-      ]
-    },
-    updates:[
-      { when:'2 weeks ago', title:'Scoping guide published', desc:'Approved for partner conversations. The catalogue it references stays internal until sign-off.' },
-      { when:'5 weeks ago', title:'Catalogue drafted', desc:'In review with delivery and commercial. Expect partner-ready status next month.' }
-    ],
-    help:[
-      { b:'Product owner', p:'Scoping support, delivery questions, catalogue status.', who:'Fabrício' },
-      { b:'Delivery desk', p:'Check regional capacity before committing a delivery date.', who:'Request form' }
+      { b:'Lane owner', p:'Narrative questions, deck exceptions, partner escalations.', who:'Alex' },
+      { b:'Positioning clinic', p:'Weekly 30-minute slot to pressure-test how you are telling the story.', who:'Thursdays' },
+      { b:'Ask the enablement channel', p:'Fastest route for "which asset do I send?" questions.', who:'#revenue-enablement' }
     ]
   }
 ];
 
-/* recency ordering for "Recently Updated" — lower = more recent */
-const RECENCY = { 'Yesterday':1,'2 days ago':2,'4 days ago':4,'6 days ago':6,'8 days ago':8,'2 weeks ago':14,'3 weeks ago':21,'1 month ago':30,'Last month':32,'5 weeks ago':35,'6 weeks ago':42 };
+/* Featured Heroes — the three things the whole company sees first */
+const HEROES = [
+  { type:'Important programme', k:'#8FA05A', lane:'farmers', when:'Nominations close Friday',
+    title:'Farmers Excellence Programme — Cohort 2',
+    desc:'The twelve-week programme for account managers returns. Nominations need manager sign-off and close Friday.' },
+  { type:'Mandatory · time-sensitive', k:'#C4674E', lane:'mip', when:'Due in 9 days',
+    title:'Copilot value-conversation certification',
+    desc:'Required for every partner-facing role before the next quarter push. About 45 minutes end to end.' },
+  { type:'Major launch', k:'#6E8A7C', lane:'salesforce', when:'This week',
+    title:'Q3 Salesforce release lands Thursday',
+    desc:'Pipeline views and stage names change overnight. Saved views must be rebuilt — the guide takes ten minutes.' }
+];
+
+/* recency ordering for the recently-updated feed — lower = more recent */
+const RECENCY = { 'Yesterday':1,'2 days ago':2,'3 days ago':3,'6 days ago':6,'1 week ago':7,'2 weeks ago':14,'3 weeks ago':21,'Last month':30 };
 
 /* ============================================================
    HELPERS
@@ -1074,8 +1009,7 @@ const view = $('#view');
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function icon(id,cls=''){ return `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`; }
 function badge(status){ const [c,l]=BADGE[status]||BADGE.draft; return `<span class="badge ${c}">${l}</span>`; }
-function byId(id){ return PRODUCTS.find(p=>p.id===id); }
-function ownerOf(p){ return OWNERS[p.owner]; }
+function laneById(id){ return LANES.find(l=>l.id===id); }
 function fact(t){ return `<span class="fact">${esc(t)}</span>`; }
 
 let toastTimer;
@@ -1086,8 +1020,6 @@ function toast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>el.classList.remove('on'), 2600);
 }
-
-/* every non-navigating item behaves like a real link would, then explains itself */
 function wireStubs(root){
   $$('[data-stub]',root).forEach(el=>{
     el.addEventListener('click',()=>toast(el.dataset.stub));
@@ -1095,17 +1027,118 @@ function wireStubs(root){
 }
 
 /* ============================================================
-   ONE PAGE — the whole company first, then three lanes, and every
-   lane's product detail lives inline below its lane heading.
+   HOMEPAGE — featured heroes, then the three lanes
    ============================================================ */
 
-const LANE_BLURB = {
-  alex:     'AI-led productivity: land Copilot, tell the Managed Intelligence story, and move partners up the value curve.',
-  marco:    'Defend and run: the security and continuity portfolio, plus the platform every partner transacts on.',
-  fabricio: 'Build and deliver: cloud infrastructure sizing and migrations, wrapped with professional and managed services.'
-};
+function renderHome(){
+  const heroes = `
+    <section class="section" id="heroes" style="margin-top:8px">
+      <div class="section-head">
+        <div>
+          <h2>Featured this week</h2>
+          <p>The three things everyone should see before opening their lane.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="heroes">
+        ${HEROES.map(h=>{
+          const l = laneById(h.lane);
+          return `
+          <a class="hero-card glass" href="#/lane/${l.id}" style="--k:${h.k}">
+            <span class="hero-kind">${esc(h.type)}</span>
+            <h3 class="hero-title">${esc(h.title)}</h3>
+            <p class="hero-desc">${esc(h.desc)}</p>
+            <div class="hero-foot">
+              <span class="hero-when">${esc(h.when)}</span>
+              <span class="hero-lane">${esc(l.name)} ${icon('i-arrow')}</span>
+            </div>
+          </a>`;
+        }).join('')}
+      </div>
+    </section>`;
 
-/* per-product inline tabs */
+  const lanes = `
+    <section class="section" id="lanes">
+      <div class="section-head">
+        <div>
+          <h2>Your three lanes</h2>
+          <p>Everything in Revenue Enablement lives in one of these. Pick the lane you work in — each one has its own page.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="lanepick">
+        ${LANES.map(l=>`
+          <div class="lp-card glass">
+            <div class="lane-head" style="margin-bottom:0">
+              <div class="owner-chip" style="--k2:${l.accent}">${l.initials}</div>
+              <div>
+                <b>${esc(l.name)}</b>
+                <span>Owner · ${esc(l.owner)}</span>
+              </div>
+            </div>
+            <p class="lane-intro" style="margin:0">${esc(l.blurb)}</p>
+            <div class="lp-list">
+              ${l.aware.slice(0,2).map(a=>`<span class="lp-item" style="color:${a.k}">${icon('i-bell')} <span style="color:var(--ink-2)">${esc(a.title)}</span></span>`).join('')}
+            </div>
+            <a class="lp-cta" href="#/lane/${l.id}">Open the lane ${icon('i-arrow')}</a>
+          </div>`).join('')}
+      </div>
+    </section>`;
+
+  const recent = LANES
+    .flatMap(l => l.updates.map(u => ({...u, lane:l})))
+    .sort((a,b)=>(RECENCY[a.when]??99)-(RECENCY[b.when]??99))
+    .slice(0,7);
+
+  const recentSection = `
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Recently updated</h2>
+          <p>Everything that moved across the three lanes, newest first.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="recent glass">
+        ${recent.map(u=>`
+          <a class="recent-row" href="#/lane/${u.lane.id}/updates">
+            <span class="recent-when">${esc(u.when)}</span>
+            <span class="recent-main">
+              <b>${esc(u.title)}</b>
+              <span>${esc(u.lane.name)} · ${esc(u.lane.owner)}</span>
+            </span>
+            <span class="recent-side">${icon('i-chev','row-ic')}</span>
+          </a>`).join('')}
+      </div>
+    </section>`;
+
+  view.innerHTML = `
+    <section class="masthead">
+      <div class="eyebrow">Revenue Enablement</div>
+      <h1 class="page">What matters now —<br>and your three lanes.</h1>
+      <p class="page-sub">
+        The heroes below are what the whole company needs to see this week. Underneath them,
+        Revenue Enablement is organised into three lanes, each with its own page — pick the one
+        you work in and go deep.
+      </p>
+      <div class="principle">
+        <span><i style="background:var(--sage)"></i>See what matters</span>
+        <span><i style="background:var(--ochre)"></i>Pick your lane</span>
+        <span><i style="background:var(--blush)"></i>Go deep</span>
+      </div>
+    </section>
+    ${heroes}
+    ${lanes}
+    ${recentSection}
+  `;
+  wireStubs(view);
+  window.scrollTo(0,0);
+}
+
+/* ============================================================
+   LANE SUBPAGE — Priorities · Learn · Use · Updates · Help
+   ============================================================ */
+
 const TABS = [
   ['priorities','Priorities'],
   ['learn','Learn'],
@@ -1113,12 +1146,11 @@ const TABS = [
   ['updates','Updates'],
   ['help','Help']
 ];
-const tabState = {};
 
-function panelPriorities(p){
+function panelPriorities(l){
   return `
     <div class="aware">
-      ${p.aware.map(a=>`
+      ${l.aware.map(a=>`
         <div class="aware-item" style="--k:${a.k};cursor:default">
           <div class="aware-top">
             <span class="aware-kind">${esc(a.kind)}</span>
@@ -1134,8 +1166,8 @@ function panelPriorities(p){
 function learnBlock(title, note, items){
   if(!items || !items.length) return '';
   return `
-    <div class="lblock">
-      <h4 class="lblock-title">${esc(title)}</h4>
+    <div class="card glass">
+      <h3 class="card-title">${esc(title)}</h3>
       <p class="card-note">${esc(note)}</p>
       <ul class="rows">
         ${items.map(i=>`
@@ -1148,23 +1180,23 @@ function learnBlock(title, note, items){
     </div>`;
 }
 
-function panelLearn(p){
+function panelLearn(l){
   return `
-    <div class="stack" style="gap:18px">
-      ${learnBlock('Required training','Complete these to stay current on this product.',p.learn.required)}
-      ${learnBlock('Recommended learning','Optional, but this is what separates a good conversation from a great one.',p.learn.recommended)}
-      ${learnBlock('Recorded sessions','Sessions already delivered — watch back at your own pace.',p.learn.recordings)}
+    <div class="stack">
+      ${learnBlock('Required training','Complete these to stay current in this lane.',l.learn.required)}
+      ${learnBlock('Recommended learning','Optional, but this is what separates a good conversation from a great one.',l.learn.recommended)}
+      ${learnBlock('Recorded sessions','Sessions already delivered — watch back at your own pace.',l.learn.recordings)}
     </div>`;
 }
 
-function panelUse(p){
+function panelUse(l){
   return `
-    <div class="stack" style="gap:18px">
-      <div class="lblock">
-        <h4 class="lblock-title" style="color:var(--teal)">Share with partners</h4>
+    <div class="stack">
+      <div class="card glass">
+        <h3 class="card-title" style="color:var(--teal)">Share with partners</h3>
         <p class="card-note">Customer-ready assets, presentations, one-pagers, approved messaging, videos and assessments.</p>
         <ul class="rows">
-          ${p.use.partner.map(u=>`
+          ${l.use.partner.map(u=>`
             <li><button class="row" data-stub="Opens “${esc(u.t)}” in Highspot (prototype)">
               ${icon(u.ic,'row-ic')}
               <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
@@ -1172,29 +1204,30 @@ function panelUse(p){
             </button></li>`).join('')}
         </ul>
       </div>
-      <div class="lblock noshare">
-        <h4 class="lblock-title" style="color:var(--amber)">Do not share</h4>
+      <div class="card glass noshare">
+        <h3 class="card-title" style="color:var(--amber)">Do not share</h3>
         <p class="card-note">Internal strategy, roadmap, pricing guidance, internal recordings and restricted information.</p>
         <ul class="rows">
-          ${p.use.internal.map(u=>`
+          ${l.use.internal.map(u=>`
             <li><button class="row" data-stub="Internal only — “${esc(u.t)}” is not for partner distribution (prototype)">
               ${icon(u.ic,'row-ic')}
               <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
               ${badge(u.s)}
             </button></li>`).join('')}
         </ul>
-        <p class="guard" style="margin-top:14px">Everything above stays internal. If a partner needs the substance of it, take it from the partner-ready set instead — or ask the product owner for an approved version.</p>
+        <p class="guard" style="margin-top:14px">Everything above stays internal. If a partner needs the substance of it, take it from the partner-ready set instead — or ask the lane owner for an approved version.</p>
       </div>
     </div>`;
 }
 
-function panelUpdates(p){
+function panelUpdates(l){
   return `
-    <div class="lblock">
-      <p class="card-note">What changed on this product, most recent first.</p>
+    <div class="card glass">
+      <h3 class="card-title">Updates</h3>
+      <p class="card-note">What changed in this lane, most recent first.</p>
       <ul class="timeline">
-        ${p.updates.map((u,i)=>`
-          <li style="--k:${i===0?p.accent:'#B7B4AC'}">
+        ${l.updates.map((u,i)=>`
+          <li style="--k:${i===0?l.accent:'#B7B4AC'}">
             <div class="tl-when">${esc(u.when)}</div>
             <div class="tl-title">${esc(u.title)}</div>
             <p class="tl-desc">${esc(u.desc)}</p>
@@ -1203,247 +1236,105 @@ function panelUpdates(p){
     </div>`;
 }
 
-function panelHelp(p){
-  const o = ownerOf(p);
+function panelHelp(l){
   return `
-    <div class="lblock">
+    <div class="card glass">
+      <h3 class="card-title">Help</h3>
       <p class="card-note">Who to ask, and the fastest route to an answer.</p>
       <div class="help-grid">
-        ${p.help.map(h=>`
+        ${l.help.map(h=>`
           <div class="help-card">
             <b>${esc(h.b)}</b>
             <p>${esc(h.p)}</p>
             <div class="who">${icon('i-chat','row-ic')} ${esc(h.who)}</div>
           </div>`).join('')}
         <div class="help-card">
-          <b>Something wrong here?</b>
+          <b>Something wrong on this page?</b>
           <p>Out-of-date asset, broken link, or messaging that contradicts a session — flag it and the owner sees it the same day.</p>
-          <div class="who">${icon('i-people','row-ic')} Owned by ${esc(o.name)}</div>
+          <div class="who">${icon('i-people','row-ic')} Owned by ${esc(l.owner)}</div>
         </div>
       </div>
     </div>`;
 }
 
-function panelFor(p, tab){
-  if(tab==='learn')   return panelLearn(p);
-  if(tab==='use')     return panelUse(p);
-  if(tab==='updates') return panelUpdates(p);
-  if(tab==='help')    return panelHelp(p);
-  return panelPriorities(p);
+function panelFor(l, tab){
+  if(tab==='learn')   return panelLearn(l);
+  if(tab==='use')     return panelUse(l);
+  if(tab==='updates') return panelUpdates(l);
+  if(tab==='help')    return panelHelp(l);
+  return panelPriorities(l);
 }
 
-function setTab(pid, tab){
-  const p = byId(pid);
-  const panel = $('#panel-'+pid);
-  if(!p || !panel) return;
-  tabState[pid] = tab;
-  panel.innerHTML = panelFor(p, tab);
-  wireStubs(panel);
-  $$(`[data-tabbtn][data-pid="${pid}"]`).forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===tab));
-}
-
-/* one product, in full, inline on the page */
-function productBlock(p){
-  const o = ownerOf(p);
-  const cur = tabState[p.id] || 'priorities';
-  return `
-    <article class="pblock glass" id="p-${p.id}">
-      <div class="pblock-head">
-        <div class="pcard-ic" style="--k2:${p.accent}">${icon(p.icon)}</div>
-        <div style="flex:1;min-width:240px">
-          <h3 class="pblock-title">${esc(p.name)}</h3>
-          <p class="pcard-purpose" style="max-width:70ch">${esc(p.purpose)}</p>
-          <div class="phead-facts" style="margin-top:12px">
-            ${fact('Owner · '+o.name)}
-            ${p.resources.map(fact).join('')}
-          </div>
-        </div>
-      </div>
-      <div class="pcard-latest" style="margin-top:18px">
-        <b>Latest update · ${esc(p.latest.when)}</b>
-        ${esc(p.latest.text)}
-      </div>
-      <div class="tabs tabs-sm" role="tablist" aria-label="${esc(p.name)} sections">
-        ${TABS.map(([k,label])=>`
-          <button class="tab" role="tab" data-tabbtn data-pid="${p.id}" data-tab="${k}" aria-selected="${k===cur}">${label}</button>`).join('')}
-      </div>
-      <div class="panel" id="panel-${p.id}">${panelFor(p, cur)}</div>
-    </article>`;
-}
-
-/* ============================================================
-   RENDER — everything on one page
-   ============================================================ */
-
-function renderAll(){
-  /* 1 · the whole company, before any lane is chosen */
-  const aware = PRODUCTS.flatMap(p => p.aware.map(a => ({...a, product:p})));
-
-  const companySection = `
-    <section class="section" id="company" style="margin-top:8px">
-      <div class="section-head">
-        <div>
-          <h2>What should the company be aware of?</h2>
-          <p>Every launch, deadline, required action and messaging change — across all three lanes, before you pick one.</p>
-        </div>
-        <div class="rainbow"></div>
-      </div>
-      <div class="aware-grid">
-        ${aware.map(a=>`
-          <a class="aware-item" href="#p-${a.product.id}" style="--k:${a.k}">
-            <div class="aware-top">
-              <span class="aware-kind">${esc(a.kind)}</span>
-              <span class="aware-when">${esc(a.when)}</span>
-            </div>
-            <div class="aware-title">${esc(a.title)}</div>
-            <p class="aware-desc">${esc(a.desc)}</p>
-            <div class="aware-foot">
-              <span>${esc(ownerOf(a.product).role)}</span>
-              <span class="dot"></span>
-              <span>${esc(a.product.name)}</span>
-            </div>
-          </a>`).join('')}
-      </div>
-    </section>`;
-
-  /* 2 · the one choice: pick a lane */
-  const lanepickSection = `
-    <section class="section" id="pick">
-      <div class="section-head">
-        <div>
-          <h2>Now pick your lane</h2>
-          <p>Three lanes, three owners — every product and every conversation belongs to exactly one. This is the only choice to make: the full depth of each lane lives right below.</p>
-        </div>
-        <div class="rainbow"></div>
-      </div>
-      <div class="lanepick">
-        ${Object.keys(OWNERS).map(key=>{
-          const o = OWNERS[key];
-          const items = PRODUCTS.filter(p=>p.owner===key);
-          return `
-            <div class="lp-card glass">
-              <div class="lane-head" style="margin-bottom:0">
-                <div class="owner-chip" style="--k2:${o.accent}">${o.initials}</div>
-                <div>
-                  <b>${esc(o.role)}</b>
-                  <span>Owner · ${esc(o.name)} · ${items.length} products</span>
-                </div>
-              </div>
-              <p class="lane-intro" style="margin:0">${esc(LANE_BLURB[key])}</p>
-              <div class="lp-list">
-                ${items.map(p=>`<span class="lp-item" style="color:${p.accent}">${icon(p.icon)} <span style="color:var(--ink-2)">${esc(p.name)}</span></span>`).join('')}
-              </div>
-              <a class="lp-cta" href="#lane-${key}">Enter this lane ${icon('i-arrow')}</a>
-            </div>`;
-        }).join('')}
-      </div>
-    </section>`;
-
-  /* 3 · the lanes themselves — each product's sub-page, inline */
-  const laneSections = Object.keys(OWNERS).map(key=>{
-    const o = OWNERS[key];
-    const items = PRODUCTS.filter(p=>p.owner===key);
-    return `
-      <section class="section lane-sec" id="lane-${key}">
-        <div class="section-head">
-          <div class="lane-head" style="margin-bottom:0">
-            <div class="owner-chip" style="--k2:${o.accent}">${o.initials}</div>
-            <div>
-              <b>${esc(o.role)}</b>
-              <span>Owner · ${esc(o.name)} — pick the product your conversation is about</span>
-            </div>
-          </div>
-          <div class="rainbow"></div>
-        </div>
-        ${items.map(productBlock).join('')}
-      </section>`;
-  }).join('');
-
-  /* 4 · recently updated, newest first across the portal */
-  const recent = PRODUCTS
-    .flatMap(p => p.updates.map(u => ({...u, product:p})))
-    .sort((a,b)=>(RECENCY[a.when]??99)-(RECENCY[b.when]??99))
-    .slice(0,7);
-
-  const recentSection = `
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <h2>Recently updated</h2>
-          <p>Everything that moved across the portal, newest first.</p>
-        </div>
-        <div class="rainbow"></div>
-      </div>
-      <div class="recent glass">
-        ${recent.map(u=>`
-          <a class="recent-row" href="#p-${u.product.id}" data-goto-tab="updates" data-pid="${u.product.id}">
-            <span class="recent-when">${esc(u.when)}</span>
-            <span class="recent-main">
-              <b>${esc(u.title)}</b>
-              <span>${esc(u.product.name)} · ${esc(ownerOf(u.product).name)}</span>
-            </span>
-            <span class="recent-side">${icon('i-chev','row-ic')}</span>
-          </a>`).join('')}
-      </div>
-    </section>`;
+function renderLane(id, tab){
+  const l = laneById(id);
+  if(!l){ location.hash = '#/'; return; }
+  if(!TABS.some(t=>t[0]===tab)) tab = 'priorities';
 
   view.innerHTML = `
-    <section class="masthead">
-      <div class="eyebrow">Revenue Enablement</div>
-      <h1 class="page">See the whole.<br>Then pick your lane.</h1>
-      <p class="page-sub">
-        Start with what matters across the company right now. Then choose one of the three lanes —
-        every product, asset and conversation belongs to exactly one of them, and everything you
-        need lives inside it, right on this page.
-      </p>
-      <div class="principle">
-        <span><i style="background:var(--sage)"></i>See the whole</span>
-        <span><i style="background:var(--ochre)"></i>Pick a lane</span>
-        <span><i style="background:var(--blush)"></i>Go deep</span>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="#/">Revenue Enablement</a>
+      ${icon('i-chev')}
+      <span style="color:var(--ink)">${esc(l.name)}</span>
+    </nav>
+
+    <header class="phead">
+      <div class="phead-ic" style="--k2:${l.accent}">${icon(l.icon)}</div>
+      <div class="phead-main">
+        <h1>${esc(l.name)}</h1>
+        <p class="phead-purpose">${esc(l.purpose)}</p>
+        <div class="phead-facts">
+          ${fact('Owner · '+l.owner)}
+          ${fact('Updated '+l.latest.when)}
+          ${l.resources.map(fact).join('')}
+        </div>
       </div>
-    </section>
-    ${companySection}
-    ${lanepickSection}
-    ${laneSections}
-    ${recentSection}
+    </header>
+
+    <div class="pcard-latest" style="margin-bottom:24px;max-width:860px">
+      <b>Latest update · ${esc(l.latest.when)}</b>
+      ${esc(l.latest.text)}
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Lane sections">
+      ${TABS.map(([k,label])=>`
+        <a class="tab" role="tab" aria-selected="${k===tab}" href="#/lane/${l.id}/${k}">${label}</a>`).join('')}
+    </div>
+
+    <div class="panel" role="tabpanel">${panelFor(l,tab)}</div>
   `;
   wireStubs(view);
+  window.scrollTo(0,0);
 }
 
-/* inline tab switching + jump-to-updates from the recent feed */
-view.addEventListener('click', e=>{
-  const tb = e.target.closest('[data-tabbtn]');
-  if(tb){ setTab(tb.dataset.pid, tb.dataset.tab); return; }
-  const g = e.target.closest('[data-goto-tab]');
-  if(g){ setTab(g.dataset.pid, g.dataset.gotoTab); }
-});
-
 /* ============================================================
-   SEARCH — flat index across everything; results jump on-page
+   SEARCH — flat index across the three lanes
    ============================================================ */
 
 function buildIndex(){
   const idx = [];
-  PRODUCTS.forEach(p=>{
-    const lane = ownerOf(p).role;
-    idx.push({ group:'Products', t:p.name, s:p.purpose, ic:p.icon, pid:p.id, tab:'priorities' });
+  LANES.forEach(l=>{
+    idx.push({ group:'Lanes', t:l.name, s:l.blurb, ic:l.icon, lane:l.id, tab:'priorities' });
 
-    [...p.learn.required.map(x=>[x,'Required']),
-     ...p.learn.recommended.map(x=>[x,'Recommended']),
-     ...p.learn.recordings.map(x=>[x,'Recorded session'])
-    ].forEach(([l,kind])=>{
-      idx.push({ group:'Learn', t:l.t, s:`${kind} · ${p.name}`, ic:l.ic, pid:p.id, tab:'learn' });
+    l.aware.forEach(a=>{
+      idx.push({ group:'Featured & priorities', t:a.title, s:`${a.kind} · ${l.name}`, ic:'i-bell', lane:l.id, tab:'priorities' });
     });
 
-    p.use.partner.forEach(u=>{
-      idx.push({ group:'Share with partners', t:u.t, s:`${p.name} · Partner ready`, ic:u.ic, pid:p.id, tab:'use' });
-    });
-    p.use.internal.forEach(u=>{
-      idx.push({ group:'Do not share', t:u.t, s:`${p.name} · Internal`, ic:'i-lock', pid:p.id, tab:'use' });
+    [...l.learn.required.map(x=>[x,'Required']),
+     ...l.learn.recommended.map(x=>[x,'Recommended']),
+     ...l.learn.recordings.map(x=>[x,'Recorded session'])
+    ].forEach(([x,kind])=>{
+      idx.push({ group:'Learn', t:x.t, s:`${kind} · ${l.name}`, ic:x.ic, lane:l.id, tab:'learn' });
     });
 
-    p.updates.forEach(u=>{
-      idx.push({ group:'Updates', t:u.title, s:`${p.name} · ${u.when}`, ic:'i-bell', pid:p.id, tab:'updates' });
+    l.use.partner.forEach(u=>{
+      idx.push({ group:'Share with partners', t:u.t, s:`${l.name} · Partner ready`, ic:u.ic, lane:l.id, tab:'use' });
+    });
+    l.use.internal.forEach(u=>{
+      idx.push({ group:'Do not share', t:u.t, s:`${l.name} · Internal`, ic:'i-lock', lane:l.id, tab:'use' });
+    });
+
+    l.updates.forEach(u=>{
+      idx.push({ group:'Updates', t:u.title, s:`${l.name} · ${u.when}`, ic:'i-bell', lane:l.id, tab:'updates' });
     });
   });
   return idx;
@@ -1459,15 +1350,10 @@ function openSearch(){
   runSearch('');
   setTimeout(()=>qInput.focus(),20);
 }
-function closeSearch(){
-  overlay.classList.remove('on');
-}
+function closeSearch(){ overlay.classList.remove('on'); }
 function goTo(el){
-  const pid = el.dataset.pid, tab = el.dataset.tab;
-  if(pid && tab) setTab(pid, tab);
+  location.hash = `#/lane/${el.dataset.lane}/${el.dataset.tab}`;
   closeSearch();
-  const target = document.getElementById('p-'+pid);
-  if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function hl(text,q){
   if(!q) return esc(text);
@@ -1479,18 +1365,18 @@ function runSearch(q){
   const term = q.trim().toLowerCase();
   hits = term
     ? INDEX.filter(x=>(x.t+' '+x.s+' '+x.group).toLowerCase().includes(term)).slice(0,30)
-    : INDEX.filter(x=>x.group==='Products');
+    : INDEX.filter(x=>x.group==='Lanes');
 
   selIdx = 0;
   if(!hits.length){
-    resultsEl.innerHTML = `<div class="fempty">Nothing matches “${esc(q)}”.<br>Try a product name, an asset type, or “restricted”.</div>`;
+    resultsEl.innerHTML = `<div class="fempty">Nothing matches “${esc(q)}”.<br>Try a lane name, an asset type, or “restricted”.</div>`;
     return;
   }
   let html='', lastGroup='', n=0;
   hits.forEach(h=>{
     if(h.group!==lastGroup){ html += `<div class="fgroup-label">${esc(h.group)}</div>`; lastGroup=h.group; }
     html += `
-      <button class="fresult${n===0?' sel':''}" data-i="${n}" data-pid="${h.pid}" data-tab="${h.tab}">
+      <button class="fresult${n===0?' sel':''}" data-i="${n}" data-lane="${h.lane}" data-tab="${h.tab}">
         ${icon(h.ic,'fic')}
         <span class="fresult-main"><b>${hl(h.t,q.trim())}</b><span>${esc(h.s)}</span></span>
         ${icon('i-chev','fic')}
@@ -1531,15 +1417,19 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ============================================================
-   BOOT — single page; hash anchors just scroll
+   ROUTER — homepage or lane subpage
    ============================================================ */
 
-renderAll();
-if(location.hash){
-  const el = document.getElementById(location.hash.slice(1));
-  if(el) setTimeout(()=>el.scrollIntoView({block:'start'}),60);
+function route(){
+  const parts = location.hash.replace(/^#\/?/,'').split('/').filter(Boolean);
+  if(parts[0]==='lane' && parts[1]) renderLane(parts[1], parts[2]);
+  else renderHome();
 }
+
+window.addEventListener('hashchange',route);
+route();
 </script>
+
 
 </body>
 </html>

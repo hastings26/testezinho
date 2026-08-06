@@ -1,29 +1,33 @@
 ## 🧭 Revenue Enablement Portal — Highspot design prototype
 
-`highspot.html` is a standalone, clickable prototype of the Highspot portal as a single page.
+`highspot.html` is a standalone, clickable prototype of the Revenue Enablement portal.
 Open the file in a browser (or serve the folder and visit `/highspot.html`).
 
-**The guiding principle:** *See the whole. Pick a lane. Go deep.* The page shows what matters for
-the company as a whole first, then asks the user to choose one of the **three lanes** — every
-product and every conversation belongs to exactly one — and each lane's full product detail lives
-inline on the same page.
+**The information architecture:**
 
-**The page, top to bottom:**
+```
+Revenue Enablement Homepage
+├── Featured Heroes
+│   ├── Important programme
+│   ├── Mandatory or time-sensitive activity
+│   └── Major announcement or launch
+├── Farmers Programmes & Soft Skills  → dedicated lane subpage
+├── Salesforce & Technology           → dedicated lane subpage
+└── MIP & AI                          → dedicated lane subpage
+```
 
-- **What should the company be aware of?** — every launch, deadline, required action and messaging
-  change across all three lanes, in one shared view, before any lane is chosen. Each card links to
-  its product below.
-- **Now pick your lane** — three cards, one per lane (Alex: Modern Work, AI & Managed Intelligence ·
-  Marco: Security, Continuity & Platform · Fabrício: Cloud Infrastructure & Services), each with its
-  owner, scope blurb, product list and an **Enter this lane** action that scrolls to the lane.
-- **The lanes themselves** — each lane heading followed by its products in full: purpose, owner,
-  resources, latest update, and inline tabs for **Priorities · Learn · Use · Updates · Help** (Use
-  keeps the **Share with Partners** / **Do Not Share** split). No sub-pages — everything is on the
-  main page.
-- **Recently Updated** — every change across the portal, newest first; rows jump to the product's
+- **Featured Heroes** — exactly three hero cards at the top of the homepage, one per type:
+  an important programme, a mandatory or time-sensitive activity, and a major announcement or
+  launch. Each links to its lane.
+- **Your three lanes** — the three lane cards (owner, scope blurb, live priorities preview) each
+  opening a **dedicated lane subpage**.
+- **Lane subpage standard** — every lane page is identical in shape: header with owner and
+  resources, latest update, and tabs for **Priorities · Learn · Use · Updates · Help**. Use keeps
+  the **Share with Partners** / **Do Not Share** split.
+- **Recently Updated** — every change across the three lanes, newest first; rows open the lane's
   Updates tab.
-- **Global search** — press `/` or `⌘K`; results are grouped and jump straight to the right product
-  block with the right tab selected.
+- **Global search** — press `/` or `⌘K`; results are grouped and open the right lane subpage with
+  the right tab selected.
 - **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
 
 **Visual direction:** neumorphism (soft UI) — one warm-grey material for everything. Elements are
@@ -34,11 +38,11 @@ click. No borders, no fills; colour appears only as stone-pastel inks and pebble
 eucalyptus, ochre, olive, terracotta, blush). Soft dark-grey ink, Plus Jakarta Sans. Note this
 deliberately departs from the Pax8 deck guidelines (dark grounds).
 
-- Pure offline, no build step, no dependencies beyond Google Fonts. One page; anchors
-  (`#p-<id>`, `#lane-<owner>`) scroll, inline tabs switch without navigation.
-- **All products, assets and updates are illustrative placeholders** — this is a design artefact for
+- Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing:
+  `#/` home, `#/lane/<id>/<tab>` lane subpages.
+- **All lanes, assets and updates are illustrative placeholders** — this is a design artefact for
   reviewing structure and feel, not a content source.
-- Edit `PRODUCTS` and `OWNERS` at the top of the inline `<script>` to reshape the whole portal.
+- Edit `LANES` and `HEROES` at the top of the inline `<script>` to reshape the whole portal.
 
 ---
 
