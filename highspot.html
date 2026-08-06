@@ -689,12 +689,18 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
 .art-img{display:block;width:100%;height:auto;border-radius:calc(var(--r-md) - 6px)}
 
 .hero-art{
-  position:absolute;right:-16px;bottom:-8px;width:150px;
-  opacity:.5;pointer-events:none;
+  position:absolute;right:-34px;bottom:-40px;width:240px;
+  opacity:.75;pointer-events:none;
   transition:opacity .25s var(--ease),transform .25s var(--ease);
 }
-.hero-card{padding-right:120px}
-.hero-card:hover .hero-art{opacity:.85;transform:translateY(-3px)}
+.hero-art img{
+  display:block;width:100%;height:auto;
+  mix-blend-mode:multiply;
+  -webkit-mask-image:radial-gradient(85% 85% at 74% 60%, #000 30%, transparent 64%);
+          mask-image:radial-gradient(85% 85% at 74% 60%, #000 30%, transparent 64%);
+}
+.hero-card{padding-right:150px}
+.hero-card:hover .hero-art{opacity:1;transform:translateY(-4px)}
 .lp-card{position:relative;padding-bottom:74px}
 .lp-go{
   position:absolute;right:22px;bottom:20px;
@@ -730,7 +736,7 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
   .lane-hero{grid-template-columns:1fr}
   .lh-art{max-width:340px}
   .hero-card{padding-right:26px}
-  .hero-art{width:110px;opacity:.3}
+  .hero-art{width:150px;opacity:.35;right:-40px;bottom:-40px}
 }
 </style>
 </head>
@@ -1055,64 +1061,6 @@ const LANE_IMG = {
 };
 
 /* ============================================================
-   LANE ART — inline SVG, one composition per lane
-   ============================================================ */
-
-function laneArt(id, uid){
-  const u = uid || Math.floor(performance.now());
-  if(id==='farmers') return `
-  <svg viewBox="0 0 300 200" role="img" aria-label="">
-    <defs>
-      <linearGradient id="fh1${u}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#2FCFA9"/><stop offset="1" stop-color="#0FA47C"/>
-      </linearGradient>
-      <linearGradient id="fh2${u}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#8BE3C8"/><stop offset="1" stop-color="#2FB893"/>
-      </linearGradient>
-    </defs>
-    <circle cx="243" cy="46" r="26" fill="#F2CE4E" opacity=".9"/>
-    <circle cx="243" cy="46" r="38" fill="#F2CE4E" opacity=".18"/>
-    <path d="M96 128c0-38 10-72 10-72" fill="none" stroke="#1F9C77" stroke-width="6" stroke-linecap="round"/>
-    <path d="M106 74c-20-4-30-20-28-38 18 0 32 12 28 38z" fill="url(#fh1${u})"/>
-    <path d="M106 92c18-2 30-16 30-34-18-2-32 14-30 34z" fill="url(#fh2${u})"/>
-    <path d="M170 138c0-26 6-48 6-48" fill="none" stroke="#1F9C77" stroke-width="5" stroke-linecap="round"/>
-    <path d="M176 96c-14-3-22-14-21-27 13 0 24 9 21 27z" fill="url(#fh2${u})"/>
-    <ellipse cx="88" cy="166" rx="118" ry="34" fill="url(#fh1${u})" opacity=".35"/>
-    <ellipse cx="212" cy="176" rx="130" ry="36" fill="url(#fh2${u})" opacity=".5"/>
-  </svg>`;
-  if(id==='salesforce') return `
-  <svg viewBox="0 0 300 200" role="img" aria-label="">
-    <defs>
-      <linearGradient id="sg1${u}" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#3FB6ED"/><stop offset="1" stop-color="#0E86C0"/>
-      </linearGradient>
-    </defs>
-    <circle cx="222" cy="62" r="46" fill="#3FB6ED" opacity=".16"/>
-    <rect x="46" y="52" width="150" height="22" rx="11" fill="url(#sg1${u})" opacity=".95"/>
-    <rect x="46" y="88" width="110" height="22" rx="11" fill="url(#sg1${u})" opacity=".65"/>
-    <rect x="46" y="124" width="72" height="22" rx="11" fill="url(#sg1${u})" opacity=".4"/>
-    <path d="M212 63l28 36-44 26" fill="none" stroke="#0E86C0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>
-    <circle cx="212" cy="63" r="10" fill="#0E86C0"/>
-    <circle cx="240" cy="99" r="10" fill="#2B57D0"/>
-    <circle cx="196" cy="135" r="10" fill="#2FCFA9"/>
-  </svg>`;
-  return `
-  <svg viewBox="0 0 300 200" role="img" aria-label="">
-    <defs>
-      <linearGradient id="mg1${u}" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#5B7FE8"/><stop offset="1" stop-color="#2B57D0"/>
-      </linearGradient>
-    </defs>
-    <ellipse cx="150" cy="100" rx="104" ry="42" fill="none" stroke="#A98BF0" stroke-width="3" opacity=".55" transform="rotate(-18 150 100)"/>
-    <ellipse cx="150" cy="100" rx="76" ry="30" fill="none" stroke="#3FB6ED" stroke-width="3" opacity=".55" transform="rotate(14 150 100)"/>
-    <path d="M150 54l12 32 32 12-32 12-12 32-12-32-32-12 32-12z" fill="url(#mg1${u})"/>
-    <circle cx="58" cy="132" r="9" fill="#2FCFA9"/>
-    <circle cx="236" cy="66" r="8" fill="#A98BF0"/>
-    <circle cx="246" cy="132" r="6" fill="#F077BE"/>
-  </svg>`;
-}
-
-/* ============================================================
    HELPERS
    ============================================================ */
 
@@ -1159,7 +1107,7 @@ function renderHome(){
           <span class="hero-kind">${esc(h.type)}</span>
           <h3 class="hero-title">${esc(h.title)}</h3>
           <p class="hero-desc">${esc(h.desc)}</p>
-          <div class="hero-art">${laneArt(l.id,'h'+n)}</div>
+          <div class="hero-art"><img src="${LANE_IMG[l.id]}" alt="" loading="lazy"></div>
           <div class="hero-foot">
             <span class="hero-when">${esc(h.when)}</span>
             <span class="hero-lane">${esc(l.name)} ${icon('i-arrow')}</span>
