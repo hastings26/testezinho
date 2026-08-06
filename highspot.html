@@ -675,6 +675,61 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
 .hero-lane{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--ink-2)}
 .hero-lane svg{width:13px;height:13px;color:var(--sage);transition:transform .2s var(--ease)}
 .hero-card:hover .hero-lane svg{transform:translateX(4px)}
+
+/* ---------- art wells, lane hero, self-evident affordances ---------- */
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;align-items:start}
+.cols3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;align-items:start}
+.art-well{
+  border-radius:var(--r-md);
+  padding:8px;
+  background:var(--surface);
+  box-shadow:var(--down-sm);
+}
+.art-well svg{display:block;width:100%;height:auto}
+.hero-art{
+  position:absolute;right:-16px;bottom:-8px;width:150px;
+  opacity:.5;pointer-events:none;
+  transition:opacity .25s var(--ease),transform .25s var(--ease);
+}
+.hero-card{padding-right:120px}
+.hero-card:hover .hero-art{opacity:.85;transform:translateY(-3px)}
+.lp-card{position:relative;padding-bottom:74px}
+.lp-go{
+  position:absolute;right:22px;bottom:20px;
+  width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--surface);
+  box-shadow:var(--up-sm);
+  transition:box-shadow .2s var(--ease);
+}
+.lp-go svg{width:16px;height:16px;color:var(--sage);transition:transform .2s var(--ease)}
+.lp-card:hover .lp-go{box-shadow:var(--up)}
+.lp-card:hover .lp-go svg{transform:translateX(3px)}
+.lp-card:active .lp-go{box-shadow:var(--down-sm)}
+.lane-hero{
+  display:grid;grid-template-columns:minmax(0,1.45fr) minmax(240px,1fr);
+  gap:30px;align-items:center;
+  padding:34px;margin-top:20px;
+}
+.lane-hero h1{margin:10px 0 16px;font-size:clamp(26px,3.2vw,40px);font-weight:800;letter-spacing:-1.2px;line-height:1.08;color:#303542}
+.lh-priority{
+  padding:18px 20px;border-radius:var(--r-md);
+  box-shadow:var(--down-sm);
+  margin-bottom:18px;
+  position:relative;
+}
+.lh-priority::before{
+  content:"";position:absolute;left:0;top:18px;bottom:18px;width:5px;border-radius:0 5px 5px 0;
+  background:var(--k,var(--sage));
+}
+.lh-art{align-self:stretch;display:flex;align-items:center}
+.lh-art svg{width:100%}
+@media (max-width:900px){
+  .lane-hero{grid-template-columns:1fr}
+  .lh-art{max-width:340px}
+  .hero-card{padding-right:26px}
+  .hero-art{width:110px;opacity:.3}
+}
 </style>
 </head>
 <body>
@@ -770,7 +825,6 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
   <svg class="cloud" viewBox="0 0 60 42" fill="none" aria-hidden="true">
     <path d="M45 39H16.5C9.6 39 4 33.6 4 27s5.6-12 12.5-12c1 0 2 .1 2.9.4C21.7 9.2 27.4 5 34 5c8.6 0 15.6 6.9 15.6 15.4 0 .7 0 1.4-.1 2.1 4 1.4 6.5 5 6.5 9 0 4.7-4.2 7.5-11 7.5z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
   </svg>
-  <span>See the whole. Pick a lane. Go deep.</span>
   <span style="margin-left:auto"><i>Design prototype — all products, assets and updates shown are illustrative placeholders.</i></span>
 </footer>
 
@@ -793,19 +847,12 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
 
 <script>
 /* ============================================================
-   DATA — the real information architecture.
-
+   DATA
    Revenue Enablement Homepage
-   ├── Featured Heroes
-   │   ├── Important programme
-   │   ├── Mandatory or time-sensitive activity
-   │   └── Major announcement or launch
-   ├── Farmers Programmes & Soft Skills  → dedicated lane subpage
-   ├── Salesforce & Technology           → dedicated lane subpage
-   └── MIP & AI                          → dedicated lane subpage
-
-   Every lane subpage follows the same standard:
-   Priorities · Learn · Use · Updates · Help
+   ├── Featured Heroes (programme · mandatory · launch)
+   ├── Farmers Programmes & Soft Skills  → lane page
+   ├── Salesforce & Technology           → lane page
+   └── MIP & AI                          → lane page
    ============================================================ */
 
 const BADGE = {
@@ -820,8 +867,8 @@ const LANES = [
     id:'farmers',
     name:'Farmers Programmes & Soft Skills',
     owner:'Fabrício', initials:'F', accent:'#0FA47C', icon:'i-people',
-    blurb:'Grow the accounts we already have: structured farmer programmes, and the soft skills that make every conversation land.',
-    purpose:'Structured development for account managers — long-running programmes, workshops and the human skills that turn renewals into expansion.',
+    blurb:'Grow the accounts we already have.',
+    purpose:'Long-running programmes, workshops and the human skills that turn renewals into expansion.',
     resources:['9 assets','5 courses','1 programme','6 recordings'],
     latest:{ when:'3 days ago', text:'Cohort 2 of the Farmers Excellence Programme opened for enrolment.' },
     aware:[
@@ -843,8 +890,8 @@ const LANES = [
         { t:'Time management for account farming', m:'15 min', ic:'i-book' }
       ],
       recordings:[
-        { t:'Farmers forum — last session', m:'Recorded 1 week ago · 48 min', ic:'i-play' },
-        { t:'Soft skills clinic: listening under pressure', m:'Recorded last month · 32 min', ic:'i-play' }
+        { t:'Farmers forum — last session', m:'1 week ago · 48 min', ic:'i-play' },
+        { t:'Soft skills clinic: listening under pressure', m:'Last month · 32 min', ic:'i-play' }
       ]
     },
     use:{
@@ -855,8 +902,8 @@ const LANES = [
       ],
       internal:[
         { t:'Account tiering guidance', m:'Internal only', s:'internal', ic:'i-lock' },
-        { t:'Commission accelerators FAQ', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
-        { t:'Coaching notes template', m:'For managers · Internal', s:'internal', ic:'i-lock' }
+        { t:'Commission accelerators FAQ', m:'Commercial', s:'restricted', ic:'i-lock' },
+        { t:'Coaching notes template', m:'For managers', s:'internal', ic:'i-lock' }
       ]
     },
     updates:[
@@ -866,8 +913,8 @@ const LANES = [
     ],
     help:[
       { b:'Lane owner', p:'Programme nominations, workshop logistics, soft-skills coaching requests.', who:'Fabrício' },
-      { b:'Ask the programmes channel', p:'Fastest route for enrolment and scheduling questions.', who:'#farmers-programmes' },
-      { b:'Nominate a colleague', p:'Managers can nominate for the next cohort at any time — the form takes two minutes.', who:'Nomination form' }
+      { b:'#farmers-programmes', p:'Enrolment and scheduling questions, answered same day.', who:'Slack channel' },
+      { b:'Nominate a colleague', p:'Managers can nominate for the next cohort any time — two minutes.', who:'Nomination form' }
     ]
   },
 
@@ -875,8 +922,8 @@ const LANES = [
     id:'salesforce',
     name:'Salesforce & Technology',
     owner:'Marco', initials:'M', accent:'#0E86C0', icon:'i-grid',
-    blurb:'The systems the sale runs on: Salesforce, quoting, and the tools around them — kept current, kept clean.',
-    purpose:'Everything about the tools of the trade — how to run your pipeline properly, what changed in each release, and where to get unstuck.',
+    blurb:'The systems the sale runs on.',
+    purpose:'Salesforce, quoting and the tools around them — how to run a clean pipeline, what changed in each release, and where to get unstuck.',
     resources:['11 assets','4 courses','2 certifications','5 recordings'],
     latest:{ when:'6 days ago', text:'Q3 release notes and the rebuilt pipeline-view guide published together.' },
     aware:[
@@ -897,8 +944,8 @@ const LANES = [
         { t:'Reports that answer real questions', m:'20 min', ic:'i-book' }
       ],
       recordings:[
-        { t:'Q3 release briefing', m:'Recorded 6 days ago · 27 min', ic:'i-play' },
-        { t:'Clinic: cleaning a messy pipeline', m:'Recorded last month · 35 min', ic:'i-play' }
+        { t:'Q3 release briefing', m:'6 days ago · 27 min', ic:'i-play' },
+        { t:'Clinic: cleaning a messy pipeline', m:'Last month · 35 min', ic:'i-play' }
       ]
     },
     use:{
@@ -907,9 +954,9 @@ const LANES = [
         { t:'Customer-facing security FAQ', m:'PDF · Approved', s:'partner-ready', ic:'i-doc' }
       ],
       internal:[
-        { t:'Discount approval matrix', m:'Commercial · <b>Do not forward</b>', s:'restricted', ic:'i-lock' },
+        { t:'Discount approval matrix', m:'Commercial', s:'restricted', ic:'i-lock' },
         { t:'Environment access guide', m:'Internal only', s:'internal', ic:'i-lock' },
-        { t:'Known issues and workarounds', m:'Internal · Updated weekly', s:'internal', ic:'i-lock' }
+        { t:'Known issues and workarounds', m:'Updated weekly', s:'internal', ic:'i-lock' }
       ]
     },
     updates:[
@@ -919,8 +966,8 @@ const LANES = [
     ],
     help:[
       { b:'Lane owner', p:'Release questions, tooling access, process exceptions.', who:'Marco' },
-      { b:'Ask the systems channel', p:'Quick answers on Salesforce, quoting and reporting.', who:'#sales-systems' },
-      { b:'Report an issue', p:'Something broken or blocking a deal — logged and triaged same day.', who:'Issue form' }
+      { b:'#sales-systems', p:'Salesforce, quoting and reporting questions.', who:'Slack channel' },
+      { b:'Report an issue', p:'Something broken or blocking a deal — triaged same day.', who:'Issue form' }
     ]
   },
 
@@ -928,7 +975,7 @@ const LANES = [
     id:'mip',
     name:'MIP & AI',
     owner:'Alex', initials:'A', accent:'#2B57D0', icon:'i-spark',
-    blurb:'The Managed Intelligence story and the AI skills to tell it: Copilot, the MIP narrative, and partner-ready proof.',
+    blurb:'The Managed Intelligence story, and the AI skills to tell it.',
     purpose:'Move partners from managed services to managed intelligence — the narrative, the Copilot motion, and the certifications that make the conversation credible.',
     resources:['14 assets','6 courses','3 certifications','7 recordings'],
     latest:{ when:'Yesterday', text:'MIP narrative deck moved from draft to partner-ready after the EMEA review.' },
@@ -946,7 +993,7 @@ const LANES = [
     learn:{
       required:[
         { t:'Copilot value conversation — certification', m:'45 min · <b>Due in 9 days</b>', ic:'i-medal' },
-        { t:'The MIP narrative — how to tell it in 5 minutes', m:'30 min · Required for partner-facing roles', ic:'i-book' }
+        { t:'The MIP narrative — how to tell it in 5 minutes', m:'30 min', ic:'i-book' }
       ],
       recommended:[
         { t:'Objection handling: "we already have AI"', m:'18 min · Scenario practice', ic:'i-play' },
@@ -954,21 +1001,21 @@ const LANES = [
         { t:'Licensing traps that kill Copilot deals', m:'25 min', ic:'i-book' }
       ],
       recordings:[
-        { t:'MIP launch briefing — EMEA', m:'Recorded 3 weeks ago · 44 min', ic:'i-play' },
-        { t:'Partner clinic: adoption after the first 90 days', m:'Recorded last month · 38 min', ic:'i-play' }
+        { t:'MIP launch briefing — EMEA', m:'3 weeks ago · 44 min', ic:'i-play' },
+        { t:'Partner clinic: adoption after the first 90 days', m:'Last month · 38 min', ic:'i-play' }
       ]
     },
     use:{
       partner:[
         { t:'MIP narrative deck', m:'Presentation · <b>Newly partner-ready</b>', s:'partner-ready', ic:'i-doc' },
-        { t:'Copilot adoption workshop deck', m:'Presentation · Updated 2 days ago', s:'partner-ready', ic:'i-doc' },
+        { t:'Copilot adoption workshop deck', m:'Presentation', s:'partner-ready', ic:'i-doc' },
         { t:'MSP to MIP — the one-page shift', m:'PDF · Leave-behind', s:'partner-ready', ic:'i-doc' },
         { t:'Adoption readiness assessment', m:'Interactive · 12 questions', s:'partner-ready', ic:'i-check' }
       ],
       internal:[
-        { t:'MIP commercial model and margin assumptions', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
-        { t:'Copilot pricing guidance', m:'Commercial · <b>Do not forward</b>', s:'restricted', ic:'i-lock' },
-        { t:'Programme roadmap and sequencing', m:'Strategy · Internal only', s:'internal', ic:'i-lock' }
+        { t:'MIP commercial model and margin assumptions', m:'Commercial', s:'restricted', ic:'i-lock' },
+        { t:'Copilot pricing guidance', m:'Commercial', s:'restricted', ic:'i-lock' },
+        { t:'Programme roadmap and sequencing', m:'Strategy', s:'internal', ic:'i-lock' }
       ]
     },
     updates:[
@@ -978,27 +1025,83 @@ const LANES = [
     ],
     help:[
       { b:'Lane owner', p:'Narrative questions, deck exceptions, partner escalations.', who:'Alex' },
-      { b:'Positioning clinic', p:'Weekly 30-minute slot to pressure-test how you are telling the story.', who:'Thursdays' },
-      { b:'Ask the enablement channel', p:'Fastest route for "which asset do I send?" questions.', who:'#revenue-enablement' }
+      { b:'Positioning clinic', p:'Weekly 30-minute slot to pressure-test how you tell the story.', who:'Thursdays' },
+      { b:'#revenue-enablement', p:'"Which asset do I send?" — answered same day.', who:'Slack channel' }
     ]
   }
 ];
 
-/* Featured Heroes — the three things the whole company sees first */
 const HEROES = [
-  { type:'Important programme', k:'#0FA47C', lane:'farmers', when:'Nominations close Friday',
+  { type:'Programme', k:'#0FA47C', lane:'farmers', when:'Nominations close Friday',
     title:'Farmers Excellence Programme — Cohort 2',
-    desc:'The twelve-week programme for account managers returns. Nominations need manager sign-off and close Friday.' },
-  { type:'Mandatory · time-sensitive', k:'#D2493F', lane:'mip', when:'Due in 9 days',
+    desc:'The twelve-week programme for account managers returns. Manager sign-off needed.' },
+  { type:'Mandatory', k:'#D2493F', lane:'mip', when:'Due in 9 days',
     title:'Copilot value-conversation certification',
-    desc:'Required for every partner-facing role before the next quarter push. About 45 minutes end to end.' },
-  { type:'Major launch', k:'#0E86C0', lane:'salesforce', when:'This week',
+    desc:'Every partner-facing role, before the next quarter push. About 45 minutes.' },
+  { type:'Launch', k:'#0E86C0', lane:'salesforce', when:'This week',
     title:'Q3 Salesforce release lands Thursday',
-    desc:'Pipeline views and stage names change overnight. Saved views must be rebuilt — the guide takes ten minutes.' }
+    desc:'Pipeline views and stage names change overnight. Saved views must be rebuilt.' }
 ];
 
-/* recency ordering for the recently-updated feed — lower = more recent */
 const RECENCY = { 'Yesterday':1,'2 days ago':2,'3 days ago':3,'6 days ago':6,'1 week ago':7,'2 weeks ago':14,'3 weeks ago':21,'Last month':30 };
+
+/* ============================================================
+   LANE ART — inline SVG, one composition per lane
+   ============================================================ */
+
+function laneArt(id, uid){
+  const u = uid || Math.floor(performance.now());
+  if(id==='farmers') return `
+  <svg viewBox="0 0 300 200" role="img" aria-label="">
+    <defs>
+      <linearGradient id="fh1${u}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2FCFA9"/><stop offset="1" stop-color="#0FA47C"/>
+      </linearGradient>
+      <linearGradient id="fh2${u}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8BE3C8"/><stop offset="1" stop-color="#2FB893"/>
+      </linearGradient>
+    </defs>
+    <circle cx="243" cy="46" r="26" fill="#F2CE4E" opacity=".9"/>
+    <circle cx="243" cy="46" r="38" fill="#F2CE4E" opacity=".18"/>
+    <path d="M96 128c0-38 10-72 10-72" fill="none" stroke="#1F9C77" stroke-width="6" stroke-linecap="round"/>
+    <path d="M106 74c-20-4-30-20-28-38 18 0 32 12 28 38z" fill="url(#fh1${u})"/>
+    <path d="M106 92c18-2 30-16 30-34-18-2-32 14-30 34z" fill="url(#fh2${u})"/>
+    <path d="M170 138c0-26 6-48 6-48" fill="none" stroke="#1F9C77" stroke-width="5" stroke-linecap="round"/>
+    <path d="M176 96c-14-3-22-14-21-27 13 0 24 9 21 27z" fill="url(#fh2${u})"/>
+    <ellipse cx="88" cy="166" rx="118" ry="34" fill="url(#fh1${u})" opacity=".35"/>
+    <ellipse cx="212" cy="176" rx="130" ry="36" fill="url(#fh2${u})" opacity=".5"/>
+  </svg>`;
+  if(id==='salesforce') return `
+  <svg viewBox="0 0 300 200" role="img" aria-label="">
+    <defs>
+      <linearGradient id="sg1${u}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#3FB6ED"/><stop offset="1" stop-color="#0E86C0"/>
+      </linearGradient>
+    </defs>
+    <circle cx="222" cy="62" r="46" fill="#3FB6ED" opacity=".16"/>
+    <rect x="46" y="52" width="150" height="22" rx="11" fill="url(#sg1${u})" opacity=".95"/>
+    <rect x="46" y="88" width="110" height="22" rx="11" fill="url(#sg1${u})" opacity=".65"/>
+    <rect x="46" y="124" width="72" height="22" rx="11" fill="url(#sg1${u})" opacity=".4"/>
+    <path d="M212 63l28 36-44 26" fill="none" stroke="#0E86C0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>
+    <circle cx="212" cy="63" r="10" fill="#0E86C0"/>
+    <circle cx="240" cy="99" r="10" fill="#2B57D0"/>
+    <circle cx="196" cy="135" r="10" fill="#2FCFA9"/>
+  </svg>`;
+  return `
+  <svg viewBox="0 0 300 200" role="img" aria-label="">
+    <defs>
+      <linearGradient id="mg1${u}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#5B7FE8"/><stop offset="1" stop-color="#2B57D0"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="150" cy="100" rx="104" ry="42" fill="none" stroke="#A98BF0" stroke-width="3" opacity=".55" transform="rotate(-18 150 100)"/>
+    <ellipse cx="150" cy="100" rx="76" ry="30" fill="none" stroke="#3FB6ED" stroke-width="3" opacity=".55" transform="rotate(14 150 100)"/>
+    <path d="M150 54l12 32 32 12-32 12-12 32-12-32-32-12 32-12z" fill="url(#mg1${u})"/>
+    <circle cx="58" cy="132" r="9" fill="#2FCFA9"/>
+    <circle cx="236" cy="66" r="8" fill="#A98BF0"/>
+    <circle cx="246" cy="132" r="6" fill="#F077BE"/>
+  </svg>`;
+}
 
 /* ============================================================
    HELPERS
@@ -1029,80 +1132,68 @@ function wireStubs(root){
 }
 
 /* ============================================================
-   HOMEPAGE — featured heroes, then the three lanes
+   HOMEPAGE
    ============================================================ */
 
 function renderHome(){
-  const heroes = `
-    <section class="section" id="heroes" style="margin-top:8px">
-      <div class="section-head">
-        <div>
-          <h2>Featured this week</h2>
-          <p>The three things everyone should see before opening their lane.</p>
-        </div>
-        <div class="rainbow"></div>
-      </div>
-      <div class="heroes">
-        ${HEROES.map(h=>{
-          const l = laneById(h.lane);
-          return `
-          <a class="hero-card glass" href="#/lane/${l.id}" style="--k:${h.k}">
-            <span class="hero-kind">${esc(h.type)}</span>
-            <h3 class="hero-title">${esc(h.title)}</h3>
-            <p class="hero-desc">${esc(h.desc)}</p>
-            <div class="hero-foot">
-              <span class="hero-when">${esc(h.when)}</span>
-              <span class="hero-lane">${esc(l.name)} ${icon('i-arrow')}</span>
-            </div>
-          </a>`;
-        }).join('')}
-      </div>
-    </section>`;
+  view.innerHTML = `
+    <section class="masthead" style="padding-bottom:22px">
+      <div class="eyebrow">Revenue Enablement</div>
+      <h1 class="page">What matters this week.</h1>
+    </section>
 
-  const lanes = `
+    <section class="heroes" id="heroes">
+      ${HEROES.map((h,n)=>{
+        const l = laneById(h.lane);
+        return `
+        <a class="hero-card glass" href="#/lane/${l.id}" style="--k:${h.k}">
+          <span class="hero-kind">${esc(h.type)}</span>
+          <h3 class="hero-title">${esc(h.title)}</h3>
+          <p class="hero-desc">${esc(h.desc)}</p>
+          <div class="hero-art">${laneArt(l.id,'h'+n)}</div>
+          <div class="hero-foot">
+            <span class="hero-when">${esc(h.when)}</span>
+            <span class="hero-lane">${esc(l.name)} ${icon('i-arrow')}</span>
+          </div>
+        </a>`;
+      }).join('')}
+    </section>
+
     <section class="section" id="lanes">
       <div class="section-head">
-        <div>
-          <h2>Your three lanes</h2>
-          <p>Everything in Revenue Enablement lives in one of these. Pick the lane you work in — each one has its own page.</p>
-        </div>
+        <div><h2>The lanes</h2></div>
         <div class="rainbow"></div>
       </div>
       <div class="lanepick">
-        ${LANES.map(l=>`
-          <div class="lp-card glass">
+        ${LANES.map((l,n)=>`
+          <a class="lp-card glass" href="#/lane/${l.id}">
+            <div class="art-well">${laneArt(l.id,'c'+n)}</div>
             <div class="lane-head" style="margin-bottom:0">
               <div class="owner-chip" style="--k2:${l.accent}">${l.initials}</div>
               <div>
                 <b>${esc(l.name)}</b>
-                <span>Owner · ${esc(l.owner)}</span>
+                <span>${esc(l.owner)}</span>
               </div>
             </div>
             <p class="lane-intro" style="margin:0">${esc(l.blurb)}</p>
             <div class="lp-list">
               ${l.aware.slice(0,2).map(a=>`<span class="lp-item" style="color:${a.k}">${icon('i-bell')} <span style="color:var(--ink-2)">${esc(a.title)}</span></span>`).join('')}
             </div>
-            <a class="lp-cta" href="#/lane/${l.id}">Open the lane ${icon('i-arrow')}</a>
-          </div>`).join('')}
+            <span class="lp-go">${icon('i-arrow')}</span>
+          </a>`).join('')}
       </div>
-    </section>`;
+    </section>
 
-  const recent = LANES
-    .flatMap(l => l.updates.map(u => ({...u, lane:l})))
-    .sort((a,b)=>(RECENCY[a.when]??99)-(RECENCY[b.when]??99))
-    .slice(0,7);
-
-  const recentSection = `
     <section class="section">
       <div class="section-head">
-        <div>
-          <h2>Recently updated</h2>
-          <p>Everything that moved across the three lanes, newest first.</p>
-        </div>
+        <div><h2>Recently updated</h2></div>
         <div class="rainbow"></div>
       </div>
       <div class="recent glass">
-        ${recent.map(u=>`
+        ${LANES.flatMap(l => l.updates.map(u => ({...u, lane:l})))
+          .sort((a,b)=>(RECENCY[a.when]??99)-(RECENCY[b.when]??99))
+          .slice(0,7)
+          .map(u=>`
           <a class="recent-row" href="#/lane/${u.lane.id}/updates">
             <span class="recent-when">${esc(u.when)}</span>
             <span class="recent-main">
@@ -1112,65 +1203,33 @@ function renderHome(){
             <span class="recent-side">${icon('i-chev','row-ic')}</span>
           </a>`).join('')}
       </div>
-    </section>`;
-
-  view.innerHTML = `
-    <section class="masthead">
-      <div class="eyebrow">Revenue Enablement</div>
-      <h1 class="page">What matters now —<br>and your three lanes.</h1>
-      <p class="page-sub">
-        The heroes below are what the whole company needs to see this week. Underneath them,
-        Revenue Enablement is organised into three lanes, each with its own page — pick the one
-        you work in and go deep.
-      </p>
-      <div class="principle">
-        <span><i style="background:var(--sage)"></i>See what matters</span>
-        <span><i style="background:var(--ochre)"></i>Pick your lane</span>
-        <span><i style="background:var(--blush)"></i>Go deep</span>
-      </div>
     </section>
-    ${heroes}
-    ${lanes}
-    ${recentSection}
   `;
   wireStubs(view);
   window.scrollTo(0,0);
 }
 
 /* ============================================================
-   LANE SUBPAGE — Priorities · Learn · Use · Updates · Help
+   LANE PAGE — a main page of its own
    ============================================================ */
 
-const TABS = [
-  ['priorities','Priorities'],
-  ['learn','Learn'],
-  ['use','Use'],
-  ['updates','Updates'],
-  ['help','Help']
-];
-
-function panelPriorities(l){
-  return `
-    <div class="aware">
-      ${l.aware.map(a=>`
-        <div class="aware-item" style="--k:${a.k};cursor:default">
-          <div class="aware-top">
-            <span class="aware-kind">${esc(a.kind)}</span>
-            <span class="aware-when">${esc(a.when)}</span>
-          </div>
-          <div class="aware-title">${esc(a.title)}</div>
-          <p class="aware-desc">${esc(a.desc)}</p>
-          <div class="aware-foot">${a.tags.map((t,i)=>`${i?'<span class="dot"></span>':''}<span>${esc(t)}</span>`).join('')}</div>
-        </div>`).join('')}
-    </div>`;
+function awareCard(a, link){
+  const inner = `
+    <div class="aware-top">
+      <span class="aware-kind">${esc(a.kind)}</span>
+      <span class="aware-when">${esc(a.when)}</span>
+    </div>
+    <div class="aware-title">${esc(a.title)}</div>
+    <p class="aware-desc">${esc(a.desc)}</p>
+    <div class="aware-foot">${a.tags.map((t,i)=>`${i?'<span class="dot"></span>':''}<span>${esc(t)}</span>`).join('')}</div>`;
+  return `<div class="aware-item" style="--k:${a.k};cursor:default">${inner}</div>`;
 }
 
-function learnBlock(title, note, items){
+function learnBlock(title, items){
   if(!items || !items.length) return '';
   return `
     <div class="card glass">
-      <h3 class="card-title">${esc(title)}</h3>
-      <p class="card-note">${esc(note)}</p>
+      <h3 class="card-title" style="margin-bottom:14px">${esc(title)}</h3>
       <ul class="rows">
         ${items.map(i=>`
           <li><button class="row" data-stub="Opens “${esc(i.t)}” in Highspot (prototype)">
@@ -1182,95 +1241,11 @@ function learnBlock(title, note, items){
     </div>`;
 }
 
-function panelLearn(l){
-  return `
-    <div class="stack">
-      ${learnBlock('Required training','Complete these to stay current in this lane.',l.learn.required)}
-      ${learnBlock('Recommended learning','Optional, but this is what separates a good conversation from a great one.',l.learn.recommended)}
-      ${learnBlock('Recorded sessions','Sessions already delivered — watch back at your own pace.',l.learn.recordings)}
-    </div>`;
-}
-
-function panelUse(l){
-  return `
-    <div class="stack">
-      <div class="card glass">
-        <h3 class="card-title" style="color:var(--teal)">Share with partners</h3>
-        <p class="card-note">Customer-ready assets, presentations, one-pagers, approved messaging, videos and assessments.</p>
-        <ul class="rows">
-          ${l.use.partner.map(u=>`
-            <li><button class="row" data-stub="Opens “${esc(u.t)}” in Highspot (prototype)">
-              ${icon(u.ic,'row-ic')}
-              <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
-              ${badge(u.s)}
-            </button></li>`).join('')}
-        </ul>
-      </div>
-      <div class="card glass noshare">
-        <h3 class="card-title" style="color:var(--amber)">Do not share</h3>
-        <p class="card-note">Internal strategy, roadmap, pricing guidance, internal recordings and restricted information.</p>
-        <ul class="rows">
-          ${l.use.internal.map(u=>`
-            <li><button class="row" data-stub="Internal only — “${esc(u.t)}” is not for partner distribution (prototype)">
-              ${icon(u.ic,'row-ic')}
-              <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
-              ${badge(u.s)}
-            </button></li>`).join('')}
-        </ul>
-        <p class="guard" style="margin-top:14px">Everything above stays internal. If a partner needs the substance of it, take it from the partner-ready set instead — or ask the lane owner for an approved version.</p>
-      </div>
-    </div>`;
-}
-
-function panelUpdates(l){
-  return `
-    <div class="card glass">
-      <h3 class="card-title">Updates</h3>
-      <p class="card-note">What changed in this lane, most recent first.</p>
-      <ul class="timeline">
-        ${l.updates.map((u,i)=>`
-          <li style="--k:${i===0?l.accent:'#B9BEC9'}">
-            <div class="tl-when">${esc(u.when)}</div>
-            <div class="tl-title">${esc(u.title)}</div>
-            <p class="tl-desc">${esc(u.desc)}</p>
-          </li>`).join('')}
-      </ul>
-    </div>`;
-}
-
-function panelHelp(l){
-  return `
-    <div class="card glass">
-      <h3 class="card-title">Help</h3>
-      <p class="card-note">Who to ask, and the fastest route to an answer.</p>
-      <div class="help-grid">
-        ${l.help.map(h=>`
-          <div class="help-card">
-            <b>${esc(h.b)}</b>
-            <p>${esc(h.p)}</p>
-            <div class="who">${icon('i-chat','row-ic')} ${esc(h.who)}</div>
-          </div>`).join('')}
-        <div class="help-card">
-          <b>Something wrong on this page?</b>
-          <p>Out-of-date asset, broken link, or messaging that contradicts a session — flag it and the owner sees it the same day.</p>
-          <div class="who">${icon('i-people','row-ic')} Owned by ${esc(l.owner)}</div>
-        </div>
-      </div>
-    </div>`;
-}
-
-function panelFor(l, tab){
-  if(tab==='learn')   return panelLearn(l);
-  if(tab==='use')     return panelUse(l);
-  if(tab==='updates') return panelUpdates(l);
-  if(tab==='help')    return panelHelp(l);
-  return panelPriorities(l);
-}
-
-function renderLane(id, tab){
+function renderLane(id, section){
   const l = laneById(id);
   if(!l){ location.hash = '#/'; return; }
-  if(!TABS.some(t=>t[0]===tab)) tab = 'priorities';
+  const heroA = l.aware[0];
+  const rest = l.aware.slice(1);
 
   view.innerHTML = `
     <nav class="crumbs" aria-label="Breadcrumb">
@@ -1279,64 +1254,131 @@ function renderLane(id, tab){
       <span style="color:var(--ink)">${esc(l.name)}</span>
     </nav>
 
-    <header class="phead">
-      <div class="phead-ic" style="--k2:${l.accent}">${icon(l.icon)}</div>
-      <div class="phead-main">
+    <section class="lane-hero glass" style="--k:${heroA.k}">
+      <div class="lh-main">
+        <div class="lane-head" style="margin-bottom:6px">
+          <div class="owner-chip" style="--k2:${l.accent}">${l.initials}</div>
+          <div><b style="font-size:13px">${esc(l.owner)}</b><span>${esc(l.blurb)}</span></div>
+        </div>
         <h1>${esc(l.name)}</h1>
-        <p class="phead-purpose">${esc(l.purpose)}</p>
-        <div class="phead-facts">
-          ${fact('Owner · '+l.owner)}
-          ${fact('Updated '+l.latest.when)}
-          ${l.resources.map(fact).join('')}
+        <div class="lh-priority">
+          <span class="hero-kind" style="margin-top:0">${esc(heroA.kind)} · ${esc(heroA.when)}</span>
+          <div class="aware-title" style="font-size:19px;margin-top:10px">${esc(heroA.title)}</div>
+          <p class="aware-desc" style="max-width:60ch">${esc(heroA.desc)}</p>
+        </div>
+        <div class="phead-facts">${l.resources.map(fact).join('')}</div>
+      </div>
+      <div class="art-well lh-art">${laneArt(l.id,'p')}</div>
+    </section>
+
+    ${rest.length ? `
+    <section class="section" id="sec-priorities" style="margin-top:34px">
+      <div class="aware-grid">${rest.map(a=>awareCard(a)).join('')}</div>
+    </section>` : ''}
+
+    <section class="section" id="sec-learn">
+      <div class="section-head">
+        <div><h2>Learn</h2></div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="cols3">
+        ${learnBlock('Required', l.learn.required)}
+        ${learnBlock('Recommended', l.learn.recommended)}
+        ${learnBlock('Recorded sessions', l.learn.recordings)}
+      </div>
+    </section>
+
+    <section class="section" id="sec-use">
+      <div class="section-head">
+        <div><h2>Use</h2></div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="cols2">
+        <div class="card glass">
+          <h3 class="card-title" style="color:var(--teal);margin-bottom:14px">Share with partners</h3>
+          <ul class="rows">
+            ${l.use.partner.map(u=>`
+              <li><button class="row" data-stub="Opens “${esc(u.t)}” in Highspot (prototype)">
+                ${icon(u.ic,'row-ic')}
+                <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
+                ${badge(u.s)}
+              </button></li>`).join('')}
+          </ul>
+        </div>
+        <div class="card glass noshare">
+          <h3 class="card-title" style="color:var(--amber);margin-bottom:14px">Do not share</h3>
+          <ul class="rows">
+            ${l.use.internal.map(u=>`
+              <li><button class="row" data-stub="Internal only — “${esc(u.t)}” is not for partner distribution (prototype)">
+                ${icon(u.ic,'row-ic')}
+                <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
+                ${badge(u.s)}
+              </button></li>`).join('')}
+          </ul>
+          <p class="guard" style="margin-top:14px">Internal only. It never leaves the building.</p>
         </div>
       </div>
-    </header>
+    </section>
 
-    <div class="pcard-latest" style="margin-bottom:24px;max-width:860px">
-      <b>Latest update · ${esc(l.latest.when)}</b>
-      ${esc(l.latest.text)}
-    </div>
-
-    <div class="tabs" role="tablist" aria-label="Lane sections">
-      ${TABS.map(([k,label])=>`
-        <a class="tab" role="tab" aria-selected="${k===tab}" href="#/lane/${l.id}/${k}">${label}</a>`).join('')}
-    </div>
-
-    <div class="panel" role="tabpanel">${panelFor(l,tab)}</div>
+    <section class="section" id="sec-updates">
+      <div class="section-head">
+        <div><h2>Updates &amp; help</h2></div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="cols2">
+        <div class="card glass">
+          <ul class="timeline">
+            ${l.updates.map((u,i)=>`
+              <li style="--k:${i===0?l.accent:'#B9BEC9'}">
+                <div class="tl-when">${esc(u.when)}</div>
+                <div class="tl-title">${esc(u.title)}</div>
+                <p class="tl-desc">${esc(u.desc)}</p>
+              </li>`).join('')}
+          </ul>
+        </div>
+        <div class="card glass" id="sec-help">
+          <div class="help-grid" style="grid-template-columns:1fr">
+            ${l.help.map(h=>`
+              <div class="help-card">
+                <b>${esc(h.b)}</b>
+                <p>${esc(h.p)}</p>
+                <div class="who">${icon('i-chat','row-ic')} ${esc(h.who)}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </section>
   `;
   wireStubs(view);
   window.scrollTo(0,0);
+  if(section){
+    const target = $('#sec-'+section);
+    if(target) setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }
 }
 
 /* ============================================================
-   SEARCH — flat index across the three lanes
+   SEARCH
    ============================================================ */
 
 function buildIndex(){
   const idx = [];
   LANES.forEach(l=>{
-    idx.push({ group:'Lanes', t:l.name, s:l.blurb, ic:l.icon, lane:l.id, tab:'priorities' });
-
+    idx.push({ group:'Lanes', t:l.name, s:l.blurb, ic:l.icon, lane:l.id, sec:'' });
     l.aware.forEach(a=>{
-      idx.push({ group:'Featured & priorities', t:a.title, s:`${a.kind} · ${l.name}`, ic:'i-bell', lane:l.id, tab:'priorities' });
+      idx.push({ group:'Featured & priorities', t:a.title, s:`${a.kind} · ${l.name}`, ic:'i-bell', lane:l.id, sec:'priorities' });
     });
-
-    [...l.learn.required.map(x=>[x,'Required']),
-     ...l.learn.recommended.map(x=>[x,'Recommended']),
-     ...l.learn.recordings.map(x=>[x,'Recorded session'])
-    ].forEach(([x,kind])=>{
-      idx.push({ group:'Learn', t:x.t, s:`${kind} · ${l.name}`, ic:x.ic, lane:l.id, tab:'learn' });
+    [...l.learn.required,...l.learn.recommended,...l.learn.recordings].forEach(x=>{
+      idx.push({ group:'Learn', t:x.t, s:l.name, ic:x.ic, lane:l.id, sec:'learn' });
     });
-
     l.use.partner.forEach(u=>{
-      idx.push({ group:'Share with partners', t:u.t, s:`${l.name} · Partner ready`, ic:u.ic, lane:l.id, tab:'use' });
+      idx.push({ group:'Share with partners', t:u.t, s:`${l.name} · Partner ready`, ic:u.ic, lane:l.id, sec:'use' });
     });
     l.use.internal.forEach(u=>{
-      idx.push({ group:'Do not share', t:u.t, s:`${l.name} · Internal`, ic:'i-lock', lane:l.id, tab:'use' });
+      idx.push({ group:'Do not share', t:u.t, s:`${l.name} · Internal`, ic:'i-lock', lane:l.id, sec:'use' });
     });
-
     l.updates.forEach(u=>{
-      idx.push({ group:'Updates', t:u.title, s:`${l.name} · ${u.when}`, ic:'i-bell', lane:l.id, tab:'updates' });
+      idx.push({ group:'Updates', t:u.title, s:`${l.name} · ${u.when}`, ic:'i-bell', lane:l.id, sec:'updates' });
     });
   });
   return idx;
@@ -1354,7 +1396,8 @@ function openSearch(){
 }
 function closeSearch(){ overlay.classList.remove('on'); }
 function goTo(el){
-  location.hash = `#/lane/${el.dataset.lane}/${el.dataset.tab}`;
+  const sec = el.dataset.sec;
+  location.hash = `#/lane/${el.dataset.lane}${sec?'/'+sec:''}`;
   closeSearch();
 }
 function hl(text,q){
@@ -1371,14 +1414,14 @@ function runSearch(q){
 
   selIdx = 0;
   if(!hits.length){
-    resultsEl.innerHTML = `<div class="fempty">Nothing matches “${esc(q)}”.<br>Try a lane name, an asset type, or “restricted”.</div>`;
+    resultsEl.innerHTML = `<div class="fempty">Nothing matches “${esc(q)}”.</div>`;
     return;
   }
   let html='', lastGroup='', n=0;
   hits.forEach(h=>{
     if(h.group!==lastGroup){ html += `<div class="fgroup-label">${esc(h.group)}</div>`; lastGroup=h.group; }
     html += `
-      <button class="fresult${n===0?' sel':''}" data-i="${n}" data-lane="${h.lane}" data-tab="${h.tab}">
+      <button class="fresult${n===0?' sel':''}" data-i="${n}" data-lane="${h.lane}" data-sec="${h.sec}">
         ${icon(h.ic,'fic')}
         <span class="fresult-main"><b>${hl(h.t,q.trim())}</b><span>${esc(h.s)}</span></span>
         ${icon('i-chev','fic')}
@@ -1419,7 +1462,7 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ============================================================
-   ROUTER — homepage or lane subpage
+   ROUTER
    ============================================================ */
 
 function route(){
@@ -1431,6 +1474,7 @@ function route(){
 window.addEventListener('hashchange',route);
 route();
 </script>
+
 
 
 </body>

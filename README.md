@@ -18,12 +18,15 @@ Revenue Enablement Homepage
 
 - **Featured Heroes** — exactly three hero cards at the top of the homepage, one per type:
   an important programme, a mandatory or time-sensitive activity, and a major announcement or
-  launch. Each links to its lane.
-- **Your three lanes** — the three lane cards (owner, scope blurb, live priorities preview) each
-  opening a **dedicated lane subpage**.
-- **Lane subpage standard** — every lane page is identical in shape: header with owner and
-  resources, latest update, and tabs for **Priorities · Learn · Use · Updates · Help**. Use keeps
-  the **Share with Partners** / **Do Not Share** split.
+  launch. Each carries its lane's illustration and links to its lane.
+- **The lanes** — three cards led by a bespoke inline-SVG illustration per lane (sprouting field
+  for Farmers, pipeline-and-nodes for Salesforce & Technology, orbit-and-spark for MIP & AI), with
+  owner, live priorities and a round go-arrow. No instructional copy anywhere — the design carries
+  the wayfinding.
+- **Every lane page is a main page** — a large hero with the lane's illustration and its number-one
+  priority embedded, then all sections visible in one scroll (Priorities · Learn · Use ·
+  Updates & Help) with nothing hidden behind tabs. Use keeps the **Share with Partners** /
+  **Do Not Share** split.
 - **Recently Updated** — every change across the three lanes, newest first; rows open the lane's
   Updates tab.
 - **Global search** — press `/` or `⌘K`; results are grouped and open the right lane subpage with
