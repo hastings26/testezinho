@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Revenue Enablement Portal — Highspot Design Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   Revenue Enablement Portal — design prototype
+   Learn on the left. Pay attention in the centre. Act on the right.
+   Pax8 palette + restrained liquid-glass surfaces.
+   ============================================================ */
+
+:root{
+  --deep:#0B1140;
+  --black:#000000;
+  --blue:#1D4ED8;
+  --cyan:#0EA5E9;
+  --teal:#00D09C;
+  --amber:#EAB308;
+  --red:#EF4444;
+  --grey:#6B7280;
+
+  --ink:#FFFFFF;
+  --ink-2:rgba(255,255,255,.72);
+  --ink-3:rgba(255,255,255,.48);
+  --ink-4:rgba(255,255,255,.30);
+
+  --line:rgba(255,255,255,.10);
+  --line-2:rgba(255,255,255,.16);
+
+  --glass:rgba(255,255,255,.055);
+  --glass-2:rgba(255,255,255,.085);
+  --blur:22px;
+
+  --r-lg:24px;
+  --r-md:18px;
+  --r-sm:12px;
+  --r-pill:999px;
+
+  --shadow:0 24px 60px -28px rgba(0,0,0,.85);
+  --shadow-lift:0 34px 80px -30px rgba(0,0,0,.95);
+
+  --gutter:clamp(16px,3vw,40px);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+/* Aurora field — fixed to the viewport, never scrolls, keeps the glass lit */
+html{
+  background-color:#04061a;
+  background-image:
+    radial-gradient(1100px 700px at 12% -8%, rgba(29,78,216,.55), transparent 62%),
+    radial-gradient(900px 620px at 88% 0%, rgba(0,208,156,.24), transparent 60%),
+    radial-gradient(1000px 800px at 60% 108%, rgba(139,92,246,.22), transparent 62%),
+    linear-gradient(180deg,#0B1140 0%,#070B26 58%,#04061a 100%);
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:cover;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Plus Jakarta Sans','Nunito Sans',system-ui,-apple-system,sans-serif;
+  color:var(--ink);
+  background:transparent;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.35;
+  background-image:radial-gradient(rgba(255,255,255,.16) .5px,transparent .5px);
+  background-size:3px 3px;
+  mix-blend-mode:overlay;
+}
+
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
+
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- glass primitives ---------- */
+.glass{
+  background:linear-gradient(160deg,var(--glass-2),var(--glass) 46%,rgba(255,255,255,.035));
+  backdrop-filter:blur(var(--blur)) saturate(150%);
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(150%);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.14);
+}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  backdrop-filter:blur(18px) saturate(150%);
+  -webkit-backdrop-filter:blur(18px) saturate(150%);
+  background:linear-gradient(180deg,rgba(7,11,38,.86),rgba(7,11,38,.55));
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{
+  max-width:1560px;margin:0 auto;
+  padding:14px var(--gutter);
+  display:flex;align-items:center;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.cloud{width:34px;height:24px;flex:none}
+.brand-text{line-height:1.15}
+.brand-text b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px}
+.brand-text span{display:block;font-size:11px;color:var(--ink-3);font-weight:500;letter-spacing:.24px}
+
+.searchbtn{
+  flex:1;min-width:0;max-width:620px;
+  display:flex;align-items:center;gap:10px;
+  padding:11px 16px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--line-2);
+  background:rgba(255,255,255,.05);
+  color:var(--ink-3);
+  font-size:14px;font-weight:500;
+  transition:border-color .2s var(--ease),background .2s var(--ease),color .2s var(--ease);
+}
+.searchbtn:hover{border-color:rgba(255,255,255,.30);background:rgba(255,255,255,.08);color:var(--ink-2)}
+.searchbtn kbd{
+  margin-left:auto;flex:none;
+  font-family:inherit;font-size:11px;font-weight:600;
+  padding:3px 7px;border-radius:6px;
+  border:1px solid var(--line-2);color:var(--ink-4);
+}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.demo-pill{
+  font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  padding:5px 11px;border-radius:var(--r-pill);
+  color:var(--amber);border:1px solid rgba(234,179,8,.34);background:rgba(234,179,8,.10);
+}
+.avatar{
+  width:36px;height:36px;border-radius:50%;flex:none;
+  display:grid;place-items:center;
+  font-size:12px;font-weight:800;letter-spacing:.3px;
+  background:linear-gradient(140deg,var(--blue),var(--teal));
+  box-shadow:0 0 0 1px rgba(255,255,255,.18);
+}
+
+/* ---------- shell ---------- */
+.shell{max-width:1560px;margin:0 auto;padding:0 var(--gutter) 96px}
+
+.masthead{padding:44px 0 26px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:14px;
+}
+.eyebrow::before{content:"";width:26px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--teal))}
+h1.page{
+  margin:0;
+  font-size:clamp(32px,4.4vw,54px);
+  font-weight:800;letter-spacing:-1.4px;line-height:1.04;
+}
+.page-sub{margin:14px 0 0;max-width:70ch;font-size:15.5px;line-height:1.62;color:var(--ink-2)}
+
+.principle{
+  margin-top:24px;display:flex;flex-wrap:wrap;gap:8px;
+}
+.principle span{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12.5px;font-weight:600;color:var(--ink-2);
+  padding:7px 14px;border-radius:var(--r-pill);
+  border:1px solid var(--line);background:rgba(255,255,255,.045);
+}
+.principle span i{width:6px;height:6px;border-radius:50%;flex:none}
+
+/* ---------- the three columns ---------- */
+.triptych{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.62fr) minmax(0,1fr);
+  gap:20px;
+  align-items:start;
+}
+.col{padding:24px;display:flex;flex-direction:column;gap:18px}
+.col-hero{
+  padding:28px;
+  border-color:rgba(255,255,255,.16);
+  background:
+    linear-gradient(160deg,rgba(29,78,216,.24),rgba(255,255,255,.05) 52%,rgba(255,255,255,.03)),
+    rgba(255,255,255,.02);
+}
+
+.col-head{display:flex;align-items:flex-start;gap:13px}
+.col-mark{
+  width:40px;height:40px;flex:none;border-radius:13px;
+  display:grid;place-items:center;
+  border:1px solid var(--line-2);
+  background:rgba(255,255,255,.07);
+}
+.col-mark svg{width:19px;height:19px}
+.col-title{margin:0;font-size:18px;font-weight:800;letter-spacing:-.4px;line-height:1.2}
+.col-hero .col-title{font-size:23px;letter-spacing:-.7px}
+.col-note{margin:4px 0 0;font-size:12.5px;line-height:1.5;color:var(--ink-3)}
+
+.subhead{
+  display:flex;align-items:center;gap:9px;
+  font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--ink-3);
+  margin:2px 0 -4px;
+}
+.subhead::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* list rows — the workhorse of every column */
+.rows{display:flex;flex-direction:column;gap:8px;list-style:none;margin:0;padding:0}
+.row{
+  display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
+  padding:12px 14px;border-radius:var(--r-sm);
+  border:1px solid transparent;
+  background:rgba(255,255,255,.035);
+  transition:background .18s var(--ease),border-color .18s var(--ease),transform .18s var(--ease);
+}
+.row:hover{background:rgba(255,255,255,.085);border-color:var(--line-2);transform:translateX(2px)}
+.row-ic{width:17px;height:17px;flex:none;margin-top:1px;color:var(--ink-3)}
+.row-body{min-width:0;flex:1}
+.row-title{display:block;font-size:13.5px;font-weight:600;line-height:1.4;letter-spacing:-.1px}
+.row-meta{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-3);line-height:1.45}
+.row-meta b{color:var(--ink-2);font-weight:600}
+
+/* hero "aware" items — the reason people come back */
+.aware{display:flex;flex-direction:column;gap:12px}
+.aware-item{
+  display:block;width:100%;text-align:left;
+  padding:17px 19px;border-radius:var(--r-md);
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.045);
+  position:relative;overflow:hidden;
+  transition:background .2s var(--ease),border-color .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease);
+}
+.aware-item::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--k,var(--blue));
+  opacity:.9;
+}
+.aware-item:hover{
+  background:rgba(255,255,255,.085);
+  border-color:var(--line-2);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-lift);
+}
+.aware-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px}
+.aware-kind{
+  font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--k,var(--blue));
+}
+.aware-when{font-size:11px;color:var(--ink-4);font-weight:500;margin-left:auto}
+.aware-title{font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.35}
+.aware-desc{margin-top:6px;font-size:13px;line-height:1.6;color:var(--ink-2)}
+.aware-foot{
+  margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--ink-3);
+}
+.aware-foot .dot{width:3px;height:3px;border-radius:50%;background:var(--ink-4);flex:none}
+
+/* right column split: share vs do not share */
+.split{display:flex;flex-direction:column;gap:10px}
+.split-head{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+}
+.split-head svg{width:14px;height:14px}
+.share .split-head{color:var(--teal)}
+.noshare .split-head{color:var(--amber)}
+.noshare .row{background:rgba(234,179,8,.055);border-color:rgba(234,179,8,.14)}
+.noshare .row:hover{background:rgba(234,179,8,.11);border-color:rgba(234,179,8,.30)}
+.noshare .row-ic{color:rgba(234,179,8,.75)}
+.guard{
+  font-size:11px;line-height:1.5;color:var(--ink-3);
+  padding:9px 12px;border-radius:10px;
+  border:1px dashed rgba(234,179,8,.28);
+  background:rgba(234,179,8,.045);
+}
+
+/* ---------- badges ---------- */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+  padding:4px 9px;border-radius:var(--r-pill);
+  white-space:nowrap;
+}
+.badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.badge-partner{color:var(--teal);background:rgba(0,208,156,.12);border:1px solid rgba(0,208,156,.30)}
+.badge-internal{color:#7FB0FF;background:rgba(29,78,216,.16);border:1px solid rgba(29,78,216,.42)}
+.badge-restricted{color:#FF8A8A;background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.34)}
+.badge-draft{color:#C3C8D4;background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.42)}
+
+/* ---------- section headings ---------- */
+.section{margin-top:58px}
+.section-head{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.section-head h2{margin:0;font-size:clamp(21px,2.3vw,28px);font-weight:800;letter-spacing:-.7px}
+.section-head p{margin:5px 0 0;font-size:13.5px;color:var(--ink-3);line-height:1.55}
+.rainbow{
+  height:3px;border-radius:3px;flex:1;min-width:120px;margin-bottom:9px;
+  background:linear-gradient(90deg,#1D4ED8,#00D09C,#22C55E,#8B5CF6,#EC4899,#F472B6,#EAB308,#EF4444);
+  opacity:.85;
+}
+
+/* ---------- product lanes ---------- */
+.lane{margin-bottom:30px}
+.lane-head{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+.owner-chip{
+  width:38px;height:38px;border-radius:12px;flex:none;
+  display:grid;place-items:center;
+  font-size:12px;font-weight:800;letter-spacing:.3px;
+  border:1px solid rgba(255,255,255,.18);
+}
+.lane-head b{display:block;font-size:14.5px;font-weight:700;letter-spacing:-.2px}
+.lane-head span{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.lane-count{margin-left:auto;font-size:11.5px;color:var(--ink-4);font-weight:600}
+
+.lane-rail{
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(310px,1fr);
+  gap:16px;
+  overflow-x:auto;
+  padding:4px 4px 14px;
+  scroll-snap-type:x proximity;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.22) transparent;
+}
+.lane-rail::-webkit-scrollbar{height:8px}
+.lane-rail::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:8px}
+.lane-rail::-webkit-scrollbar-track{background:transparent}
+
+.pcard{
+  scroll-snap-align:start;
+  display:flex;flex-direction:column;gap:14px;
+  padding:20px;text-align:left;
+  border-radius:var(--r-md);
+  border:1px solid var(--line);
+  background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  box-shadow:var(--shadow);
+  transition:transform .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease),background .22s var(--ease);
+  position:relative;overflow:hidden;
+}
+.pcard::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(420px 160px at 50% -30%,var(--k,rgba(29,78,216,.5)),transparent 70%);
+  opacity:0;transition:opacity .22s var(--ease);
+}
+.pcard:hover{transform:translateY(-4px);border-color:var(--line-2);box-shadow:var(--shadow-lift)}
+.pcard:hover::after{opacity:.5}
+.pcard-top{display:flex;align-items:flex-start;gap:12px}
+.pcard-ic{
+  width:42px;height:42px;flex:none;border-radius:13px;
+  display:grid;place-items:center;
+  border:1px solid var(--line-2);
+  background:rgba(255,255,255,.07);
+}
+.pcard-ic svg{width:20px;height:20px}
+.pcard h3{margin:0;font-size:16px;font-weight:800;letter-spacing:-.35px;line-height:1.25}
+.pcard-purpose{margin:5px 0 0;font-size:12.5px;line-height:1.55;color:var(--ink-2)}
+.pcard-owner{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-3)}
+.pcard-owner i{width:5px;height:5px;border-radius:50%;flex:none}
+.pcard-latest{
+  padding:11px 13px;border-radius:11px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  font-size:12px;line-height:1.5;color:var(--ink-2);
+}
+.pcard-latest b{
+  display:block;font-size:9.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-4);margin-bottom:4px;
+}
+.pcard-res{display:flex;flex-wrap:wrap;gap:6px}
+.res-tag{
+  font-size:10.5px;font-weight:600;color:var(--ink-2);
+  padding:4px 9px;border-radius:var(--r-pill);
+  border:1px solid var(--line);background:rgba(255,255,255,.04);
+}
+.pcard-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:4px}
+.open-cta{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:700;letter-spacing:-.1px;color:var(--ink);
+}
+.open-cta svg{width:14px;height:14px;transition:transform .2s var(--ease)}
+.pcard:hover .open-cta svg{transform:translateX(4px)}
+
+/* ---------- recently updated ---------- */
+.recent{padding:8px;display:flex;flex-direction:column}
+.recent-row{
+  display:flex;align-items:center;gap:16px;width:100%;text-align:left;
+  padding:15px 18px;border-radius:14px;
+  transition:background .18s var(--ease);
+}
+.recent-row+.recent-row{border-top:1px solid var(--line)}
+.recent-row:hover{background:rgba(255,255,255,.06)}
+.recent-when{
+  font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--ink-4);width:92px;flex:none;
+}
+.recent-main{flex:1;min-width:0}
+.recent-main b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.15px}
+.recent-main span{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-3)}
+.recent-side{display:flex;align-items:center;gap:10px;flex:none}
+
+/* ---------- product page ---------- */
+.crumbs{display:flex;align-items:center;gap:9px;padding:26px 0 0;font-size:12.5px;color:var(--ink-3)}
+.crumbs a:hover{color:var(--ink)}
+.crumbs svg{width:12px;height:12px;opacity:.55}
+
+.phead{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;padding:22px 0 26px}
+.phead-ic{
+  width:64px;height:64px;flex:none;border-radius:19px;
+  display:grid;place-items:center;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.07);
+}
+.phead-ic svg{width:28px;height:28px}
+.phead-main{flex:1;min-width:280px}
+.phead h1{margin:0;font-size:clamp(27px,3.4vw,40px);font-weight:800;letter-spacing:-1.1px;line-height:1.08}
+.phead-purpose{margin:10px 0 0;max-width:68ch;font-size:14.5px;line-height:1.62;color:var(--ink-2)}
+.phead-facts{margin-top:16px;display:flex;flex-wrap:wrap;gap:9px}
+.fact{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11.5px;font-weight:600;color:var(--ink-2);
+  padding:7px 13px;border-radius:var(--r-pill);
+  border:1px solid var(--line);background:rgba(255,255,255,.045);
+}
+.fact svg{width:13px;height:13px;color:var(--ink-3)}
+
+.tabs{
+  display:flex;gap:4px;flex-wrap:wrap;
+  padding:5px;border-radius:var(--r-pill);
+  border:1px solid var(--line);background:rgba(255,255,255,.04);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  width:fit-content;max-width:100%;
+  margin-bottom:26px;
+}
+.tab{
+  padding:9px 19px;border-radius:var(--r-pill);
+  font-size:13px;font-weight:600;color:var(--ink-3);
+  transition:color .18s var(--ease),background .18s var(--ease);
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{
+  color:var(--ink);
+  background:linear-gradient(140deg,rgba(29,78,216,.62),rgba(0,208,156,.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+.panel{animation:rise .34s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.stack{display:flex;flex-direction:column;gap:20px}
+.card{padding:24px}
+.card-title{margin:0 0 4px;font-size:17px;font-weight:800;letter-spacing:-.4px}
+.card-note{margin:0 0 16px;font-size:12.5px;line-height:1.55;color:var(--ink-3)}
+
+.timeline{list-style:none;margin:0;padding:0 0 0 22px;position:relative}
+.timeline::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--line-2)}
+.timeline li{position:relative;padding:0 0 20px}
+.timeline li:last-child{padding-bottom:0}
+.timeline li::before{
+  content:"";position:absolute;left:-21px;top:5px;
+  width:11px;height:11px;border-radius:50%;
+  background:var(--deep);border:2px solid var(--k,var(--blue));
+}
+.tl-when{font-size:10.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--ink-4)}
+.tl-title{margin-top:4px;font-size:14px;font-weight:700;letter-spacing:-.2px}
+.tl-desc{margin-top:5px;font-size:12.5px;line-height:1.6;color:var(--ink-2);max-width:72ch}
+
+.help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.help-card{padding:18px;border-radius:var(--r-md);border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.help-card b{display:block;font-size:13.5px;font-weight:700;margin-bottom:6px}
+.help-card p{margin:0;font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.help-card .who{margin-top:11px;display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--ink-3)}
+
+/* ---------- search overlay ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:100;
+  display:none;
+  padding:clamp(40px,10vh,120px) 20px 40px;
+  background:rgba(4,6,26,.72);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.overlay.on{display:block;animation:fade .2s var(--ease) both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.finder{
+  max-width:720px;margin:0 auto;
+  border-radius:var(--r-lg);
+  border:1px solid var(--line-2);
+  background:linear-gradient(160deg,rgba(20,26,66,.96),rgba(10,14,44,.96));
+  backdrop-filter:blur(30px) saturate(160%);
+  -webkit-backdrop-filter:blur(30px) saturate(160%);
+  box-shadow:0 40px 100px -30px rgba(0,0,0,.9);
+  overflow:hidden;
+  animation:pop .24s var(--ease) both;
+}
+@keyframes pop{from{opacity:0;transform:translateY(-12px) scale(.985)}to{opacity:1;transform:none}}
+.finder-top{display:flex;align-items:center;gap:13px;padding:19px 22px;border-bottom:1px solid var(--line)}
+.finder-top svg{width:19px;height:19px;color:var(--ink-3);flex:none}
+.finder-top input{
+  flex:1;min-width:0;background:none;border:none;outline:none;
+  font:inherit;font-size:16.5px;font-weight:500;color:var(--ink);
+}
+.finder-top input::placeholder{color:var(--ink-4)}
+.finder-esc{font-size:10.5px;font-weight:700;color:var(--ink-4);border:1px solid var(--line-2);padding:4px 8px;border-radius:6px}
+.finder-body{max-height:min(460px,52vh);overflow-y:auto;padding:8px}
+.fgroup-label{
+  padding:12px 14px 6px;
+  font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-4);
+}
+.fresult{
+  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  padding:11px 14px;border-radius:11px;
+  transition:background .14s var(--ease);
+}
+.fresult:hover,.fresult.sel{background:rgba(255,255,255,.09)}
+.fresult .fic{width:16px;height:16px;flex:none;color:var(--ink-3)}
+.fresult-main{flex:1;min-width:0}
+.fresult-main b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fresult-main span{display:block;margin-top:2px;font-size:11.5px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fempty{padding:34px 20px;text-align:center;font-size:13.5px;color:var(--ink-3)}
+mark{background:rgba(0,208,156,.26);color:inherit;border-radius:3px;padding:0 2px}
+
+/* ---------- toast (prototype affordance) ---------- */
+.toast{
+  position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);
+  z-index:120;opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:11px;
+  padding:13px 20px;border-radius:var(--r-pill);
+  border:1px solid var(--line-2);
+  background:rgba(12,17,52,.94);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:var(--shadow-lift);
+  font-size:13px;font-weight:600;
+  transition:opacity .26s var(--ease),transform .26s var(--ease);
+  max-width:min(90vw,520px);
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast svg{width:16px;height:16px;color:var(--teal);flex:none}
+
+/* ---------- footer ---------- */
+.foot{
+  max-width:1560px;margin:0 auto;
+  padding:30px var(--gutter) 40px;
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--ink-4);
+}
+.foot .cloud{width:26px;height:19px;opacity:.75}
+.foot i{font-style:italic}
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){
+  .triptych{grid-template-columns:1fr;gap:16px}
+  .col-hero{order:-1}
+}
+@media (max-width:720px){
+  .topbar-in{flex-wrap:wrap;gap:12px}
+  .searchbtn{order:3;flex-basis:100%;max-width:none}
+  .demo-pill{display:none}
+  .lane-rail{grid-auto-columns:minmax(84%,1fr)}
+  .recent-row{flex-wrap:wrap;gap:8px}
+  .recent-when{width:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v15H6.5A2.5 2.5 0 0 0 4 19.5z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20v5H6.5A2.5 2.5 0 0 1 4 19.5z"/>
+    </symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+    </symbol>
+    <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h13M13 6l6 6-6 6"/>
+    </symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 6l6 6-6 6"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 12.5l5 5 11-11"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7v5.5l3.5 2"/>
+    </symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.7-.8L3 21l1.9-4.9A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/>
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/>
+    </symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5M9 13h6M9 17h4"/>
+    </symbol>
+    <symbol id="i-medal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="15" r="6"/><path d="M8.5 9.5L6 2h12l-2.5 7.5M12 12.8l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2L9 15l2-.3z"/>
+    </symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2l8 3.5v6c0 5-3.4 9.2-8 10.5-4.6-1.3-8-5.5-8-10.5v-6z"/><path d="M9 12l2 2 4-4"/>
+    </symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.5 19a4.5 4.5 0 0 0 .3-9 6.2 6.2 0 0 0-11.8 1.4A3.9 3.9 0 0 0 6.6 19z"/>
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2.5l2.2 5.9 5.9 2.2-5.9 2.2L12 18.7l-2.2-5.9L3.9 10.6l5.9-2.2z"/><path d="M18.5 17l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>
+    </symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.5 6.5a4.5 4.5 0 0 0 5.9 5.9l-8.4 8.4a2.6 2.6 0 0 1-3.7-3.7z"/><path d="M14.5 6.5L18 3"/>
+    </symbol>
+    <symbol id="i-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 5.2a3.4 3.4 0 0 1 0 5.6M18 20a6.5 6.5 0 0 0-2.2-4.9"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#/" aria-label="Revenue Enablement Portal — home">
+      <svg class="cloud" viewBox="0 0 60 42" fill="none" aria-hidden="true">
+        <path d="M45 39H16.5C9.6 39 4 33.6 4 27s5.6-12 12.5-12c1 0 2 .1 2.9.4C21.7 9.2 27.4 5 34 5c8.6 0 15.6 6.9 15.6 15.4 0 .7 0 1.4-.1 2.1 4 1.4 6.5 5 6.5 9 0 4.7-4.2 7.5-11 7.5z" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-text"><b>Revenue Enablement</b><span>Highspot Portal</span></span>
+    </a>
+
+    <button class="searchbtn" id="openSearch" aria-label="Search the portal">
+      <svg width="16" height="16" aria-hidden="true"><use href="#i-search"/></svg>
+      <span>Search products, learning, assets and updates…</span>
+      <kbd>/</kbd>
+    </button>
+
+    <div class="topbar-right">
+      <span class="demo-pill">Design prototype · sample content</span>
+      <div class="avatar" title="Signed in (mock)">RE</div>
+    </div>
+  </div>
+</header>
+
+<main id="view" class="shell"></main>
+
+<footer class="foot">
+  <svg class="cloud" viewBox="0 0 60 42" fill="none" aria-hidden="true">
+    <path d="M45 39H16.5C9.6 39 4 33.6 4 27s5.6-12 12.5-12c1 0 2 .1 2.9.4C21.7 9.2 27.4 5 34 5c8.6 0 15.6 6.9 15.6 15.4 0 .7 0 1.4-.1 2.1 4 1.4 6.5 5 6.5 9 0 4.7-4.2 7.5-11 7.5z" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+  </svg>
+  <span>Learn on the left. Pay attention in the centre. Act on the right.</span>
+  <span style="margin-left:auto"><i>Design prototype — all products, assets and updates shown are illustrative placeholders.</i></span>
+</footer>
+
+<!-- search -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Portal search">
+  <div class="finder" role="document">
+    <div class="finder-top">
+      <svg aria-hidden="true"><use href="#i-search"/></svg>
+      <input id="q" type="text" placeholder="Search products, learning, assets and updates…" autocomplete="off" spellcheck="false" aria-label="Search query" />
+      <span class="finder-esc">ESC</span>
+    </div>
+    <div class="finder-body" id="results"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg aria-hidden="true"><use href="#i-check"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+/* ============================================================
+   DATA — edit here to reshape the portal.
+   Every product follows the same page standard:
+   Overview · Learn · Use · Updates · Help
+   ============================================================ */
+
+const OWNERS = {
+  alex:     { name:'Alex',     initials:'A',  role:'Modern Work, AI & Managed Intelligence', accent:'#1D4ED8' },
+  marco:    { name:'Marco',    initials:'M',  role:'Security, Continuity & Platform',        accent:'#00D09C' },
+  fabricio: { name:'Fabrício', initials:'F',  role:'Cloud Infrastructure & Services',        accent:'#8B5CF6' }
+};
+
+/* status → badge class */
+const BADGE = {
+  'partner-ready':['badge-partner','Partner Ready'],
+  'internal':['badge-internal','Internal Only'],
+  'restricted':['badge-restricted','Restricted'],
+  'draft':['badge-draft','Draft']
+};
+
+const PRODUCTS = [
+  {
+    id:'modern-work', name:'Modern Work & Copilot', owner:'alex', icon:'i-spark', accent:'#1D4ED8',
+    purpose:'Help partners land, adopt and expand Microsoft 365 and Copilot with a repeatable adoption motion.',
+    latest:{ when:'2 days ago', text:'Copilot adoption playbook refreshed with the new partner-ready workshop deck.' },
+    resources:['12 assets','4 courses','2 certifications','6 recordings'],
+    aware:[
+      { kind:'Launch', k:'#00D09C', when:'This week', title:'Copilot adoption workshop is now partner-ready',
+        desc:'The half-day workshop deck, facilitator notes and follow-up assessment are approved for partner delivery. Use these instead of the 2024 pilot materials.',
+        tags:['Required action','Replaces older assets'] },
+      { kind:'Deadline', k:'#EAB308', when:'Ends in 9 days', title:'Complete the Copilot value-conversation certification',
+        desc:'Everyone in a partner-facing role needs the refreshed certification before the next quarter push. Roughly 45 minutes end to end.',
+        tags:['Required training'] }
+    ],
+    learn:{
+      required:[
+        { t:'Copilot value conversation — certification', m:'45 min · <b>Due in 9 days</b>', ic:'i-medal' },
+        { t:'Modern Work foundations', m:'2 modules · Refreshed this month', ic:'i-book' }
+      ],
+      recommended:[
+        { t:'Objection handling: “we already have AI”', m:'18 min · Scenario practice', ic:'i-play' },
+        { t:'Licensing traps that kill deals', m:'25 min · Product knowledge', ic:'i-book' }
+      ],
+      recordings:[
+        { t:'EMEA enablement session — Copilot Q3 motion', m:'Recorded 12 days ago · 52 min', ic:'i-play' },
+        { t:'Partner clinic: adoption after the first 90 days', m:'Recorded last month · 38 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'Copilot adoption workshop deck', m:'Presentation · <b>Updated 2 days ago</b>', s:'partner-ready', ic:'i-doc' },
+        { t:'Modern Work one-pager', m:'PDF · Co-brandable', s:'partner-ready', ic:'i-doc' },
+        { t:'Adoption readiness assessment', m:'Interactive · 12 questions', s:'partner-ready', ic:'i-check' },
+        { t:'Customer story: 240-seat rollout', m:'Video · 3 min', s:'partner-ready', ic:'i-play' }
+      ],
+      internal:[
+        { t:'Copilot margin and pricing guidance', m:'Commercial · Do not forward', s:'restricted', ic:'i-lock' },
+        { t:'FY roadmap — Modern Work', m:'Strategy · Internal only', s:'internal', ic:'i-lock' },
+        { t:'Competitive teardown vs. Google Workspace', m:'Internal briefing', s:'internal', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'2 days ago', title:'Workshop deck approved for partner use', desc:'Legal and product sign-off complete. The pilot deck is archived — remove it from any saved pitch.' },
+      { when:'2 weeks ago', title:'Certification refreshed', desc:'Value-conversation module rewritten around the new discovery questions. Prior completions do not carry over.' },
+      { when:'Last month', title:'Messaging change: “assistant” → “agent”', desc:'Align all partner-facing language with the current product naming. Updated in every partner-ready asset.' }
+    ],
+    help:[
+      { b:'Product owner', p:'Positioning, asset requests, exception approvals for partner-facing material.', who:'Alex' },
+      { b:'Ask the enablement channel', p:'Fastest route for “which asset do I send?” questions. Answered same day in working hours.', who:'#revenue-enablement' },
+      { b:'Report an out-of-date asset', p:'Flag anything that contradicts current messaging and it gets pulled or corrected.', who:'Portal feedback form' }
+    ]
+  },
+
+  {
+    id:'mip', name:'Managed Intelligence (MIP)', owner:'alex', icon:'i-people', accent:'#0EA5E9',
+    purpose:'Move partners from managed services to managed intelligence — the narrative, the capability model and the proof.',
+    latest:{ when:'Yesterday', text:'MIP narrative deck moved from draft to partner-ready after the EMEA review.' },
+    resources:['9 assets','3 courses','1 certification','4 recordings'],
+    aware:[
+      { kind:'Messaging change', k:'#1D4ED8', when:'Yesterday', title:'MSP → MIP narrative is now the approved framing',
+        desc:'Lead with the shift in what partners sell, not the technology. The old “AI-enabled MSP” framing is retired across all decks.',
+        tags:['Affects every partner conversation'] }
+    ],
+    learn:{
+      required:[
+        { t:'The MIP narrative — how to tell it in 5 minutes', m:'30 min · Required for partner-facing roles', ic:'i-book' }
+      ],
+      recommended:[
+        { t:'MIP capability model walkthrough', m:'22 min · Product knowledge', ic:'i-grid' },
+        { t:'Where MIP fits against the existing portfolio', m:'15 min · Internal guidance', ic:'i-book' }
+      ],
+      recordings:[
+        { t:'MIP launch briefing — EMEA', m:'Recorded 3 weeks ago · 44 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'MIP narrative deck', m:'Presentation · <b>Newly partner-ready</b>', s:'partner-ready', ic:'i-doc' },
+        { t:'MSP to MIP — the one-page shift', m:'PDF · Leave-behind', s:'partner-ready', ic:'i-doc' },
+        { t:'Capability self-assessment', m:'Interactive · Partner-facing', s:'partner-ready', ic:'i-check' }
+      ],
+      internal:[
+        { t:'MIP commercial model and margin assumptions', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
+        { t:'Programme roadmap and sequencing', m:'Strategy · Internal only', s:'internal', ic:'i-lock' },
+        { t:'Early partner feedback — unfiltered', m:'Internal recording', s:'internal', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'Yesterday', title:'Narrative deck promoted to partner-ready', desc:'Cleared the EMEA review with two wording changes on the capability slide.' },
+      { when:'3 weeks ago', title:'Launch briefing recorded', desc:'Watch this before running your first MIP conversation.' }
+    ],
+    help:[
+      { b:'Product owner', p:'Narrative questions, deck exceptions, partner escalations.', who:'Alex' },
+      { b:'Positioning clinic', p:'Weekly 30-minute slot to pressure-test how you are telling the story.', who:'Thursdays' }
+    ]
+  },
+
+  {
+    id:'security', name:'Security & Continuity', owner:'marco', icon:'i-shield', accent:'#00D09C',
+    purpose:'Everything needed to sell, position and defend the security and continuity portfolio in a competitive deal.',
+    latest:{ when:'4 days ago', text:'New competitive battlecard published; two legacy comparison sheets retired.' },
+    resources:['15 assets','5 courses','3 certifications','8 recordings'],
+    aware:[
+      { kind:'Required action', k:'#EF4444', when:'Action needed', title:'Retire the 2024 comparison sheets',
+        desc:'Two legacy competitor comparisons contain pricing that is no longer accurate. Delete local copies and use the new battlecard.',
+        tags:['Compliance','Replaces older assets'] },
+      { kind:'Update', k:'#00D09C', when:'4 days ago', title:'Continuity assessment rebuilt around recovery objectives',
+        desc:'The assessment now opens with RPO and RTO rather than product features — it qualifies far better in the first call.',
+        tags:['Partner ready'] }
+    ],
+    learn:{
+      required:[
+        { t:'Security portfolio essentials', m:'3 modules · Required on join', ic:'i-book' },
+        { t:'Handling a security objection under pressure', m:'40 min · Certification', ic:'i-medal' }
+      ],
+      recommended:[
+        { t:'Continuity: explaining RPO and RTO without jargon', m:'16 min', ic:'i-play' },
+        { t:'Incident-response conversation guide', m:'20 min · Internal guidance', ic:'i-book' }
+      ],
+      recordings:[
+        { t:'Competitive session — the new battlecard in practice', m:'Recorded 4 days ago · 41 min', ic:'i-play' },
+        { t:'Partner panel: what actually closes security deals', m:'Recorded last month · 55 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'Security portfolio overview deck', m:'Presentation · Co-brandable', s:'partner-ready', ic:'i-doc' },
+        { t:'Continuity readiness assessment', m:'Interactive · <b>Rebuilt</b>', s:'partner-ready', ic:'i-check' },
+        { t:'Why continuity fails — 4-minute explainer', m:'Video', s:'partner-ready', ic:'i-play' },
+        { t:'Security one-pager', m:'PDF · Approved messaging', s:'partner-ready', ic:'i-doc' }
+      ],
+      internal:[
+        { t:'Competitive battlecard', m:'Internal only · <b>Do not forward</b>', s:'restricted', ic:'i-lock' },
+        { t:'Discount guardrails', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
+        { t:'Vendor roadmap briefing', m:'Under NDA · Internal recording', s:'internal', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'4 days ago', title:'Battlecard published, legacy sheets retired', desc:'Old comparisons are removed from the portal. If you have a local copy, delete it.' },
+      { when:'2 weeks ago', title:'Assessment rebuilt', desc:'Now opens on recovery objectives. Average completion time dropped by half.' },
+      { when:'6 weeks ago', title:'Certification made mandatory', desc:'Required for anyone running security conversations without a specialist on the call.' }
+    ],
+    help:[
+      { b:'Product owner', p:'Competitive support, deal-specific positioning, asset approvals.', who:'Marco' },
+      { b:'Specialist support', p:'Bring a specialist into a live deal — request at least 48 hours ahead.', who:'Request form' },
+      { b:'Ask the enablement channel', p:'Quick answers on what is safe to share externally.', who:'#revenue-enablement' }
+    ]
+  },
+
+  {
+    id:'platform', name:'Marketplace Platform', owner:'marco', icon:'i-grid', accent:'#22C55E',
+    purpose:'How the platform works, what changed this release, and how to show it convincingly in a demo.',
+    latest:{ when:'6 days ago', text:'Release notes and the refreshed demo script published together.' },
+    resources:['8 assets','2 courses','5 recordings'],
+    aware:[
+      { kind:'Release', k:'#8B5CF6', when:'6 days ago', title:'Platform release — billing view has changed',
+        desc:'The billing screens in every existing demo recording are now out of date. Use the refreshed demo script until new recordings land.',
+        tags:['Affects demos'] }
+    ],
+    learn:{
+      required:[
+        { t:'Platform walkthrough for partner-facing roles', m:'2 modules · Refreshed', ic:'i-book' }
+      ],
+      recommended:[
+        { t:'Demo script — the 12-minute version', m:'12 min · Practice with a colleague', ic:'i-play' },
+        { t:'Common platform questions and honest answers', m:'Internal guidance', ic:'i-book' }
+      ],
+      recordings:[
+        { t:'Release briefing', m:'Recorded 6 days ago · 27 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'Platform overview one-pager', m:'PDF', s:'partner-ready', ic:'i-doc' },
+        { t:'Demo script — 12-minute version', m:'Document · <b>Refreshed</b>', s:'partner-ready', ic:'i-doc' },
+        { t:'Onboarding checklist for new partners', m:'PDF · Leave-behind', s:'partner-ready', ic:'i-check' }
+      ],
+      internal:[
+        { t:'Release notes — full detail', m:'Internal only', s:'internal', ic:'i-lock' },
+        { t:'Known issues and workarounds', m:'Internal only · Updated weekly', s:'internal', ic:'i-lock' },
+        { t:'Next release preview', m:'Roadmap · Restricted', s:'restricted', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'6 days ago', title:'Release shipped', desc:'Billing view redesigned. Demo script updated the same day; recordings follow next week.' },
+      { when:'3 weeks ago', title:'Onboarding checklist added', desc:'Built from the questions partners actually asked in their first month.' }
+    ],
+    help:[
+      { b:'Product owner', p:'Platform questions, demo environment access, release timing.', who:'Marco' },
+      { b:'Demo environment', p:'Reset your demo tenant before a customer call — takes about 10 minutes.', who:'Self-service' }
+    ]
+  },
+
+  {
+    id:'cloud', name:'Cloud Infrastructure', owner:'fabricio', icon:'i-cloud', accent:'#8B5CF6',
+    purpose:'Position and size cloud infrastructure with confidence, from first conversation to migration plan.',
+    latest:{ when:'8 days ago', text:'Sizing calculator guidance rewritten after repeated partner confusion.' },
+    resources:['11 assets','4 courses','2 certifications','5 recordings'],
+    aware:[
+      { kind:'Guidance', k:'#0EA5E9', when:'8 days ago', title:'New sizing guidance — stop quoting from the old calculator',
+        desc:'The previous calculator under-sized storage in almost every migration scenario. The rewritten guidance walks through three worked examples.',
+        tags:['Required reading'] }
+    ],
+    learn:{
+      required:[
+        { t:'Cloud infrastructure foundations', m:'4 modules · Required on join', ic:'i-book' },
+        { t:'Migration conversation certification', m:'50 min', ic:'i-medal' }
+      ],
+      recommended:[
+        { t:'Sizing worked examples', m:'25 min · <b>New</b>', ic:'i-wrench' },
+        { t:'When not to migrate — qualifying out well', m:'14 min', ic:'i-play' }
+      ],
+      recordings:[
+        { t:'Migration planning clinic', m:'Recorded 8 days ago · 46 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'Cloud infrastructure overview deck', m:'Presentation · Co-brandable', s:'partner-ready', ic:'i-doc' },
+        { t:'Migration readiness assessment', m:'Interactive', s:'partner-ready', ic:'i-check' },
+        { t:'Sizing guidance — partner version', m:'PDF · <b>Rewritten</b>', s:'partner-ready', ic:'i-doc' }
+      ],
+      internal:[
+        { t:'Cost model and margin bands', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' },
+        { t:'Capacity and regional availability', m:'Internal only', s:'internal', ic:'i-lock' },
+        { t:'Sizing calculator — internal build', m:'Draft · Not for external use', s:'draft', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'8 days ago', title:'Sizing guidance rewritten', desc:'Three worked examples replace the single abstract model that kept being misread.' },
+      { when:'1 month ago', title:'Assessment shortened', desc:'Cut from 24 questions to 11 with no loss of qualification accuracy.' }
+    ],
+    help:[
+      { b:'Product owner', p:'Sizing reviews, migration scoping, technical escalation.', who:'Fabrício' },
+      { b:'Architecture review', p:'Book a review before committing to a migration plan over 200 seats.', who:'Request form' }
+    ]
+  },
+
+  {
+    id:'services', name:'Professional & Managed Services', owner:'fabricio', icon:'i-wrench', accent:'#EC4899',
+    purpose:'Wrap services around every product sale — what is available, what it costs partners and how to scope it.',
+    latest:{ when:'2 weeks ago', text:'Scoping guide published; the services catalogue is still in draft.' },
+    resources:['7 assets','2 courses','3 recordings'],
+    aware:[
+      { kind:'Draft', k:'#6B7280', when:'In progress', title:'Services catalogue is still in draft',
+        desc:'Do not share the catalogue externally yet. The scoping guide is approved and safe to use in partner conversations.',
+        tags:['Do not share'] }
+    ],
+    learn:{
+      required:[
+        { t:'Services essentials', m:'2 modules', ic:'i-book' }
+      ],
+      recommended:[
+        { t:'Scoping a services engagement in one call', m:'20 min', ic:'i-play' },
+        { t:'Where services rescue a stalled deal', m:'12 min · Internal guidance', ic:'i-book' }
+      ],
+      recordings:[
+        { t:'Services scoping clinic', m:'Recorded 2 weeks ago · 33 min', ic:'i-play' }
+      ]
+    },
+    use:{
+      partner:[
+        { t:'Services scoping guide', m:'PDF · Approved', s:'partner-ready', ic:'i-doc' },
+        { t:'Engagement overview one-pager', m:'PDF', s:'partner-ready', ic:'i-doc' }
+      ],
+      internal:[
+        { t:'Services catalogue', m:'<b>Draft</b> · Not for external use', s:'draft', ic:'i-lock' },
+        { t:'Delivery capacity by region', m:'Internal only', s:'internal', ic:'i-lock' },
+        { t:'Rate card', m:'Commercial · Restricted', s:'restricted', ic:'i-lock' }
+      ]
+    },
+    updates:[
+      { when:'2 weeks ago', title:'Scoping guide published', desc:'Approved for partner conversations. The catalogue it references stays internal until sign-off.' },
+      { when:'5 weeks ago', title:'Catalogue drafted', desc:'In review with delivery and commercial. Expect partner-ready status next month.' }
+    ],
+    help:[
+      { b:'Product owner', p:'Scoping support, delivery questions, catalogue status.', who:'Fabrício' },
+      { b:'Delivery desk', p:'Check regional capacity before committing a delivery date.', who:'Request form' }
+    ]
+  }
+];
+
+/* recency ordering for "Recently Updated" — lower = more recent */
+const RECENCY = { 'Yesterday':1,'2 days ago':2,'4 days ago':4,'6 days ago':6,'8 days ago':8,'2 weeks ago':14,'3 weeks ago':21,'1 month ago':30,'Last month':32,'5 weeks ago':35,'6 weeks ago':42 };
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const view = $('#view');
+
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function icon(id,cls=''){ return `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`; }
+function badge(status){ const [c,l]=BADGE[status]||BADGE.draft; return `<span class="badge ${c}">${l}</span>`; }
+function byId(id){ return PRODUCTS.find(p=>p.id===id); }
+function ownerOf(p){ return OWNERS[p.owner]; }
+
+let toastTimer;
+function toast(msg){
+  $('#toastMsg').textContent = msg;
+  const el = $('#toast');
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('on'), 2600);
+}
+
+/* every non-navigating item behaves like a real link would, then explains itself */
+function wireStubs(root){
+  $$('[data-stub]',root).forEach(el=>{
+    el.addEventListener('click',()=>toast(el.dataset.stub));
+  });
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+
+function homeAware(){
+  // the centre column aggregates what every product owner flagged
+  return PRODUCTS.flatMap(p => p.aware.map(a => ({...a, product:p})));
+}
+
+function renderHome(){
+  const aware = homeAware();
+
+  const learnRows = [
+    { t:'Copilot value conversation — certification', m:'Due in 9 days · <b>Required</b>', ic:'i-medal', go:'modern-work' },
+    { t:'Security objection handling', m:'Certification · <b>Required</b>', ic:'i-medal', go:'security' },
+    { t:'The MIP narrative in 5 minutes', m:'30 min · New this month', ic:'i-book', go:'mip' },
+    { t:'Cloud sizing — worked examples', m:'25 min · Recommended', ic:'i-wrench', go:'cloud' },
+    { t:'Platform walkthrough', m:'2 modules · Refreshed', ic:'i-book', go:'platform' },
+    { t:'Services essentials', m:'2 modules', ic:'i-book', go:'services' }
+  ];
+
+  const shareRows = [
+    { t:'Copilot adoption workshop deck', m:'Updated 2 days ago', s:'partner-ready', go:'modern-work' },
+    { t:'MIP narrative deck', m:'Newly partner-ready', s:'partner-ready', go:'mip' },
+    { t:'Continuity readiness assessment', m:'Rebuilt this month', s:'partner-ready', go:'security' },
+    { t:'Sizing guidance — partner version', m:'Rewritten', s:'partner-ready', go:'cloud' },
+    { t:'Services scoping guide', m:'Approved', s:'partner-ready', go:'services' }
+  ];
+
+  const noShareRows = [
+    { t:'Competitive battlecard', m:'Security & Continuity', s:'restricted', go:'security' },
+    { t:'Copilot margin and pricing guidance', m:'Modern Work & Copilot', s:'restricted', go:'modern-work' },
+    { t:'Next release preview', m:'Marketplace Platform', s:'restricted', go:'platform' },
+    { t:'Services catalogue', m:'Not signed off yet', s:'draft', go:'services' }
+  ];
+
+  const lanes = Object.keys(OWNERS).map(key=>{
+    const o = OWNERS[key];
+    const items = PRODUCTS.filter(p=>p.owner===key);
+    return `
+      <div class="lane">
+        <div class="lane-head">
+          <div class="owner-chip" style="background:linear-gradient(140deg,${o.accent},rgba(255,255,255,.14))">${o.initials}</div>
+          <div>
+            <b>${esc(o.name)}</b>
+            <span>${esc(o.role)}</span>
+          </div>
+          <span class="lane-count">${items.length} product${items.length===1?'':'s'}</span>
+        </div>
+        <div class="lane-rail">
+          ${items.map(productCard).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  const recent = PRODUCTS
+    .flatMap(p => p.updates.map(u => ({...u, product:p})))
+    .sort((a,b)=>(RECENCY[a.when]??99)-(RECENCY[b.when]??99))
+    .slice(0,7);
+
+  view.innerHTML = `
+    <section class="masthead">
+      <div class="eyebrow">Revenue Enablement</div>
+      <h1 class="page">Find it by product,<br>not by person.</h1>
+      <p class="page-sub">
+        Knowledge is organised around the products you sell. Owners stay visible so you know who to ask —
+        but you navigate by what you need, not by who happens to own it.
+      </p>
+      <div class="principle">
+        <span><i style="background:var(--blue)"></i>Learn on the left</span>
+        <span><i style="background:var(--teal)"></i>Pay attention in the centre</span>
+        <span><i style="background:#8B5CF6"></i>Act on the right</span>
+      </div>
+    </section>
+
+    <section class="triptych" aria-label="Portal homepage">
+
+      <!-- LEFT: LEARN -->
+      <div class="col glass" aria-labelledby="h-learn">
+        <div class="col-head">
+          <div class="col-mark" style="color:var(--blue)">${icon('i-book')}</div>
+          <div>
+            <h2 class="col-title" id="h-learn">Learn</h2>
+            <p class="col-note">Training, certifications and product knowledge — what you must do, and what will make you better.</p>
+          </div>
+        </div>
+
+        <div class="subhead">Required &amp; recommended</div>
+        <ul class="rows">
+          ${learnRows.map(r=>`
+            <li><a class="row" href="#/p/${r.go}/learn">
+              ${icon(r.ic,'row-ic')}
+              <span class="row-body">
+                <span class="row-title">${esc(r.t)}</span>
+                <span class="row-meta">${r.m}</span>
+              </span>
+            </a></li>`).join('')}
+        </ul>
+
+        <div class="subhead">Learning paths</div>
+        <ul class="rows">
+          <li><button class="row" data-stub="Learning path: New starter — 30 / 60 / 90 (prototype)">
+            ${icon('i-medal','row-ic')}
+            <span class="row-body"><span class="row-title">New starter — 30 / 60 / 90</span><span class="row-meta">6 steps · Sequenced across every product</span></span>
+          </button></li>
+          <li><button class="row" data-stub="Learning path: Partner-facing readiness (prototype)">
+            ${icon('i-medal','row-ic')}
+            <span class="row-body"><span class="row-title">Partner-facing readiness</span><span class="row-meta">4 certifications · Complete before first solo call</span></span>
+          </button></li>
+        </ul>
+      </div>
+
+      <!-- CENTRE: AWARENESS -->
+      <div class="col col-hero glass" aria-labelledby="h-aware">
+        <div class="col-head">
+          <div class="col-mark" style="color:var(--teal)">${icon('i-bell')}</div>
+          <div>
+            <h2 class="col-title" id="h-aware">What should I be aware of?</h2>
+            <p class="col-note">Launches, deadlines, required actions and messaging changes. This is the reason to come back.</p>
+          </div>
+        </div>
+
+        <div class="aware">
+          ${aware.map(a=>`
+            <a class="aware-item" href="#/p/${a.product.id}" style="--k:${a.k}">
+              <div class="aware-top">
+                <span class="aware-kind">${esc(a.kind)}</span>
+                <span class="aware-when">${esc(a.when)}</span>
+              </div>
+              <div class="aware-title">${esc(a.title)}</div>
+              <p class="aware-desc">${esc(a.desc)}</p>
+              <div class="aware-foot">
+                <span>${esc(a.product.name)}</span>
+                ${a.tags.map(t=>`<span class="dot"></span><span>${esc(t)}</span>`).join('')}
+              </div>
+            </a>`).join('')}
+        </div>
+      </div>
+
+      <!-- RIGHT: USE -->
+      <div class="col glass" aria-labelledby="h-use">
+        <div class="col-head">
+          <div class="col-mark" style="color:#C4B5FD">${icon('i-share')}</div>
+          <div>
+            <h2 class="col-title" id="h-use">Use</h2>
+            <p class="col-note">What you take into the conversation — and what never leaves the building.</p>
+          </div>
+        </div>
+
+        <div class="split share">
+          <div class="split-head">${icon('i-share')} Share with partners</div>
+          <ul class="rows">
+            ${shareRows.map(r=>`
+              <li><a class="row" href="#/p/${r.go}/use">
+                ${icon('i-doc','row-ic')}
+                <span class="row-body">
+                  <span class="row-title">${esc(r.t)}</span>
+                  <span class="row-meta">${esc(r.m)}</span>
+                </span>
+                ${badge(r.s)}
+              </a></li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="split noshare">
+          <div class="split-head">${icon('i-lock')} Do not share</div>
+          <ul class="rows">
+            ${noShareRows.map(r=>`
+              <li><a class="row" href="#/p/${r.go}/use">
+                ${icon('i-lock','row-ic')}
+                <span class="row-body">
+                  <span class="row-title">${esc(r.t)}</span>
+                  <span class="row-meta">${esc(r.m)}</span>
+                </span>
+                ${badge(r.s)}
+              </a></li>`).join('')}
+          </ul>
+          <p class="guard">Internal strategy, roadmap, pricing guidance and restricted recordings. If it is in this list, it does not go to a partner — not in a deck, not in a forward.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Products</h2>
+          <p>Owners stay visible. You still click the product.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      ${lanes}
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Recently updated</h2>
+          <p>Everything that moved across the portal, newest first.</p>
+        </div>
+        <div class="rainbow"></div>
+      </div>
+      <div class="recent glass">
+        ${recent.map(u=>`
+          <a class="recent-row" href="#/p/${u.product.id}/updates">
+            <span class="recent-when">${esc(u.when)}</span>
+            <span class="recent-main">
+              <b>${esc(u.title)}</b>
+              <span>${esc(u.product.name)} · ${esc(ownerOf(u.product).name)}</span>
+            </span>
+            <span class="recent-side">
+              ${icon('i-chev','row-ic')}
+            </span>
+          </a>`).join('')}
+      </div>
+    </section>
+  `;
+  wireStubs(view);
+}
+
+function productCard(p){
+  const o = ownerOf(p);
+  return `
+    <a class="pcard" href="#/p/${p.id}" style="--k:${p.accent}55">
+      <div class="pcard-top">
+        <div class="pcard-ic" style="color:${p.accent}">${icon(p.icon)}</div>
+        <div>
+          <h3>${esc(p.name)}</h3>
+          <p class="pcard-purpose">${esc(p.purpose)}</p>
+        </div>
+      </div>
+      <div class="pcard-owner"><i style="background:${o.accent}"></i> Owner · ${esc(o.name)}</div>
+      <div class="pcard-latest">
+        <b>Latest update · ${esc(p.latest.when)}</b>
+        ${esc(p.latest.text)}
+      </div>
+      <div class="pcard-res">${p.resources.map(r=>`<span class="res-tag">${esc(r)}</span>`).join('')}</div>
+      <div class="pcard-foot">
+        <span class="open-cta">Open product ${icon('i-arrow')}</span>
+        ${badge(p.aware.some(a=>a.kind==='Draft')?'draft':'partner-ready')}
+      </div>
+    </a>`;
+}
+
+/* ============================================================
+   PRODUCT PAGE — same standard for every product
+   ============================================================ */
+
+const TABS = [
+  ['overview','Overview'],
+  ['learn','Learn'],
+  ['use','Use'],
+  ['updates','Updates'],
+  ['help','Help']
+];
+
+function renderProduct(id, tab){
+  const p = byId(id);
+  if(!p){ location.hash = '#/'; return; }
+  const o = ownerOf(p);
+  if(!TABS.some(t=>t[0]===tab)) tab = 'overview';
+
+  view.innerHTML = `
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="#/">Revenue Enablement</a>
+      ${icon('i-chev')}
+      <span>${esc(o.name)}</span>
+      ${icon('i-chev')}
+      <span style="color:var(--ink)">${esc(p.name)}</span>
+    </nav>
+
+    <header class="phead">
+      <div class="phead-ic" style="color:${p.accent}">${icon(p.icon)}</div>
+      <div class="phead-main">
+        <h1>${esc(p.name)}</h1>
+        <p class="phead-purpose">${esc(p.purpose)}</p>
+        <div class="phead-facts">
+          <span class="fact"><i style="width:7px;height:7px;border-radius:50%;background:${o.accent};display:inline-block"></i> Owner · ${esc(o.name)}</span>
+          <span class="fact">${icon('i-clock')} Updated ${esc(p.latest.when)}</span>
+          ${p.resources.map(r=>`<span class="fact">${esc(r)}</span>`).join('')}
+        </div>
+      </div>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Product sections">
+      ${TABS.map(([k,label])=>`
+        <a class="tab" role="tab" aria-selected="${k===tab}" href="#/p/${p.id}/${k}">${label}</a>`).join('')}
+    </div>
+
+    <div class="panel" role="tabpanel">${panelFor(p,tab)}</div>
+  `;
+  wireStubs(view);
+  window.scrollTo({top:0,behavior:'instant' in window ? 'instant' : 'auto'});
+}
+
+function panelFor(p, tab){
+  if(tab==='learn')   return panelLearn(p);
+  if(tab==='use')     return panelUse(p);
+  if(tab==='updates') return panelUpdates(p);
+  if(tab==='help')    return panelHelp(p);
+  return panelOverview(p);
+}
+
+/* Overview keeps the homepage geometry: learn left, priorities centre, tools right */
+function panelOverview(p){
+  const learnPeek = [...p.learn.required, ...p.learn.recommended].slice(0,4);
+  const usePeek = p.use.partner.slice(0,4);
+
+  return `
+    <div class="triptych">
+      <div class="col glass">
+        <div class="col-head">
+          <div class="col-mark" style="color:var(--blue)">${icon('i-book')}</div>
+          <div>
+            <h2 class="col-title">Learn</h2>
+            <p class="col-note">Get competent on this product.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          ${learnPeek.map(l=>`
+            <li><a class="row" href="#/p/${p.id}/learn">
+              ${icon(l.ic,'row-ic')}
+              <span class="row-body"><span class="row-title">${esc(l.t)}</span><span class="row-meta">${l.m}</span></span>
+            </a></li>`).join('')}
+        </ul>
+        <a class="row" href="#/p/${p.id}/learn" style="justify-content:space-between">
+          <span class="row-title">All learning for this product</span>${icon('i-arrow','row-ic')}
+        </a>
+      </div>
+
+      <div class="col col-hero glass">
+        <div class="col-head">
+          <div class="col-mark" style="color:var(--teal)">${icon('i-bell')}</div>
+          <div>
+            <h2 class="col-title">Current priorities</h2>
+            <p class="col-note">What changed, what is required, and what it replaces.</p>
+          </div>
+        </div>
+        <div class="aware">
+          ${p.aware.map(a=>`
+            <div class="aware-item" style="--k:${a.k};cursor:default">
+              <div class="aware-top">
+                <span class="aware-kind">${esc(a.kind)}</span>
+                <span class="aware-when">${esc(a.when)}</span>
+              </div>
+              <div class="aware-title">${esc(a.title)}</div>
+              <p class="aware-desc">${esc(a.desc)}</p>
+              <div class="aware-foot">${a.tags.map((t,i)=>`${i?'<span class="dot"></span>':''}<span>${esc(t)}</span>`).join('')}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="col glass">
+        <div class="col-head">
+          <div class="col-mark" style="color:#C4B5FD">${icon('i-share')}</div>
+          <div>
+            <h2 class="col-title">Use</h2>
+            <p class="col-note">Practical tools and customer-facing assets.</p>
+          </div>
+        </div>
+        <div class="split share">
+          <div class="split-head">${icon('i-share')} Share with partners</div>
+          <ul class="rows">
+            ${usePeek.map(u=>`
+              <li><button class="row" data-stub="Opens “${esc(u.t)}” in Highspot (prototype)">
+                ${icon(u.ic,'row-ic')}
+                <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
+                ${badge(u.s)}
+              </button></li>`).join('')}
+          </ul>
+        </div>
+        <a class="row" href="#/p/${p.id}/use" style="justify-content:space-between">
+          <span class="row-title">Everything in Use</span>${icon('i-arrow','row-ic')}
+        </a>
+      </div>
+    </div>`;
+}
+
+function learnBlock(title, note, items){
+  if(!items || !items.length) return '';
+  return `
+    <div class="card glass">
+      <h3 class="card-title">${esc(title)}</h3>
+      <p class="card-note">${esc(note)}</p>
+      <ul class="rows">
+        ${items.map(i=>`
+          <li><button class="row" data-stub="Opens “${esc(i.t)}” in Highspot (prototype)">
+            ${icon(i.ic,'row-ic')}
+            <span class="row-body"><span class="row-title">${esc(i.t)}</span><span class="row-meta">${i.m}</span></span>
+            ${icon('i-chev','row-ic')}
+          </button></li>`).join('')}
+      </ul>
+    </div>`;
+}
+
+function panelLearn(p){
+  return `
+    <div class="stack">
+      ${learnBlock('Required training','Complete these to stay current on this product.',p.learn.required)}
+      ${learnBlock('Recommended learning','Optional, but this is what separates a good conversation from a great one.',p.learn.recommended)}
+      ${learnBlock('Recorded sessions','Sessions already delivered — watch back at your own pace.',p.learn.recordings)}
+    </div>`;
+}
+
+function panelUse(p){
+  return `
+    <div class="stack">
+      <div class="card glass">
+        <h3 class="card-title" style="color:var(--teal)">Share with partners</h3>
+        <p class="card-note">Customer-ready assets, presentations, one-pagers, approved messaging, videos and assessments.</p>
+        <ul class="rows">
+          ${p.use.partner.map(u=>`
+            <li><button class="row" data-stub="Opens “${esc(u.t)}” in Highspot (prototype)">
+              ${icon(u.ic,'row-ic')}
+              <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
+              ${badge(u.s)}
+            </button></li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="card glass noshare">
+        <h3 class="card-title" style="color:var(--amber)">Do not share</h3>
+        <p class="card-note">Internal strategy, roadmap, pricing guidance, internal recordings and restricted information.</p>
+        <ul class="rows">
+          ${p.use.internal.map(u=>`
+            <li><button class="row" data-stub="Internal only — “${esc(u.t)}” is not for partner distribution (prototype)">
+              ${icon(u.ic,'row-ic')}
+              <span class="row-body"><span class="row-title">${esc(u.t)}</span><span class="row-meta">${u.m}</span></span>
+              ${badge(u.s)}
+            </button></li>`).join('')}
+        </ul>
+        <p class="guard" style="margin-top:14px">Everything above stays internal. If a partner needs the substance of it, take it from the partner-ready set instead — or ask the product owner for an approved version.</p>
+      </div>
+    </div>`;
+}
+
+function panelUpdates(p){
+  return `
+    <div class="card glass">
+      <h3 class="card-title">Updates</h3>
+      <p class="card-note">What changed on this product, most recent first.</p>
+      <ul class="timeline">
+        ${p.updates.map((u,i)=>`
+          <li style="--k:${i===0?p.accent:'rgba(255,255,255,.28)'}">
+            <div class="tl-when">${esc(u.when)}</div>
+            <div class="tl-title">${esc(u.title)}</div>
+            <p class="tl-desc">${esc(u.desc)}</p>
+          </li>`).join('')}
+      </ul>
+    </div>`;
+}
+
+function panelHelp(p){
+  const o = ownerOf(p);
+  return `
+    <div class="card glass">
+      <h3 class="card-title">Help</h3>
+      <p class="card-note">Who to ask, and the fastest route to an answer.</p>
+      <div class="help-grid">
+        ${p.help.map(h=>`
+          <div class="help-card">
+            <b>${esc(h.b)}</b>
+            <p>${esc(h.p)}</p>
+            <div class="who">${icon('i-chat','row-ic')} ${esc(h.who)}</div>
+          </div>`).join('')}
+      </div>
+      <div class="help-card" style="margin-top:14px;border-color:${o.accent}55;background:linear-gradient(140deg,${o.accent}1f,rgba(255,255,255,.03))">
+        <b>Something wrong on this page?</b>
+        <p>Out-of-date asset, broken link, or messaging that contradicts what you were told in a session — flag it and the owner sees it the same day.</p>
+        <div class="who">${icon('i-people','row-ic')} Owned by ${esc(o.name)}</div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================
+   SEARCH — flat index across everything
+   ============================================================ */
+
+function buildIndex(){
+  const idx = [];
+  PRODUCTS.forEach(p=>{
+    idx.push({ group:'Products', t:p.name, s:p.purpose, ic:p.icon, href:`#/p/${p.id}` });
+
+    [...p.learn.required.map(x=>[x,'Required']),
+     ...p.learn.recommended.map(x=>[x,'Recommended']),
+     ...p.learn.recordings.map(x=>[x,'Recorded session'])
+    ].forEach(([l,kind])=>{
+      idx.push({ group:'Learn', t:l.t, s:`${kind} · ${p.name}`, ic:l.ic, href:`#/p/${p.id}/learn` });
+    });
+
+    p.use.partner.forEach(u=>{
+      idx.push({ group:'Share with partners', t:u.t, s:`${p.name} · Partner ready`, ic:u.ic, href:`#/p/${p.id}/use` });
+    });
+    p.use.internal.forEach(u=>{
+      idx.push({ group:'Do not share', t:u.t, s:`${p.name} · Internal`, ic:'i-lock', href:`#/p/${p.id}/use` });
+    });
+
+    p.updates.forEach(u=>{
+      idx.push({ group:'Updates', t:u.title, s:`${p.name} · ${u.when}`, ic:'i-bell', href:`#/p/${p.id}/updates` });
+    });
+  });
+  return idx;
+}
+const INDEX = buildIndex();
+
+const overlay = $('#overlay'), qInput = $('#q'), resultsEl = $('#results');
+let selIdx = 0, hits = [];
+
+function openSearch(){
+  overlay.classList.add('on');
+  qInput.value = '';
+  runSearch('');
+  setTimeout(()=>qInput.focus(),20);
+}
+function closeSearch(){
+  overlay.classList.remove('on');
+}
+function hl(text,q){
+  if(!q) return esc(text);
+  const i = text.toLowerCase().indexOf(q.toLowerCase());
+  if(i<0) return esc(text);
+  return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length));
+}
+function runSearch(q){
+  const term = q.trim().toLowerCase();
+  hits = term
+    ? INDEX.filter(x=>(x.t+' '+x.s+' '+x.group).toLowerCase().includes(term)).slice(0,30)
+    : INDEX.filter(x=>x.group==='Products');
+
+  selIdx = 0;
+  if(!hits.length){
+    resultsEl.innerHTML = `<div class="fempty">Nothing matches “${esc(q)}”.<br>Try a product name, an asset type, or “restricted”.</div>`;
+    return;
+  }
+  let html='', lastGroup='', n=0;
+  hits.forEach(h=>{
+    if(h.group!==lastGroup){ html += `<div class="fgroup-label">${esc(h.group)}</div>`; lastGroup=h.group; }
+    html += `
+      <a class="fresult${n===0?' sel':''}" data-i="${n}" href="${h.href}">
+        ${icon(h.ic,'fic')}
+        <span class="fresult-main"><b>${hl(h.t,q.trim())}</b><span>${esc(h.s)}</span></span>
+        ${icon('i-chev','fic')}
+      </a>`;
+    n++;
+  });
+  resultsEl.innerHTML = html;
+  $$('.fresult',resultsEl).forEach(el=>{
+    el.addEventListener('click',closeSearch);
+    el.addEventListener('mousemove',()=>select(+el.dataset.i));
+  });
+}
+function select(i){
+  const els = $$('.fresult',resultsEl);
+  if(!els.length) return;
+  selIdx = (i+els.length)%els.length;
+  els.forEach((e,n)=>e.classList.toggle('sel',n===selIdx));
+  els[selIdx].scrollIntoView({block:'nearest'});
+}
+
+$('#openSearch').addEventListener('click',openSearch);
+qInput.addEventListener('input',e=>runSearch(e.target.value));
+overlay.addEventListener('click',e=>{ if(e.target===overlay) closeSearch(); });
+
+document.addEventListener('keydown',e=>{
+  const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+  if(e.key==='/' && !typing){ e.preventDefault(); openSearch(); return; }
+  if((e.key==='k'||e.key==='K') && (e.metaKey||e.ctrlKey)){ e.preventDefault(); openSearch(); return; }
+  if(!overlay.classList.contains('on')) return;
+
+  if(e.key==='Escape'){ closeSearch(); }
+  else if(e.key==='ArrowDown'){ e.preventDefault(); select(selIdx+1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); select(selIdx-1); }
+  else if(e.key==='Enter'){
+    const el = $$('.fresult',resultsEl)[selIdx];
+    if(el){ location.hash = el.getAttribute('href'); closeSearch(); }
+  }
+});
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+
+function route(){
+  const raw = location.hash.replace(/^#\/?/,'');
+  const parts = raw.split('/').filter(Boolean);
+  if(parts[0]==='p' && parts[1]) renderProduct(parts[1], parts[2]);
+  else renderHome();
+}
+
+window.addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>

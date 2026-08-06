@@ -1,3 +1,39 @@
+## 🧭 Revenue Enablement Portal — Highspot design prototype
+
+`highspot.html` is a standalone, clickable prototype of the Highspot homepage and product-page
+standard. Open the file in a browser (or serve the folder and visit `/highspot.html`).
+
+**The guiding principle:** *Learn on the left. Pay attention in the centre. Act on the right.*
+Knowledge is organised around **products**, not people — owners stay visible, but users navigate
+by the product they need.
+
+**What the prototype contains:**
+
+- **Homepage triptych** — **Learn** (required training, recommended learning, certifications,
+  recorded sessions, learning paths) · **What should I be aware of?** as the hero (launches,
+  deadlines, required actions, messaging changes — the reason people come back) · **Use**, split
+  into **Share with Partners** and **Do Not Share**.
+- **Product lanes** grouped under each owner (Alex, Marco, Fabrício). Every card shows the product
+  name, purpose, owner, latest update, available resources and an **Open product** action — you
+  click the product, not the person.
+- **Recently Updated** — every change across the portal, newest first.
+- **Product page standard** — the same five sections for every product: **Overview · Learn · Use ·
+  Updates · Help**. Overview repeats the homepage geometry: learning left, current priorities
+  centre, practical tools and customer assets right.
+- **Global search** — press `/` or `⌘K`, filters products, learning, assets and updates with
+  grouped results, arrow-key navigation and match highlighting.
+- **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
+
+**Visual direction:** restrained liquid-glass over the Pax8 palette — deep blue and black grounds,
+Pax8 Blue and Teal accents, generous spacing, rounded cards, soft shadows, Plus Jakarta Sans.
+
+- Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing (`#/p/<id>/<tab>`).
+- **All products, assets and updates are illustrative placeholders** — this is a design artefact for
+  reviewing structure and feel, not a content source.
+- Edit `PRODUCTS` and `OWNERS` at the top of the inline `<script>` to reshape the whole portal.
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
