@@ -1,3 +1,54 @@
+## 🧭 Revenue Enablement Portal — Highspot design prototype
+
+`highspot.html` is a standalone, clickable prototype of the Revenue Enablement portal.
+Open the file in a browser (or serve the folder and visit `/highspot.html`).
+
+**The information architecture:**
+
+```
+Revenue Enablement Homepage
+├── Featured Heroes
+│   ├── Important programme
+│   ├── Mandatory or time-sensitive activity
+│   └── Major announcement or launch
+├── Farmers Programmes & Soft Skills  → dedicated lane subpage
+├── Salesforce & Technology           → dedicated lane subpage
+└── MIP & AI                          → dedicated lane subpage
+```
+
+- **Featured Heroes** — exactly three hero cards at the top of the homepage, one per type:
+  an important programme, a mandatory or time-sensitive activity, and a major announcement or
+  launch. Each carries its lane's illustration and links to its lane.
+- **The lanes** — three cards led by a bespoke inline-SVG illustration per lane (sprouting field
+  for Farmers, pipeline-and-nodes for Salesforce & Technology, orbit-and-spark for MIP & AI), with
+  owner, live priorities and a round go-arrow. No instructional copy anywhere — the design carries
+  the wayfinding.
+- **Every lane page is a main page** — a large hero with the lane's illustration and its number-one
+  priority embedded, then all sections visible in one scroll (Priorities · Learn · Use ·
+  Updates & Help) with nothing hidden behind tabs. Use keeps the **Share with Partners** /
+  **Do Not Share** split.
+- **Recently Updated** — every change across the three lanes, newest first; rows open the lane's
+  Updates tab.
+- **Global search** — press `/` or `⌘K`; results are grouped and open the right lane subpage with
+  the right tab selected.
+- **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
+
+**Visual direction:** Pax8-light neumorphism — one cool blue-grey material for everything, kept
+deliberately light (no black or deep-blue grounds). Elements are extruded from the surface with the
+dual-shadow pair or pressed into it: the search field, tab track and badges are engraved wells, Do
+Not Share rows sit recessed, and buttons press in on click. The Pax8 identity carries through in
+the accents: Pax8 Blue for MIP & AI and the cloud mark, teal for Farmers, cyan for Salesforce &
+Technology, gold for deadlines — and the signature **rainbow line** returns as a softened gradient
+engraved into the surface under every section heading. Plus Jakarta Sans throughout.
+
+- Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing:
+  `#/` home, `#/lane/<id>/<tab>` lane subpages.
+- **All lanes, assets and updates are illustrative placeholders** — this is a design artefact for
+  reviewing structure and feel, not a content source.
+- Edit `LANES` and `HEROES` at the top of the inline `<script>` to reshape the whole portal.
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
