@@ -30,13 +30,13 @@ Revenue Enablement Homepage
   the right tab selected.
 - **Status badges** throughout: `Partner Ready`, `Internal Only`, `Restricted`, `Draft`.
 
-**Visual direction:** neumorphism (soft UI) — one warm-grey material for everything. Elements are
-extruded from the surface with the dual-shadow pair (white light top-left, grey shade bottom-right)
-or pressed into it: the search field, tab track, badges and section grooves are engraved wells; the
-Do Not Share rows are recessed — locked away — while Share rows sit raised. Buttons press in on
-click. No borders, no fills; colour appears only as stone-pastel inks and pebble dots (sage,
-eucalyptus, ochre, olive, terracotta, blush). Soft dark-grey ink, Plus Jakarta Sans. Note this
-deliberately departs from the Pax8 deck guidelines (dark grounds).
+**Visual direction:** Pax8-light neumorphism — one cool blue-grey material for everything, kept
+deliberately light (no black or deep-blue grounds). Elements are extruded from the surface with the
+dual-shadow pair or pressed into it: the search field, tab track and badges are engraved wells, Do
+Not Share rows sit recessed, and buttons press in on click. The Pax8 identity carries through in
+the accents: Pax8 Blue for MIP & AI and the cloud mark, teal for Farmers, cyan for Salesforce &
+Technology, gold for deadlines — and the signature **rainbow line** returns as a softened gradient
+engraved into the surface under every section heading. Plus Jakarta Sans throughout.
 
 - Pure offline, no build step, no dependencies beyond Google Fonts. Hash routing:
   `#/` home, `#/lane/<id>/<tab>` lane subpages.

@@ -19,26 +19,26 @@
 
 :root{
   /* the single material */
-  --surface:#E8E6E1;
-  --surface-hi:#F1EFEA;
+  --surface:#E7E9EF;
+  --surface-hi:#F3F5FA;
 
   /* stone pastels */
-  --blue:#7E9159;        /* sage — primary (Learn) */
-  --teal:#6B7F4A;        /* deep sage — share, bell */
-  --violet:#C98944;      /* ochre — Use */
-  --amber:#B98035;       /* deadline / do-not-share */
-  --red:#C4674E;
+  --blue:#2B57D0;        /* sage — primary (Learn) */
+  --teal:#0A8A68;        /* deep sage — share, bell */
+  --violet:#7C5CD6;      /* ochre — Use */
+  --amber:#A67F0E;       /* deadline / do-not-share */
+  --red:#D2493F;
   --grey:#8B8983;
 
-  --sage:#7E9159;
-  --ochre:#D28E3F;
-  --blush:#DCA9A4;
+  --sage:#2B57D0;
+  --ochre:#0AA57E;
+  --blush:#D6478F;
 
   /* soft ink — never pure black */
-  --ink:#3A3936;
-  --ink-2:#63615C;
-  --ink-3:#8B8880;
-  --ink-4:#A9A69E;
+  --ink:#343842;
+  --ink-2:#5B6070;
+  --ink-3:#858B9B;
+  --ink-4:#A6ACBB;
 
   --r-xl:40px;
   --r-lg:30px;
@@ -49,19 +49,19 @@
   /* the neumorphic pair: white light + grey shade */
   --up:
     -7px -7px 16px rgba(255,255,255,.85),
-    8px 9px 18px rgba(163,157,144,.42);
+    8px 9px 18px rgba(148,156,176,.42);
   --up-lg:
     -12px -12px 26px rgba(255,255,255,.9),
-    14px 16px 34px rgba(163,157,144,.48);
+    14px 16px 34px rgba(148,156,176,.48);
   --up-sm:
     -4px -4px 10px rgba(255,255,255,.8),
-    5px 6px 12px rgba(163,157,144,.38);
+    5px 6px 12px rgba(148,156,176,.38);
   --down:
     inset -5px -5px 11px rgba(255,255,255,.85),
-    inset 5px 5px 11px rgba(163,157,144,.42);
+    inset 5px 5px 11px rgba(148,156,176,.42);
   --down-sm:
     inset -3px -3px 7px rgba(255,255,255,.8),
-    inset 3px 3px 7px rgba(163,157,144,.36);
+    inset 3px 3px 7px rgba(148,156,176,.36);
 
   --gutter:clamp(16px,3vw,40px);
   --ease:cubic-bezier(.22,.61,.36,1);
@@ -119,7 +119,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   box-shadow:var(--up);
 }
 .brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
-.cloud{width:34px;height:24px;flex:none;color:var(--ink-2)}
+.cloud{width:34px;height:24px;flex:none;color:var(--sage)}
 .brand-text{line-height:1.15}
 .brand-text b{display:block;font-size:15px;font-weight:800;letter-spacing:-.3px}
 .brand-text span{display:block;font-size:11px;color:var(--ink-3);font-weight:600;letter-spacing:.24px}
@@ -171,12 +171,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   color:var(--ink-3);margin-bottom:14px;
 }
 .eyebrow::before{content:"";width:22px;height:8px;border-radius:8px;background:var(--sage);
-  box-shadow:-2px -2px 5px rgba(255,255,255,.7),3px 3px 6px rgba(163,157,144,.4)}
+  box-shadow:-2px -2px 5px rgba(255,255,255,.7),3px 3px 6px rgba(148,156,176,.4)}
 h1.page{
   margin:0;
   font-size:clamp(32px,4.4vw,54px);
   font-weight:800;letter-spacing:-1.6px;line-height:1.05;
-  color:#33322F;
+  color:#303542;
 }
 .page-sub{margin:15px 0 0;max-width:70ch;font-size:15.5px;line-height:1.62;color:var(--ink-2)}
 
@@ -212,7 +212,7 @@ h1.page{
   box-shadow:var(--up-sm);
 }
 .col-mark svg{width:20px;height:20px}
-.col-title{margin:0;font-size:19px;font-weight:800;letter-spacing:-.5px;line-height:1.2;color:#33322F}
+.col-title{margin:0;font-size:19px;font-weight:800;letter-spacing:-.5px;line-height:1.2;color:#303542}
 .col-hero .col-title{font-size:24px;letter-spacing:-.8px}
 .col-note{margin:5px 0 0;font-size:12.5px;line-height:1.5;color:var(--ink-3)}
 
@@ -237,7 +237,7 @@ h1.page{
 .row:active{transform:none;box-shadow:var(--down-sm)}
 .row-ic{width:17px;height:17px;flex:none;margin-top:2px;color:var(--sage)}
 .row-body{min-width:0;flex:1}
-.row-title{display:block;font-size:13.5px;font-weight:700;line-height:1.4;letter-spacing:-.15px;color:#403F3B}
+.row-title{display:block;font-size:13.5px;font-weight:700;line-height:1.4;letter-spacing:-.15px;color:#3C414E}
 .row-meta{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-3);line-height:1.45;font-weight:500}
 .row-meta b{color:var(--ink-2);font-weight:700}
 
@@ -265,7 +265,7 @@ h1.page{
   filter:saturate(1.1) brightness(.82);
 }
 .aware-when{font-size:11px;color:var(--ink-4);font-weight:600;margin-left:auto}
-.aware-title{font-size:16.5px;font-weight:800;letter-spacing:-.4px;line-height:1.34;color:#33322F}
+.aware-title{font-size:16.5px;font-weight:800;letter-spacing:-.4px;line-height:1.34;color:#303542}
 .aware-desc{margin-top:7px;font-size:13px;line-height:1.6;color:var(--ink-2)}
 .aware-foot{
   margin-top:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
@@ -303,21 +303,23 @@ h1.page{
 }
 .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;
   box-shadow:inset -1px -1px 1.5px rgba(255,255,255,.5),inset 1px 1px 1.5px rgba(0,0,0,.2)}
-.badge-partner{color:#68804B}
-.badge-internal{color:#96793B}
-.badge-restricted{color:#B06A50}
-.badge-draft{color:#8B8983}
+.badge-partner{color:#0A8A68}
+.badge-internal{color:#2B57D0}
+.badge-restricted{color:#C24339}
+.badge-draft{color:#7A8090}
 
 /* ---------- section headings ---------- */
 .section{margin-top:64px}
 .section-head{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:24px}
-.section-head h2{margin:0;font-size:clamp(21px,2.3vw,29px);font-weight:800;letter-spacing:-.8px;color:#33322F}
+.section-head h2{margin:0;font-size:clamp(21px,2.3vw,29px);font-weight:800;letter-spacing:-.8px;color:#303542}
 .section-head p{margin:6px 0 0;font-size:13.5px;color:var(--ink-3);line-height:1.55;font-weight:500}
-/* engraved groove */
+/* the Pax8 rainbow line, softened and engraved into the surface */
 .rainbow{
   height:8px;border-radius:8px;flex:1;min-width:120px;margin-bottom:12px;
-  background:var(--surface);
-  box-shadow:var(--down-sm);
+  background:linear-gradient(90deg,#5B7FE8,#3FB6ED,#2FCFA9,#5ED97F,#A98BF0,#F077BE,#F2CE4E,#F08A7A);
+  box-shadow:
+    inset 0 1.5px 3px rgba(82,92,116,.35),
+    inset 0 -1px 0 rgba(255,255,255,.55);
 }
 
 /* ---------- product lanes ---------- */
@@ -331,7 +333,7 @@ h1.page{
   background:var(--surface);
   box-shadow:var(--up-sm);
 }
-.lane-head b{display:block;font-size:15px;font-weight:800;letter-spacing:-.3px;color:#33322F}
+.lane-head b{display:block;font-size:15px;font-weight:800;letter-spacing:-.3px;color:#303542}
 .lane-head span{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px;font-weight:600}
 .lane-count{margin-left:auto;font-size:11.5px;color:var(--ink-4);font-weight:700}
 
@@ -344,10 +346,10 @@ h1.page{
   padding:8px 8px 24px;
   scroll-snap-type:x proximity;
   scrollbar-width:thin;
-  scrollbar-color:rgba(120,115,105,.35) transparent;
+  scrollbar-color:rgba(104,114,138,.35) transparent;
 }
 .lane-rail::-webkit-scrollbar{height:9px}
-.lane-rail::-webkit-scrollbar-thumb{background:rgba(120,115,105,.28);border-radius:9px}
+.lane-rail::-webkit-scrollbar-thumb{background:rgba(104,114,138,.28);border-radius:9px}
 .lane-rail::-webkit-scrollbar-track{background:transparent}
 
 .pcard{
@@ -370,7 +372,7 @@ h1.page{
   box-shadow:var(--up-sm);
 }
 .pcard-ic svg{width:22px;height:22px}
-.pcard h3{margin:0;font-size:16.5px;font-weight:800;letter-spacing:-.4px;line-height:1.25;color:#33322F}
+.pcard h3{margin:0;font-size:16.5px;font-weight:800;letter-spacing:-.4px;line-height:1.25;color:#303542}
 .pcard-purpose{margin:6px 0 0;font-size:12.5px;line-height:1.55;color:var(--ink-2)}
 .pcard-owner{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-3);font-weight:700}
 .pcard-owner i{width:8px;height:8px;border-radius:50%;flex:none;
@@ -422,7 +424,7 @@ h1.page{
   color:var(--ink-4);width:96px;flex:none;
 }
 .recent-main{flex:1;min-width:0}
-.recent-main b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.2px;color:#403F3B}
+.recent-main b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.2px;color:#3C414E}
 .recent-main span{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-3);font-weight:500}
 .recent-side{display:flex;align-items:center;gap:10px;flex:none}
 .recent-side .row-ic{color:var(--ink-4)}
@@ -442,7 +444,7 @@ h1.page{
 }
 .phead-ic svg{width:32px;height:32px}
 .phead-main{flex:1;min-width:280px}
-.phead h1{margin:0;font-size:clamp(27px,3.4vw,42px);font-weight:800;letter-spacing:-1.3px;line-height:1.08;color:#33322F}
+.phead h1{margin:0;font-size:clamp(27px,3.4vw,42px);font-weight:800;letter-spacing:-1.3px;line-height:1.08;color:#303542}
 .phead-purpose{margin:11px 0 0;max-width:68ch;font-size:14.5px;line-height:1.62;color:var(--ink-2)}
 .phead-facts{margin-top:18px;display:flex;flex-wrap:wrap;gap:12px}
 .fact{
@@ -470,7 +472,7 @@ h1.page{
 }
 .tab:hover{color:var(--ink)}
 .tab[aria-selected="true"]{
-  color:#33322F;
+  color:#303542;
   background:var(--surface);
   box-shadow:var(--up-sm);
 }
@@ -480,7 +482,7 @@ h1.page{
 
 .stack{display:flex;flex-direction:column;gap:26px}
 .card{padding:28px}
-.card-title{margin:0 0 5px;font-size:18px;font-weight:800;letter-spacing:-.5px;color:#33322F}
+.card-title{margin:0 0 5px;font-size:18px;font-weight:800;letter-spacing:-.5px;color:#303542}
 .card-note{margin:0 0 18px;font-size:12.5px;line-height:1.55;color:var(--ink-3);font-weight:500}
 
 .timeline{list-style:none;margin:0;padding:0 0 0 28px;position:relative}
@@ -496,10 +498,10 @@ h1.page{
     inset -2px -2px 3px rgba(255,255,255,.5),
     inset 2px 2px 3px rgba(0,0,0,.18),
     -2px -2px 5px rgba(255,255,255,.7),
-    3px 3px 7px rgba(163,157,144,.45);
+    3px 3px 7px rgba(148,156,176,.45);
 }
 .tl-when{font-size:10.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--ink-4)}
-.tl-title{margin-top:5px;font-size:14.5px;font-weight:800;letter-spacing:-.3px;color:#403F3B}
+.tl-title{margin-top:5px;font-size:14.5px;font-weight:800;letter-spacing:-.3px;color:#3C414E}
 .tl-desc{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--ink-2);max-width:72ch}
 
 .help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
@@ -508,7 +510,7 @@ h1.page{
   background:var(--surface);
   box-shadow:var(--up-sm);
 }
-.help-card b{display:block;font-size:14px;font-weight:800;margin-bottom:7px;color:#33322F;letter-spacing:-.2px}
+.help-card b{display:block;font-size:14px;font-weight:800;margin-bottom:7px;color:#303542;letter-spacing:-.2px}
 .help-card p{margin:0;font-size:12.5px;line-height:1.6;color:var(--ink-2)}
 .help-card .who{margin-top:12px;display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--teal);font-weight:700}
 
@@ -517,7 +519,7 @@ h1.page{
   position:fixed;inset:0;z-index:100;
   display:none;
   padding:clamp(40px,10vh,120px) 20px 40px;
-  background:rgba(120,114,102,.30);
+  background:rgba(104,114,138,.30);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
 }
@@ -530,7 +532,7 @@ h1.page{
   background:var(--surface);
   box-shadow:
     -14px -14px 30px rgba(255,255,255,.55),
-    18px 20px 44px rgba(90,84,72,.45);
+    18px 20px 44px rgba(82,92,116,.45);
   overflow:hidden;
   animation:pop .24s var(--ease) both;
 }
@@ -561,7 +563,7 @@ h1.page{
 .fresult:active{box-shadow:var(--down-sm)}
 .fresult .fic{width:16px;height:16px;flex:none;color:var(--sage)}
 .fresult-main{flex:1;min-width:0}
-.fresult-main b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.15px;color:#403F3B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fresult-main b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.15px;color:#3C414E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fresult-main span{display:block;margin-top:2px;font-size:11.5px;color:var(--ink-3);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fempty{padding:36px 20px;text-align:center;font-size:13.5px;color:var(--ink-3);font-weight:500}
 mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weight:800;
@@ -576,8 +578,8 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
   background:var(--surface);
   box-shadow:
     -10px -10px 22px rgba(255,255,255,.6),
-    12px 14px 30px rgba(90,84,72,.4);
-  font-size:13px;font-weight:700;color:#403F3B;
+    12px 14px 30px rgba(82,92,116,.4);
+  font-size:13px;font-weight:700;color:#3C414E;
   transition:opacity .26s var(--ease),transform .26s var(--ease);
   max-width:min(90vw,520px);
 }
@@ -636,10 +638,10 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
 .lane-sec{scroll-margin-top:120px}
 .pblock{padding:30px;margin-bottom:28px;scroll-margin-top:120px}
 .pblock-head{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
-.pblock-title{margin:0 0 4px;font-size:20px;font-weight:800;letter-spacing:-.5px;color:#33322F}
+.pblock-title{margin:0 0 4px;font-size:20px;font-weight:800;letter-spacing:-.5px;color:#303542}
 .tabs-sm{margin:22px 0 20px;padding:6px}
 .tabs-sm .tab{padding:9px 18px;font-size:12.5px}
-.lblock-title{margin:0 0 5px;font-size:15px;font-weight:800;letter-spacing:-.3px;color:#33322F}
+.lblock-title{margin:0 0 5px;font-size:15px;font-weight:800;letter-spacing:-.3px;color:#303542}
 .lblock{padding:2px 0}
 
 /* ---------- featured heroes ---------- */
@@ -666,7 +668,7 @@ mark{background:transparent;color:#5F7442;border-radius:4px;padding:0;font-weigh
   box-shadow:var(--down-sm);
   margin-top:10px;
 }
-.hero-title{margin:4px 0 0;font-size:20px;font-weight:800;letter-spacing:-.5px;line-height:1.25;color:#33322F}
+.hero-title{margin:4px 0 0;font-size:20px;font-weight:800;letter-spacing:-.5px;line-height:1.25;color:#303542}
 .hero-desc{margin:0;font-size:13px;line-height:1.6;color:var(--ink-2)}
 .hero-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;flex-wrap:wrap}
 .hero-when{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-4)}
@@ -817,16 +819,16 @@ const LANES = [
   {
     id:'farmers',
     name:'Farmers Programmes & Soft Skills',
-    owner:'Fabrício', initials:'F', accent:'#C97F63', icon:'i-people',
+    owner:'Fabrício', initials:'F', accent:'#0FA47C', icon:'i-people',
     blurb:'Grow the accounts we already have: structured farmer programmes, and the soft skills that make every conversation land.',
     purpose:'Structured development for account managers — long-running programmes, workshops and the human skills that turn renewals into expansion.',
     resources:['9 assets','5 courses','1 programme','6 recordings'],
     latest:{ when:'3 days ago', text:'Cohort 2 of the Farmers Excellence Programme opened for enrolment.' },
     aware:[
-      { kind:'Programme', k:'#8FA05A', when:'Closes Friday', title:'Farmers Excellence Programme — Cohort 2 enrolment open',
+      { kind:'Programme', k:'#0FA47C', when:'Closes Friday', title:'Farmers Excellence Programme — Cohort 2 enrolment open',
         desc:'The twelve-week structured programme for account managers returns. Nominations need manager sign-off and close end of Friday — the next cohort starts in six weeks.',
         tags:['Nominations open','12 weeks','Manager sign-off'] },
-      { kind:'Update', k:'#7E9159', when:'2 days ago', title:'Negotiation workshop moved to next Thursday',
+      { kind:'Update', k:'#2B57D0', when:'2 days ago', title:'Negotiation workshop moved to next Thursday',
         desc:'The in-person negotiation workshop shifts one week to avoid the quarter-close crunch. Same venue, same pre-work — calendar invites already updated.',
         tags:['Schedule change'] }
     ],
@@ -872,16 +874,16 @@ const LANES = [
   {
     id:'salesforce',
     name:'Salesforce & Technology',
-    owner:'Marco', initials:'M', accent:'#D28E3F', icon:'i-grid',
+    owner:'Marco', initials:'M', accent:'#0E86C0', icon:'i-grid',
     blurb:'The systems the sale runs on: Salesforce, quoting, and the tools around them — kept current, kept clean.',
     purpose:'Everything about the tools of the trade — how to run your pipeline properly, what changed in each release, and where to get unstuck.',
     resources:['11 assets','4 courses','2 certifications','5 recordings'],
     latest:{ when:'6 days ago', text:'Q3 release notes and the rebuilt pipeline-view guide published together.' },
     aware:[
-      { kind:'Launch', k:'#6E8A7C', when:'This week', title:'Q3 Salesforce release — pipeline views change Thursday',
+      { kind:'Launch', k:'#0E86C0', when:'This week', title:'Q3 Salesforce release — pipeline views change Thursday',
         desc:'Stage names and pipeline views change Thursday night. Saved views built on the old stages must be rebuilt — the guide walks through it in ten minutes.',
         tags:['Affects everyone','Action needed'] },
-      { kind:'Deadline', k:'#B98035', when:'Ends in 5 days', title:'Data hygiene sprint — mandatory field updates',
+      { kind:'Deadline', k:'#A67F0E', when:'Ends in 5 days', title:'Data hygiene sprint — mandatory field updates',
         desc:'Every open opportunity needs the three new qualification fields filled before the sprint closes. Forecast reviews will use them from next month.',
         tags:['Mandatory','Forecast dependency'] }
     ],
@@ -925,19 +927,19 @@ const LANES = [
   {
     id:'mip',
     name:'MIP & AI',
-    owner:'Alex', initials:'A', accent:'#7E9159', icon:'i-spark',
+    owner:'Alex', initials:'A', accent:'#2B57D0', icon:'i-spark',
     blurb:'The Managed Intelligence story and the AI skills to tell it: Copilot, the MIP narrative, and partner-ready proof.',
     purpose:'Move partners from managed services to managed intelligence — the narrative, the Copilot motion, and the certifications that make the conversation credible.',
     resources:['14 assets','6 courses','3 certifications','7 recordings'],
     latest:{ when:'Yesterday', text:'MIP narrative deck moved from draft to partner-ready after the EMEA review.' },
     aware:[
-      { kind:'Mandatory', k:'#C4674E', when:'Due in 9 days', title:'Copilot value-conversation certification',
+      { kind:'Mandatory', k:'#D2493F', when:'Due in 9 days', title:'Copilot value-conversation certification',
         desc:'Everyone in a partner-facing role needs the refreshed certification before the next quarter push. Roughly 45 minutes end to end.',
         tags:['Required training','All partner-facing roles'] },
-      { kind:'Launch', k:'#7E9159', when:'This week', title:'Copilot adoption workshop is now partner-ready',
+      { kind:'Launch', k:'#2B57D0', when:'This week', title:'Copilot adoption workshop is now partner-ready',
         desc:'The half-day workshop deck, facilitator notes and follow-up assessment are approved for partner delivery. Use these instead of the 2024 pilot materials.',
         tags:['Replaces older assets'] },
-      { kind:'Messaging change', k:'#6B7F4A', when:'Yesterday', title:'MSP → MIP narrative is now the approved framing',
+      { kind:'Messaging change', k:'#0A8A68', when:'Yesterday', title:'MSP → MIP narrative is now the approved framing',
         desc:'Lead with the shift in what partners sell, not the technology. The old "AI-enabled MSP" framing is retired across all decks.',
         tags:['Affects every partner conversation'] }
     ],
@@ -984,13 +986,13 @@ const LANES = [
 
 /* Featured Heroes — the three things the whole company sees first */
 const HEROES = [
-  { type:'Important programme', k:'#8FA05A', lane:'farmers', when:'Nominations close Friday',
+  { type:'Important programme', k:'#0FA47C', lane:'farmers', when:'Nominations close Friday',
     title:'Farmers Excellence Programme — Cohort 2',
     desc:'The twelve-week programme for account managers returns. Nominations need manager sign-off and close Friday.' },
-  { type:'Mandatory · time-sensitive', k:'#C4674E', lane:'mip', when:'Due in 9 days',
+  { type:'Mandatory · time-sensitive', k:'#D2493F', lane:'mip', when:'Due in 9 days',
     title:'Copilot value-conversation certification',
     desc:'Required for every partner-facing role before the next quarter push. About 45 minutes end to end.' },
-  { type:'Major launch', k:'#6E8A7C', lane:'salesforce', when:'This week',
+  { type:'Major launch', k:'#0E86C0', lane:'salesforce', when:'This week',
     title:'Q3 Salesforce release lands Thursday',
     desc:'Pipeline views and stage names change overnight. Saved views must be rebuilt — the guide takes ten minutes.' }
 ];
@@ -1227,7 +1229,7 @@ function panelUpdates(l){
       <p class="card-note">What changed in this lane, most recent first.</p>
       <ul class="timeline">
         ${l.updates.map((u,i)=>`
-          <li style="--k:${i===0?l.accent:'#B7B4AC'}">
+          <li style="--k:${i===0?l.accent:'#B9BEC9'}">
             <div class="tl-when">${esc(u.when)}</div>
             <div class="tl-title">${esc(u.title)}</div>
             <p class="tl-desc">${esc(u.desc)}</p>
