@@ -1,0 +1,54 @@
+# Good Night bridge — rebuilt
+#
+# Replaces the automation with id `goodnight_bridge`, which loads as
+# `unavailable` (attributes show `mode: None`, `last_triggered: None` — the
+# signature of a config that fails at startup, not of a missing entity).
+#
+# The original was built in the UI and referenced devices by `device_id`.
+# When a device is re-paired or its integration is removed, that id changes
+# and the automation stops loading entirely. This version references
+# `entity_id` only, which survives re-pairing.
+#
+# Paste into automations.yaml (or Settings → Automations → ⋮ → Edit in YAML),
+# keeping the same id so history and the entity name carry over.
+
+- id: goodnight_bridge
+  alias: Good Night bridge - bedroom TV + Cheirinho off when bedroom lights go off at night
+  description: >-
+    When the bedroom light is switched off at night, turn off the bedroom TV
+    and the Cheirinho plug. Rebuilt with entity_id references so re-pairing a
+    device no longer breaks it.
+  mode: single
+
+  triggers:
+    # ASSUMPTION: `switch.quarto_switch_1` is the bedroom light.
+    # It is the only live bedroom-named switch. If the bedroom light is
+    # actually `light.strip_lights`, add it to this list — both can trigger.
+    - trigger: state
+      entity_id: switch.quarto_switch_1
+      from: "on"
+      to: "off"
+      for: "00:00:30"   # debounce, so a quick flick doesn't fire it
+
+  conditions:
+    - condition: or
+      conditions:
+        - condition: sun
+          after: sunset
+        - condition: time
+          after: "21:00:00"
+          before: "06:00:00"
+
+  actions:
+    # continue_on_error matters here: while an integration is offline these
+    # entities are unavailable, and without it the first failure aborts the
+    # rest of the sequence.
+    - action: media_player.turn_off
+      target:
+        entity_id: media_player.bedroom_1_bedroom_tv
+      continue_on_error: true
+
+    - action: switch.turn_off
+      target:
+        entity_id: switch.cheirinho_socket_1
+      continue_on_error: true
