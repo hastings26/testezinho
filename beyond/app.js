@@ -46,16 +46,6 @@
   }
   var NUM_COLORS = ['#1D4ED8', '#0EA5E9', '#14B8A6', '#10B981', '#22C55E', '#8B5CF6'];
 
-  /* Review-date maths: a section is overdue when now is past reviewed + cadence. */
-  var CADENCE_DAYS = { 'Monthly': 31, 'Quarterly': 92, 'Half-yearly': 183, 'Annually': 365 };
-  function reviewState(sec) {
-    var days = CADENCE_DAYS[sec.cadence] || 92;
-    var due = new Date(sec.reviewed + 'T00:00:00Z');
-    due.setUTCDate(due.getUTCDate() + days);
-    var overdue = Date.now() > due.getTime();
-    return { due: due.toISOString().slice(0, 10), overdue: overdue };
-  }
-
   /* ---------- block renderers -------------------------------------------- */
   var BLOCK = {
     lead: function (b) { return '<p class="lead">' + md(b.text) + '</p>'; },
@@ -87,20 +77,15 @@
 
     assets: function (b) {
       return '<div class="assets">' + b.items.map(function (a) {
-        var label = a.href
-          ? '<a class="asset-label" href="' + esc(a.href) + '" target="_blank" rel="noopener">' + md(a.label) + ' ↗</a>'
+        var coming = (a.status || 'coming') !== 'live' || !a.href;
+        var label = a.href && !coming
+          ? '<a class="asset-label" href="' + esc(a.href) + '" target="_blank" rel="noopener">' + md(a.label) + ' \u2197</a>'
           : '<span class="asset-label">' + md(a.label) + '</span>';
-        var status = a.status || 'needed';
-        var statusText = status === 'live' ? 'Live' : status === 'draft' ? 'Draft' : 'Needed';
         var note = a.note ? '<div class="asset-note">' + md(a.note) + '</div>' : '';
-        if (!a.href && status !== 'needed') {
-          note += '<div class="asset-note">URL not yet supplied.</div>';
-        }
-        var owner = a.owner ? '<div class="asset-owner">Owner <b>' + md(a.owner) + '</b></div>' : '';
         return '<div class="asset">' +
           '<span class="chip">' + esc(a.type || 'Doc') + '</span>' +
-          '<div class="asset-main">' + label + note + owner + '</div>' +
-          '<span class="pill ' + status + '">' + statusText + '</span>' +
+          '<div class="asset-main">' + label + note + '</div>' +
+          (coming ? '<span class="pill coming">Coming soon</span>' : '<span class="pill live">Available</span>') +
           '</div>';
       }).join('') + '</div>';
     },
@@ -138,7 +123,6 @@
       }).join('') + '</ul>';
     },
 
-    generated: function (b) { return b.kind === 'report' ? renderReport() : ''; },
   };
 
   function renderBlocks(blocks) {
@@ -148,95 +132,15 @@
     }).join('');
   }
 
-  /* ---------- governance report (generated from the content model) -------- */
-  function allAssets() {
-    var out = [];
-    SECTIONS.forEach(function (sec) {
-      sec.pages.forEach(function (pg) {
-        (pg.blocks || []).forEach(function (b) {
-          if (b.t === 'assets') {
-            b.items.forEach(function (a) {
-              out.push({ asset: a, sec: sec, page: pg });
-            });
-          }
-        });
-      });
-    });
-    return out;
-  }
-
-  function renderReport() {
-    var assets = allAssets();
-    var counts = { live: 0, draft: 0, needed: 0 };
-    assets.forEach(function (r) { counts[r.asset.status || 'needed']++; });
-
-    var overdueSections = SECTIONS.filter(function (s) { return reviewState(s).overdue; });
-    var unnamed = Object.keys(window.OWNERS).filter(function (k) { return window.OWNERS[k].name === 'TBC'; });
-
-    var html = '<div class="report-summary">' +
-      '<div class="rs blue"><div class="v">' + assets.length + '</div><div class="l">Registered assets</div></div>' +
-      '<div class="rs teal"><div class="v">' + counts.live + '</div><div class="l">Live</div></div>' +
-      '<div class="rs gold"><div class="v">' + counts.draft + '</div><div class="l">Draft</div></div>' +
-      '<div class="rs red"><div class="v">' + counts.needed + '</div><div class="l">Not yet produced</div></div>' +
-      '</div>';
-
-    html += '<div class="callout ' + (unnamed.length ? 'warn' : 'good') + '">' +
-      '<h4>Named owners</h4><p>' +
-      (unnamed.length
-        ? unnamed.length + ' of ' + Object.keys(window.OWNERS).length +
-          ' owning teams have no named individual. The ownership model does not work on team names alone — a team cannot be chased for a review.'
-        : 'Every owning team has a named individual.') +
-      '</p></div>';
-
-    html += '<div class="callout ' + (overdueSections.length ? 'warn' : 'good') + '">' +
-      '<h4>Review status</h4><p>' +
-      (overdueSections.length
-        ? overdueSections.length + ' section(s) are past their review date: ' +
-          overdueSections.map(function (s) { return s.title; }).join(', ') + '.'
-        : 'All ' + SECTIONS.length + ' sections are within their review cadence.') +
-      '</p></div>';
-
-    /* Ownership table */
-    html += '<h2 class="sub">Section ownership</h2><div class="tablewrap"><table><thead><tr>' +
-      '<th>Section</th><th>Owning team</th><th>Named owner</th><th>Cadence</th><th>Review due</th>' +
-      '</tr></thead><tbody>' +
-      SECTIONS.map(function (s) {
-        var r = reviewState(s);
-        return '<tr><td><a href="#/' + s.id + '" style="color:inherit">' + s.title + '</a></td>' +
-          '<td>' + s.owner.team + '</td>' +
-          '<td>' + (s.owner.name === 'TBC' ? '<span style="color:#EAB308">TBC</span>' : s.owner.name) + '</td>' +
-          '<td>' + s.cadence + '</td>' +
-          '<td>' + (r.overdue ? '<span style="color:#F98080">' + r.due + ' — overdue</span>' : r.due) + '</td></tr>';
-      }).join('') + '</tbody></table></div>';
-
-    /* Outstanding assets */
-    var outstanding = assets.filter(function (r) { return (r.asset.status || 'needed') !== 'live'; });
-    html += '<h2 class="sub">Outstanding content (' + outstanding.length + ')</h2>';
-    html += '<p>Every asset below is either not yet produced, or has no working link registered. This is the Beyond content backlog.</p>';
-    html += '<div class="assets">' + outstanding.map(function (r) {
-      var st = r.asset.status || 'needed';
-      return '<div class="asset">' +
-        '<span class="chip">' + esc(r.asset.type || 'Doc') + '</span>' +
-        '<div class="asset-main"><span class="asset-label">' + md(r.asset.label) + '</span>' +
-        '<div class="asset-note"><a href="#/' + r.sec.id + '/' + r.page.id + '" style="color:#808080">' +
-        r.sec.title + ' › ' + r.page.title + '</a></div>' +
-        (r.asset.owner ? '<div class="asset-owner">Owner <b>' + md(r.asset.owner) + '</b></div>' : '') +
-        '</div><span class="pill ' + st + '">' + (st === 'draft' ? 'Draft' : 'Needed') + '</span></div>';
-    }).join('') + '</div>';
-
-    return html;
-  }
-
   /* ---------- page rendering --------------------------------------------- */
   function ownerBar(sec) {
-    var r = reviewState(sec);
-    return '<dl class="ownerbar">' +
-      '<div><dt>Owning team</dt><dd>' + sec.owner.team + '</dd></div>' +
-      '<div><dt>Named owner</dt><dd class="' + (sec.owner.name === 'TBC' ? 'tbc' : '') + '">' + sec.owner.name + '</dd></div>' +
-      '<div><dt>Last reviewed</dt><dd>' + sec.reviewed + '</dd></div>' +
-      '<div><dt>Review due</dt><dd class="' + (r.overdue ? 'overdue' : 'ok') + '">' +
-        r.due + (r.overdue ? ' · overdue' : '') + '</dd></div>' +
-      '</dl>';
+    var contact = sec.owner.contact
+      ? ' &middot; <span style="color:#00D09C">' + esc(sec.owner.contact) + '</span>'
+      : '';
+    return '<div class="ownerbar"><div><dt>Maintained by</dt>' +
+      '<dd>' + esc(sec.owner.team) + contact + '</dd></div>' +
+      '<div><dt>Questions or corrections</dt>' +
+      '<dd style="font-weight:500;color:#A6A6B2">Go to the team above &mdash; they keep this section current.</dd></div></div>';
   }
 
   function renderHome() {
@@ -267,10 +171,6 @@
       return '<div class="card"><div class="num" style="background:' + NUM_COLORS[i % NUM_COLORS.length] + '">' +
         (i + 1) + '</div><h3>' + p.title + '</h3><p>' + p.text + '</p></div>';
     }).join('') + '</div>';
-
-    html += '<div class="callout info" style="margin-top:34px"><h4>Ownership and content gaps</h4>' +
-      '<p>Every section names an owning team and a review date. Anything overdue — and every asset still to be produced — is listed on the ' +
-      '<a href="#/governance/report" style="color:#7FA5FF">content gap report</a>, generated live from the content model.</p></div>';
 
     return html + '</div>';
   }
@@ -336,8 +236,7 @@
       return out;
     }
 
-    return '<div class="nav-label">Topics</div>' + topics.map(item).join('') +
-      '<div class="nav-label">Running the hub</div>' + utility.map(item).join('');
+    return topics.map(item).join('') + utility.map(item).join('');
   }
 
   function crumbs(sec, page) {
@@ -377,9 +276,8 @@
           b.items.forEach(function (a) {
             idx.push({
               href: '#/' + sec.id + '/' + pg.id, sec: sec.title + ' › ' + pg.title,
-              title: plain(a.label), snip: (a.type || 'Doc') + ' · ' +
-                ((a.status || 'needed') === 'live' ? 'Live' : (a.status === 'draft' ? 'Draft' : 'Not yet produced')),
-              hay: plain(a.label + ' ' + (a.type || '') + ' ' + (a.note || '') + ' ' + (a.owner || '')).toLowerCase(), weight: 1,
+              title: plain(a.label), snip: (a.type || 'Doc') + ' · ' + sec.title,
+              hay: plain(a.label + ' ' + (a.type || '') + ' ' + (a.note || '')).toLowerCase(), weight: 1,
             });
           });
         });
@@ -419,7 +317,7 @@
     current = list;
     if (!list.length) {
       results.innerHTML = '<div class="empty">' +
-        (input.value.trim() ? 'Nothing found. If it should be here, that is a content gap — log it on <em>FAQs › Ask a question</em>.'
+        (input.value.trim() ? 'No match. Try a different term, or ask the team — see <em>FAQs › Ask a question</em>.'
                             : 'Search every page and every registered asset.') + '</div>';
       return;
     }

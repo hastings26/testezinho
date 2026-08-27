@@ -25,6 +25,10 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
+      # Internal-only material must never ship with the published site.
+      # beyond-internal/ holds the Beyond leadership view and content backlog.
+      - name: Strip internal-only files from the deploy
+        run: rm -rf beyond-internal
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .

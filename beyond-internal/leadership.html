@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beyond 2026 — Leadership View</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="../beyond/assets/pax8-logo-white.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../beyond/beyond.css" />
+  <style>
+    .content { padding: 46px 34px 80px; }
+    .internal-band {
+      background: linear-gradient(90deg, rgba(234,179,8,.14), transparent 70%);
+      border: 1px solid rgba(234,179,8,.34); border-left-width: 3px;
+      border-radius: 10px; padding: 15px 20px; margin-bottom: 34px;
+    }
+    .internal-band strong { color: var(--gold); }
+    .report-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 14px; margin: 0 0 34px; }
+    .rs { border: 1px solid var(--line); border-radius: 11px; padding: 18px 20px; background: var(--surface); }
+    .rs .v { font-size: 2rem; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+    .rs .l { font-size: .74rem; color: var(--gray-med); margin-top: 7px; font-weight: 600; }
+    .rs.blue .v { color: var(--blue); } .rs.teal .v { color: var(--teal); }
+    .rs.gold .v { color: var(--gold); } .rs.red .v { color: #F98080; }
+    .pri { font-size: .63rem; font-weight: 800; letter-spacing: .1em; padding: 4px 9px; border-radius: 5px; flex: none; }
+    .pri.P1 { background: rgba(239,68,68,.12); color: #F98080; border: 1px solid rgba(239,68,68,.3); }
+    .pri.P2 { background: rgba(234,179,8,.11); color: var(--gold); border: 1px solid rgba(234,179,8,.3); }
+    .pri.P3 { background: #101017; color: var(--gray-med); border: 1px solid var(--line); }
+    .dec { border: 1px solid var(--line); border-left: 3px solid var(--gold);
+           border-radius: 10px; padding: 18px 22px; margin-bottom: 14px; background: var(--surface); }
+    .dec h3 { margin: 0 0 8px; font-size: 1rem; font-weight: 800; }
+    .dec .row { font-size: .86rem; color: #A6A6B2; margin-bottom: 7px; }
+    .dec .row b { color: var(--white); font-weight: 700; }
+    .dec .impact { font-size: .86rem; color: #BDBDC8; border-top: 1px solid var(--line-soft); padding-top: 10px; margin-top: 10px; }
+    .dec .impact b { color: #7FA5FF; }
+  </style>
+</head>
+<body>
+  <div class="edge-stripe" aria-hidden="true"></div>
+  <div class="shell">
+    <div class="main">
+      <header class="topbar">
+        <div class="crumbs"><strong style="color:#fff">Beyond 2026</strong> <span>›</span> Leadership View</div>
+        <a class="search-btn" href="../beyond/index.html" style="text-decoration:none">Open the field hub →</a>
+      </header>
+      <main class="content"><div class="wrap-wide" id="out"></div></main>
+      <footer class="sitefoot">
+        <img src="../beyond/assets/pax8-logo-white.png" alt="Pax8" />
+        <p>Copyright &copy;2026 Pax8 | All rights reserved &middot; Internal — not published with the field hub</p>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../beyond/content.js"></script>
+  <script src="backlog.js"></script>
+  <script>
+  (function () {
+    var esc = function (s) { return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+    var items = BACKLOG.items;
+    var byP = function (p) { return items.filter(function (i) { return i.p === p; }); };
+    var unnamed = BACKLOG.owners.filter(function (o) { return !o.named; });
+    var shown = items.filter(function (i) { return i.shown; }).length;
+
+    var h = '';
+    h += '<div class="kicker">Internal</div>';
+    h += '<h1 class="page-title">Beyond 2026 — Leadership View</h1>';
+    h += '<div class="rainbow full"></div>';
+
+    h += '<div class="internal-band"><strong>Not published.</strong> This page and ' +
+         '<code>backlog.js</code> are excluded from the site deploy and are never loaded by the field hub. ' +
+         'Nothing on this page reaches a CAM\'s browser.</div>';
+
+    /* --- summary --- */
+    h += '<div class="report-summary">' +
+      '<div class="rs red"><div class="v">' + byP('P1').length + '</div><div class="l">P1 &mdash; blocking field work</div></div>' +
+      '<div class="rs gold"><div class="v">' + byP('P2').length + '</div><div class="l">P2 &mdash; needed this quarter</div></div>' +
+      '<div class="rs blue"><div class="v">' + byP('P3').length + '</div><div class="l">P3 &mdash; improves quality</div></div>' +
+      '<div class="rs teal"><div class="v">' + BACKLOG.decisions.length + '</div><div class="l">Open decisions</div></div>' +
+      '</div>';
+
+    h += '<div class="callout warn"><h4>Named owners</h4><p>' +
+      unnamed.length + ' of ' + BACKLOG.owners.length + ' owning teams have no named individual. ' +
+      'The field hub shows team names only, framed as a contact route, so this is invisible to CAMs &mdash; ' +
+      'but nothing currently triggers a review, so accuracy decays silently.</p></div>';
+
+    h += '<div class="callout info"><h4>What the field currently sees</h4><p>' +
+      shown + ' of these ' + items.length + ' items appear in the published hub as &ldquo;Coming soon&rdquo; &mdash; ' +
+      'limited to things a CAM would otherwise go looking for elsewhere. The remaining ' + (items.length - shown) +
+      ' are not referenced in the field hub at all.</p></div>';
+
+    /* --- editorial line --- */
+    h += '<h2 class="sub">Editorial line taken with the field</h2>';
+    h += '<ul class="plain">' + BACKLOG.editorialLine.map(function (l) {
+      return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>';
+
+    /* --- decisions --- */
+    h += '<h2 class="sub">Open decisions (' + BACKLOG.decisions.length + ')</h2>';
+    h += '<p>Each of these is currently being routed around in the field-facing copy rather than named as a gap.</p>';
+    h += BACKLOG.decisions.map(function (d) {
+      return '<div class="dec"><h3>' + esc(d.title) + '</h3>' +
+        '<div class="row">' + esc(d.detail) + '</div>' +
+        '<div class="row"><b>Owner:</b> ' + esc(d.owner) + '</div>' +
+        '<div class="impact"><b>Effect on the field:</b> ' + esc(d.fieldImpact) + '</div></div>';
+    }).join('');
+
+    /* --- ownership --- */
+    h += '<h2 class="sub">Section ownership</h2>';
+    h += '<div class="tablewrap"><table><thead><tr><th>Owning team</th><th>Named owner</th>' +
+      '<th>Cadence</th><th>Sections</th></tr></thead><tbody>' +
+      BACKLOG.owners.map(function (o) {
+        return '<tr><td>' + esc(o.team) + '</td>' +
+          '<td>' + (o.named ? esc(o.named) : '<span style="color:#EAB308">unassigned</span>') + '</td>' +
+          '<td>' + esc(o.cadence) + '</td>' +
+          '<td>' + o.sections.map(esc).join('<br>') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+
+    /* --- backlog --- */
+    ['P1','P2','P3'].forEach(function (p) {
+      var label = p === 'P1' ? 'P1 — blocking field work now'
+                : p === 'P2' ? 'P2 — needed this quarter'
+                : 'P3 — improves quality';
+      var list = byP(p);
+      h += '<h2 class="sub">' + label + ' (' + list.length + ')</h2>';
+      h += '<div class="assets">' + list.map(function (i) {
+        return '<div class="asset">' +
+          '<span class="pri ' + i.p + '">' + i.p + '</span>' +
+          '<span class="chip">' + esc(i.type) + '</span>' +
+          '<div class="asset-main"><span class="asset-label">' + esc(i.label) + '</span>' +
+          '<div class="asset-note">' + esc(i.where) +
+            (i.shown ? ' &middot; <span style="color:#7FA5FF">shown as Coming soon</span>'
+                     : ' &middot; <span style="color:#6B7280">not referenced in the field hub</span>') + '</div>' +
+          (i.note ? '<div class="asset-note">' + esc(i.note) + '</div>' : '') +
+          '<div class="asset-owner">Owner <b>' + esc(i.owner) + '</b></div></div></div>';
+      }).join('') + '</div>';
+    });
+
+    h += '<p style="color:#6B7280;font-size:.8rem">Backlog last updated ' + esc(BACKLOG.updated) + '.</p>';
+
+    document.getElementById('out').innerHTML = h;
+    document.title = 'Beyond 2026 — Leadership View';
+  })();
+  </script>
+</body>
+</html>

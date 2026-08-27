@@ -183,16 +183,14 @@ h1.page-title {
   border: 1px solid var(--line); border-radius: 11px;
   background: var(--surface); overflow: hidden; margin-bottom: 40px;
 }
-.ownerbar div { padding: 13px 20px; flex: 1 1 150px; border-right: 1px solid var(--line-soft); }
+.ownerbar div { padding: 13px 20px; flex: 1 1 220px; border-right: 1px solid var(--line-soft); }
 .ownerbar div:last-child { border-right: none; }
 .ownerbar dt {
   font-size: .62rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase;
   color: var(--gray-med); margin-bottom: 5px;
 }
 .ownerbar dd { margin: 0; font-size: .86rem; font-weight: 700; }
-.ownerbar dd.tbc { color: var(--gold); }
-.ownerbar dd.overdue { color: var(--red); }
-.ownerbar dd.ok { color: var(--teal); }
+
 
 /* ---------- body content ------------------------------------------------- */
 .lead { font-size: 1.24rem; line-height: 1.55; font-weight: 500; color: #E4E4EA; margin: 0 0 26px; max-width: 66ch; }
@@ -289,9 +287,8 @@ a.asset-label:hover { color: var(--teal); border-bottom-color: var(--teal); }
   font-size: .62rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
   padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex: none;
 }
-.pill.live   { background: rgba(0,208,156,.13); color: var(--teal);  border: 1px solid rgba(0,208,156,.32); }
-.pill.draft  { background: rgba(234,179,8,.11);  color: var(--gold);  border: 1px solid rgba(234,179,8,.3); }
-.pill.needed { background: rgba(239,68,68,.1);   color: #F98080;      border: 1px solid rgba(239,68,68,.28); }
+.pill.live   { background: rgba(0,208,156,.13); color: var(--teal); border: 1px solid rgba(0,208,156,.32); }
+.pill.coming { background: rgba(29,78,216,.14);  color: #7FA5FF;     border: 1px solid rgba(29,78,216,.36); }
 
 /* ---------- callouts ----------------------------------------------------- */
 .callout {
