@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beyond 2026 Command Center | Pax8</title>
+  <meta name="description" content="The single source of truth for Pax8 Beyond 2026 — the story, the announcements, the follow-up and the readiness content." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="assets/pax8-logo-white.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="beyond.css" />
+</head>
+<body>
+
+  <div class="edge-stripe" aria-hidden="true"></div>
+
+  <div class="shell">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#/">
+        <img src="assets/pax8-logo-white.png" alt="Pax8" />
+        <div class="brand-name">Beyond 2026</div>
+        <div class="brand-sub">Command Center</div>
+      </a>
+      <nav class="nav" id="nav" aria-label="Main"></nav>
+      <div class="sidebar-foot">
+        Press <kbd>/</kbd> to search
+      </div>
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="crumbs" id="crumbs"></div>
+        <button class="search-btn" id="searchBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round"><path d="M11 19a8 8 0 100-16 8 8 0 000 16zm10 2l-4.5-4.5"/></svg>
+          Search <kbd>/</kbd>
+        </button>
+      </header>
+
+      <main class="content" id="content"></main>
+
+      <footer class="sitefoot">
+        <img src="assets/pax8-logo-white.png" alt="Pax8" />
+        <p>Copyright &copy;2026 Pax8 | All rights reserved &middot; Internal use only</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ================= SEARCH ================= -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Search">
+    <div class="searchbox">
+      <input id="searchInput" type="text" placeholder="Search pages and assets…" autocomplete="off" spellcheck="false" />
+      <div class="results" id="results"></div>
+    </div>
+  </div>
+
+  <script src="content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

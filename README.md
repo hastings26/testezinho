@@ -1,3 +1,23 @@
+## 🛰️ Beyond 2026 Command Center
+
+`beyond/` is a static, no-build hub for everything relating to Pax8 Beyond 2026 —
+the event, the announcements, the follow-up motion and the readiness content.
+Serve the repo and visit `/beyond/`, or open `beyond/index.html` directly.
+
+Topic-based navigation (not role-based) and a single registry of every asset so
+nothing is duplicated across SharePoint. Built to the Pax8 Brand Design System.
+All field-facing content lives in `beyond/content.js`.
+
+`beyond-internal/` holds the leadership view — content backlog, owner
+assignments and open decisions. It is **stripped from the Pages deploy**, so
+none of it reaches the field hub or the browsers that load it.
+
+See [`beyond-internal/MAINTAINING.md`](beyond-internal/MAINTAINING.md) for the
+block reference and the tone rules, and
+[`beyond-internal/README.md`](beyond-internal/README.md) for the leadership view.
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
