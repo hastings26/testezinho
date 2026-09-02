@@ -526,7 +526,42 @@
     chime([523, 659, 784, 1047, 1319]);
   }
 
+  /**
+   * Hand the summary to the viewer. Inside a claude.ai artifact the frame
+   * cannot download directly, so ask the host; anywhere else (GitHub Pages,
+   * local file) fall back to a blob link.
+   */
   function exportSummary() {
+    var name = 'onboarding-summary.md';
+    var text = buildSummary();
+    var claude = window.claude;
+    if (claude && typeof claude.use === 'function') {
+      claude.use('downloads').then(function (downloads) {
+        if (!downloads) return saveViaLink(name, text);
+        downloads.save({ filename: name, data: text }).catch(function (err) {
+          if (err && err.code === 'declined') return;
+          toast('Could not save the summary here.');
+        });
+      }).catch(function () { saveViaLink(name, text); });
+      return;
+    }
+    saveViaLink(name, text);
+  }
+
+  function saveViaLink(name, text) {
+    var blob = new Blob([text], { type: 'text/markdown' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+      URL.revokeObjectURL(a.href);
+      a.remove();
+    }, 0);
+  }
+
+  function buildSummary() {
     var lines = ['# Onboarding World Map — completion summary', ''];
     lines.push('Started: ' + new Date(state.startedAt).toLocaleDateString());
     lines.push('Final challenge best score: ' + (state.quizBest || 0) + ' / 5');
@@ -541,16 +576,7 @@
       });
       lines.push('');
     });
-    var blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'onboarding-summary.md';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () {
-      URL.revokeObjectURL(a.href);
-      a.remove();
-    }, 0);
+    return lines.join('\n');
   }
 
   // ----------------------------------------------------------------- wiring --
