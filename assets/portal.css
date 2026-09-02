@@ -239,3 +239,48 @@ table.tb td:first-child{font-weight:800;letter-spacing:-.2px}
   .notes{display:none}
   .slide{page-break-after:always}
 }
+
+/* ==========================================================================
+   Operating-map components
+   Added for the AI Ownership map: a status chip, a card with a coloured
+   left rail, bulleted detail lists, small italic provenance footnotes, and
+   a band that sits in the flow rather than pinned to the slide foot.
+   ========================================================================== */
+
+/* Status of a thing, not a state of the world — solid, uppercase, small. */
+.status{
+  display:inline-block;padding:6px 16px;border-radius:8px;color:#fff;
+  font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  box-shadow:0 4px 10px rgba(11,17,64,.16);
+}
+.st-go{background:#147D57}    /* in place */
+.st-part{background:#B3261E}  /* partial / led from elsewhere */
+.st-form{background:#B45309}  /* forming */
+
+/* A card carrying a coloured rail, set per instance with --rail. */
+.region{position:relative;padding-left:28px}
+.region::before{
+  content:"";position:absolute;left:13px;top:20px;bottom:20px;
+  width:5px;border-radius:3px;background:var(--rail,var(--blue));
+}
+
+/* Thin coloured rule across the top of a card, set per instance with --top. */
+.topline{height:4px;border-radius:3px;background:var(--top,var(--blue));margin-bottom:12px}
+
+.blist{margin:0;padding-left:15px;font-size:11px;line-height:1.45;color:var(--body)}
+.blist li{margin-bottom:4px}
+.blist li:last-child{margin-bottom:0}
+.blist b{color:var(--ink);font-weight:800}
+
+/* Provenance / caveat line at the foot of a card. */
+.fnote{font-size:10px;font-style:italic;line-height:1.38;margin-top:10px;color:var(--muted)}
+.vnote{font-size:11px;font-style:italic;font-weight:700;margin-top:8px;color:var(--rail,var(--muted))}
+
+/* Section heading between blocks of cards. */
+.sect{
+  font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;
+  color:var(--ink);opacity:.65;margin:0 0 12px;
+}
+
+/* A band in the flow rather than pinned to the slide foot. */
+.band.flow{position:static;left:auto;right:auto;bottom:auto;margin-top:10px;padding:11px 20px}

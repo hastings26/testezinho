@@ -237,7 +237,7 @@
     </div>
     <div class="band press">
       <div class="mark"></div>
-      <div><b>T0 — banned. No audit trail, scraping tools. InfoSec blocks these by default.</b><p>The rule: pick the tool that fits the data. In doubt, ask column four.</p></div>
+      <div><b>T0 — banned. No audit trail, scraping tools. InfoSec blocks these by default.</b><p>The rule: pick the tool that fits the data. In doubt, ask Revenue Enablement before you paste.</p></div>
     </div>
   </div>
   <img class="logo" src="assets/pax8-logo.png" alt="Pax8" />
@@ -247,7 +247,7 @@
 <div class="notes"><h3>07 — Your stack</h3><ul>
   <li>Same tier table as v1, opposite posture: it leads with what they <em>have</em>. T1 is bold because it's the answer 90% of the time.</li>
   <li class="flag">CONFIRM: T2 status — has either enterprise contract landed since the deck was written? If yes, move it out of 'coming'.</li>
-  <li>'Column four' is a running callback to slide 11. It pays off when they get there.</li>
+  <li>Points at Revenue Enablement by name — the approved map on slide 11 names Kipp Johnson and Alex Hastings for EMEA, so the ask has a face.</li>
 </ul></div>
 
 <!-- ===== 08 · Chat or Cowork =========================================== -->
@@ -367,33 +367,111 @@
   <li>Swap the worked example for the dominant role in the cohort. The 50-prompt Cowork library is the follow-on.</li>
 </ul></div>
 
-<!-- ===== 11 · Who owns what ============================================ -->
+<!-- ===== 11 · AI ownership map (approved, owners verified 2 Sep 2026) === -->
 <div class="slide" id="s11">
   <div class="halo"></div>
-  <div class="pill"><span class="dot"></span>MIP GA · July</div>
-  <div class="body">
-    <div class="label">How EMEA is organised around AI</div>
-    <h1>Who owns what — and who you ask</h1>
-    <div class="sub">Four groups run AI at Pax8. You only need to know which one to go to.</div>
-    <div class="grid4" style="margin-top:30px">
-      <div class="card"><div class="chip c1">1</div><div class="ct">Strategy &amp;<br>Transformation</div><div class="cd">Sets the long-term AI operating model.</div><div class="rule"></div><div class="p">Aaron Garza<span>SVP Transformation — leads the TMO</span></div></div>
-      <div class="card"><div class="chip c3">2</div><div class="ct">Platform &amp;<br>Engineering</div><div class="cd">Builds the AI and agent infrastructure Pax8 runs on.</div><div class="rule"></div><div class="p">Simon Green<span>SVP Workflow Engineering</span></div><div class="p">Mark Michelman<span>AI Enablement Director</span></div><div class="p">Scott O'Bryan<span>Sr Manager, Agentic Systems</span></div></div>
-      <div class="card"><div class="chip c5">3</div><div class="ct">Managed<br>Intelligence</div><div class="cd">Takes MIP to partners. GA since July.</div><div class="rule"></div><div class="p">Eric Mink<span>Drives the MIP Program</span></div><div class="p">Johannes Donat<span>Transformation Consultant</span></div><div class="p">Tori Powell<span>Senior Program Manager</span></div></div>
-      <div class="card lead"><div class="chip c6">4</div><div class="ct">Enablement &amp;<br>Community</div><div class="cd">Helps you actually use it.</div><div class="rule"></div><div class="p">Alex Hastings<span>Revenue Enablement EMEA</span></div><div class="p">AI Champions &amp; Coaches<span>Partner Experience · Sales · RevE</span></div><div class="p">Andy Readman<span>AI tool &amp; usage-budget questions</span></div><div class="tag">Your first stop</div></div>
+  <div class="pill"><span class="dot"></span>Owners verified · 2 Sep 2026</div>
+  <div class="body" style="padding-top:44px">
+    <div class="label" style="margin-bottom:10px">Pax8 · Revenue Enablement EMEA · <b>AI operating map</b></div>
+    <h1 style="font-size:25px;letter-spacing:-.6px;max-width:810px;line-height:1.1">AI Ownership at Pax8 — one model, three regional realities</h1>
+    <div class="sub" style="margin-top:6px;max-width:1020px;font-size:12.5px">Platform, policy and skills are owned centrally. Outcomes are owned regionally — and that is where the three regions diverge.</div>
+
+    <div style="margin-top:16px">
+      <div class="sect" style="margin:0 0 10px">Owned centrally — applies to every region</div>
+      <div class="grid4" style="margin-top:0;gap:14px">
+        <div class="card" style="padding:14px 16px 12px;--top:var(--blue)">
+          <div class="topline"></div>
+          <div class="when" style="margin-bottom:6px">Policy</div>
+          <div class="ct" style="font-size:14px;margin-bottom:6px">AI Governance Committee</div>
+          <div class="cd" style="font-size:11px;line-height:1.45">Coordinated by Corporate StratOps. Owns the Pax8 AI Policy — described as the one part of AI owned in a single place. Cross-functional by design.</div>
+          <div class="fnote" style="color:var(--blue)">Supersedes the Jun-26 map's "no ratified AI policy" gap</div>
+        </div>
+        <div class="card" style="padding:14px 16px 12px;--top:var(--ink)">
+          <div class="topline"></div>
+          <div class="when" style="margin-bottom:6px">Strategy</div>
+          <div class="ct" style="font-size:14px;margin-bottom:6px">Pax8OS SteerCo · StratOps · TMO</div>
+          <div class="cd" style="font-size:11px;line-height:1.45">Larger AI initiatives originate here. TMO led by Aaron Garza, SVP of Transformation — mandate is design &rarr; build &rarr; hand off, not permanent ownership.</div>
+          <div class="fnote">Garza title verified in directory</div>
+        </div>
+        <div class="card" style="padding:14px 16px 12px;--top:var(--cyan)">
+          <div class="topline"></div>
+          <div class="when" style="margin-bottom:6px">Platform</div>
+          <div class="ct" style="font-size:14px;margin-bottom:6px">Workflow Engineering · APEX</div>
+          <div class="cd" style="font-size:11px;line-height:1.45">Simon Green (SVP) owns assistive AI tools, MCP/Context8 connectivity and citizen-dev governance. APEX (P&amp;E) owns AI in software development.</div>
+          <div class="fnote" style="color:var(--cyan)">AI Platform Lead: Andy Readman — secondment ends 30 Sep</div>
+        </div>
+        <div class="card" style="padding:14px 16px 12px;--top:#147D57">
+          <div class="topline"></div>
+          <div class="when" style="margin-bottom:6px">Enablement &amp; skills</div>
+          <div class="ct" style="font-size:14px;margin-bottom:6px">L&amp;TD · AITO</div>
+          <div class="cd" style="font-size:11px;line-height:1.45">Learning &amp; Talent Development owns the company-wide AI skills curriculum. AITO (Ben Eichholz) runs Spark, AI Builder and AI Office Hours.</div>
+          <div class="fnote" style="color:#147D57">AI Office Hours run across all three regions</div>
+        </div>
+      </div>
     </div>
-    <div class="band press">
+
+    <div style="margin-top:6px">
+      <div class="sect" style="margin:0 0 10px">Owned regionally — where the three diverge</div>
+      <div class="grid3" style="margin-top:0;gap:16px">
+        <div class="card region" style="padding:14px 16px 10px;--rail:#147D57">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+            <div style="font-size:22px;font-weight:800;letter-spacing:-.7px">EMEA</div>
+            <span class="status st-go">Coordinated</span>
+          </div>
+          <ul class="blist">
+            <li><b>AI vTeam EMEA</b> — biweekly cross-functional sync convened by Eric Östlund. Still running 27 Aug 2026.</li>
+            <li><b>Eric Mink</b> — VP of AI Adoption, EMEA. Expanded with Johannes Donat, MI Transformation Consultant.</li>
+            <li><b>Revenue Enablement</b> — Kipp Johnson · Alex Hastings. MIP story, 6-play, talk-tracks, onboarding.</li>
+            <li>Academy (Josh Foye) · ProServ (Rhys Batcup) · Spark &amp; Project Zeus.</li>
+          </ul>
+          <div class="vnote">Named owner, active forum, delivery layer in place.</div>
+        </div>
+        <div class="card region" style="padding:14px 16px 10px;--rail:#B3261E">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+            <div style="font-size:22px;font-weight:800;letter-spacing:-.7px">AMER</div>
+            <span class="status st-part">GTM-led</span>
+          </div>
+          <ul class="blist">
+            <li>Runs through <b>Project Asteroid</b> workstreams rather than a regional AI forum.</li>
+            <li>Owns: AI Innovation Group, MIP Partner Program, Co-sell &amp; Pro Services.</li>
+            <li>Asteroid resourcing note: "AMER AI GTM — resources needed; business case to be presented to AMER LT".</li>
+            <li>Distinct Managed Intelligence messaging track EMEA must interlock with to avoid partner-facing drift.</li>
+          </ul>
+          <div class="vnote">No named regional AI-adoption owner found.</div>
+        </div>
+        <div class="card region" style="padding:14px 16px 10px;--rail:#B45309">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+            <div style="font-size:22px;font-weight:800;letter-spacing:-.7px">APAC</div>
+            <span class="status st-form">Forming</span>
+          </div>
+          <ul class="blist">
+            <li><b>Director of AI Adoption, APAC</b> exists as a job description dated 10 Jun 2026 — Microsoft AI first.</li>
+            <li>Incumbent not confirmed in the directory.</li>
+            <li>MIP pilot: "APAC selection remains TBD".</li>
+            <li>Only Marketing, Comms and Support contacts mapped in Asteroid — no adoption owner.</li>
+          </ul>
+          <div class="vnote">A role on paper is not installed capability.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="band press flow">
       <div class="mark"></div>
-      <div><b>Stuck? Start at column four.</b><p>Enablement and the Champions exist to unblock you — you never need to work out which SVP owns a problem first.</p></div>
+      <div style="flex:1;font-size:11px;color:var(--body);line-height:1.4"><b style="font-size:12.5px;letter-spacing:-.3px;color:var(--ink)">The gap is not the org chart — it is the asymmetry.</b> EMEA has a forum and an owner. AMER has workstreams. APAC has a role description.</div>
+      <div style="font-size:10.5px;font-style:italic;color:var(--muted);text-align:right;flex-shrink:0;white-space:nowrap">Route AI questions via Slack <b style="color:var(--blue);font-style:normal">#citizen-dev-community</b></div>
     </div>
   </div>
   <img class="logo" src="assets/pax8-logo.png" alt="Pax8" />
   <div class="foot">Copyright &copy;2026 Pax8 | AI Onboarding · Revenue Enablement EMEA</div>
   <div class="num">11</div>
 </div>
-<div class="notes"><h3>11 — Who owns what</h3><ul>
-  <li><strong>Say:</strong> 'You don't need to memorise this. You need to know that column four is yours.'</li>
-  <li class="flag">CONFIRM: only Mark Michelman and Simon Green are directory-confirmed; the rest come from the Slack canvas. Every named person should know they're in onboarding content — one Slack message each.</li>
-  <li>Deliberately omitted: unfilled JD roles, Craig Horton, Tyler Kron, Jen Bossier. Regional nuances stay out of onboarding entirely.</li>
+<div class="notes"><h3>11 — AI ownership map</h3><ul>
+  <li>This is the approved map, owners verified 2 September 2026. It replaces the earlier four-column "who owns what" slide, whose names were never directory-confirmed.</li>
+  <li><strong>Say:</strong> 'You don't need to memorise this. You need to know that EMEA is the one region with a named owner and a live forum — and that your questions have a route.'</li>
+  <li>The bottom band is the point of the slide. Don't read the cards out; land the asymmetry.</li>
+  <li class="flag">CONFIRM: the routing line says <strong>#citizen-dev-community</strong>, but slides 12, 14 and 15 all push <strong>#claude-community</strong>. Two different channels — decide which is the front door for a new joiner before this ships, and make the deck say one thing.</li>
+  <li class="flag">TIME-BOMB: Andy Readman's secondment as AI Platform Lead ends 30 Sep. A deck delivered in September goes stale inside the month — check who takes Platform questions from 1 Oct.</li>
+  <li>Dropped from the previous version because they are not on the approved map: Mark Michelman, Scott O'Bryan, Tori Powell. Add them back only if the map owner does.</li>
 </ul></div>
 
 <!-- ===== 12 · The rhythm =============================================== -->
