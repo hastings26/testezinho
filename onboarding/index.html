@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onboarding World Map · Pax8 EMEA</title>
+  <meta name="description" content="A pixel-art world map that walks new starters through Pax8 EMEA onboarding, one checkpoint at a time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="map.css" />
+</head>
+<body>
+
+  <header class="hud">
+    <div class="hud-left">
+      <h1 class="hud-title">Onboarding World Map</h1>
+      <p class="hud-sub" id="hudSub">Pax8 EMEA · New Starter Quest</p>
+    </div>
+
+    <div class="hud-progress">
+      <div class="progress-track" role="progressbar" aria-labelledby="progressLabel" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="progress-label" id="progressLabel">0 / 6 worlds complete</p>
+    </div>
+
+    <div class="hud-right">
+      <button id="continueBtn" class="btn btn-primary">▶ Continue</button>
+      <button id="soundBtn" class="btn btn-icon" aria-pressed="true" title="Toggle sound">♪</button>
+      <button id="resetBtn" class="btn btn-icon" title="Reset progress">↺</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+    <div class="map-scroll" id="mapScroll">
+      <div class="map" id="map">
+        <img class="map-art" id="mapArt" src="assets/world-map.png" alt="Pixel-art world map: a start flag, six numbered island worlds joined by a yellow road, ending at a castle." />
+
+        <!-- Route: traced down the centre of the yellow road. Hidden unless debug is on. -->
+        <svg class="map-path" id="pathSvg" viewBox="0 0 1448 1086" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path id="road" d="" />
+        </svg>
+
+        <!-- Checkpoint markers are generated here -->
+        <div class="markers" id="markers"></div>
+
+        <div class="hero" id="hero" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <p class="stage-hint" id="stageHint">Click <strong>Continue</strong> — or tap the glowing coin — to travel to the next checkpoint.</p>
+  </main>
+
+  <!-- Checkpoint briefing -->
+  <div class="overlay hidden" id="overlay">
+    <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+      <header class="panel-head">
+        <span class="panel-badge" id="panelBadge">1</span>
+        <div>
+          <p class="panel-kicker" id="panelKicker">World 1</p>
+          <h2 class="panel-title" id="panelTitle">Title</h2>
+        </div>
+        <button class="btn btn-icon panel-close" id="panelClose" aria-label="Close">✕</button>
+      </header>
+
+      <div class="panel-body" id="panelBody">
+        <p class="panel-summary" id="panelSummary"></p>
+
+        <section class="panel-section" id="keyPointsSection">
+          <h3>What matters here</h3>
+          <ul class="key-points" id="panelKeyPoints"></ul>
+        </section>
+
+        <section class="panel-section" id="objectivesSection">
+          <h3>Objectives</h3>
+          <ul class="objectives" id="panelObjectives"></ul>
+        </section>
+
+        <section class="panel-section hidden" id="quizSection">
+          <h3>Final challenge</h3>
+          <ol class="quiz" id="panelQuiz"></ol>
+          <p class="quiz-result" id="quizResult" role="status"></p>
+        </section>
+      </div>
+
+      <footer class="panel-foot">
+        <p class="panel-reward" id="panelReward"></p>
+        <div class="panel-actions">
+          <button class="btn" id="panelLater">Not yet</button>
+          <button class="btn btn-primary" id="panelComplete">✓ Mark complete</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Victory -->
+  <div class="overlay hidden" id="victory">
+    <div class="panel panel-victory" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
+      <h2 class="panel-title" id="victoryTitle">★ Onboarding complete ★</h2>
+      <p class="panel-summary" id="victoryText"></p>
+      <div class="panel-actions">
+        <button class="btn" id="victoryExport">Download summary</button>
+        <button class="btn btn-primary" id="victoryClose">Return to map</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="world-data.js"></script>
+  <script src="map.js"></script>
+</body>
+</html>
