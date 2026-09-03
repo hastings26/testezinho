@@ -1,3 +1,20 @@
+## 🗺️ Onboarding World Map — Pax8 EMEA new starter quest
+
+`onboarding/index.html` — a pixel-art overworld where a character walks the yellow road from
+START to the castle, stopping at six worlds (Welcome to Pax8 → Meet the MSP → The MIP Shift →
+Marketplace → Make It Happen → Final Challenge). Each stop opens a briefing with objectives to
+tick off; the castle is a five-question gate.
+
+Built on the architecture the Executive Summary research recommends: the artwork stays an
+untouched PNG, an invisible SVG `<path>` traced down the centre of the road carries the route,
+and the sprite is moved along it with `getPointAtLength()`. No build step, no backend; progress
+lives in `localStorage`. Content is all in `onboarding/world-data.js`.
+
+See [`onboarding/README.md`](onboarding/README.md) for the data model, the tracing tool, and the
+one place where the artwork's road has a gap.
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
