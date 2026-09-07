@@ -1,3 +1,51 @@
+## 🎮 Onboarding Request — 8-bit hiring-manager prototype
+
+`onboarding-request.html` is a standalone, front-end-only prototype of an onboarding
+request form for hiring managers. Open the file in a browser — no build step, no server,
+no external dependencies, no network calls.
+
+A manager enters the new hire's name, department, role, start date and their own name.
+From department + role the page derives the **mandatory** learning modules, locks them so
+they can't be removed, lets the manager add optional modules on top, and calculates the
+total learning time and the number of onboarding days live.
+
+- **Mandatory = department baseline ∪ role mapping**, de-duplicated. The manager doesn't
+  decide what is mandatory.
+- **Locked and added modules are tracked separately**, so a manager's own additions survive
+  a role change while the previous role's obligations disappear.
+- **Day maths:** max 4 hours of sessions per day, and a started day counts as a full day —
+  `ceil(totalHours / 4)`. 8 hrs is 2 days, 9 hrs is 3 days.
+- **Reference case:** Sales + Channel Account Manager = 10 locked modules, 13 hours, 4 days.
+
+Submission is **explicitly simulated**. Nothing is sent, saved, booked or tracked; the
+confirmation panel prints a system log describing what a connected version *would* do, and
+says so. Refreshing the page resets everything — there is no persistence.
+
+### Data
+
+All content lives in one `DATA` object at the top of the script, in five collections that
+mirror the intended future Excel structure: `departments`, `roles`, `modules`, `baselines`,
+`roleMappingDelivery`. The renderer never names a department or module. The same data is
+mirrored in `onboarding-data.json` for reference — the HTML does not fetch it.
+
+> The role lists, baselines, module durations, owners and notification lists are
+> **reconstructed placeholder data** for the prototype. They are not approved business data.
+
+`docs/onboarding-request-spec.md` is the full behavioural contract, including the known
+differences between this prototype and the original written design.
+
+### Test it
+
+```
+NODE_PATH=$(npm root -g) node tests/onboarding-request.mjs
+```
+
+52 checks against the spec: the reference case, the locked/added split, role and department
+changes, the day maths, the `[ALL]` toggle, submit validation, the simulated log, and that
+the page makes no external requests.
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG

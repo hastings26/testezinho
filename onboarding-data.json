@@ -1,0 +1,315 @@
+{
+  "departments": [
+    {
+      "id": "sales",
+      "name": "Sales"
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing"
+    },
+    {
+      "id": "finance",
+      "name": "Finance"
+    },
+    {
+      "id": "rev-enablement",
+      "name": "Revenue Enablement"
+    },
+    {
+      "id": "rev-ops",
+      "name": "Revenue Operations"
+    },
+    {
+      "id": "tech-presales",
+      "name": "Technical Pre-Sales"
+    },
+    {
+      "id": "vendor-exp",
+      "name": "Vendor Experience"
+    }
+  ],
+  "roles": [
+    {
+      "id": "cam",
+      "department": "sales",
+      "name": "Channel Account Manager"
+    },
+    {
+      "id": "ae",
+      "department": "sales",
+      "name": "Account Executive"
+    },
+    {
+      "id": "sales-mgr",
+      "department": "sales",
+      "name": "Sales Manager"
+    },
+    {
+      "id": "mktg",
+      "department": "marketing",
+      "name": "Marketing Specialist"
+    },
+    {
+      "id": "fin",
+      "department": "finance",
+      "name": "Finance Analyst"
+    },
+    {
+      "id": "revm",
+      "department": "rev-enablement",
+      "name": "Revenue Enablement Programs Manager"
+    },
+    {
+      "id": "revo",
+      "department": "rev-ops",
+      "name": "Revenue Operations Analyst"
+    },
+    {
+      "id": "tps",
+      "department": "tech-presales",
+      "name": "Solutions Consultant"
+    },
+    {
+      "id": "ve",
+      "department": "vendor-exp",
+      "name": "Vendor Experience Manager"
+    }
+  ],
+  "modules": [
+    {
+      "id": "culture",
+      "group": "Culture",
+      "name": "Culture Essentials",
+      "minutes": 90
+    },
+    {
+      "id": "marketplace",
+      "group": "Offering",
+      "name": "Marketplace",
+      "minutes": 60
+    },
+    {
+      "id": "partner-enable",
+      "group": "Offering",
+      "name": "Partner Enablement",
+      "minutes": 45
+    },
+    {
+      "id": "partner-support",
+      "group": "Offering",
+      "name": "Partner Support",
+      "minutes": 45
+    },
+    {
+      "id": "vendor",
+      "group": "Offering",
+      "name": "Vendor",
+      "minutes": 45
+    },
+    {
+      "id": "ai",
+      "group": "Tools",
+      "name": "AI Literacy",
+      "minutes": 60
+    },
+    {
+      "id": "m365",
+      "group": "Tools",
+      "name": "M365",
+      "minutes": 45
+    },
+    {
+      "id": "powerbi",
+      "group": "Tools",
+      "name": "Power BI",
+      "minutes": 45
+    },
+    {
+      "id": "salesforce",
+      "group": "Tools",
+      "name": "Salesforce",
+      "minutes": 90
+    },
+    {
+      "id": "academy",
+      "group": "Department",
+      "name": "Academy Essentials",
+      "minutes": 45
+    },
+    {
+      "id": "finance",
+      "group": "Department",
+      "name": "Finance Essentials",
+      "minutes": 30
+    },
+    {
+      "id": "marketing",
+      "group": "Department",
+      "name": "Marketing Essentials",
+      "minutes": 45
+    },
+    {
+      "id": "ps",
+      "group": "Department",
+      "name": "Professional Services Essentials",
+      "minutes": 45
+    },
+    {
+      "id": "re",
+      "group": "Department",
+      "name": "Revenue Enablement Essentials",
+      "minutes": 45
+    },
+    {
+      "id": "ro",
+      "group": "Department",
+      "name": "Revenue Operations Essentials",
+      "minutes": 45
+    },
+    {
+      "id": "sales-complete",
+      "group": "Department",
+      "name": "Sales Complete",
+      "minutes": 255
+    },
+    {
+      "id": "sales-essential",
+      "group": "Department",
+      "name": "Sales Essentials",
+      "minutes": 45
+    },
+    {
+      "id": "tps",
+      "group": "Department",
+      "name": "Technical Pre-Sales Essentials",
+      "minutes": 45
+    },
+    {
+      "id": "ve",
+      "group": "Department",
+      "name": "Vendor Experience Essentials",
+      "minutes": 45
+    }
+  ],
+  "baselines": [
+    {
+      "department": "sales",
+      "modules": [
+        "culture",
+        "marketplace",
+        "partner-enable",
+        "partner-support",
+        "vendor",
+        "ai",
+        "m365",
+        "powerbi",
+        "salesforce"
+      ]
+    },
+    {
+      "department": "marketing",
+      "modules": [
+        "culture",
+        "marketing"
+      ]
+    },
+    {
+      "department": "finance",
+      "modules": [
+        "culture",
+        "finance"
+      ]
+    },
+    {
+      "department": "rev-enablement",
+      "modules": [
+        "culture",
+        "re"
+      ]
+    },
+    {
+      "department": "rev-ops",
+      "modules": [
+        "culture",
+        "ro"
+      ]
+    },
+    {
+      "department": "tech-presales",
+      "modules": [
+        "culture",
+        "tps"
+      ]
+    },
+    {
+      "department": "vendor-exp",
+      "modules": [
+        "culture",
+        "ve"
+      ]
+    }
+  ],
+  "roleMappingDelivery": [
+    {
+      "role": "cam",
+      "modules": [
+        "sales-complete"
+      ],
+      "owner": "Revenue Enablement",
+      "notify": "Hiring Manager, Revenue Enablement"
+    },
+    {
+      "role": "ae",
+      "modules": [
+        "sales-essential"
+      ],
+      "owner": "Revenue Enablement",
+      "notify": "Hiring Manager, Revenue Enablement"
+    },
+    {
+      "role": "sales-mgr",
+      "modules": [
+        "sales-complete"
+      ],
+      "owner": "Revenue Enablement",
+      "notify": "Hiring Manager, Revenue Enablement"
+    },
+    {
+      "role": "mktg",
+      "modules": [],
+      "owner": "Marketing",
+      "notify": "Hiring Manager, Marketing Enablement"
+    },
+    {
+      "role": "fin",
+      "modules": [],
+      "owner": "Finance",
+      "notify": "Hiring Manager, Finance"
+    },
+    {
+      "role": "revm",
+      "modules": [],
+      "owner": "Revenue Enablement",
+      "notify": "Hiring Manager, Revenue Enablement"
+    },
+    {
+      "role": "revo",
+      "modules": [],
+      "owner": "Revenue Operations",
+      "notify": "Hiring Manager, Revenue Operations"
+    },
+    {
+      "role": "tps",
+      "modules": [],
+      "owner": "Technical Pre-Sales",
+      "notify": "Hiring Manager, Technical Pre-Sales"
+    },
+    {
+      "role": "ve",
+      "modules": [],
+      "owner": "Vendor Experience",
+      "notify": "Hiring Manager, Vendor Experience"
+    }
+  ]
+}
