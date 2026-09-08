@@ -1115,3 +1115,49 @@ caveat does not reopen that.
 
 The summary heading is `ONBOARDING ESTIMATE` rather than `TOTAL TIME`,
 since the block now leads with the estimate rather than the total.
+
+## A.4 Session syllabus view (new)
+
+The prototype now has two views in one file, switched by URL hash so a
+link to either can be shared:
+
+- `#request` (and anything unrecognised) — the request form, unchanged
+- `#syllabus` — an outline of what every session covers
+
+The masthead and document title follow the view. The sticky summary bar is
+hidden on the syllabus, since it summarises the form.
+
+Each of the 19 modules gets a card showing its name, duration, a one-line
+summary, a topic list, and who has to take it. The requirement line is
+**derived from the same `baselines` and `roleMappingDelivery` records that
+drive the locking**, so the syllabus cannot drift out of step with what the
+form enforces:
+
+- Departments whose baseline includes the module
+- Roles whose mapping adds it
+- Otherwise: optional, required by nothing
+
+The syllabus copy — summaries and topic lists — lives in a `SYLLABUS`
+object held separate from `DATA`, keyed by module id. `DATA` stays an exact
+mirror of `onboarding-data.json` and is checked against it; the syllabus
+text is prototype copy and is not.
+
+**This copy is illustrative and has not been reviewed by the teams who own
+the material.** The view carries a visible notice saying so. It must be
+replaced before the page is shown to anyone as a real curriculum.
+
+## A.5 Motion
+
+Three parallax layers of pixel dust sit behind the content, tracking scroll
+at 0.08, 0.18 and 0.32 of page speed, with a few pixels of pointer drift.
+The masthead lags the page at 0.12. Coins land with a staggered pop, and
+are only redrawn when the day count actually changes — `refresh()` runs on
+every keystroke in the name field, and re-animating on each would strobe.
+
+Smaller interactions: pixel checkboxes scale their fill in, rows nudge on
+hover, buttons press into their shadow, the confirmation panel rises.
+
+All of it is decorative. Under `prefers-reduced-motion: reduce` the
+parallax layers are removed and animation and transition durations collapse
+to nothing; the page reads identically. Nothing is revealed by scrolling —
+the whole page is present at rest.

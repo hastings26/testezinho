@@ -31,8 +31,23 @@ mirrored in `onboarding-data.json` for reference — the HTML does not fetch it.
 > The role lists, baselines, module durations, owners and notification lists are
 > **reconstructed placeholder data** for the prototype. They are not approved business data.
 
+### Two views
+
+The file holds two views, switched by URL hash so either can be linked:
+
+- `#request` — the request form (the default)
+- `#syllabus` — what every session covers, how long it runs, and who has to take it
+
+The syllabus's "mandatory for" lines are derived from the same `baselines` and
+`roleMappingDelivery` records that drive the locking, so the two cannot drift apart.
+
+> The session summaries and topic lists on the syllabus are **illustrative copy written
+> for the prototype**. They have not been reviewed by the teams who own the material, and
+> the page says so. Replace them before showing this to anyone as a real curriculum.
+
 `docs/onboarding-request-spec.md` is the full behavioural contract, including the known
-differences between this prototype and the original written design.
+differences between this prototype and the original written design, and an appendix
+recording what has changed since the handoff.
 
 ### Test it
 
@@ -40,9 +55,9 @@ differences between this prototype and the original written design.
 NODE_PATH=$(npm root -g) node tests/onboarding-request.mjs
 ```
 
-52 checks against the spec: the reference case, the locked/added split, role and department
-changes, the day maths, the `[ALL]` toggle, submit validation, the simulated log, and that
-the page makes no external requests.
+72 checks against the spec: the reference case, the locked/added split, role and department
+changes, the day maths, the `[ALL]` toggle, submit validation, the simulated log, the syllabus view and its derived
+requirement lines, and that the page makes no external requests.
 
 ---
 

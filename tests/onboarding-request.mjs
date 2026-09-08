@@ -159,6 +159,37 @@ check('log disclaims any real action', log[6], 'Nothing was sent, booked, stored
 const requests = [];
 page.on('request', r => requests.push(r.url()));
 await page.reload();
+// Syllabus view (spec appendix A.4)
+await page.goto(file + '#syllabus');
+check('syllabus view shown', await page.locator('#viewSyllabus').isVisible(), true);
+check('request view hidden', await page.locator('#viewRequest').isVisible(), false);
+check('sticky bar hidden on syllabus', await page.locator('#stickyBar').isVisible(), false);
+check('a card per module', await page.locator('.sy-card').count(), 19);
+check('syllabus adds no catalogue rows of its own', await page.locator('.module').count(), 19);
+check('catalogue rows not visible on the syllabus', await page.locator('.module').first().isVisible(), false);
+check('every card has an outline', await page.locator('.sy-card .sy-summary:not(:empty)').count(), 19);
+check('every card lists topics', await page.locator('.sy-card .sy-topics li').count() >= 19 * 3, true);
+check('placeholder warning present', await page.locator('.sy-warning').isVisible(), true);
+check('document title follows the view', await page.title(), 'Session Syllabus');
+
+// The requirement line is derived from the same data that drives locking.
+const cultureReq = await page.locator('.sy-card[data-id="culture"] .sy-req').textContent();
+check('culture is baseline for every department', cultureReq,
+  'Mandatory: baseline for Sales, Marketing, Finance, Revenue Enablement, Revenue Operations, Technical Pre-Sales, Vendor Experience.');
+check('sales-complete names the roles that add it',
+  await page.locator('.sy-card[data-id="sales-complete"] .sy-req').textContent(),
+  'Mandatory: added for Channel Account Manager, Sales Manager.');
+check('academy is marked optional',
+  await page.locator('.sy-card[data-id="academy"] .sy-req').textContent(),
+  'Optional — no department baseline or role requires this.');
+check('catalogue total', (await page.locator('#syllabusTotal').textContent()).includes('19 SESSIONS'), true);
+
+// Back to the form, with the parallax layers present but decorative.
+await page.goto(file + '#request');
+check('request view restored', await page.locator('#viewRequest').isVisible(), true);
+check('parallax layers rendered', await page.locator('.layer').count(), 3);
+check('parallax is hidden from assistive tech', await page.locator('.parallax').getAttribute('aria-hidden'), 'true');
+
 check('no external requests', requests.filter(u => !u.startsWith('file:')), []);
 check('no page errors', errors, []);
 
