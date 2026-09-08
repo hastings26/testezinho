@@ -1,39 +1,418 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Onboarding Request</title>
 <style>
-:root{
-  --bg:#17171d;--panel:#1f2028;--ink:#f8f3e8;--muted:#b8b6c1;--line:#6e6d79;
-  --yellow:#ffd84d;--blue:#3898ff;--pink:#ff3b9d;--purple:#bd62ff;--orange:#ffb13b;--green:#84ff57;
+/* ------------------------------------------------------------------
+   Palette. Category colours are keyed to the four module groups.
+   ------------------------------------------------------------------ */
+:root {
+  --bg:     #17171d;
+  --ink:    #f8f3e8;
+  --rule:   #8c8a96;
+  --dotted: #767480;
+
+  --yellow: #ffd84d;
+  --blue:   #3898ff;
+  --pink:   #ff3b9d;
+  --purple: #bd62ff;
+  --orange: #ffb13b;
+  --green:  #84ff57;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(circle at 50% -10%,#292937 0,#17171d 42%,#111116 100%);color:var(--ink);font-family:"Courier New",monospace;letter-spacing:.055em;text-transform:uppercase}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.08;background:repeating-linear-gradient(0deg,transparent 0 3px,#fff 4px,transparent 5px)}
-.wrap{width:min(920px,92vw);margin:0 auto;padding:56px 0 140px}
-.logo{font-weight:900;font-size:clamp(34px,7vw,68px);line-height:.82;text-align:center;color:var(--yellow);text-shadow:4px 0 var(--blue),0 4px #a66d00,4px 4px #0e4e97;margin:10px 0 54px}
-.section-title{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;margin:26px 0 18px;font-weight:900;letter-spacing:.18em}.section-title:before,.section-title:after{content:"";height:2px;background:#8c8a96}
-.setup-row{display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:center;border-bottom:2px dotted #767480;padding:16px 0}.setup-row label{font-weight:900}.field{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font:900 19px "Courier New",monospace;text-align:right;text-transform:uppercase}.field::placeholder{color:#fff;opacity:.85}.field option{background:#20212a}.disabled{opacity:.5}.catalog-head{display:grid;grid-template-columns:1fr 120px 84px;gap:12px;color:#ddd;font-weight:900;font-size:13px;margin:12px 0 2px}.group{margin:17px 0 10px}.group-head{display:grid;grid-template-columns:1fr 84px;align-items:center;gap:12px;font-size:22px;font-weight:900}.group-head .line{height:2px;margin-left:14px;background:currentColor;opacity:.65}.group-head .all{text-align:right;font-size:14px;cursor:pointer}.culture{color:var(--purple)}.offering{color:var(--pink)}.tools{color:var(--orange)}.department{color:var(--green)}
-.module{display:grid;grid-template-columns:28px minmax(0,1fr) 105px;gap:10px;align-items:center;padding:8px 0 8px 20px;cursor:pointer;position:relative}.module:hover{filter:brightness(1.15)}.module input{position:absolute;opacity:0}.box{width:16px;height:16px;border:2px solid currentColor;box-shadow:2px 2px 0 #0b0b0e;position:relative}.module input:checked + .box:after{content:"";position:absolute;inset:2px;background:currentColor}.module.locked .box:before{content:"L";position:absolute;left:2px;top:-5px;font-size:14px;font-weight:900;background:var(--bg)}.module.locked{cursor:not-allowed}.module-name{display:flex;align-items:center;min-width:0;font-weight:900}.dots{border-bottom:2px dotted currentColor;opacity:.5;flex:1;margin:0 11px 4px}.time{text-align:right;font-weight:900}.badge{font-size:11px;border:1px solid currentColor;padding:2px 5px;margin-left:8px}.msg{margin:46px 0}.msg textarea{width:100%;min-height:118px;background:transparent;border:2px solid #9997a4;color:var(--ink);padding:18px;font:900 16px "Courier New",monospace;text-transform:uppercase;resize:vertical;outline:none}.msg .optional{font-size:12px;margin-bottom:8px}.summary{margin-top:60px;border-top:2px solid #777683;padding-top:34px;text-align:center}.summary h3{font-size:15px;letter-spacing:.2em}.big{font-size:30px;font-weight:900;margin:8px 0}.split{font-size:12px;color:#ddd}.days-label{margin-top:34px;font-size:14px;font-weight:900}.coins{display:flex;justify-content:center;gap:12px;margin:15px 0}.coin{width:50px;height:50px;border:8px solid var(--yellow);background:#7c5100;box-shadow:5px 0 #f2a900,0 5px #f2a900,5px 5px #653e00;transform:rotate(0deg)}.day-boxes{display:flex;justify-content:center;gap:8px;margin:14px 0 6px}.day-box{width:18px;height:18px;border:2px solid #bbb}.day-box.on{background:var(--yellow);border-color:var(--yellow);box-shadow:2px 2px #7b5800}.rule{max-width:590px;margin:26px auto 0;line-height:1.8;font-weight:900;font-size:13px}.submit{margin:42px auto 12px;padding:14px 25px;background:transparent;border:3px solid var(--ink);color:var(--ink);font:900 16px "Courier New",monospace;text-transform:uppercase;box-shadow:5px 5px 0 #595764;cursor:pointer}.submit:disabled{opacity:.35;cursor:not-allowed}.hint{font-size:12px;line-height:1.7;max-width:560px;margin:0 auto}.sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;width:min(860px,92vw);background:#1d1e26e8;border:2px solid #9896a2;backdrop-filter:blur(8px);display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 18px;z-index:10;box-shadow:7px 7px 0 #0d0d11}.sticky strong{font-size:13px}.sticky button{border:2px solid #ddd;background:transparent;color:#fff;padding:9px 16px;font:900 13px "Courier New",monospace;text-transform:uppercase}.confirmation{display:none;margin-top:46px;border:3px solid var(--green);padding:28px;background:#111811}.confirmation.show{display:block}.confirmation h2{color:var(--green);margin-top:0}.log{margin-top:20px;border-top:1px dashed #7ea970;padding-top:10px}.log div{padding:7px 0}.tiny{font-size:11px;color:#c8c8cf;text-transform:none;letter-spacing:.02em}.flash{animation:flash .45s 2}@keyframes flash{50%{filter:brightness(2);transform:translateX(3px)}}
-@media(max-width:650px){.wrap{width:94vw;padding-top:32px}.setup-row{grid-template-columns:1fr;gap:5px}.field{text-align:left}.catalog-head{grid-template-columns:1fr 85px 58px}.module{grid-template-columns:24px minmax(0,1fr) 82px;padding-left:5px}.group-head{font-size:18px}.sticky{align-items:flex-start}.sticky strong{font-size:11px}.sticky button{padding:8px 10px}}
+
+* { box-sizing: border-box }
+html { scroll-behavior: smooth }
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 50% -10%, #292937 0, #17171d 42%, #111116 100%);
+  color: var(--ink);
+  font-family: "Courier New", monospace;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+/* Scanline overlay — the old-monitor texture. */
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .08;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, #fff 4px, transparent 5px);
+}
+
+.wrap {
+  width: min(920px, 92vw);
+  margin: 0 auto;
+  padding: 56px 0 140px;
+}
+
+/* ------------------------------------------------------------------
+   Masthead — yellow fill with offset shadows faking 8-bit extrusion.
+   ------------------------------------------------------------------ */
+.logo {
+  margin: 10px 0 54px;
+  font-size: clamp(34px, 7vw, 68px);
+  font-weight: 900;
+  line-height: .82;
+  text-align: center;
+  color: var(--yellow);
+  text-shadow: 4px 0 var(--blue), 0 4px #a66d00, 4px 4px #0e4e97;
+}
+
+/* Section heading: rule | title | rule */
+.section-title {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+  margin: 26px 0 18px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+.section-title:before,
+.section-title:after {
+  content: "";
+  height: 2px;
+  background: var(--rule);
+}
+
+/* ------------------------------------------------------------------
+   Player setup
+   ------------------------------------------------------------------ */
+.setup-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  gap: 22px;
+  padding: 16px 0;
+  border-bottom: 2px dotted var(--dotted);
+}
+.setup-row label { font-weight: 900 }
+
+.field {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 900 19px "Courier New", monospace;
+  text-align: right;
+  text-transform: uppercase;
+}
+.field::placeholder { color: #fff; opacity: .85 }
+.field option { background: #20212a }
+
+/* ------------------------------------------------------------------
+   Module catalogue
+   ------------------------------------------------------------------ */
+.catalog-head {
+  display: grid;
+  grid-template-columns: 1fr 120px 84px;
+  gap: 12px;
+  margin: 12px 0 2px;
+  color: #ddd;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.group { margin: 17px 0 10px }
+
+.group-head {
+  display: grid;
+  grid-template-columns: 1fr 84px;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 900;
+}
+.group-head .title { display: flex; align-items: center }
+.group-head .line {
+  flex: 1;
+  height: 2px;
+  margin-left: 14px;
+  background: currentColor;
+  opacity: .65;
+}
+.group-head .all {
+  text-align: right;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Each group carries its own colour; rows inherit it. */
+.culture    { color: var(--purple) }
+.offering   { color: var(--pink) }
+.tools      { color: var(--orange) }
+.department { color: var(--green) }
+
+/* Row: pixel checkbox | name + dotted leader | duration */
+.module {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 105px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 8px 20px;
+  cursor: pointer;
+}
+.module:hover { filter: brightness(1.15) }
+.module.locked { cursor: not-allowed }
+
+/* The native control is hidden; .box is drawn in its place. */
+.module input { position: absolute; opacity: 0 }
+
+.box {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  box-shadow: 2px 2px 0 #0b0b0e;
+}
+.module input:checked + .box:after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: currentColor;
+}
+/* Locked rows get an L over the box, on top of the LOCKED badge. */
+.module.locked .box:before {
+  content: "L";
+  position: absolute;
+  left: 2px;
+  top: -5px;
+  font-size: 14px;
+  font-weight: 900;
+  background: var(--bg);
+}
+
+.module-name {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  font-weight: 900;
+}
+/* A flexible element, not typed characters — it resizes with the viewport. */
+.dots {
+  flex: 1;
+  margin: 0 11px 4px;
+  border-bottom: 2px dotted currentColor;
+  opacity: .5;
+}
+.time { text-align: right; font-weight: 900 }
+
+.badge {
+  margin-left: 8px;
+  padding: 2px 5px;
+  border: 1px solid currentColor;
+  font-size: 11px;
+}
+
+/* Clicking a locked row flashes it rather than doing nothing. */
+.flash { animation: flash .45s 2 }
+@keyframes flash {
+  50% { filter: brightness(2); transform: translateX(3px) }
+}
+
+/* ------------------------------------------------------------------
+   Additional message
+   ------------------------------------------------------------------ */
+.msg { margin: 46px 0 }
+.msg .optional { margin-bottom: 8px; font-size: 12px }
+.msg textarea {
+  width: 100%;
+  min-height: 118px;
+  padding: 18px;
+  border: 2px solid #9997a4;
+  background: transparent;
+  color: var(--ink);
+  font: 900 16px "Courier New", monospace;
+  text-transform: uppercase;
+  resize: vertical;
+  outline: none;
+}
+
+/* ------------------------------------------------------------------
+   Summary
+   ------------------------------------------------------------------ */
+.summary {
+  margin-top: 60px;
+  padding-top: 34px;
+  border-top: 2px solid #777683;
+  text-align: center;
+}
+.summary h3 { font-size: 15px; letter-spacing: .2em }
+.big { margin: 8px 0; font-size: 30px; font-weight: 900 }
+.split { color: #ddd; font-size: 12px }
+.days-label { margin-top: 34px; font-size: 14px; font-weight: 900 }
+
+/* One coin per onboarding day, capped at eight. Pure CSS, no images. */
+.coins {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 15px 0;
+}
+.coin {
+  width: 50px;
+  height: 50px;
+  border: 8px solid var(--yellow);
+  background: #7c5100;
+  box-shadow: 5px 0 #f2a900, 0 5px #f2a900, 5px 5px #653e00;
+}
+
+.day-boxes {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 6px;
+}
+.day-box {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #bbb;
+}
+.day-box.on {
+  border-color: var(--yellow);
+  background: var(--yellow);
+  box-shadow: 2px 2px #7b5800;
+}
+
+.rule {
+  max-width: 590px;
+  margin: 26px auto 0;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.8;
+}
+
+.submit {
+  margin: 42px auto 12px;
+  padding: 14px 25px;
+  border: 3px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font: 900 16px "Courier New", monospace;
+  text-transform: uppercase;
+  box-shadow: 5px 5px 0 #595764;
+  cursor: pointer;
+}
+.submit:disabled { opacity: .35; cursor: not-allowed }
+
+.hint {
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* ------------------------------------------------------------------
+   Sticky summary bar
+   ------------------------------------------------------------------ */
+.sticky {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: min(860px, 92vw);
+  padding: 13px 18px;
+  border: 2px solid #9896a2;
+  background: #1d1e26e8;
+  backdrop-filter: blur(8px);
+  box-shadow: 7px 7px 0 #0d0d11;
+}
+.sticky strong { font-size: 13px }
+.sticky button {
+  padding: 9px 16px;
+  border: 2px solid #ddd;
+  background: transparent;
+  color: #fff;
+  font: 900 13px "Courier New", monospace;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------
+   Simulated confirmation
+   ------------------------------------------------------------------ */
+.confirmation {
+  display: none;
+  margin-top: 46px;
+  padding: 28px;
+  border: 3px solid var(--green);
+  background: #111811;
+}
+.confirmation.show { display: block }
+.confirmation h2 { margin-top: 0; color: var(--green) }
+
+.log {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px dashed #7ea970;
+}
+.log div { padding: 7px 0 }
+
+.tiny {
+  color: #c8c8cf;
+  font-size: 11px;
+  letter-spacing: .02em;
+  text-transform: none;
+}
+
+/* ------------------------------------------------------------------
+   Narrow viewports
+   ------------------------------------------------------------------ */
+@media (max-width: 650px) {
+  .wrap { width: 94vw; padding-top: 32px }
+  .setup-row { grid-template-columns: 1fr; gap: 5px }
+  .field { text-align: left }
+  .catalog-head { grid-template-columns: 1fr 85px 58px }
+  .module { grid-template-columns: 24px minmax(0, 1fr) 82px; padding-left: 5px }
+  .group-head { font-size: 18px }
+  .sticky { align-items: flex-start }
+  .sticky strong { font-size: 11px }
+  .sticky button { padding: 8px 10px }
+}
 </style>
 </head>
 <body>
+
 <div class="wrap">
   <div class="logo">ONBOARDING<br>REQUEST</div>
 
   <div class="section-title"><span></span><span>PLAYER SETUP</span><span></span></div>
-  <div class="setup-row"><label for="name">NAME</label><input id="name" class="field" placeholder="ENTER NAME"></div>
-  <div class="setup-row"><label for="department">DEPARTMENT</label><select id="department" class="field"><option value="">SELECT DEPARTMENT</option></select></div>
-  <div class="setup-row"><label for="role">ROLE</label><select id="role" class="field" disabled><option value="">SELECT DEPARTMENT FIRST</option></select></div>
-  <div class="setup-row"><label for="start">START DATE</label><input id="start" class="field" type="date"></div>
-  <div class="setup-row"><label for="manager">MANAGER</label><input id="manager" class="field" placeholder="ENTER MANAGER"></div>
+  <div class="setup-row">
+    <label for="name">NAME</label>
+    <input id="name" class="field" placeholder="ENTER NAME">
+  </div>
+  <div class="setup-row">
+    <label for="department">DEPARTMENT</label>
+    <select id="department" class="field"><option value="">SELECT DEPARTMENT</option></select>
+  </div>
+  <div class="setup-row">
+    <label for="role">ROLE</label>
+    <select id="role" class="field" disabled><option value="">SELECT DEPARTMENT FIRST</option></select>
+  </div>
+  <div class="setup-row">
+    <label for="start">START DATE</label>
+    <input id="start" class="field" type="date">
+  </div>
+  <div class="setup-row">
+    <label for="manager">MANAGER</label>
+    <input id="manager" class="field" placeholder="ENTER MANAGER">
+  </div>
 
   <div class="section-title"><span></span><span>MODULE SELECT</span><span></span></div>
-  <div class="catalog-head"><span>MODULE</span><span style="text-align:right">TIME</span><span></span></div>
+  <div class="catalog-head">
+    <span>MODULE</span><span style="text-align:right">TIME</span><span></span>
+  </div>
   <div id="catalog"></div>
 
   <div class="msg">
@@ -44,13 +423,20 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.08;ba
 
   <div class="summary">
     <h3>TOTAL TIME</h3>
-    <div class="big"><span id="hours">0</span> HRS · <span id="count">0</span>/<span id="moduleTotal">19</span> MODULES</div>
-    <div class="split"><span id="lockedCount">0</span> LOCKED BASELINE + <span id="addedCount">0</span> ADDED BY YOU</div>
+    <div class="big">
+      <span id="hours">0</span> HRS · <span id="count">0</span>/<span id="moduleTotal">0</span> MODULES
+    </div>
+    <div class="split">
+      <span id="lockedCount">0</span> LOCKED BASELINE + <span id="addedCount">0</span> ADDED BY YOU
+    </div>
+
     <div class="days-label">ONBOARDING DAYS</div>
     <div class="coins" id="coins"></div>
     <div class="day-boxes" id="dayBoxes"></div>
     <div class="tiny" id="dayCaption">DAY 1 TO DAY 5</div>
+
     <div class="rule">MAX 4 HRS OF SESSIONS PER DAY. A STARTED DAY COUNTS AS A FULL DAY: 8 HRS IS 2 DAYS, 9 HRS IS 3 DAYS.</div>
+
     <button class="submit" id="submit" disabled>SUBMIT</button>
     <div class="hint" id="submitHint">SELECT A DEPARTMENT, ROLE, AND COMPLETE PLAYER SETUP TO ENABLE SUBMIT.</div>
   </div>
@@ -70,140 +456,358 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.08;ba
 <script>
 // ---------------------------------------------------------------------
 // DATA BLOCK ONLY. The renderer below never names a department or module.
-// Five tables mirror the intended future Excel structure 1:1.
+// Five collections mirror the intended future Excel structure 1:1. They
+// are also mirrored in onboarding-data.json, which this page does not
+// fetch — the prototype is deliberately dependency-free and offline.
+//
+// This is reconstructed placeholder data for calibration, not approved
+// business data.
 // ---------------------------------------------------------------------
 const DATA = {
   departments: [
-    {id:'sales', name:'Sales'}, {id:'marketing', name:'Marketing'}, {id:'finance', name:'Finance'},
-    {id:'rev-enablement', name:'Revenue Enablement'}, {id:'rev-ops', name:'Revenue Operations'},
-    {id:'tech-presales', name:'Technical Pre-Sales'}, {id:'vendor-exp', name:'Vendor Experience'}
+    { id: 'sales',          name: 'Sales' },
+    { id: 'marketing',      name: 'Marketing' },
+    { id: 'finance',        name: 'Finance' },
+    { id: 'rev-enablement', name: 'Revenue Enablement' },
+    { id: 'rev-ops',        name: 'Revenue Operations' },
+    { id: 'tech-presales',  name: 'Technical Pre-Sales' },
+    { id: 'vendor-exp',     name: 'Vendor Experience' }
   ],
+
   roles: [
-    {id:'cam', department:'sales', name:'Channel Account Manager'}, {id:'ae', department:'sales', name:'Account Executive'},
-    {id:'sales-mgr', department:'sales', name:'Sales Manager'}, {id:'mktg', department:'marketing', name:'Marketing Specialist'},
-    {id:'fin', department:'finance', name:'Finance Analyst'}, {id:'revm', department:'rev-enablement', name:'Revenue Enablement Programs Manager'},
-    {id:'revo', department:'rev-ops', name:'Revenue Operations Analyst'}, {id:'tps', department:'tech-presales', name:'Solutions Consultant'},
-    {id:'ve', department:'vendor-exp', name:'Vendor Experience Manager'}
+    { id: 'cam',       department: 'sales',          name: 'Channel Account Manager' },
+    { id: 'ae',        department: 'sales',          name: 'Account Executive' },
+    { id: 'sales-mgr', department: 'sales',          name: 'Sales Manager' },
+    { id: 'mktg',      department: 'marketing',      name: 'Marketing Specialist' },
+    { id: 'fin',       department: 'finance',        name: 'Finance Analyst' },
+    { id: 'revm',      department: 'rev-enablement', name: 'Revenue Enablement Programs Manager' },
+    { id: 'revo',      department: 'rev-ops',        name: 'Revenue Operations Analyst' },
+    { id: 'tps',       department: 'tech-presales',  name: 'Solutions Consultant' },
+    { id: 've',        department: 'vendor-exp',     name: 'Vendor Experience Manager' }
   ],
+
   modules: [
-    {id:'culture', group:'Culture', name:'Culture Essentials', minutes:90},
-    {id:'marketplace', group:'Offering', name:'Marketplace', minutes:60}, {id:'partner-enable', group:'Offering', name:'Partner Enablement', minutes:45},
-    {id:'partner-support', group:'Offering', name:'Partner Support', minutes:45}, {id:'vendor', group:'Offering', name:'Vendor', minutes:45},
-    {id:'ai', group:'Tools', name:'AI Literacy', minutes:60}, {id:'m365', group:'Tools', name:'M365', minutes:45},
-    {id:'powerbi', group:'Tools', name:'Power BI', minutes:45}, {id:'salesforce', group:'Tools', name:'Salesforce', minutes:90},
-    {id:'academy', group:'Department', name:'Academy Essentials', minutes:45}, {id:'finance', group:'Department', name:'Finance Essentials', minutes:30},
-    {id:'marketing', group:'Department', name:'Marketing Essentials', minutes:45}, {id:'ps', group:'Department', name:'Professional Services Essentials', minutes:45},
-    {id:'re', group:'Department', name:'Revenue Enablement Essentials', minutes:45}, {id:'ro', group:'Department', name:'Revenue Operations Essentials', minutes:45},
-    {id:'sales-complete', group:'Department', name:'Sales Complete', minutes:255}, {id:'sales-essential', group:'Department', name:'Sales Essentials', minutes:45},
-    {id:'tps', group:'Department', name:'Technical Pre-Sales Essentials', minutes:45}, {id:'ve', group:'Department', name:'Vendor Experience Essentials', minutes:45}
+    { id: 'culture',         group: 'Culture',    name: 'Culture Essentials',                minutes: 90 },
+
+    { id: 'marketplace',     group: 'Offering',   name: 'Marketplace',                       minutes: 60 },
+    { id: 'partner-enable',  group: 'Offering',   name: 'Partner Enablement',                minutes: 45 },
+    { id: 'partner-support', group: 'Offering',   name: 'Partner Support',                   minutes: 45 },
+    { id: 'vendor',          group: 'Offering',   name: 'Vendor',                            minutes: 45 },
+
+    { id: 'ai',              group: 'Tools',      name: 'AI Literacy',                       minutes: 60 },
+    { id: 'm365',            group: 'Tools',      name: 'M365',                              minutes: 45 },
+    { id: 'powerbi',         group: 'Tools',      name: 'Power BI',                          minutes: 45 },
+    { id: 'salesforce',      group: 'Tools',      name: 'Salesforce',                        minutes: 90 },
+
+    { id: 'academy',         group: 'Department', name: 'Academy Essentials',                minutes: 45 },
+    { id: 'finance',         group: 'Department', name: 'Finance Essentials',                minutes: 30 },
+    { id: 'marketing',       group: 'Department', name: 'Marketing Essentials',              minutes: 45 },
+    { id: 'ps',              group: 'Department', name: 'Professional Services Essentials',  minutes: 45 },
+    { id: 're',              group: 'Department', name: 'Revenue Enablement Essentials',     minutes: 45 },
+    { id: 'ro',              group: 'Department', name: 'Revenue Operations Essentials',     minutes: 45 },
+    { id: 'sales-complete',  group: 'Department', name: 'Sales Complete',                    minutes: 255 },
+    { id: 'sales-essential', group: 'Department', name: 'Sales Essentials',                  minutes: 45 },
+    { id: 'tps',             group: 'Department', name: 'Technical Pre-Sales Essentials',    minutes: 45 },
+    { id: 've',              group: 'Department', name: 'Vendor Experience Essentials',      minutes: 45 }
   ],
+
+  // Department baselines. Sales deliberately totals 525 min; CAM then adds
+  // Sales Complete (255 min) for 780 min = 13 hrs = 4 onboarding days.
   baselines: [
-    // Sales baseline deliberately totals 525 min. CAM adds Sales Complete (255 min) = 780 min / 13 hrs / 4 onboarding days.
-    {department:'sales', modules:['culture','marketplace','partner-enable','partner-support','vendor','ai','m365','powerbi','salesforce']},
-    {department:'marketing', modules:['culture','marketing']}, {department:'finance', modules:['culture','finance']},
-    {department:'rev-enablement', modules:['culture','re']}, {department:'rev-ops', modules:['culture','ro']},
-    {department:'tech-presales', modules:['culture','tps']}, {department:'vendor-exp', modules:['culture','ve']}
+    { department: 'sales',          modules: ['culture', 'marketplace', 'partner-enable', 'partner-support', 'vendor', 'ai', 'm365', 'powerbi', 'salesforce'] },
+    { department: 'marketing',      modules: ['culture', 'marketing'] },
+    { department: 'finance',        modules: ['culture', 'finance'] },
+    { department: 'rev-enablement', modules: ['culture', 're'] },
+    { department: 'rev-ops',        modules: ['culture', 'ro'] },
+    { department: 'tech-presales',  modules: ['culture', 'tps'] },
+    { department: 'vendor-exp',     modules: ['culture', 've'] }
   ],
+
+  // Role-specific mandatory modules, plus delivery metadata. Owner and
+  // notification list are deliberately not shown during module selection —
+  // the hiring manager should not be negotiating delivery from the form.
+  // They surface only in the simulated log after submit.
   roleMappingDelivery: [
-    {role:'cam', modules:['sales-complete'], owner:'Revenue Enablement', notify:'Hiring Manager, Revenue Enablement'},
-    {role:'ae', modules:['sales-essential'], owner:'Revenue Enablement', notify:'Hiring Manager, Revenue Enablement'},
-    {role:'sales-mgr', modules:['sales-complete'], owner:'Revenue Enablement', notify:'Hiring Manager, Revenue Enablement'},
-    {role:'mktg', modules:[], owner:'Marketing', notify:'Hiring Manager, Marketing Enablement'},
-    {role:'fin', modules:[], owner:'Finance', notify:'Hiring Manager, Finance'},
-    {role:'revm', modules:[], owner:'Revenue Enablement', notify:'Hiring Manager, Revenue Enablement'},
-    {role:'revo', modules:[], owner:'Revenue Operations', notify:'Hiring Manager, Revenue Operations'},
-    {role:'tps', modules:[], owner:'Technical Pre-Sales', notify:'Hiring Manager, Technical Pre-Sales'},
-    {role:'ve', modules:[], owner:'Vendor Experience', notify:'Hiring Manager, Vendor Experience'}
+    { role: 'cam',       modules: ['sales-complete'],  owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' },
+    { role: 'ae',        modules: ['sales-essential'], owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' },
+    { role: 'sales-mgr', modules: ['sales-complete'],  owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' },
+    { role: 'mktg',      modules: [],                  owner: 'Marketing',           notify: 'Hiring Manager, Marketing Enablement' },
+    { role: 'fin',       modules: [],                  owner: 'Finance',             notify: 'Hiring Manager, Finance' },
+    { role: 'revm',      modules: [],                  owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' },
+    { role: 'revo',      modules: [],                  owner: 'Revenue Operations',  notify: 'Hiring Manager, Revenue Operations' },
+    { role: 'tps',       modules: [],                  owner: 'Technical Pre-Sales', notify: 'Hiring Manager, Technical Pre-Sales' },
+    { role: 've',        modules: [],                  owner: 'Vendor Experience',   notify: 'Hiring Manager, Vendor Experience' }
   ]
 };
 
-const state={locked:new Set(),added:new Set()};
-const el=id=>document.getElementById(id);
-const moduleById=id=>DATA.modules.find(m=>m.id===id);
-const groups=[...new Set(DATA.modules.map(m=>m.group))];
-const groupClass=g=>g.toLowerCase().replace(/\s+/g,'-');
+// ---------------------------------------------------------------------
+// State
+//
+// Mandatory and manager-chosen modules are held apart on purpose. The
+// visible selection is derived as locked ∪ added at render time, never
+// stored flat. That is what lets a manager's own additions survive a role
+// change while the previous role's obligations simply stop being rendered.
+// ---------------------------------------------------------------------
+const state = {
+  locked: new Set(),
+  added:  new Set()
+};
 
-function populateDepartments(){ DATA.departments.forEach(d=>el('department').add(new Option(d.name,d.id))); }
-function populateRoles(){
-  const dep=el('department').value; const role=el('role'); role.innerHTML='';
-  if(!dep){role.add(new Option('SELECT DEPARTMENT FIRST',''));role.disabled=true;return}
-  role.disabled=false; role.add(new Option('SELECT ROLE',''));
-  DATA.roles.filter(r=>r.department===dep).forEach(r=>role.add(new Option(r.name,r.id)));
+const MAX_SESSION_HOURS_PER_DAY = 4;
+const MAX_COINS = 8;
+const MIN_DAY_BOXES = 5;
+
+const el = id => document.getElementById(id);
+const moduleById = id => DATA.modules.find(m => m.id === id);
+const groups = [...new Set(DATA.modules.map(m => m.group))];
+const groupClass = group => group.toLowerCase().replace(/\s+/g, '-');
+
+// Whole hours read as integers; fractions to one decimal (8.75 -> 8.8).
+const formatHours = hours => Number.isInteger(hours) ? String(hours) : hours.toFixed(1);
+const plural = n => n === 1 ? '' : 'S';
+
+// ---------------------------------------------------------------------
+// Rendering
+// ---------------------------------------------------------------------
+function populateDepartments() {
+  DATA.departments.forEach(d => el('department').add(new Option(d.name, d.id)));
 }
-function renderCatalog(){
-  const c=el('catalog'); c.innerHTML='';
-  groups.forEach(g=>{
-    const sec=document.createElement('section'); sec.className='group '+groupClass(g);
-    sec.innerHTML=`<div class="group-head"><div style="display:flex;align-items:center"><span>${g}</span><span class="line" style="flex:1"></span></div><span class="all" data-group="${g}">[ALL]</span></div>`;
-    DATA.modules.filter(m=>m.group===g).forEach(m=>{
-      const lab=document.createElement('label'); lab.className='module'; lab.dataset.id=m.id;
-      lab.innerHTML=`<input type="checkbox"><span class="box"></span><span class="module-name"><span>${m.name}</span><span class="dots"></span></span><span class="time">${m.minutes} MIN</span>`;
-      lab.querySelector('input').addEventListener('change',()=>toggleAdded(m.id,lab.querySelector('input').checked));
-      sec.appendChild(lab);
-    }); c.appendChild(sec);
+
+function populateRoles() {
+  const department = el('department').value;
+  const role = el('role');
+  role.innerHTML = '';
+
+  if (!department) {
+    role.add(new Option('SELECT DEPARTMENT FIRST', ''));
+    role.disabled = true;
+    return;
+  }
+
+  role.disabled = false;
+  role.add(new Option('SELECT ROLE', ''));
+  DATA.roles
+    .filter(r => r.department === department)
+    .forEach(r => role.add(new Option(r.name, r.id)));
+}
+
+function renderCatalog() {
+  const catalog = el('catalog');
+  catalog.innerHTML = '';
+
+  groups.forEach(group => {
+    const section = document.createElement('section');
+    section.className = 'group ' + groupClass(group);
+    section.innerHTML =
+      `<div class="group-head">` +
+        `<div class="title"><span>${group}</span><span class="line"></span></div>` +
+        `<span class="all" data-group="${group}">[ALL]</span>` +
+      `</div>`;
+
+    DATA.modules
+      .filter(m => m.group === group)
+      .forEach(m => {
+        const row = document.createElement('label');
+        row.className = 'module';
+        row.dataset.id = m.id;
+        row.innerHTML =
+          `<input type="checkbox">` +
+          `<span class="box"></span>` +
+          `<span class="module-name"><span>${m.name}</span><span class="dots"></span></span>` +
+          `<span class="time">${m.minutes} MIN</span>`;
+
+        const input = row.querySelector('input');
+        input.addEventListener('change', () => toggleAdded(m.id, input.checked));
+
+        // A disabled checkbox swallows the change event, so a locked row
+        // would otherwise be a dead click. Flash it instead.
+        row.addEventListener('click', event => {
+          if (!row.classList.contains('locked')) return;
+          event.preventDefault();
+          row.classList.remove('flash');
+          void row.offsetWidth;              // restart the animation
+          row.classList.add('flash');
+        });
+
+        section.appendChild(row);
+      });
+
+    catalog.appendChild(section);
   });
-  document.querySelectorAll('.all').forEach(a=>a.addEventListener('click',()=>selectGroup(a.dataset.group)));
-  el('moduleTotal').textContent=DATA.modules.length;
+
+  document.querySelectorAll('.all').forEach(control =>
+    control.addEventListener('click', () => selectGroup(control.dataset.group)));
+
+  el('moduleTotal').textContent = DATA.modules.length;
 }
-function mandatoryFor(dep,role){
-  const b=DATA.baselines.find(x=>x.department===dep)?.modules||[];
-  const r=DATA.roleMappingDelivery.find(x=>x.role===role)?.modules||[];
-  return [...new Set([...b,...r])];
+
+// ---------------------------------------------------------------------
+// Selection
+// ---------------------------------------------------------------------
+
+// Mandatory learning is department baseline ∪ role mapping, de-duplicated.
+// The manager does not decide what is mandatory.
+function mandatoryFor(department, role) {
+  const baseline = DATA.baselines.find(b => b.department === department)?.modules || [];
+  const roleModules = DATA.roleMappingDelivery.find(r => r.role === role)?.modules || [];
+  return [...new Set([...baseline, ...roleModules])];
 }
-function applyRole(){
-  state.locked=new Set(mandatoryFor(el('department').value,el('role').value));
+
+function applyRole() {
+  state.locked = new Set(mandatoryFor(el('department').value, el('role').value));
   refresh();
 }
-function toggleAdded(id,on){ if(state.locked.has(id))return; on?state.added.add(id):state.added.delete(id); refresh(); }
-function selectGroup(group){
-  const ids=DATA.modules.filter(m=>m.group===group).map(m=>m.id).filter(id=>!state.locked.has(id));
-  const allOn=ids.every(id=>state.added.has(id)); ids.forEach(id=>allOn?state.added.delete(id):state.added.add(id)); refresh();
-}
-function refresh(){
-  const selected=new Set([...state.locked,...state.added]);
-  document.querySelectorAll('.module').forEach(l=>{
-    const id=l.dataset.id, input=l.querySelector('input'); input.checked=selected.has(id);
-    l.classList.toggle('locked',state.locked.has(id)); input.disabled=state.locked.has(id);
-    let badge=l.querySelector('.badge'); if(badge)badge.remove();
-    if(state.locked.has(id)){badge=document.createElement('span');badge.className='badge';badge.textContent='LOCKED';l.querySelector('.module-name span').after(badge);}
-  });
-  const mins=[...selected].reduce((s,id)=>s+moduleById(id).minutes,0), hours=mins/60, days=mins?Math.ceil(hours/4):0;
-  el('hours').textContent=Number.isInteger(hours)?hours:hours.toFixed(1); el('count').textContent=selected.size;
-  el('lockedCount').textContent=state.locked.size; el('addedCount').textContent=state.added.size;
-  renderDays(days); updateSubmit();
-  el('stickyText').textContent=selected.size?`${Number.isInteger(hours)?hours:hours.toFixed(1)} HRS · ${selected.size} MODULES · ${days} DAY${days===1?'':'S'}`:'NOTHING SELECTED YET';
-}
-function renderDays(days){
-  el('coins').innerHTML=''; for(let i=0;i<Math.min(days,8);i++){const d=document.createElement('div');d.className='coin';el('coins').appendChild(d)}
-  el('dayBoxes').innerHTML=''; const boxes=Math.max(5,Math.min(8,days)); for(let i=1;i<=boxes;i++){const d=document.createElement('div');d.className='day-box'+(i<=days?' on':'');el('dayBoxes').appendChild(d)}
-  el('dayCaption').textContent=days?`DAY 1 TO DAY ${days}`:'DAY 1 TO DAY 5';
-}
-function updateSubmit(){
-  const ready=el('name').value.trim()&&el('department').value&&el('role').value&&el('start').value&&el('manager').value.trim()&&state.locked.size;
-  el('submit').disabled=!ready; el('stickySubmit').disabled=!ready;
-  el('submitHint').textContent=ready?'READY TO CREATE SIMULATED REQUEST.':'SELECT A DEPARTMENT, ROLE, AND COMPLETE PLAYER SETUP TO ENABLE SUBMIT.';
-}
-function submit(){
-  const selected=[...new Set([...state.locked,...state.added])], mins=selected.reduce((s,id)=>s+moduleById(id).minutes,0), hours=mins/60,days=Math.ceil(hours/4);
-  const roleMap=DATA.roleMappingDelivery.find(x=>x.role===el('role').value)||{};
-  const lines=[
-    `MODULES PLANNED: ${selected.length} (${state.locked.size} LOCKED + ${state.added.size} ADDED).`,
-    `CONTENT OWNER IDENTIFIED: ${roleMap.owner||'TO BE ASSIGNED'}.`,
-    `DISTRIBUTION LIST WILL BE NOTIFIED: ${roleMap.notify||'TO BE ASSIGNED'}.`,
-    `CONSOLIDATED PLAN WILL BE PREPARED FOR ${el('name').value.trim()}.`,
-    `COMPLETION TRACKING STARTS ON SUBMIT IN THE FUTURE CONNECTED VERSION.`,
-    `ESTIMATE: ${Number.isInteger(hours)?hours:hours.toFixed(1)} HOURS ACROSS ${days} ONBOARDING DAY${days===1?'':'S'}.`
-  ];
-  el('systemLog').innerHTML=lines.map(x=>`<div>&gt; ${x}</div>`).join('')+`<div class="tiny">Nothing was sent, booked, stored, or tracked by this standalone prototype.</div>`;
-  el('confirmation').classList.add('show'); el('confirmation').scrollIntoView({behavior:'smooth',block:'center'});
+
+function toggleAdded(id, on) {
+  if (state.locked.has(id)) return;
+  on ? state.added.add(id) : state.added.delete(id);
+  refresh();
 }
 
-populateDepartments(); renderCatalog(); refresh();
-el('department').addEventListener('change',()=>{populateRoles();state.locked.clear();refresh()});
-el('role').addEventListener('change',applyRole);
-['name','start','manager'].forEach(id=>el(id).addEventListener('input',updateSubmit));
-el('submit').addEventListener('click',submit); el('stickySubmit').addEventListener('click',submit);
-document.querySelectorAll('.module').forEach(l=>l.addEventListener('click',e=>{if(l.classList.contains('locked')){e.preventDefault();l.classList.remove('flash');void l.offsetWidth;l.classList.add('flash')}}));
+// [ALL] convenience toggle. Locked modules are ignored entirely: if every
+// optional module in the group is already on, clear them; otherwise add them.
+function selectGroup(group) {
+  const ids = DATA.modules
+    .filter(m => m.group === group)
+    .map(m => m.id)
+    .filter(id => !state.locked.has(id));
+
+  const allOn = ids.every(id => state.added.has(id));
+  ids.forEach(id => allOn ? state.added.delete(id) : state.added.add(id));
+  refresh();
+}
+
+// ---------------------------------------------------------------------
+// The single render/update pass
+// ---------------------------------------------------------------------
+function refresh() {
+  const selected = new Set([...state.locked, ...state.added]);
+
+  document.querySelectorAll('.module').forEach(row => {
+    const id = row.dataset.id;
+    const input = row.querySelector('input');
+    const isLocked = state.locked.has(id);
+
+    input.checked = selected.has(id);
+    input.disabled = isLocked;
+    row.classList.toggle('locked', isLocked);
+
+    row.querySelector('.badge')?.remove();
+    if (isLocked) {
+      const badge = document.createElement('span');
+      badge.className = 'badge';
+      badge.textContent = 'LOCKED';
+      row.querySelector('.module-name span').after(badge);
+    }
+  });
+
+  const minutes = [...selected].reduce((total, id) => total + moduleById(id).minutes, 0);
+  const hours = minutes / 60;
+  const days = minutes ? Math.ceil(hours / MAX_SESSION_HOURS_PER_DAY) : 0;
+
+  el('hours').textContent = formatHours(hours);
+  el('count').textContent = selected.size;
+  el('lockedCount').textContent = state.locked.size;
+  el('addedCount').textContent = state.added.size;
+
+  renderDays(days);
+  updateSubmit();
+
+  el('stickyText').textContent = selected.size
+    ? `${formatHours(hours)} HRS · ${selected.size} MODULES · ${days} DAY${plural(days)}`
+    : 'NOTHING SELECTED YET';
+}
+
+function renderDays(days) {
+  const coins = el('coins');
+  coins.innerHTML = '';
+  for (let i = 0; i < Math.min(days, MAX_COINS); i++) {
+    const coin = document.createElement('div');
+    coin.className = 'coin';
+    coins.appendChild(coin);
+  }
+
+  const boxes = el('dayBoxes');
+  boxes.innerHTML = '';
+  const boxCount = Math.max(MIN_DAY_BOXES, Math.min(MAX_COINS, days));
+  for (let i = 1; i <= boxCount; i++) {
+    const box = document.createElement('div');
+    box.className = 'day-box' + (i <= days ? ' on' : '');
+    boxes.appendChild(box);
+  }
+
+  el('dayCaption').textContent = days ? `DAY 1 TO DAY ${days}` : 'DAY 1 TO DAY 5';
+}
+
+function updateSubmit() {
+  const ready = Boolean(
+    el('name').value.trim() &&
+    el('department').value &&
+    el('role').value &&
+    el('start').value &&
+    el('manager').value.trim() &&
+    state.locked.size
+  );
+
+  el('submit').disabled = !ready;
+  el('stickySubmit').disabled = !ready;
+  el('submitHint').textContent = ready
+    ? 'READY TO CREATE SIMULATED REQUEST.'
+    : 'SELECT A DEPARTMENT, ROLE, AND COMPLETE PLAYER SETUP TO ENABLE SUBMIT.';
+}
+
+// ---------------------------------------------------------------------
+// Simulated submit. Nothing leaves the browser: no request is made, no
+// state is persisted, no booking or tracking is started. The log describes
+// what a connected version would do, and says as much.
+// ---------------------------------------------------------------------
+function submit() {
+  const selected = [...new Set([...state.locked, ...state.added])];
+  const minutes = selected.reduce((total, id) => total + moduleById(id).minutes, 0);
+  const hours = minutes / 60;
+  const days = Math.ceil(hours / MAX_SESSION_HOURS_PER_DAY);
+  const delivery = DATA.roleMappingDelivery.find(r => r.role === el('role').value) || {};
+
+  const lines = [
+    `MODULES PLANNED: ${selected.length} (${state.locked.size} LOCKED + ${state.added.size} ADDED).`,
+    `CONTENT OWNER IDENTIFIED: ${delivery.owner || 'TO BE ASSIGNED'}.`,
+    `DISTRIBUTION LIST WILL BE NOTIFIED: ${delivery.notify || 'TO BE ASSIGNED'}.`,
+    `CONSOLIDATED PLAN WILL BE PREPARED FOR ${el('name').value.trim()}.`,
+    `COMPLETION TRACKING STARTS ON SUBMIT IN THE FUTURE CONNECTED VERSION.`,
+    `ESTIMATE: ${formatHours(hours)} HOURS ACROSS ${days} ONBOARDING DAY${plural(days)}.`
+  ];
+
+  el('systemLog').innerHTML =
+    lines.map(line => `<div>&gt; ${line}</div>`).join('') +
+    `<div class="tiny">Nothing was sent, booked, stored, or tracked by this standalone prototype.</div>`;
+
+  el('confirmation').classList.add('show');
+  el('confirmation').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ---------------------------------------------------------------------
+// Start up. No stored session — a refresh resets everything.
+// ---------------------------------------------------------------------
+function init() {
+  populateDepartments();
+  renderCatalog();
+  refresh();
+
+  el('department').addEventListener('change', () => {
+    populateRoles();
+    state.locked.clear();     // role is cleared too, so nothing is mandatory yet
+    refresh();
+  });
+  el('role').addEventListener('change', applyRole);
+
+  ['name', 'start', 'manager'].forEach(id =>
+    el(id).addEventListener('input', updateSubmit));
+
+  el('submit').addEventListener('click', submit);
+  el('stickySubmit').addEventListener('click', submit);
+}
+
+init();
 </script>
 </body>
 </html>
