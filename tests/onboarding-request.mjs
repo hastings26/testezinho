@@ -33,7 +33,8 @@ const snap = () => page.evaluate(() => ({
   total: document.getElementById('moduleTotal').textContent,
   locked: document.getElementById('lockedCount').textContent,
   added: document.getElementById('addedCount').textContent,
-  caption: document.getElementById('dayCaption').textContent,
+  estimate: document.getElementById('dayEstimate').textContent,
+  owner: document.getElementById('deliveryOwner').textContent,
   coins: document.querySelectorAll('.coin').length,
   boxesOn: document.querySelectorAll('.day-box.on').length,
   boxes: document.querySelectorAll('.day-box').length,
@@ -47,7 +48,7 @@ const snap = () => page.evaluate(() => ({
 let s = await snap();
 check('19-module catalogue', s.total, '19');
 check('module rows rendered', await page.locator('.module').count(), 19);
-check('default day caption', s.caption, 'DAY 1 TO DAY 5');
+check('estimate prompts for department and role', s.estimate, 'SELECT A DEPARTMENT AND ROLE TO SEE THE ONBOARDING ESTIMATE.');
 check('sticky bar empty state', s.sticky, 'NOTHING SELECTED YET');
 check('submit disabled on load', s.submitDisabled, true);
 check('role locked until department chosen', await page.locator('#role').isDisabled(), true);
@@ -63,7 +64,8 @@ check('CAM hours', s.hours, '13');
 check('CAM selected', s.count, '10');
 check('CAM locked', s.locked, '10');
 check('CAM added', s.added, '0');
-check('CAM days', s.caption, 'DAY 1 TO DAY 4');
+check('CAM estimate before a name is entered', s.estimate, 'YOUR NEW HIRE WOULD NEED 4 ONBOARDING DAYS TO COMPLETE 13 HOURS OF ONBOARDING.');
+check('CAM delivery owner in note', s.owner, 'Revenue Enablement');
 check('CAM coins', s.coins, 4);
 check('CAM day boxes lit', s.boxesOn, 4);
 check('CAM day boxes drawn', s.boxes, 5);
@@ -80,6 +82,7 @@ await page.fill('#start', '2026-10-01');
 await page.fill('#manager', 'TEST MANAGER');
 s = await snap();
 check('submit enabled when setup complete', s.submitDisabled, false);
+check('estimate picks up the entered name', s.estimate, 'TEST USER WOULD NEED 4 ONBOARDING DAYS TO COMPLETE 13 HOURS OF ONBOARDING.');
 check('both submits share state', s.stickyDisabled, false);
 
 // Locked modules cannot be removed (spec section 12)
@@ -101,7 +104,7 @@ s = await snap();
 check('AE locked recalculated', s.locked, '10');
 check('addition survives role change', s.added, '1');
 check('AE hours', s.hours, '10.3');
-check('AE days ceil(10.25/4)', s.caption, 'DAY 1 TO DAY 3');
+check('AE estimate', s.estimate, 'TEST USER WOULD NEED 3 ONBOARDING DAYS TO COMPLETE 10.3 HOURS OF ONBOARDING.');
 
 // Department change clears locked, keeps additions
 await page.selectOption('#department', 'finance');
@@ -113,7 +116,8 @@ await page.selectOption('#role', 'fin');
 s = await snap();
 check('finance baseline size', s.locked, '2');
 check('finance hours', s.hours, '2.8');
-check('finance days', s.caption, 'DAY 1 TO DAY 1');
+check('finance estimate uses singular day', s.estimate, 'TEST USER WOULD NEED 1 ONBOARDING DAY TO COMPLETE 2.8 HOURS OF ONBOARDING.');
+check('finance delivery owner in note', s.owner, 'Finance');
 check('singular DAY in sticky bar', s.sticky, '2.8 HRS · 3 MODULES · 1 DAY');
 
 // [ALL] toggle skips locked modules (spec section 14)
@@ -136,7 +140,7 @@ for (const g of ['Culture', 'Offering', 'Tools', 'Department']) await page.locat
 s = await snap();
 check('every module selectable', s.count, '19');
 check('full catalogue hours', s.hours, '19.5');
-check('full catalogue days', s.caption, 'DAY 1 TO DAY 5');
+check('full catalogue estimate', s.estimate, 'TEST USER WOULD NEED 5 ONBOARDING DAYS TO COMPLETE 19.5 HOURS OF ONBOARDING.');
 check('coins track days', s.coins, 5);
 
 // Simulated submit (spec sections 24-25)

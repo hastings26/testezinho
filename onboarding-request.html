@@ -281,13 +281,43 @@ body:before {
   box-shadow: 2px 2px #7b5800;
 }
 
-.rule {
-  max-width: 590px;
-  margin: 26px auto 0;
-  font-size: 13px;
+/* The plain-language read-out. This is the line the hiring manager is
+   meant to take away, so it carries the weight; the arithmetic behind it
+   is demoted to supporting text. */
+.estimate {
+  max-width: 620px;
+  margin: 22px auto 0;
+  font-size: 18px;
   font-weight: 900;
-  line-height: 1.8;
+  line-height: 1.6;
+  text-wrap: balance;
 }
+.estimate b { color: var(--yellow) }
+
+.rule {
+  max-width: 620px;
+  margin: 14px auto 0;
+  color: #c8c8cf;
+  font-size: 12px;
+  line-height: 1.7;
+  text-wrap: balance;
+}
+
+/* Scheduling caveat. Sentence case and left-aligned so it reads as a note
+   from a colleague rather than another line of arcade chrome. */
+.note {
+  max-width: 560px;
+  margin: 26px auto 0;
+  padding-left: 14px;
+  border-left: 2px solid #6e6d79;
+  color: #c8c8cf;
+  font-size: 12px;
+  line-height: 1.75;
+  letter-spacing: .02em;
+  text-align: left;
+  text-transform: none;
+}
+.note strong { color: var(--ink) }
 
 .submit {
   margin: 42px auto 12px;
@@ -422,7 +452,7 @@ body:before {
   </div>
 
   <div class="summary">
-    <h3>TOTAL TIME</h3>
+    <h3>ONBOARDING ESTIMATE</h3>
     <div class="big">
       <span id="hours">0</span> HRS · <span id="count">0</span>/<span id="moduleTotal">0</span> MODULES
     </div>
@@ -433,9 +463,10 @@ body:before {
     <div class="days-label">ONBOARDING DAYS</div>
     <div class="coins" id="coins"></div>
     <div class="day-boxes" id="dayBoxes"></div>
-    <div class="tiny" id="dayCaption">DAY 1 TO DAY 5</div>
 
-    <div class="rule">MAX 4 HRS OF SESSIONS PER DAY. A STARTED DAY COUNTS AS A FULL DAY: 8 HRS IS 2 DAYS, 9 HRS IS 3 DAYS.</div>
+    <p class="estimate" id="dayEstimate">SELECT A DEPARTMENT AND ROLE TO SEE THE ONBOARDING ESTIMATE.</p>
+    <p class="rule">BASED ON UP TO 4 HOURS OF SESSIONS PER DAY. A PART-DAY COUNTS AS A FULL DAY.</p>
+    <p class="note" id="schedulingNote"><strong>Scheduling note:</strong> this is an estimate of effort, not a set of booked dates. The actual number of days may differ depending on <span id="deliveryOwner">Revenue Enablement</span> availability, the new hire's own calendar, and how sessions are grouped.</p>
 
     <button class="submit" id="submit" disabled>SUBMIT</button>
     <div class="hint" id="submitHint">SELECT A DEPARTMENT, ROLE, AND COMPLETE PLAYER SETUP TO ENABLE SUBMIT.</div>
@@ -711,6 +742,8 @@ function refresh() {
   el('addedCount').textContent = state.added.size;
 
   renderDays(days);
+  renderEstimate(days, hours);
+  renderSchedulingNote();
   updateSubmit();
 
   el('stickyText').textContent = selected.size
@@ -735,8 +768,41 @@ function renderDays(days) {
     box.className = 'day-box' + (i <= days ? ' on' : '');
     boxes.appendChild(box);
   }
+}
 
-  el('dayCaption').textContent = days ? `DAY 1 TO DAY ${days}` : 'DAY 1 TO DAY 5';
+// The takeaway line, in words rather than arithmetic: who, how many days,
+// how much learning. Falls back to "your new hire" until a name is entered.
+function renderEstimate(days, hours) {
+  const estimate = el('dayEstimate');
+
+  if (!days) {
+    estimate.textContent = 'SELECT A DEPARTMENT AND ROLE TO SEE THE ONBOARDING ESTIMATE.';
+    return;
+  }
+
+  const who = el('name').value.trim().toUpperCase() || 'YOUR NEW HIRE';
+  const dayText = `${days} ONBOARDING DAY${plural(days)}`;
+  const hourText = `${formatHours(hours)} HOUR${hours === 1 ? '' : 'S'}`;
+
+  // Built from nodes rather than innerHTML — the name is whatever the
+  // manager typed, and it is not markup.
+  const strong = text => {
+    const b = document.createElement('b');
+    b.textContent = text;
+    return b;
+  };
+
+  estimate.replaceChildren(
+    `${who} WOULD NEED `, strong(dayText),
+    ' TO COMPLETE ', strong(hourText), ' OF ONBOARDING.'
+  );
+}
+
+// The note names whoever actually owns delivery for the selected role, so
+// a Finance hire is not told to wait on Revenue Enablement.
+function renderSchedulingNote() {
+  const delivery = DATA.roleMappingDelivery.find(r => r.role === el('role').value);
+  el('deliveryOwner').textContent = delivery?.owner || 'Revenue Enablement';
 }
 
 function updateSubmit() {
@@ -800,7 +866,10 @@ function init() {
   });
   el('role').addEventListener('change', applyRole);
 
-  ['name', 'start', 'manager'].forEach(id =>
+  // The name appears in the estimate sentence, so it needs a full refresh;
+  // the other two only gate the submit button.
+  el('name').addEventListener('input', refresh);
+  ['start', 'manager'].forEach(id =>
     el(id).addEventListener('input', updateSubmit));
 
   el('submit').addEventListener('click', submit);

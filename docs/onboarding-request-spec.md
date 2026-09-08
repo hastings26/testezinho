@@ -1056,3 +1056,62 @@ You can paste this directly into Claude:
 
 These three files are also packaged together in:
 `onboarding-request-claude-handoff.zip`
+
+---
+
+# Appendix A: changes made after handoff
+
+The document above is the specification as received. This appendix records
+where the built prototype now deliberately departs from it, so the two can
+be read together without either being rewritten.
+
+## A.1 The onboarding-days read-out (supersedes sections 16, 17 and 19)
+
+The original design reported days as a caption, `DAY 1 TO DAY 4`, above a
+line of explanatory arithmetic:
+
+`MAX 4 HRS OF SESSIONS PER DAY. A STARTED DAY COUNTS AS A FULL DAY: 8 HRS IS 2 DAYS, 9 HRS IS 3 DAYS.`
+
+That asked the reader to work out what the numbers meant for their new
+hire. It is replaced by a plain-language sentence:
+
+`TEST USER WOULD NEED 4 ONBOARDING DAYS TO COMPLETE 13 HOURS OF ONBOARDING.`
+
+Rules:
+
+- The name comes from the Name field, uppercased. Until one is entered the
+  sentence reads `YOUR NEW HIRE`.
+- Before a department and role are chosen it reads
+  `SELECT A DEPARTMENT AND ROLE TO SEE THE ONBOARDING ESTIMATE.`
+- Days and hours are singular at one (`1 ONBOARDING DAY`, `1 HOUR`).
+- The day count and hour count are emphasised in the accent colour.
+
+The calculation is unchanged: `ceil(totalHours / 4)`, a part-day counting
+as a full day. The rule is now supporting text beneath the sentence rather
+than the primary explanation:
+
+`BASED ON UP TO 4 HOURS OF SESSIONS PER DAY. A PART-DAY COUNTS AS A FULL DAY.`
+
+The coins and day boxes are unchanged.
+
+## A.2 Scheduling note (new)
+
+A note below the estimate states that the figure is an estimate of effort
+rather than a set of booked dates, and that the real number of days may
+differ depending on delivery-team availability, the new hire's calendar,
+and how sessions are grouped.
+
+The team named in the note is the `owner` from the role's
+`roleMappingDelivery` record, so a Finance hire is not told to wait on
+Revenue Enablement. It falls back to `Revenue Enablement` when no role is
+selected.
+
+This is the one place delivery ownership appears before submit. Section 9
+keeps owner and notification list out of module *selection* so the manager
+is not negotiating delivery from the form; naming the team in a scheduling
+caveat does not reopen that.
+
+## A.3 Section heading
+
+The summary heading is `ONBOARDING ESTIMATE` rather than `TOTAL TIME`,
+since the block now leads with the estimate rather than the total.
