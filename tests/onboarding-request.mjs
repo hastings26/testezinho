@@ -34,6 +34,7 @@ const snap = () => page.evaluate(() => ({
   locked: document.getElementById('lockedCount').textContent,
   added: document.getElementById('addedCount').textContent,
   estimate: document.getElementById('dayEstimate').textContent,
+  split: document.querySelector('.split').textContent.replace(/\s+/g, ' ').trim(),
   owner: document.getElementById('deliveryOwner').textContent,
   coins: document.querySelectorAll('.coin').length,
   boxesOn: document.querySelectorAll('.day-box.on').length,
@@ -57,7 +58,11 @@ check('role locked until department chosen', await page.locator('#role').isDisab
 await page.selectOption('#department', 'sales');
 check('role enabled after department', await page.locator('#role').isDisabled(), false);
 check('roles filtered by department', await page.locator('#role option').allTextContents(),
-  ['SELECT ROLE', 'Channel Account Manager', 'Account Executive', 'Sales Manager']);
+  ['SELECT ROLE', 'Channel Account Manager', 'Account Executive', 'Sales Manager', 'CGS', 'MGS', 'TPS']);
+check('the new roles are Sales-only', await page.selectOption('#department', 'finance')
+  .then(() => page.locator('#role option').allTextContents()),
+  ['SELECT ROLE', 'Finance Analyst']);
+await page.selectOption('#department', 'sales');
 await page.selectOption('#role', 'cam');
 s = await snap();
 check('CAM hours', s.hours, '13');
@@ -159,6 +164,90 @@ check('log disclaims any real action', log[6], 'Nothing was sent, booked, stored
 const requests = [];
 page.on('request', r => requests.push(r.url()));
 await page.reload();
+// ---------------------------------------------------------------------
+// Post-handoff additions (spec appendix A.6). Sets up its own state so it
+// does not depend on anything above it.
+// ---------------------------------------------------------------------
+await page.goto(file);
+check('name field asks for the new hire', await page.locator('label[for="name"]').textContent(), 'NEW HIRE NAME');
+check('ldap field present', await page.locator('#ldap').count(), 1);
+check('manager email field present', await page.locator('#managerEmail').count(), 1);
+
+await page.selectOption('#department', 'finance');
+await page.selectOption('#role', 'fin');
+await page.fill('#name', 'TEST USER');
+await page.fill('#start', '2026-10-01');
+await page.fill('#manager', 'TEST MANAGER');
+s = await snap();
+check('finance baseline is 2 hours', s.hours, '2');
+check('ldap is not required to submit', s.submitDisabled, false);
+
+// Additional requests fold into the estimate only when a duration is given.
+await page.fill('#extraName', 'Territory handover');
+await page.fill('#extraMinutes', '60');
+await page.locator('#extraAdd').click();
+s = await snap();
+check('request listed', await page.locator('.extra-list li').count(), 1);
+check('scoped request counts towards hours', s.hours, '3');
+check('request shown in the split line', s.split.includes('1 ADDITIONAL REQUEST'), true);
+check('request counts as a session in the sticky bar', s.sticky, '3 HRS · 3 MODULES · 1 DAY');
+
+await page.fill('#extraName', 'Meet the vendor team');
+await page.locator('#extraAdd').click();
+s = await snap();
+check('unscoped request added', await page.locator('.extra-list li').count(), 2);
+check('unscoped request does not change hours', s.hours, '3');
+check('unscoped request marked to be scoped',
+  await page.locator('.extra-list li').nth(1).locator('.mins').textContent(), 'TO BE SCOPED');
+check('two requests in the split line', s.split.includes('2 ADDITIONAL REQUESTS'), true);
+
+await page.locator('.extra-list li').first().locator('.drop').click();
+s = await snap();
+check('request removed', await page.locator('.extra-list li').count(), 1);
+check('hours drop back after removal', s.hours, '2');
+
+// Shadowing
+check('shadow field starts disabled', await page.locator('#shadowWho').isDisabled(), true);
+await page.locator('.shadow-toggle').click();   // as a user would — the checkbox itself is visually hidden
+check('toggle reflects the click', await page.locator('#shadowWanted').isChecked(), true);
+// The fill scales in over .14s, so let the transition settle before reading it.
+await page.waitForTimeout(300);
+check('the pixel box actually fills in', await page.evaluate(() =>
+  getComputedStyle(document.querySelector('.shadow-toggle .box'), '::after').transform), 'matrix(1, 0, 0, 1, 0, 0)');
+check('shadow field enabled once requested', await page.locator('#shadowWho').isDisabled(), false);
+await page.fill('#shadowWho', 'Dana Reeves');
+s = await snap();
+check('shadowing does not change the estimate', s.hours, '2');
+
+// Email to self: the link is only armed once there is an address.
+check('email link disabled without an address',
+  await page.locator('#emailSelf').getAttribute('aria-disabled'), 'true');
+await page.fill('#managerEmail', 'manager@example.com');
+check('email link armed', await page.locator('#emailSelf').getAttribute('aria-disabled'), 'false');
+const mailto = await page.locator('#emailSelf').getAttribute('href');
+check('mailto addresses the manager', mailto.startsWith('mailto:manager%40example.com'), true);
+const mailBody = decodeURIComponent(mailto.split('body=')[1]);
+check('summary names the new hire', mailBody.includes('New hire:    TEST USER'), true);
+check('summary carries the unscoped request', mailBody.includes('Meet the vendor team (to be scoped)'), true);
+check('summary carries the shadowing request', mailBody.includes('with Dana Reeves'), true);
+check('summary says nothing was sent', mailBody.includes('Nothing was sent, booked, stored or'), true);
+
+// Confetti fires on submit and cleans up after itself.
+await page.locator('#submit').click();
+const logText = await page.locator('#systemLog').textContent();
+check('shadowing reaches the log', logText.includes('SHADOWING REQUESTED WITH DANA REEVES'), true);
+check('requests reach the log', logText.includes('1 ADDITIONAL REQUEST TO BE REVIEWED'), true);
+// The log must quote the same total the page shows, requests included.
+check('log estimate matches the on-screen estimate',
+  logText.includes('ESTIMATE: 2 HOURS ACROSS 1 ONBOARDING DAY.'), true);
+check('confetti canvas exists', await page.locator('#confetti').count(), 1);
+await page.waitForFunction(() => document.getElementById('confetti').hidden, null, { timeout: 15000 });
+check('confetti clears itself away', await page.locator('#confetti').isVisible(), false);
+
+// The scanline overlay is gone.
+check('no scanline overlay',
+  await page.evaluate(() => getComputedStyle(document.body, '::after').content), 'none');
+
 // Syllabus view (spec appendix A.4)
 await page.goto(file + '#syllabus');
 check('syllabus view shown', await page.locator('#viewSyllabus').isVisible(), true);

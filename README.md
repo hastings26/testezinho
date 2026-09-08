@@ -16,6 +16,10 @@ total learning time and the number of onboarding days live.
 - **Day maths:** max 4 hours of sessions per day, and a started day counts as a full day —
   `ceil(totalHours / 4)`. 8 hrs is 2 days, 9 hrs is 3 days.
 - **Reference case:** Sales + Channel Account Manager = 10 locked modules, 13 hours, 4 days.
+- **Additional requests** cover anything outside the catalogue: given a duration they count
+  towards the estimate, without one they are passed on to be scoped.
+- **Shadowing** can be requested alongside the sessions; it does not change the estimate.
+- Managers can **mail themselves a copy** (a `mailto:` draft) or copy the plan as plain text.
 
 Submission is **explicitly simulated**. Nothing is sent, saved, booked or tracked; the
 confirmation panel prints a system log describing what a connected version *would* do, and
@@ -55,7 +59,7 @@ recording what has changed since the handoff.
 NODE_PATH=$(npm root -g) node tests/onboarding-request.mjs
 ```
 
-72 checks against the spec: the reference case, the locked/added split, role and department
+106 checks against the spec: the reference case, the locked/added split, role and department
 changes, the day maths, the `[ALL]` toggle, submit validation, the simulated log, the syllabus view and its derived
 requirement lines, and that the page makes no external requests.
 

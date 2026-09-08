@@ -41,17 +41,6 @@ body {
   text-transform: uppercase;
 }
 
-/* Scanline overlay — the old-monitor texture, above everything. */
-body:after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-  opacity: .08;
-  background: repeating-linear-gradient(0deg, transparent 0 3px, #fff 4px, transparent 5px);
-}
-
 /* ------------------------------------------------------------------
    Parallax starfield. Three layers of pixel dust, each drifting at its
    own rate against the scroll. Purely decorative — the page reads
@@ -637,6 +626,162 @@ body:after {
 .sy-total b { color: var(--yellow) }
 
 /* ------------------------------------------------------------------
+   Field hints, additional requests, shadowing, actions
+   ------------------------------------------------------------------ */
+.setup-row .stack { display: flex; flex-direction: column; align-items: flex-end; gap: 3px }
+.setup-row .hint-inline {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .04em;
+  text-transform: none;
+}
+
+.extras { margin: 26px 0 10px; color: var(--blue) }
+.extras .lead {
+  margin: 10px 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  text-transform: none;
+  letter-spacing: .02em;
+}
+.extra-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px auto;
+  gap: 10px;
+  align-items: center;
+}
+.extra-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #6f7d92;
+  background: transparent;
+  color: var(--ink);
+  font: 900 14px "Courier New", monospace;
+  text-transform: uppercase;
+  outline: none;
+}
+.extra-form input:focus { border-color: var(--blue) }
+.extra-form input::placeholder { color: var(--muted); opacity: .8 }
+.extra-form button {
+  padding: 10px 16px;
+  border: 2px solid var(--blue);
+  background: transparent;
+  color: var(--blue);
+  font: 900 13px "Courier New", monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .12s;
+}
+.extra-form button:not(:disabled):hover { transform: translateY(-2px) }
+.extra-form button:disabled { opacity: .35; cursor: not-allowed }
+
+.extra-list { margin: 16px 0 0; padding: 0; list-style: none }
+.extra-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px dotted #4d5a6d;
+  font-weight: 900;
+}
+.extra-list .mins { font-size: 13px; font-variant-numeric: tabular-nums }
+.extra-list .drop {
+  padding: 3px 9px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: var(--muted);
+  font: 900 11px "Courier New", monospace;
+  cursor: pointer;
+}
+.extra-list .drop:hover { color: var(--pink) }
+.extra-empty {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: .02em;
+}
+
+.shadow-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 2px dotted var(--dotted);
+  font-weight: 900;
+  cursor: pointer;
+}
+.shadow-toggle input { position: absolute; opacity: 0 }
+.shadow-toggle .box { color: var(--green) }
+/* The fill rule above is scoped to .module, so this toggle needs its own. */
+.shadow-toggle input:checked + .box:after { transform: scale(1) }
+.shadow-toggle input:focus-visible + .box { outline: 2px solid var(--blue); outline-offset: 3px }
+.shadow-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  text-transform: none;
+  letter-spacing: .02em;
+}
+.setup-row.is-off { opacity: .4 }
+
+.actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+.action {
+  padding: 10px 18px;
+  border: 2px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font: 900 12px "Courier New", monospace;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #0d0d11;
+  transition: transform .12s, box-shadow .12s;
+}
+.action:not(:disabled):hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #0d0d11 }
+.action:disabled, .action[aria-disabled="true"] { opacity: .35; cursor: not-allowed }
+.action-status {
+  margin-top: 10px;
+  min-height: 16px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* Fallback for browsers that refuse clipboard writes: the text is shown
+   for the manager to copy by hand rather than silently failing. */
+.copy-fallback {
+  width: 100%;
+  min-height: 160px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 2px solid var(--rule);
+  background: #12131a;
+  color: var(--ink);
+  font: 400 12px "Courier New", monospace;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Confetti fires on submit. Pointer-events off, above the page, cleared
+   as soon as the burst finishes. */
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
    Narrow viewports
    ------------------------------------------------------------------ */
 @media (max-width: 650px) {
@@ -668,6 +813,8 @@ body:after {
 </head>
 <body>
 
+<canvas class="confetti" id="confetti" aria-hidden="true" hidden></canvas>
+
 <div class="parallax" aria-hidden="true">
   <div class="layer layer-far" data-depth="0.08"></div>
   <div class="layer layer-mid" data-depth="0.18"></div>
@@ -685,8 +832,15 @@ body:after {
   <main id="viewRequest">
     <div class="section-title"><span></span><span>PLAYER SETUP</span><span></span></div>
     <div class="setup-row">
-      <label for="name">NAME</label>
-      <input id="name" class="field" placeholder="ENTER NAME">
+      <label for="name">NEW HIRE NAME</label>
+      <input id="name" class="field" placeholder="ENTER NEW HIRE NAME">
+    </div>
+    <div class="setup-row">
+      <label for="ldap">NEW HIRE LDAP</label>
+      <div class="stack">
+        <input id="ldap" class="field" placeholder="ENTER LDAP">
+        <span class="hint-inline">network username — optional</span>
+      </div>
     </div>
     <div class="setup-row">
       <label for="department">DEPARTMENT</label>
@@ -704,12 +858,49 @@ body:after {
       <label for="manager">MANAGER</label>
       <input id="manager" class="field" placeholder="ENTER MANAGER">
     </div>
+    <div class="setup-row">
+      <label for="managerEmail">YOUR EMAIL</label>
+      <div class="stack">
+        <input id="managerEmail" class="field" type="email" placeholder="NAME@COMPANY.COM">
+        <span class="hint-inline">so you can send yourself a copy — optional</span>
+      </div>
+    </div>
 
     <div class="section-title"><span></span><span>MODULE SELECT</span><span></span></div>
     <div class="catalog-head">
       <span>MODULE</span><span style="text-align:right">TIME</span><span></span>
     </div>
     <div id="catalog"></div>
+
+    <section class="extras">
+      <div class="group-head">
+        <div class="title"><span>ADDITIONAL REQUESTS</span><span class="line"></span></div>
+        <span></span>
+      </div>
+      <p class="lead">Something this new hire needs that is not in the catalogue above? Add it here. Give a duration if you have one and it counts towards the estimate; leave it blank and it is passed on as a request to be scoped.</p>
+      <div class="extra-form">
+        <input id="extraName" placeholder="SESSION OR TOPIC" maxlength="80">
+        <input id="extraMinutes" type="number" min="0" max="600" step="5" placeholder="MINUTES">
+        <button id="extraAdd" type="button" disabled>+ ADD</button>
+      </div>
+      <ul class="extra-list" id="extraList"></ul>
+      <p class="extra-empty" id="extraEmpty">Nothing added yet.</p>
+    </section>
+
+    <div class="section-title"><span></span><span>SHADOWING</span><span></span></div>
+    <label class="shadow-toggle" for="shadowWanted">
+      <input type="checkbox" id="shadowWanted">
+      <span class="box"></span>
+      <span>REQUEST SHADOWING SUPPORT</span>
+    </label>
+    <div class="setup-row is-off" id="shadowWhoRow">
+      <label for="shadowWho">WHO SHOULD THEY SHADOW?</label>
+      <div class="stack">
+        <input id="shadowWho" class="field" placeholder="NAME OR LDAP" disabled>
+        <span class="hint-inline">leave blank and we will suggest someone</span>
+      </div>
+    </div>
+    <p class="shadow-note">Shadowing sits alongside the sessions above and is arranged separately — it does not change the estimate.</p>
 
     <div class="msg">
       <div class="section-title"><span></span><span>ADDITIONAL MESSAGE</span><span></span></div>
@@ -723,7 +914,7 @@ body:after {
         <span id="hours">0</span> HRS · <span id="count">0</span>/<span id="moduleTotal">0</span> MODULES
       </div>
       <div class="split">
-        <span id="lockedCount">0</span> LOCKED BASELINE + <span id="addedCount">0</span> ADDED BY YOU
+        <span id="lockedCount">0</span> LOCKED BASELINE + <span id="addedCount">0</span> ADDED BY YOU<span id="extraCount"></span>
       </div>
 
       <div class="days-label">ONBOARDING DAYS</div>
@@ -736,6 +927,13 @@ body:after {
 
       <button class="submit" id="submit" disabled>SUBMIT</button>
       <div class="hint" id="submitHint">SELECT A DEPARTMENT, ROLE, AND COMPLETE PLAYER SETUP TO ENABLE SUBMIT.</div>
+
+      <div class="actions">
+        <a class="action" id="emailSelf" href="#" aria-disabled="true">✉ EMAIL THIS TO ME</a>
+        <button class="action" id="copySummary" type="button" disabled>⧉ COPY SUMMARY</button>
+      </div>
+      <div class="action-status" id="actionStatus" role="status"></div>
+      <textarea class="copy-fallback" id="copyFallback" readonly hidden></textarea>
     </div>
 
     <section class="confirmation" id="confirmation">
@@ -789,7 +987,13 @@ const DATA = {
     { id: 'revm',      department: 'rev-enablement', name: 'Revenue Enablement Programs Manager' },
     { id: 'revo',      department: 'rev-ops',        name: 'Revenue Operations Analyst' },
     { id: 'tps',       department: 'tech-presales',  name: 'Solutions Consultant' },
-    { id: 've',        department: 'vendor-exp',     name: 'Vendor Experience Manager' }
+    { id: 've',        department: 'vendor-exp',     name: 'Vendor Experience Manager' },
+
+    // Added after handoff. Placement under Sales and the delivery owner are
+    // assumptions pending confirmation, and the acronyms still need expanding.
+    { id: 'cgs',       department: 'sales',          name: 'CGS' },
+    { id: 'mgs',       department: 'sales',          name: 'MGS' },
+    { id: 'tps-sales', department: 'sales',          name: 'TPS' }
   ],
 
   modules: [
@@ -842,7 +1046,11 @@ const DATA = {
     { role: 'revm',      modules: [],                  owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' },
     { role: 'revo',      modules: [],                  owner: 'Revenue Operations',  notify: 'Hiring Manager, Revenue Operations' },
     { role: 'tps',       modules: [],                  owner: 'Technical Pre-Sales', notify: 'Hiring Manager, Technical Pre-Sales' },
-    { role: 've',        modules: [],                  owner: 'Vendor Experience',   notify: 'Hiring Manager, Vendor Experience' }
+    { role: 've',        modules: [],                  owner: 'Vendor Experience',   notify: 'Hiring Manager, Vendor Experience' },
+
+    { role: 'cgs',       modules: [],                  owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' },
+    { role: 'mgs',       modules: [],                  owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' },
+    { role: 'tps-sales', modules: [],                  owner: 'Revenue Enablement',  notify: 'Hiring Manager, Revenue Enablement' }
   ]
 };
 
@@ -944,7 +1152,10 @@ const SYLLABUS = {
 // ---------------------------------------------------------------------
 const state = {
   locked: new Set(),
-  added:  new Set()
+  added:  new Set(),
+  // Free-text requests for things the catalogue does not cover.
+  // { id, name, minutes } — minutes may be 0, meaning "not scoped yet".
+  extras: []
 };
 
 const MAX_SESSION_HOURS_PER_DAY = 4;
@@ -1072,6 +1283,58 @@ function selectGroup(group) {
 }
 
 // ---------------------------------------------------------------------
+// Additional requests — anything the catalogue does not cover
+// ---------------------------------------------------------------------
+let extraSeq = 0;
+
+function addExtra() {
+  const name = el('extraName').value.trim();
+  if (!name) return;
+
+  const raw = Number(el('extraMinutes').value);
+  const minutes = Number.isFinite(raw) && raw > 0 ? Math.round(raw) : 0;
+
+  state.extras.push({ id: ++extraSeq, name, minutes });
+  el('extraName').value = '';
+  el('extraMinutes').value = '';
+  el('extraAdd').disabled = true;
+  refresh();
+  el('extraName').focus();
+}
+
+function removeExtra(id) {
+  state.extras = state.extras.filter(extra => extra.id !== id);
+  refresh();
+}
+
+function renderExtras() {
+  const list = el('extraList');
+  list.replaceChildren();
+
+  state.extras.forEach(extra => {
+    const row = document.createElement('li');
+
+    const label = document.createElement('span');
+    label.textContent = extra.name;                 // manager-typed, so not markup
+
+    const mins = document.createElement('span');
+    mins.className = 'mins';
+    mins.textContent = extra.minutes ? `${extra.minutes} MIN` : 'TO BE SCOPED';
+
+    const drop = document.createElement('button');
+    drop.type = 'button';
+    drop.className = 'drop';
+    drop.textContent = 'REMOVE';
+    drop.addEventListener('click', () => removeExtra(extra.id));
+
+    row.append(label, mins, drop);
+    list.appendChild(row);
+  });
+
+  el('extraEmpty').hidden = state.extras.length > 0;
+}
+
+// ---------------------------------------------------------------------
 // The single render/update pass
 // ---------------------------------------------------------------------
 function refresh() {
@@ -1095,22 +1358,31 @@ function refresh() {
     }
   });
 
-  const minutes = [...selected].reduce((total, id) => total + moduleById(id).minutes, 0);
+  // Catalogue minutes plus any additional requests that carry a duration.
+  // Requests left unscoped are passed on but cannot be estimated.
+  const catalogueMinutes = [...selected].reduce((total, id) => total + moduleById(id).minutes, 0);
+  const extraMinutes = state.extras.reduce((total, extra) => total + extra.minutes, 0);
+  const minutes = catalogueMinutes + extraMinutes;
   const hours = minutes / 60;
   const days = minutes ? Math.ceil(hours / MAX_SESSION_HOURS_PER_DAY) : 0;
+  const sessions = selected.size + state.extras.length;
 
   el('hours').textContent = formatHours(hours);
   el('count').textContent = selected.size;
   el('lockedCount').textContent = state.locked.size;
   el('addedCount').textContent = state.added.size;
+  el('extraCount').textContent = state.extras.length
+    ? ` + ${state.extras.length} ADDITIONAL REQUEST${plural(state.extras.length)}`
+    : '';
 
+  renderExtras();
   renderDays(days);
   renderEstimate(days, hours);
   renderSchedulingNote();
   updateSubmit();
 
-  el('stickyText').textContent = selected.size
-    ? `${formatHours(hours)} HRS · ${selected.size} MODULES · ${days} DAY${plural(days)}`
+  el('stickyText').textContent = sessions
+    ? `${formatHours(hours)} HRS · ${sessions} MODULES · ${days} DAY${plural(days)}`
     : 'NOTHING SELECTED YET';
 }
 
@@ -1192,6 +1464,8 @@ function updateSubmit() {
   el('submitHint').textContent = ready
     ? 'READY TO CREATE SIMULATED REQUEST.'
     : 'SELECT A DEPARTMENT, ROLE, AND COMPLETE PLAYER SETUP TO ENABLE SUBMIT.';
+
+  updateActions();
 }
 
 // ---------------------------------------------------------------------
@@ -1201,7 +1475,11 @@ function updateSubmit() {
 // ---------------------------------------------------------------------
 function submit() {
   const selected = [...new Set([...state.locked, ...state.added])];
-  const minutes = selected.reduce((total, id) => total + moduleById(id).minutes, 0);
+  // Scoped additional requests count here exactly as they do in the
+  // on-screen estimate — the log must not quote a different number.
+  const minutes =
+    selected.reduce((total, id) => total + moduleById(id).minutes, 0) +
+    state.extras.reduce((total, extra) => total + extra.minutes, 0);
   const hours = minutes / 60;
   const days = Math.ceil(hours / MAX_SESSION_HOURS_PER_DAY);
   const delivery = DATA.roleMappingDelivery.find(r => r.role === el('role').value) || {};
@@ -1215,12 +1493,211 @@ function submit() {
     `ESTIMATE: ${formatHours(hours)} HOURS ACROSS ${days} ONBOARDING DAY${plural(days)}.`
   ];
 
+  if (state.extras.length) {
+    lines.splice(1, 0, `${state.extras.length} ADDITIONAL REQUEST${plural(state.extras.length)} TO BE REVIEWED.`);
+  }
+  if (el('shadowWanted').checked) {
+    const who = el('shadowWho').value.trim();
+    lines.push(`SHADOWING REQUESTED${who ? ` WITH ${who.toUpperCase()}` : ' — PARTNER TO BE SUGGESTED'}.`);
+  }
+
   el('systemLog').innerHTML =
     lines.map(line => `<div>&gt; ${line}</div>`).join('') +
     `<div class="tiny">Nothing was sent, booked, stored, or tracked by this standalone prototype.</div>`;
 
   el('confirmation').classList.add('show');
   el('confirmation').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  burstConfetti();
+}
+
+// ---------------------------------------------------------------------
+// Take-away copy of the plan. Built as plain text so it works in an email
+// client, a ticket, or a paste into chat.
+// ---------------------------------------------------------------------
+function summaryText() {
+  const selected = [...new Set([...state.locked, ...state.added])];
+  const catalogueMinutes = selected.reduce((total, id) => total + moduleById(id).minutes, 0);
+  const extraMinutes = state.extras.reduce((total, extra) => total + extra.minutes, 0);
+  const hours = (catalogueMinutes + extraMinutes) / 60;
+  const days = hours ? Math.ceil(hours / MAX_SESSION_HOURS_PER_DAY) : 0;
+
+  const department = el('department').selectedOptions[0]?.text || '—';
+  const role = el('role').selectedOptions[0]?.text || '—';
+  const delivery = DATA.roleMappingDelivery.find(r => r.role === el('role').value) || {};
+  const value = id => el(id).value.trim() || '—';
+
+  const lines = [
+    'ONBOARDING REQUEST — DRAFT',
+    '',
+    `New hire:    ${value('name')}`,
+    `LDAP:        ${value('ldap')}`,
+    `Department:  ${department}`,
+    `Role:        ${role}`,
+    `Start date:  ${value('start')}`,
+    `Manager:     ${value('manager')}`,
+    '',
+    `Estimate:    ${formatHours(hours)} hours across ${days} onboarding day${plural(days).toLowerCase()}`,
+    `Sessions:    ${selected.length} from the catalogue (${state.locked.size} mandatory, ${state.added.size} added)`,
+    ''
+  ];
+
+  ['Culture', 'Offering', 'Tools', 'Department'].forEach(group => {
+    const inGroup = DATA.modules.filter(m => m.group === group && selected.includes(m.id));
+    if (!inGroup.length) return;
+    lines.push(`${group.toUpperCase()}`);
+    inGroup.forEach(m =>
+      lines.push(`  - ${m.name} (${m.minutes} min)${state.locked.has(m.id) ? ' [mandatory]' : ''}`));
+    lines.push('');
+  });
+
+  if (state.extras.length) {
+    lines.push('ADDITIONAL REQUESTS');
+    state.extras.forEach(extra =>
+      lines.push(`  - ${extra.name} (${extra.minutes ? extra.minutes + ' min' : 'to be scoped'})`));
+    lines.push('');
+  }
+
+  if (el('shadowWanted').checked) {
+    const who = el('shadowWho').value.trim();
+    lines.push('SHADOWING');
+    lines.push(`  Requested${who ? `, with ${who}` : ' — partner to be suggested'}`);
+    lines.push('');
+  }
+
+  const message = el('message').value.trim();
+  if (message) {
+    lines.push('ADDITIONAL MESSAGE', `  ${message}`, '');
+  }
+
+  lines.push(
+    `Delivery owner: ${delivery.owner || 'to be assigned'}`,
+    '',
+    'This is an estimate of effort, not a set of booked dates. The number of',
+    `days may differ depending on ${delivery.owner || 'delivery team'} availability and the new`,
+    "hire's own calendar.",
+    '',
+    'Produced by a standalone prototype. Nothing was sent, booked, stored or',
+    'tracked when this was generated.'
+  );
+
+  return lines.join('\n');
+}
+
+function updateActions() {
+  const email = el('managerEmail').value.trim();
+  const hasPlan = state.locked.size > 0 || state.added.size > 0 || state.extras.length > 0;
+  const link = el('emailSelf');
+
+  el('copySummary').disabled = !hasPlan;
+
+  if (hasPlan && email.includes('@')) {
+    const subject = `Onboarding request — ${el('name').value.trim() || 'new hire'}`;
+    link.href = `mailto:${encodeURIComponent(email)}` +
+      `?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(summaryText())}`;
+    link.setAttribute('aria-disabled', 'false');
+  } else {
+    link.removeAttribute('href');
+    link.setAttribute('aria-disabled', 'true');
+  }
+}
+
+function say(message) {
+  el('actionStatus').textContent = message;
+}
+
+async function copySummary() {
+  const text = summaryText();
+  try {
+    await navigator.clipboard.writeText(text);
+    say('COPIED TO CLIPBOARD.');
+    el('copyFallback').hidden = true;
+  } catch {
+    // Clipboard access is refused in plenty of contexts. Show the text
+    // rather than pretending it worked.
+    const fallback = el('copyFallback');
+    fallback.value = text;
+    fallback.hidden = false;
+    fallback.select();
+    say('CLIPBOARD BLOCKED — SELECT AND COPY THE TEXT BELOW.');
+  }
+}
+
+// ---------------------------------------------------------------------
+// Confetti. Pixel squares in the page palette, fired once on submit.
+// Nothing depends on it: the canvas is hidden again as soon as the last
+// piece leaves the screen, and reduced-motion skips it entirely.
+// ---------------------------------------------------------------------
+function burstConfetti() {
+  const canvas = el('confetti');
+  if (!canvas.getContext || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const colours = ['#ffd84d', '#3898ff', '#ff3b9d', '#bd62ff', '#ffb13b', '#84ff57'];
+  const context = canvas.getContext('2d');
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+
+  canvas.hidden = false;
+  canvas.width = innerWidth * dpr;
+  canvas.height = innerHeight * dpr;
+  context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // Two jets from the lower corners, the way an arcade cabinet would do it.
+  const pieces = [];
+  [[0.12, 1], [0.88, -1]].forEach(([originX, direction]) => {
+    for (let i = 0; i < 70; i++) {
+      pieces.push({
+        x: innerWidth * originX,
+        y: innerHeight * 0.92,
+        vx: direction * (2 + Math.random() * 7),
+        vy: -(9 + Math.random() * 9),
+        size: 5 + Math.random() * 7,
+        colour: colours[(Math.random() * colours.length) | 0],
+        spin: (Math.random() - 0.5) * 0.3,
+        angle: Math.random() * Math.PI,
+        life: 1
+      });
+    }
+  });
+
+  let previous = performance.now();
+
+  const frame = now => {
+    // Normalised against 60fps so the burst runs at the same speed
+    // whatever the display refresh rate.
+    const step = Math.min((now - previous) / 16.7, 3);
+    previous = now;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    let alive = 0;
+    pieces.forEach(piece => {
+      if (piece.life <= 0) return;
+      alive++;
+
+      piece.vy += 0.42 * step;          // gravity
+      piece.vx *= 0.995;                // drag
+      piece.x += piece.vx * step;
+      piece.y += piece.vy * step;
+      piece.angle += piece.spin * step;
+      if (piece.y > innerHeight * 0.7) piece.life -= 0.012 * step;
+
+      context.save();
+      context.translate(piece.x, piece.y);
+      context.rotate(piece.angle);
+      context.globalAlpha = Math.max(piece.life, 0);
+      context.fillStyle = piece.colour;
+      // Squares, not circles — same pixel vocabulary as the coins.
+      context.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.7);
+      context.restore();
+    });
+
+    if (alive) {
+      requestAnimationFrame(frame);
+    } else {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.hidden = true;
+    }
+  };
+
+  requestAnimationFrame(frame);
 }
 
 // ---------------------------------------------------------------------
@@ -1397,6 +1874,38 @@ function init() {
 
   el('submit').addEventListener('click', submit);
   el('stickySubmit').addEventListener('click', submit);
+
+  // Additional requests
+  el('extraName').addEventListener('input', () => {
+    el('extraAdd').disabled = !el('extraName').value.trim();
+  });
+  el('extraName').addEventListener('keydown', event => {
+    if (event.key === 'Enter') { event.preventDefault(); addExtra(); }
+  });
+  el('extraMinutes').addEventListener('keydown', event => {
+    if (event.key === 'Enter') { event.preventDefault(); addExtra(); }
+  });
+  el('extraAdd').addEventListener('click', addExtra);
+
+  // Shadowing: the "who" field only makes sense once support is requested.
+  el('shadowWanted').addEventListener('change', () => {
+    const wanted = el('shadowWanted').checked;
+    el('shadowWho').disabled = !wanted;
+    el('shadowWhoRow').classList.toggle('is-off', !wanted);
+    if (wanted) el('shadowWho').focus();
+  });
+
+  // Take-away copy
+  el('managerEmail').addEventListener('input', updateActions);
+  el('copySummary').addEventListener('click', copySummary);
+  el('emailSelf').addEventListener('click', event => {
+    if (el('emailSelf').getAttribute('aria-disabled') === 'true') {
+      event.preventDefault();
+      say('ADD YOUR EMAIL ABOVE TO SEND YOURSELF A COPY.');
+      return;
+    }
+    say('OPENING YOUR EMAIL CLIENT WITH A DRAFT.');
+  });
 }
 
 init();

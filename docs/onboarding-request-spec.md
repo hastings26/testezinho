@@ -1161,3 +1161,77 @@ All of it is decorative. Under `prefers-reduced-motion: reduce` the
 parallax layers are removed and animation and transition durations collapse
 to nothing; the page reads identically. Nothing is revealed by scrolling —
 the whole page is present at rest.
+
+## A.6 Post-handoff additions
+
+Requested after the prototype was in use.
+
+### Roles: CGS, MGS, TPS
+
+Three roles added under **Sales**, alongside Channel Account Manager,
+Account Executive and Sales Manager. Each has an empty role mapping — no
+additional mandatory module beyond the Sales baseline — with Revenue
+Enablement as delivery owner.
+
+Three things about them are **assumptions, not confirmed facts**:
+
+- That they are roles rather than departments or modules (confirmed by the
+  requester; the department placement was not)
+- That they belong to Sales
+- That Revenue Enablement owns their delivery
+
+The acronyms are also unexpanded. `TPS` here is a Sales role and is
+distinct from the existing **Technical Pre-Sales** department and its
+Solutions Consultant role; the role id is `tps-sales` because `tps` was
+already taken by that role, and `tps` is also a module id.
+
+### Field naming
+
+`NAME` is now `NEW HIRE NAME`, so a manager does not read it as their own.
+A `NEW HIRE LDAP` field is added for the network username — optional, and
+not required to submit. The label may need changing for organisations that
+call it something else.
+
+### Manager email and take-away copy
+
+A `YOUR EMAIL` field feeds two actions under the summary:
+
+- **EMAIL THIS TO ME** — a `mailto:` link with the plan as the body. It
+  opens the manager's own mail client; the page still sends nothing itself.
+- **COPY SUMMARY** — copies the same plain text. Where the browser refuses
+  clipboard access the text is shown in a textarea to copy by hand, rather
+  than failing silently.
+
+Neither is required to submit. The summary covers the new hire, LDAP,
+department, role, start date, manager, sessions by category, additional
+requests, shadowing, the message, the delivery owner and the estimate — and
+repeats that nothing was sent, booked, stored or tracked.
+
+### Additional requests
+
+A free-text list for anything the catalogue does not cover. Each entry has
+a name and an optional duration:
+
+- With a duration, it counts towards hours, days and the session count
+  exactly as a catalogue module does
+- Without one, it is carried through as `TO BE SCOPED` and changes no total
+
+They are held in `state.extras`, separate from `locked` and `added`, and do
+not appear in the syllabus. The simulated log quotes the same total the
+page shows, requests included.
+
+### Shadowing
+
+A `REQUEST SHADOWING SUPPORT` toggle and a `WHO SHOULD THEY SHADOW?` field,
+the latter enabled only when support is requested and blank meaning "we
+will suggest someone". Shadowing is arranged separately and **does not
+change the estimate**; the page says so.
+
+### Motion
+
+The scanline overlay is removed.
+
+Confetti fires once on submit: pixel squares in the page palette, thrown
+from the lower corners, cleared as soon as the last piece leaves the
+screen. It is skipped entirely under `prefers-reduced-motion`, and nothing
+depends on it.

@@ -74,6 +74,21 @@
       "id": "ve",
       "department": "vendor-exp",
       "name": "Vendor Experience Manager"
+    },
+    {
+      "id": "cgs",
+      "department": "sales",
+      "name": "CGS"
+    },
+    {
+      "id": "mgs",
+      "department": "sales",
+      "name": "MGS"
+    },
+    {
+      "id": "tps-sales",
+      "department": "sales",
+      "name": "TPS"
     }
   ],
   "modules": [
@@ -310,6 +325,24 @@
       "modules": [],
       "owner": "Vendor Experience",
       "notify": "Hiring Manager, Vendor Experience"
+    },
+    {
+      "role": "cgs",
+      "modules": [],
+      "owner": "Revenue Enablement",
+      "notify": "Hiring Manager, Revenue Enablement"
+    },
+    {
+      "role": "mgs",
+      "modules": [],
+      "owner": "Revenue Enablement",
+      "notify": "Hiring Manager, Revenue Enablement"
+    },
+    {
+      "role": "tps-sales",
+      "modules": [],
+      "owner": "Revenue Enablement",
+      "notify": "Hiring Manager, Revenue Enablement"
     }
   ]
 }
