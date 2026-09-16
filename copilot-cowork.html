@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Copilot Cowork | Watch it. Prove it. | Pax8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--deep:#0B1140;--blue:#1D4ED8;--teal:#00D09C;--c2:#0EA5E9;--c3:#14B8A6;--c4:#10B981;
+  --gray:#808080;--dark:#374151;--red:#EF4444;--pink:#FCA5A5;--line:rgba(255,255,255,.14);--panel:#0A0A0F;
+  --rainbow:linear-gradient(90deg,#1D4ED8,#00D09C,#22C55E,#8B5CF6,#EC4899,#F472B6,#EAB308,#EF4444);
+  --font:'Plus Jakarta Sans','Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;color:#fff;font-family:var(--font);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;font-size:16px;line-height:1.5}
+button{font-family:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
+[data-focus]:focus{outline:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.stripe{position:fixed;left:0;top:10vh;height:40vh;width:10px;background:linear-gradient(180deg,var(--blue),var(--teal));z-index:2;transition:opacity .3s}
+body.hero-mode .stripe{opacity:0}
+.hero-bg{position:fixed;inset:0;background:url("data:image/jpeg;base64,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") center/cover no-repeat;z-index:0;opacity:0;transition:opacity .4s;pointer-events:none}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,17,64,.1) 0%,rgba(11,17,64,.5) 40%,rgba(0,0,0,.94) 85%)}
+body.hero-mode .hero-bg{opacity:1}
+
+main{flex:1;display:flex;flex-direction:column;position:relative;z-index:1}
+.screen{width:100%;max-width:880px;margin:0 auto;padding:36px 28px 24px 44px;flex:1;display:flex;flex-direction:column;animation:in .35s ease both}
+.screen.still{animation:none}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* type */
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.muted{color:var(--gray)}
+.center{text-align:center}
+h1.cover{font-size:clamp(46px,9.5vw,88px);font-weight:800;line-height:1;letter-spacing:-.025em;margin:12px 0 10px}
+.cover-sub{font-size:clamp(19px,3.2vw,24px);font-weight:700}
+.cover-sub b{color:var(--teal)}
+.rainbow{height:4px;border-radius:4px;background:var(--rainbow);width:66%;margin:20px auto 0}
+.h-sec{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1.1;text-align:center}
+.sub-sec{text-align:center;color:rgba(255,255,255,.8);margin-top:8px;font-weight:600}
+.line-sm{height:3px;width:120px;border-radius:3px;background:var(--rainbow);margin:6px 0 16px}
+
+/* buttons */
+.actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding-top:8px}
+.btn{background:transparent;border:1.5px solid #fff;border-radius:999px;padding:14px 30px;font-size:16px;font-weight:600;letter-spacing:.04em;min-height:50px;transition:background .15s,opacity .15s,transform .1s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+.btn:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.btn:active:not(:disabled){transform:scale(.98)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.ghost{border-color:rgba(255,255,255,.35);color:rgba(255,255,255,.85)}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:12px}
+.back{background:none;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;letter-spacing:.04em}
+.back:hover{background:rgba(255,255,255,.08)}
+.gname{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
+
+/* home */
+.hero-logo{width:112px;color:#fff;margin-bottom:34px}
+.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin:30px 0 10px;background:#000;border:1px solid rgba(255,255,255,.2);box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.video video,.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.video.ph{display:grid;place-items:center;text-align:center;aspect-ratio:auto;min-height:min(58vw,330px);padding:26px 18px;background:
+  radial-gradient(120% 90% at 20% 0%,rgba(29,78,216,.55),transparent 60%),
+  radial-gradient(90% 80% at 100% 100%,rgba(0,208,156,.28),transparent 60%),#050818}
+.video.ph::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(circle at center,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(circle at center,#000 30%,transparent 75%)}
+.ph-inner{position:relative;padding:20px}
+.play-ring{width:72px;height:72px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;margin:0 auto 14px;animation:pulse 2.4s ease-in-out infinite}
+.play-ring::after{content:"";border-left:22px solid #fff;border-top:13px solid transparent;border-bottom:13px solid transparent;margin-left:6px}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,208,156,.45)}50%{box-shadow:0 0 0 16px rgba(0,208,156,0)}}
+.ph-title{font-size:clamp(18px,3vw,24px);font-weight:800}
+.ph-meta{font-size:13px;font-style:italic;color:rgba(255,255,255,.7);margin-top:4px}
+.video-cap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:rgba(255,255,255,.75);font-weight:600;margin-bottom:26px}
+.field{margin:0 auto 30px;max-width:440px;width:100%}
+.field label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,.8);margin-bottom:6px}
+.field input{width:100%;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:13px 14px;font:inherit;color:#fff}
+.field input::placeholder{color:rgba(255,255,255,.45)}
+
+.paths{display:grid;gap:14px;margin:22px 0 18px}
+.path{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;text-align:left;width:100%;background:rgba(5,6,14,.82);border:1.5px solid var(--line);border-radius:20px;padding:20px;transition:border-color .2s,transform .15s,background .2s;overflow:hidden;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.path::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
+.path:hover{border-color:rgba(255,255,255,.45);transform:translateY(-2px)}
+.path .num{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:20px;background:var(--acc)}
+.path .ptitle{display:block;font-size:21px;font-weight:800;letter-spacing:-.01em}
+.path .pdesc{display:block;font-size:14.5px;color:rgba(255,255,255,.78);margin-top:2px}
+.path .pmeta{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-top:8px}
+.go-arrow{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);display:grid;place-items:center;font-size:18px;font-weight:800}
+.badge{display:inline-block;margin-left:8px;font-size:11px;font-weight:800;letter-spacing:.06em;border-radius:999px;padding:3px 9px;vertical-align:middle;text-transform:uppercase}
+.badge.done{background:var(--teal);color:#000}
+.badge.try{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff}
+.badge.resume{background:var(--blue);color:#fff}
+.triple{text-align:center;border-radius:18px;padding:16px;margin:4px 0 14px;background:linear-gradient(#000,#000) padding-box,var(--rainbow) border-box;border:2px solid transparent;font-weight:800;font-size:18px}
+.triple small{display:block;font-weight:600;font-size:14px;color:rgba(255,255,255,.75)}
+.vault-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--deep);border-radius:20px;padding:20px;margin:6px 0 10px;border:1px solid rgba(255,255,255,.12);text-align:left;width:100%}
+.vault-cta .ptitle{display:block;font-size:19px;font-weight:800}
+.vault-cta .pdesc{display:block;font-size:14px;color:rgba(255,255,255,.78)}
+
+/* divider / countdown */
+.divider{justify-content:center;align-items:center;text-align:center}
+.divider .num{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:800;margin:0 auto 20px}
+.divider h2{font-size:clamp(40px,8vw,70px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.divider p{max-width:540px;margin:20px auto 30px;color:rgba(255,255,255,.8);font-size:17px}
+.rules{list-style:none;display:grid;gap:10px;max-width:520px;margin:0 auto 30px;text-align:left}
+.rules li{display:flex;gap:12px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px}
+.rules b{color:var(--teal)}
+.count{font-size:clamp(120px,30vw,220px);font-weight:800;line-height:1;color:var(--teal);letter-spacing:-.04em}
+.bump{animation:bump .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes bump{from{transform:scale(.4);opacity:.2}to{transform:scale(1);opacity:1}}
+
+/* gauntlet */
+.progress{display:flex;gap:4px;margin-bottom:22px}
+.seg{flex:1;height:5px;border-radius:3px;background:#1F2937;transition:background .3s}
+.seg.now{background:#fff}.seg.ok{background:var(--teal)}.seg.no{background:#6B7280}
+.qhead{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray)}
+.qhead .pts{color:var(--teal)}
+h2.q{font-size:clamp(21px,3.4vw,28px);font-weight:700;line-height:1.3;margin-bottom:8px}
+.hint{font-size:14px;color:rgba(255,255,255,.65);margin-bottom:18px;font-weight:600}
+.opts{display:grid;gap:10px;margin-bottom:22px}
+.opt{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:15px 16px;font-size:16px;line-height:1.45;transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.4)}
+.opt .mk{flex:0 0 auto;width:22px;height:22px;margin-top:1px;border:2px solid rgba(255,255,255,.5);border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800}
+.opt.multi .mk{border-radius:6px}
+.opt[aria-pressed="true"]{border-color:var(--blue);background:rgba(29,78,216,.16)}
+.opt[aria-pressed="true"] .mk{background:var(--blue);border-color:var(--blue)}
+.opt[aria-pressed="true"] .mk::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+.opt.multi[aria-pressed="true"] .mk::after{content:"\2713";width:auto;height:auto;background:none;color:#fff}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--teal);background:rgba(0,208,156,.12)}
+.opt.right .mk{background:var(--teal);border-color:var(--teal)}
+.opt.right .mk::after{content:"\2713"!important;width:auto!important;height:auto!important;background:none!important;color:#000!important}
+.opt.wrong{border-color:var(--red);background:rgba(239,68,68,.1)}
+.opt.wrong .mk{background:var(--red);border-color:var(--red)}
+.opt.wrong .mk::after{content:"\2715"!important;width:auto!important;height:auto!important;background:none!important;color:#fff!important}
+.opt.missed{border-style:dashed}
+.opt.dim{opacity:.45}
+.lock-label{font-size:13px;color:var(--gray);text-align:center;margin-bottom:10px;font-weight:600}
+.lock{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lock .btn{width:100%;padding:14px 10px}
+.feedback{background:var(--deep);border-radius:16px;padding:18px 20px;border-left:5px solid var(--teal);margin-bottom:20px;animation:in .3s ease both}
+.feedback.bad{border-left-color:var(--red)}
+.feedback.mid{border-left-color:#EAB308}
+.feedback h3{font-size:19px;font-weight:800;margin-bottom:6px}
+.feedback p{color:rgba(255,255,255,.9);font-size:15.5px}
+.feedback .label{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin:12px 0 4px}
+.warn{margin-top:12px;font-size:14px;font-weight:700;color:var(--pink)}
+.chip{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:14px;font-weight:700;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 14px;text-decoration:none;background:transparent}
+button.chip:hover,a.chip:hover{background:rgba(255,255,255,.1)}
+.chip .play,.rw .play{width:0;height:0;border-left:8px solid var(--teal);border-top:5px solid transparent;border-bottom:5px solid transparent;display:inline-block}
+
+/* myth buster */
+.hud{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px}
+.hud .v{font-size:clamp(38px,8vw,56px);font-weight:800;line-height:.95;font-variant-numeric:tabular-nums}
+.hud small{display:block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-top:4px}
+.hud .time.low .v{color:var(--red);animation:tick 1s steps(1) infinite}
+@keyframes tick{50%{opacity:.55}}
+.mult{font-size:22px;font-weight:800;border-radius:999px;padding:6px 16px;border:2px solid rgba(255,255,255,.3);transition:all .2s;text-align:center}
+.mult.x2{border-color:var(--c2);color:var(--c2);box-shadow:0 0 22px rgba(14,165,233,.45)}
+.mult.x3{border-color:var(--teal);color:#000;background:var(--teal);box-shadow:0 0 34px rgba(0,208,156,.7);animation:throb .8s ease-in-out infinite}
+@keyframes throb{50%{transform:scale(1.08)}}
+.timebar{height:8px;border-radius:5px;background:#1F2937;overflow:hidden;margin-bottom:22px}
+.timebar div{height:100%;background:linear-gradient(90deg,var(--teal),var(--c2));border-radius:5px}
+.timebar.low div{background:var(--red)}
+.mcard{position:relative;min-height:230px;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:2px solid var(--line);border-radius:22px;padding:26px 24px;margin-bottom:18px;transition:border-color .15s,background .15s}
+.mcount{position:absolute;top:14px;left:20px;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--gray)}
+.mtext{font-size:clamp(22px,4.2vw,32px);font-weight:800;line-height:1.25;letter-spacing:-.01em}
+.mtruth{font-size:16px;font-weight:700;margin-top:14px;color:var(--pink);min-height:1.5em}
+.mcard.good{border-color:var(--teal);background:rgba(0,208,156,.1)}
+.mcard.bad{border-color:var(--red);background:rgba(239,68,68,.1);animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.mbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mb{height:84px;border-radius:20px;background:transparent;border:2.5px solid;font-size:26px;font-weight:800;letter-spacing:.12em;transition:transform .08s,background .15s}
+.mb:active{transform:scale(.96)}
+.mb.myth{border-color:var(--red)}.mb.myth:hover{background:rgba(239,68,68,.12)}
+.mb.fact{border-color:var(--teal)}.mb.fact:hover{background:rgba(0,208,156,.12)}
+.mb small{display:block;font-size:11px;letter-spacing:.08em;font-weight:700;color:var(--gray);margin-top:2px}
+.pop{position:fixed;left:50%;top:17%;transform:translate(-50%,-50%);font-size:56px;font-weight:800;pointer-events:none;opacity:0;z-index:9}
+.pop.go{animation:pop .7s ease-out}
+.pop.good{color:var(--teal)}.pop.bad{color:var(--red)}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
+.keys{text-align:center;font-size:12px;color:var(--gray);margin-top:12px;font-weight:600}
+
+/* showdown */
+.meter-wrap{margin-bottom:20px}
+.meter-top{display:flex;justify-content:space-between;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.meter-top .tv{color:var(--teal);font-variant-numeric:tabular-nums}
+.meter{height:14px;border-radius:8px;background:#1F2937;overflow:hidden;position:relative}
+.meter .mfill{height:100%;border-radius:8px;transition:width .8s cubic-bezier(.2,.8,.2,1),background .4s}
+.meter .goal{position:absolute;top:-3px;bottom:-3px;left:90%;width:2px;background:#fff;opacity:.7}
+.persona{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+.avatar{flex:0 0 auto;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:22px;background:linear-gradient(135deg,var(--blue),#8B5CF6);border:2px solid rgba(255,255,255,.5)}
+.avatar.mad{background:linear-gradient(135deg,#7F1D1D,var(--red))}
+.avatar.happy{background:linear-gradient(135deg,var(--c3),var(--teal))}
+.persona h3{font-size:19px;font-weight:800;line-height:1.2}
+.persona p{font-size:13.5px;color:rgba(255,255,255,.7)}
+.bubble{position:relative;background:var(--deep);border-radius:22px;padding:28px 26px 26px 26px;margin-bottom:20px}
+.bubble::before{content:"\201C";position:absolute;left:12px;top:-26px;font-size:96px;line-height:1;color:var(--blue);font-weight:800}
+.bubble::after{content:"\201D";position:absolute;right:16px;bottom:-62px;font-size:96px;line-height:1;color:var(--blue);font-weight:800}
+.bubble .said{font-size:clamp(20px,3.6vw,27px);font-weight:700;line-height:1.3}
+.bubble .rnd{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--gray);text-transform:uppercase;margin-bottom:6px}
+.delta{display:inline-block;font-weight:800;font-size:15px;border-radius:999px;padding:3px 10px;margin-left:8px}
+.delta.up{background:var(--teal);color:#000}.delta.flat{background:#EAB308;color:#000}.delta.down{background:var(--red);color:#fff}
+.react{font-size:18px;font-style:italic;font-weight:600;margin:4px 0 2px}
+
+/* results */
+.results h2.title{font-size:clamp(36px,6.5vw,56px);font-weight:800;text-align:center;letter-spacing:-.02em;line-height:1.05}
+.who{text-align:center;color:var(--gray);font-style:italic;font-size:14px;margin-top:8px}
+.score{display:flex;align-items:center;justify-content:center;gap:24px;margin:26px 0 6px;flex-wrap:wrap}
+.big{font-size:clamp(80px,17vw,128px);font-weight:800;line-height:.9;color:var(--teal);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big.fail{color:#fff}
+.verdict .v{font-size:22px;font-weight:800}
+.verdict .s{font-size:15px;color:rgba(255,255,255,.75)}
+.section-h{font-size:20px;font-weight:700;margin:32px 0 2px}
+.bars{display:grid;gap:14px}
+.bar-row{display:grid;grid-template-columns:150px 1fr 60px;gap:12px;align-items:center;font-size:15px;font-weight:600}
+.track{height:12px;border-radius:6px;background:#1F2937;overflow:hidden}
+.fill{height:100%;border-radius:6px;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.bar-row .n{text-align:right;color:rgba(255,255,255,.8)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat .k{font-size:32px;font-weight:800;line-height:1}
+.stat .l{font-size:13px;color:rgba(255,255,255,.72);margin-top:6px;font-weight:600}
+.stat.alert .k{color:var(--pink)}
+.rw-list{list-style:none;display:grid;gap:10px}
+.rw{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 15px;text-align:left;width:100%;font-size:15px}
+button.rw:hover{border-color:rgba(255,255,255,.4)}
+.rw .t{font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums;min-width:74px;display:flex;align-items:center;gap:7px}
+.rw small{display:block;color:var(--pink);font-weight:700;font-size:12px;margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
+.rw .win{display:block;color:rgba(255,255,255,.85);margin-top:6px;font-size:14px}
+.rw .win b{color:var(--teal)}
+.clean{color:rgba(255,255,255,.82)}
+.next-up{margin-top:30px;background:var(--deep);border-radius:18px;padding:18px 20px}
+.next-up h3{font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
+.next-up .actions{justify-content:flex-start;padding-top:0}
+
+/* vault */
+.wp{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:linear-gradient(135deg,var(--deep),#101a5c);border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:22px;margin:26px 0 18px;text-decoration:none}
+a.wp:hover{border-color:rgba(255,255,255,.5)}
+.doc{width:62px;height:78px;border-radius:8px;background:#fff;position:relative;box-shadow:6px 6px 0 var(--teal)}
+.doc::before{content:"";position:absolute;left:12px;right:12px;top:16px;height:40px;background:repeating-linear-gradient(#1D4ED8 0 3px,transparent 3px 9px);opacity:.8}
+.wp h3{font-size:clamp(20px,3.4vw,26px);font-weight:800;line-height:1.15}
+.wp p{font-size:14px;color:rgba(255,255,255,.78);margin-top:4px}
+.wp .dl{display:inline-flex;margin-top:12px;border:1.5px solid #fff;border-radius:999px;padding:8px 18px;font-weight:700;font-size:14px;letter-spacing:.04em}
+.dls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.dl-card{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;transition:border-color .15s,transform .15s}
+a.dl-card:hover{border-color:rgba(255,255,255,.45);transform:translateY(-2px)}
+.ftype{flex:0 0 auto;width:42px;height:52px;border-radius:6px;background:#fff;position:relative;box-shadow:4px 4px 0 var(--acc2,#1D4ED8)}
+.ftype span{position:absolute;left:0;right:0;bottom:7px;text-align:center;font-size:9px;font-weight:800;letter-spacing:.04em;color:#0B1140}
+.ftype::before{content:"";position:absolute;left:8px;right:8px;top:9px;height:20px;background:repeating-linear-gradient(var(--acc2,#1D4ED8) 0 2px,transparent 2px 6px);opacity:.75}
+.dl-card h4{font-size:16px;font-weight:700;line-height:1.3}
+.dl-card p{font-size:13.5px;color:rgba(255,255,255,.7);margin-top:2px}
+.dl-card .go{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-top:8px;display:block}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lk{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;transition:border-color .15s,transform .15s}
+a.lk:hover{border-color:rgba(255,255,255,.45);transform:translateY(-2px)}
+.lk .num{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px}
+.lk h4{font-size:16px;font-weight:700;line-height:1.3}
+.lk p{font-size:13.5px;color:rgba(255,255,255,.7);margin-top:2px}
+.lk .go{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-top:8px;display:block}
+.soon{opacity:.55;cursor:default}
+.soon .go,.wp.soon .dl{color:var(--gray);border-color:rgba(255,255,255,.3)}
+.scorecard{display:grid;gap:10px;margin-top:4px}
+.sc{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-weight:700}
+.sc span:last-child{color:var(--teal);text-align:right}
+.sc.none span:last-child{color:var(--gray);font-weight:600}
+.copybox{width:100%;margin-top:12px;background:var(--panel);color:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:14px;display:none}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--teal);color:#000;font-weight:700;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.toast.show{opacity:1}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+
+footer{position:relative;z-index:1;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 22px calc(14px + env(safe-area-inset-bottom))}
+footer .flogo{width:46px;color:#fff}
+footer .copy{font-size:11px;font-style:italic;color:var(--gray);text-align:center}
+
+@media (max-width:640px){
+  .screen{padding:24px 18px 18px 26px}
+  .stripe{width:6px}
+  .hero-logo{width:88px;margin-bottom:24px}
+  .path{grid-template-columns:auto 1fr;padding:18px 16px;gap:14px}
+  .path .go-arrow{display:none}
+  .path .num{width:44px;height:44px;font-size:18px}
+  .path .ptitle{font-size:19px}
+  .links,.dls{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:108px 1fr 50px;font-size:14px}
+  .stat .k{font-size:26px}.stat .l{font-size:12px}
+  .mb{height:76px;font-size:22px}
+  .play-ring{width:60px;height:60px}
+  .play-ring::after{border-left-width:17px;border-top-width:10px;border-bottom-width:10px}
+  .video.ph{min-height:270px;padding:22px 14px}
+  .mcard{min-height:200px;padding:42px 18px 20px}
+  .bubble{padding:26px 20px 22px}
+  .wp{grid-template-columns:1fr}
+  .vault-cta{flex-direction:column;align-items:flex-start}
+  footer{grid-template-columns:auto 1fr auto;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+  footer .flogo{width:38px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body class="hero-mode">
+<div class="hero-bg" aria-hidden="true"></div>
+<div class="stripe" aria-hidden="true"></div>
+<main id="main"></main>
+<footer>
+  <div class="flogo"><svg role="img" aria-label="Pax8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 421.5 275.6"><path fill="currentColor" d="M459.92,241.29l-.63-.34-.21-.69a79.55,79.55,0,0,0-75.76-56.45,77.83,77.83,0,0,0-34.39,7.91l-1.25.6-.87-1.08a109.59,109.59,0,0,0-179.07,11.5l-.46.74-.86.08a98.93,98.93,0,1,0,27.91,195.7l.74-.13.6.44A136.26,136.26,0,0,0,359,397.64l.72-.55.87.28a74.52,74.52,0,0,0,74.6-17.43l.39-.38.55-.08a74,74,0,0,0,23.79-138.19ZM428.8,355.63l-4.86.4-3.27,3.63a50.39,50.39,0,0,1-37.35,16.72,49.71,49.71,0,0,1-20.73-4.53l-7.2-3.28-6,5.19a111.69,111.69,0,0,1-73.37,27.48,110.56,110.56,0,0,1-70.33-24.9l-4.81-3.9-6,1.55a74.41,74.41,0,0,1-93.12-72c0-40.32,32.8-73.67,73.12-74.34l7.35-.12,3.36-6.54a85,85,0,0,1,148.11-5.72l6.95,11.27,10.71-7.77a54,54,0,0,1,31.92-10.4A54.65,54.65,0,0,1,436.73,252l1.29,6.35,6,2.52a49.41,49.41,0,0,1-15.19,94.78Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M200.05,269c-6.66,0-12.05,3.1-16.07,7.69l-.34-4.71a1.7,1.7,0,0,0-1.73-1.72h-12.5a1.62,1.62,0,0,0-1.72,1.72v74.59a1.62,1.62,0,0,0,1.72,1.72h13.77a1.63,1.63,0,0,0,1.72-1.72v-24.9A20.87,20.87,0,0,0,200.05,328c15.6,0,27.08-13.08,27.08-29.49S215.65,269,200.05,269Zm-2.19,43.26c-7.22,0-12.62-6.43-12.62-13.89s5.4-13.77,12.62-13.77,12.74,6,12.74,13.77S205.21,312.23,197.86,312.23Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M289.11,270.23h-12.5a1.68,1.68,0,0,0-1.72,1.72l-.35,4.71c-4-4.59-9.41-7.69-16.06-7.69-15.61,0-27.09,13.08-27.09,29.49S242.87,328,258.48,328a20.92,20.92,0,0,0,16.06-7.34l.35,4.13a1.68,1.68,0,0,0,1.72,1.72h12.5a1.63,1.63,0,0,0,1.73-1.72V272A1.63,1.63,0,0,0,289.11,270.23Zm-28.45,42c-7.35,0-12.74-6-12.74-13.89s5.39-13.77,12.74-13.77,12.62,6.32,12.62,13.77S267.89,312.23,260.66,312.23Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M334.21,297.66l17.56-25.36c.8-1.15.23-2.07-1.15-2.07H335a2.3,2.3,0,0,0-2.07,1.15l-8.6,13.31-8.73-13.31a2.28,2.28,0,0,0-2.06-1.15H298c-1.37,0-1.95.92-1.14,2.07l17.55,25.36-18.47,26.73c-.81,1.15-.23,2.07,1.14,2.07h15.61a2.32,2.32,0,0,0,2.07-1.15l9.64-14.8,9.52,14.8a2.31,2.31,0,0,0,2.07,1.15h15.6c1.38,0,1.95-.92,1.15-2.07Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M395.38,280.79c4.48-3.44,7.8-8.84,7.8-14.8,0-11.25-8.95-20.78-22.95-20.78s-23,9.53-23,20.78c0,6,3.33,11.36,7.69,14.8a22.73,22.73,0,0,0-13,21c0,16.29,14.58,26.16,28.23,26.16s28.12-9.87,28.12-26.16A22.73,22.73,0,0,0,395.38,280.79ZM380.23,259a7.71,7.71,0,0,1,7.81,7.68c-.12,4.25-3.1,7.92-7.81,7.92a7.8,7.8,0,1,1,0-15.6Zm0,53a10.62,10.62,0,0,1,0-21.23,10.62,10.62,0,0,1,0,21.23Z" transform="translate(-77.25 -150.2)"/></svg></div>
+  <div class="copy">Copyright &copy;2026 Pax8 | All rights reserved</div>
+  <div></div>
+</footer>
+<div class="pop" id="pop" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  EDIT HERE: video, whitepaper and the 6 course links          ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+const CONFIG = {
+  // VIDEO. type: "stream" (SharePoint/Stream page - opens in a new tab, timestamp jumps work),
+  // "mp4" (direct file - plays inline), "embed" (iframe player) or "link" (plain new tab, no timestamps).
+  // SharePoint Stream CANNOT be embedded inline on another domain, so "stream" is the right type here.
+  VIDEO: {
+    type: "stream",
+    url: "https://pax8.sharepoint.com/sites/RevenueEnablementEMEA/_layouts/15/stream.aspx?id=%2Fsites%2FRevenueEnablementEMEA%2FInternal%20RevE%20Worksite%20%20EMEA%2FEnablement%20programs%2FVideos%2FCopilot%20Cowork%20Session%2D20260908%5F135902%2DMeeting%20Recording%20%283%29%2Emp4&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW0iLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0&ga=1&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E339e3640%2Db84a%2D4b70%2D9ecb%2D54e26441b56a",
+    title: "Copilot Training for Sales People",
+    meta: "90 min \u00b7 Alex de Jong, hosted by Morgan Johnson \u00b7 8 Sept 2026",
+    note: "Opens in Microsoft Stream. Pax8 sign-in required."
+  },
+  TIMESTAMP_OFFSET_SECONDS: 0,   // seconds trimmed from the start of the video (0 = full recording, timings as-is)
+
+  WHITEPAPER_URL: "",            // WHITEPAPER PLACEHOLDER
+  WHITEPAPER_LABEL: "Copilot Cowork: A Sales Enablement Whitepaper",
+
+  DOWNLOADS: [                   // Session takeaways. Leave url "" to show a greyed "coming soon" card.
+    { title: "Session slide deck",   desc: "The full presentation as shown on the day, every link clickable.", kind: "PDF", url: "" },
+    { title: "Cowork pricing sheet", desc: "Credit bands, licence stack and prepaid tiers. Check before you quote.", kind: "XLSX", url: "" }
+  ],
+
+  LINKS: [                       // 6 COURSE LINK PLACEHOLDERS. Titles are editable.
+    { title: "Copilot Cowork Simulated Field Demos", desc: "Click-through customer demos, no Cowork tenant needed.", url: "" },
+    { title: "Customer Cowork Estimator",            desc: "Model spend by persona and light, medium, heavy task mix.", url: "" },
+    { title: "Copilot Credits & usage-based billing", desc: "How credits, spending limits and alerts work.", url: "" },
+    { title: "Microsoft Purview and Cowork",         desc: "How Cowork honours existing data protection.", url: "" },
+    { title: "Skill Up with Level Up",               desc: "Free seller, pre-sales and certification learning paths.", url: "" },
+    { title: "Cowork adoption hub",                  desc: "Microsoft's rollout guidance, prompt library and governance advice.", url: "" }
+  ],
+
+  PASS_MARK: 0.8,                // Gauntlet pass mark
+  MYTH_SECONDS: 60,              // Myth Buster clock
+  MYTH_CLEAR_SCORE: 2000         // Myth Buster "cleared" score
+};
+/* ════════════════════════════════════════════════════════════════ */
+
+const ROUNDS = [{"id": 1, "name": "The Pitch", "sub": "What Cowork is and why it wins", "points": 1}, {"id": 2, "name": "The Money", "sub": "Licensing, credits and cost control. Double points, because this is where sellers get caught out.", "points": 2}, {"id": 3, "name": "The Guardrails", "sub": "Security, positioning and when not to sell it", "points": 1}];
+const QUESTIONS = [{"round": 1, "type": "single", "ts": "09:02", "q": "A partner asks: “We already have Copilot. What does Cowork actually add?” Which answer lands best?", "options": [{"t": "You hand it an outcome and boundaries; it plans and runs the multi-step work, then reports back.", "c": true}, {"t": "It’s Copilot on a larger reasoning model, so every answer comes back more accurate and detailed.", "c": false}, {"t": "It’s Copilot Chat rebranded at general availability, with a new interface and usage pricing.", "c": false}, {"t": "It’s a Copilot Studio template that lets your team build and publish custom agents faster.", "c": false}], "why": "Assistant you converse with versus teammate you send off to work. That contrast is the whole pitch, so lead with it."}, {"round": 1, "type": "single", "ts": "19:04", "q": "A customer schedules a Cowork job for 19:00, then shuts their laptop at 17:30. What happens at 19:00?", "options": [{"t": "It runs on time, because Cowork runs in Microsoft’s cloud.", "c": true}, {"t": "It queues until the laptop next reconnects to the network.", "c": false}, {"t": "It runs, but only if the Copilot app was left open.", "c": false}, {"t": "It pauses and emails the user to restart it manually.", "c": false}], "why": "Cloud-hosted is Microsoft’s first differentiator, and the clearest contrast with desktop-based Claude Cowork."}, {"round": 1, "type": "single", "ts": "10:22", "q": "A customer asks: “What is Work IQ?”", "options": [{"t": "Your Microsoft 365 data (mail, meetings, chats, files) plus a layer that learns how each person works.", "c": true}, {"t": "Microsoft’s own reasoning model, trained on Microsoft 365 usage, sitting underneath Copilot and Cowork.", "c": false}, {"t": "An analytics layer in the admin centre that scores each user’s AI adoption and flags low usage.", "c": false}, {"t": "A premium credit bundle that unlocks Cowork’s access to SharePoint and OneDrive content.", "c": false}], "why": "Work IQ is why Cowork’s output reflects real business context, natively, with no paid connector."}, {"round": 1, "type": "single", "ts": "32:34", "q": "Which of these is a SKILL, not a tool?", "options": [{"t": "“No emojis, and never open with ‘I hope this finds you well’.”", "c": true}, {"t": "A connection that lets Cowork drive a browser and fill in web forms.", "c": false}, {"t": "The ability to move and rename files across OneDrive folders.", "c": false}, {"t": "Permission to create Teams meetings and send the invites out.", "c": false}], "why": "Tools are the hands that take the action. Skills are the instructions that govern how it’s done. The tool writes the email; the skill decides what it sounds like."}, {"round": 1, "type": "multi", "ts": "53:37", "q": "Microsoft gives five reasons Copilot Cowork wins. Select all five.", "options": [{"t": "Hosted in the cloud", "c": true}, {"t": "Native Work IQ grounding", "c": true}, {"t": "Enterprise-grade security", "c": true}, {"t": "Multi-model design", "c": true}, {"t": "Lower cost", "c": true}, {"t": "Built-in code generation", "c": false}, {"t": "Largest plugin ecosystem", "c": false}, {"t": "Runs locally for privacy", "c": false}], "why": "Cloud-hosted, Work IQ-native, enterprise-secure, multi-model, lower cost. Code isn’t in scope, Claude Cowork has more plugins today, and Cowork runs in the cloud."}, {"round": 2, "type": "single", "ts": "1:08:20", "q": "A customer wants Cowork on for their sales team tomorrow. What must be in place?", "options": [{"t": "A Microsoft 365 Copilot licence per user, plus an admin enabling Cowork and usage-based billing.", "c": true}, {"t": "An Azure subscription with prepaid credits loaded, because Cowork users don’t need a Copilot licence.", "c": false}, {"t": "Nothing extra. Cowork switches on automatically for every tenant that has Copilot Chat.", "c": false}, {"t": "A Copilot Studio capacity pack assigned to the team before anyone can open Cowork.", "c": false}], "why": "The Copilot licence is the prerequisite; Cowork usage is billed on top in Copilot Credits. Admins decide when it’s enabled and who gets access."}, {"round": 2, "type": "single", "ts": "1:09:19", "q": "A heavy analysis task consumes 1,200 Copilot Credits. What’s the pay-as-you-go list cost?", "options": [{"t": "$12", "c": true}, {"t": "$1.20", "c": false}, {"t": "$120", "c": false}, {"t": "$0.12", "c": false}], "why": "Pay-as-you-go is $0.01 per credit, so 1,200 credits = $12. Shortcut: divide credits by 100."}, {"round": 2, "type": "multi", "ts": "1:11:31", "q": "Microsoft calculates what a Cowork task costs from four inputs. Select all four.", "options": [{"t": "Model use", "c": true}, {"t": "Context retrieval", "c": true}, {"t": "Tool calls", "c": true}, {"t": "Runtime", "c": true}, {"t": "Seats in the tenant", "c": false}, {"t": "Time of day it runs", "c": false}, {"t": "The user’s job title", "c": false}], "why": "Model, context, tools, runtime. Bigger models, more context, more tool calls and longer runs all mean more credits."}, {"round": 2, "type": "single", "ts": "1:09:42", "q": "“Every Monday, draft my team status update from my calendar and priorities.” Which band is this?", "options": [{"t": "Light: a few sources, light reasoning, one output", "c": true}, {"t": "Medium: multiple sources, two or more outputs", "c": false}, {"t": "Heavy: broad aggregation and deep analysis", "c": false}, {"t": "Unbilled: scheduled runs are in the licence", "c": false}], "why": "A recurring status update is the textbook light task (Microsoft estimates roughly 100–300 credits). Heavy looks like analysing six months of data into a leadership report."}, {"round": 2, "type": "single", "ts": "1:20:13", "q": "A customer wants a discount for committing up front. What’s true of the Pre-Purchase Plan (P3)?", "options": [{"t": "Annual prepay from 300,000 credits at 5% off; unused credits then expire.", "c": true}, {"t": "A monthly credit pack at 10% off, with any unused credits rolling forward.", "c": false}, {"t": "A flat 20% off any prepaid volume, with credits valid for three years.", "c": false}, {"t": "A discount on the Copilot seat licence when credits are bought in bulk.", "c": false}], "why": "Entry P3 is 300,000 credits: $3,000 list becomes $2,850. Discounts scale to 20% at the top tier, and overage bills at pay-as-you-go. Flag use-it-or-lose-it so the customer doesn’t over-commit."}, {"round": 2, "type": "single", "ts": "1:15:26", "q": "The CFO says: “I’m not signing up for a bill with no ceiling.” Strongest answer?", "options": [{"t": "It’s off until an admin enables it, with spend limits by tenant, group and user, plus alerts.", "c": true}, {"t": "Microsoft caps Cowork at the Copilot seat price, so the bill can never go over $30 a user.", "c": false}, {"t": "Buy the largest prepaid pack; once it’s consumed, Cowork simply stops until renewal.", "c": false}, {"t": "Usage is pooled with the Copilot licences, so the heavy users are offset by light ones.", "c": false}], "why": "Control, visibility, efficiency. Governance is a trust-builder, so walk the admin through it before usage ramps."}, {"round": 3, "type": "single", "ts": "17:57", "q": "A security lead asks: “Can Cowork reach data the user running it can’t?”", "options": [{"t": "No. It acts on the user’s behalf, with their permissions.", "c": true}, {"t": "Yes, via a service account so long tasks don’t fail midway.", "c": false}, {"t": "Only when a Global Admin has approved the task in advance.", "c": false}, {"t": "Only for SharePoint sites shared with the whole organisation.", "c": false}], "why": "On-behalf-of by design. It’s the single most important security line in the deck."}, {"round": 3, "type": "single", "ts": "42:56", "q": "A customer wants Cowork to tighten one paragraph in a Word document. Your advice?", "options": [{"t": "Use Copilot in Word, which they’re already paying for per user.", "c": true}, {"t": "Use Cowork on the largest model so the tone is perfect.", "c": false}, {"t": "Use Cowork, since a single edit is always billed as a light task.", "c": false}, {"t": "Build a Copilot Studio agent so the edit is repeatable.", "c": false}], "why": "Don’t sell Cowork for easy tasks. If Copilot can do it, use Copilot, and save Cowork’s credits for long-running, multi-tool work."}, {"round": 3, "type": "single", "ts": "53:37", "q": "A partner pushes back: “Claude Cowork has more plugins, so why Copilot Cowork?” Best move?", "options": [{"t": "Concede the plugin gap, then pivot: cloud, native Work IQ, inherited security, 30–40% cheaper.", "c": true}, {"t": "Point out Claude Cowork can’t create Word, Excel or PowerPoint files, so plugins don’t matter.", "c": false}, {"t": "Explain that Copilot Cowork includes unlimited credits, so it always works out cheaper overall.", "c": false}, {"t": "Tell them Microsoft blocks Claude Cowork from connecting to Microsoft 365 tenants for security.", "c": false}], "why": "Concede the true point, then pivot to the structural advantages. The 30–40% figure is from Microsoft’s June 2026 internal tests with both on Opus 4.8. Say so if challenged."}, {"round": 3, "type": "single", "ts": "52:14", "q": "A compliance lead asks whether DLP and Insider Risk Management cover Cowork today. You…", "options": [{"t": "Check current rollout status on Microsoft Learn before you commit to it.", "c": true}, {"t": "Confirm yes, since every Purview control has covered Cowork from day one.", "c": false}, {"t": "Say no, because Purview policies don’t apply to AI agents in Microsoft 365.", "c": false}, {"t": "Recommend the Cowork security add-on that extends Purview to agents.", "c": false}], "why": "Security claims are commitments. At launch, Microsoft listed audit, eDiscovery, DSPM and Communication Compliance as available, with DLP and Insider Risk Management coming. Confirm before you promise."}, {"round": 3, "type": "single", "ts": "24:44", "q": "In the author → editor → director → orchestrator frame, which role does the user play with Cowork?", "options": [{"t": "Director: you set the outcome and limits", "c": true}, {"t": "Editor: AI drafts, you refine and approve", "c": false}, {"t": "Author: you write, AI assists with pieces", "c": false}, {"t": "Orchestrator: AI acts before you even ask", "c": false}], "why": "Use it as a discovery question: where is this customer today, and where do they want to be?"}];
+const MYTHS = [{"s": "Cowork keeps running a scheduled task even when the user’s laptop is switched off.", "fact": true, "truth": "It runs in Microsoft’s cloud, not on the device.", "ts": "19:04"}, {"s": "Pay-as-you-go Copilot Credits cost one cent each.", "fact": true, "truth": "$0.01 per credit. Divide credits by 100 to get dollars.", "ts": "1:09:19"}, {"s": "Cowork is switched off by default until an admin enables it.", "fact": true, "truth": "Admins decide when it’s on and who gets access.", "ts": "1:14:31"}, {"s": "Admins can set Cowork spending limits at tenant, group and user level.", "fact": true, "truth": "All three levels, plus custom alerts.", "ts": "1:15:26"}, {"s": "Cowork can never reach data the user running it can’t access.", "fact": true, "truth": "It always works on behalf of the user.", "ts": "17:57"}, {"s": "A Microsoft 365 Copilot licence is required before anyone can use Cowork.", "fact": true, "truth": "The licence is the prerequisite; usage bills on top.", "ts": "1:08:20"}, {"s": "Microsoft’s tests put Copilot Cowork 30–40% cheaper per prompt than Claude Cowork on the same model.", "fact": true, "truth": "Internal June 2026 tests, both running Opus 4.8.", "ts": "53:37"}, {"s": "The entry-level prepaid plan (P3) starts at 300,000 credits.", "fact": true, "truth": "$3,000 list, 5% off: $2,850.", "ts": "1:20:13"}, {"s": "A skill tells Cowork how to do something; a tool lets it take the action.", "fact": true, "truth": "The tool writes the email; the skill decides how it sounds.", "ts": "32:34"}, {"s": "Model use, context retrieval, tool calls and runtime all change a task’s credit cost.", "fact": true, "truth": "Those are Microsoft’s four billing inputs.", "ts": "1:11:31"}, {"s": "Cowork usage is included in the Microsoft 365 Copilot licence.", "fact": false, "truth": "The licence is the prerequisite; Cowork bills on top in credits.", "ts": "1:08:20"}, {"s": "Like Claude Cowork, Copilot Cowork runs on the user’s desktop.", "fact": false, "truth": "Copilot Cowork runs in Microsoft’s cloud.", "ts": "19:04"}, {"s": "Cowork can write and deploy application code.", "fact": false, "truth": "Code generation isn’t in Cowork’s scope.", "ts": "55:10"}, {"s": "Unused prepaid P3 credits roll over into the next year.", "fact": false, "truth": "P3 is one year, use-it-or-lose-it.", "ts": "1:20:13"}, {"s": "Cowork needs a paid connector to read a customer’s Microsoft 365 data.", "fact": false, "truth": "It’s natively grounded in Work IQ, no connector needed.", "ts": "30:29"}, {"s": "For quick single edits, Cowork is the better choice than Copilot.", "fact": false, "truth": "If Copilot can do it, use Copilot. It’s already paid for.", "ts": "42:56"}, {"s": "Every prepaid credit pack gets a 20% discount.", "fact": false, "truth": "5% at entry, scaling to 20% at the top tier.", "ts": "1:20:13"}, {"s": "A weekly status update drafted from the calendar is a heavy task.", "fact": false, "truth": "It’s the textbook light task.", "ts": "1:09:42"}, {"s": "When prepaid credits run out, Cowork stops working until renewal.", "fact": false, "truth": "Overage bills at pay-as-you-go.", "ts": "1:20:13"}, {"s": "Work IQ gives every user in the tenant identical results.", "fact": false, "truth": "Its behavioural layer learns how each person works.", "ts": "10:22"}];
+const PERSONA = {"name": "Dan Hollis", "initials": "DH", "role": "MSP owner · 38 SMB clients", "bio": "Got burned by an AI pilot last year. Allergic to fluff. Knows his numbers."};
+const SHOWDOWN = [{"obj": "Half my clients already pay for Copilot. Why would they pay again for Cowork?", "ts": "09:02", "coach": "Lead with the contrast: an assistant you talk to versus a teammate you send off to work. Usage billing means there’s no second seat fee.", "options": [{"t": "Different job. Copilot helps step by step; Cowork runs the whole task and reports back.", "tier": "best", "react": "Huh. So it’s a doer, not a helper. Go on."}, {"t": "Microsoft is moving everyone to agents, so Copilot clients will want to stay current.", "tier": "ok", "react": "“Stay current” isn’t a reason to spend money."}, {"t": "They won’t pay again, because Cowork usage is included for anyone with a Copilot licence.", "tier": "bad", "react": "That’s not what I read. Now I’m worried."}]}, {"obj": "My clients’ teams already run Claude Cowork on their laptops. Why would they switch?", "ts": "53:37", "coach": "Four structural edges: cloud-hosted, native Work IQ with no chargeable connector, inherited Microsoft 365 security, and Microsoft’s tests put it 30–40% cheaper per prompt on Opus 4.8.", "options": [{"t": "It runs in the cloud, reads their Microsoft 365 data natively, and keeps their security.", "tier": "best", "react": "No connector bill, and it runs with the lid shut. Noted."}, {"t": "Both are strong tools. Copilot Cowork is simply a more natural fit for a Microsoft shop.", "tier": "ok", "react": "“Natural fit” won’t win me a renewal."}, {"t": "Claude Cowork can’t create Word, Excel or PowerPoint files, so it isn’t comparable.", "tier": "bad", "react": "My client did exactly that yesterday. You’ve lost me a bit."}]}, {"obj": "Usage-based billing? One surprise invoice and I’m the one who gets blamed.", "ts": "1:15:26", "coach": "Control, visibility, efficiency. It’s off by default, with limits at tenant, group and user level and custom alerts. P3 overage bills at pay-as-you-go; it doesn’t just stop.", "options": [{"t": "It stays off until you enable it; then you set limits by tenant, group and user, with alerts.", "tier": "best", "react": "Limits per user? That I can sell."}, {"t": "Honestly, most day-to-day tasks are light, so the monthly total tends to stay fairly small.", "tier": "ok", "react": "“Tends to” is exactly what keeps me up at night."}, {"t": "Buy a big prepaid pack. When the credits run out, Cowork stops, so the bill can never go over.", "tier": "bad", "react": "Pretty sure overage still bills. You’re guessing."}]}, {"obj": "My legal-sector clients will ask one thing: can this AI see everything?", "ts": "17:57", "coach": "On-behalf-of by design: Cowork never gets more access than the user running it. It’s the single most important security line.", "options": [{"t": "No. It works on behalf of each user, so it only reaches what that person can already open.", "tier": "best", "react": "That’s the sentence I needed."}, {"t": "It’s covered by the same Microsoft compliance certifications your clients already rely on.", "tier": "ok", "react": "Certifications don’t answer “what can it see”."}, {"t": "It uses a service account so tasks don’t fail, but admins can audit everything it touched.", "tier": "bad", "react": "A service account? Legal will kill that on sight."}]}, {"obj": "Stop dancing around it. What does a Cowork task actually cost?", "ts": "1:09:42", "coach": "Credits are $0.01 each, scaling with model, context, tool calls and runtime. Microsoft puts light tasks at roughly 100–300 credits and heavy at 700+. Then model real usage in Microsoft’s Customer Cowork Estimator.", "options": [{"t": "Light tasks run about 100–300 credits, so $1–$3. Let’s model your clients by persona.", "tier": "best", "react": "A range and a plan. Fine."}, {"t": "It varies too much by task to quote, so the honest answer is we’ll know after month one.", "tier": "ok", "react": "So you want me to sign a blank cheque."}, {"t": "Every task is one credit at one cent, so a thousand tasks a month is about ten dollars.", "tier": "bad", "react": "Ten dollars? My client will find out that’s wrong fast."}]}, {"obj": "Right. So I tell every client to use Cowork for everything?", "ts": "42:56", "coach": "Don’t sell Cowork for easy tasks. If Copilot can do it, use Copilot. Cowork earns its credits on long-running, multi-tool, complex work.", "options": [{"t": "No. Keep quick edits in Copilot, already paid for. Point Cowork at long, multi-tool work.", "tier": "best", "react": "Honest. That’s why I’d trust you with my clients."}, {"t": "Let them use it for everything for a month, then trim back once you see what costs most.", "tier": "ok", "react": "A month of unmanaged spend? Pass."}, {"t": "Yes. The output quality is better across the board, so it earns its credits on every task.", "tier": "bad", "react": "Every task? That’s how clients get burned."}]}];
+const LOGO = `<svg role="img" aria-label="Pax8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 421.5 275.6"><path fill="currentColor" d="M459.92,241.29l-.63-.34-.21-.69a79.55,79.55,0,0,0-75.76-56.45,77.83,77.83,0,0,0-34.39,7.91l-1.25.6-.87-1.08a109.59,109.59,0,0,0-179.07,11.5l-.46.74-.86.08a98.93,98.93,0,1,0,27.91,195.7l.74-.13.6.44A136.26,136.26,0,0,0,359,397.64l.72-.55.87.28a74.52,74.52,0,0,0,74.6-17.43l.39-.38.55-.08a74,74,0,0,0,23.79-138.19ZM428.8,355.63l-4.86.4-3.27,3.63a50.39,50.39,0,0,1-37.35,16.72,49.71,49.71,0,0,1-20.73-4.53l-7.2-3.28-6,5.19a111.69,111.69,0,0,1-73.37,27.48,110.56,110.56,0,0,1-70.33-24.9l-4.81-3.9-6,1.55a74.41,74.41,0,0,1-93.12-72c0-40.32,32.8-73.67,73.12-74.34l7.35-.12,3.36-6.54a85,85,0,0,1,148.11-5.72l6.95,11.27,10.71-7.77a54,54,0,0,1,31.92-10.4A54.65,54.65,0,0,1,436.73,252l1.29,6.35,6,2.52a49.41,49.41,0,0,1-15.19,94.78Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M200.05,269c-6.66,0-12.05,3.1-16.07,7.69l-.34-4.71a1.7,1.7,0,0,0-1.73-1.72h-12.5a1.62,1.62,0,0,0-1.72,1.72v74.59a1.62,1.62,0,0,0,1.72,1.72h13.77a1.63,1.63,0,0,0,1.72-1.72v-24.9A20.87,20.87,0,0,0,200.05,328c15.6,0,27.08-13.08,27.08-29.49S215.65,269,200.05,269Zm-2.19,43.26c-7.22,0-12.62-6.43-12.62-13.89s5.4-13.77,12.62-13.77,12.74,6,12.74,13.77S205.21,312.23,197.86,312.23Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M289.11,270.23h-12.5a1.68,1.68,0,0,0-1.72,1.72l-.35,4.71c-4-4.59-9.41-7.69-16.06-7.69-15.61,0-27.09,13.08-27.09,29.49S242.87,328,258.48,328a20.92,20.92,0,0,0,16.06-7.34l.35,4.13a1.68,1.68,0,0,0,1.72,1.72h12.5a1.63,1.63,0,0,0,1.73-1.72V272A1.63,1.63,0,0,0,289.11,270.23Zm-28.45,42c-7.35,0-12.74-6-12.74-13.89s5.39-13.77,12.74-13.77,12.62,6.32,12.62,13.77S267.89,312.23,260.66,312.23Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M334.21,297.66l17.56-25.36c.8-1.15.23-2.07-1.15-2.07H335a2.3,2.3,0,0,0-2.07,1.15l-8.6,13.31-8.73-13.31a2.28,2.28,0,0,0-2.06-1.15H298c-1.37,0-1.95.92-1.14,2.07l17.55,25.36-18.47,26.73c-.81,1.15-.23,2.07,1.14,2.07h15.61a2.32,2.32,0,0,0,2.07-1.15l9.64-14.8,9.52,14.8a2.31,2.31,0,0,0,2.07,1.15h15.6c1.38,0,1.95-.92,1.15-2.07Z" transform="translate(-77.25 -150.2)"/><path fill="currentColor" d="M395.38,280.79c4.48-3.44,7.8-8.84,7.8-14.8,0-11.25-8.95-20.78-22.95-20.78s-23,9.53-23,20.78c0,6,3.33,11.36,7.69,14.8a22.73,22.73,0,0,0-13,21c0,16.29,14.58,26.16,28.23,26.16s28.12-9.87,28.12-26.16A22.73,22.73,0,0,0,395.38,280.79ZM380.23,259a7.71,7.71,0,0,1,7.81,7.68c-.12,4.25-3.1,7.92-7.81,7.92a7.8,7.8,0,1,1,0-15.6Zm0,53a10.62,10.62,0,0,1,0-21.23,10.62,10.62,0,0,1,0,21.23Z" transform="translate(-77.25 -150.2)"/></svg>`;
+const CIRCLE = ["#1D4ED8","#0EA5E9","#14B8A6","#10B981","#1D4ED8","#0EA5E9"];
+
+const main = document.getElementById("main");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toSec = ts => ts.split(":").map(Number).reduce((a,n)=>a*60+n,0);
+const fmtT = s => { s=Math.max(0,s); const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60,p=n=>String(n).padStart(2,"0"); return h?`${h}:${p(m)}:${p(x)}`:`${p(m)}:${p(x)}`; };
+const adjSec = ts => Math.max(0, toSec(ts) - CONFIG.TIMESTAMP_OFFSET_SECONDS);
+const adjTs = ts => fmtT(adjSec(ts));
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const today = () => new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const S = { name:"", gauntlet:null, myth:null, showdown:null, tripleShown:false };
+let cleanup = null;
+
+function show(render, opts={}){
+  if(cleanup){ const c=cleanup; cleanup=null; c(); }
+  document.body.classList.toggle("hero-mode", !!opts.hero);
+  render();
+  if(!opts.keepScroll) window.scrollTo(0,0);
+  const h = main.querySelector("[data-focus]"); if(h && !opts.noFocus) h.focus({preventScroll:true});
+}
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+function popFx(txt, kind){ const p=document.getElementById("pop"); p.className="pop"; p.textContent=txt; void p.offsetWidth; p.className=`pop go ${kind}`; }
+const topbar = name => `<div class="topbar"><button class="back" data-home>&larr; Paths</button><span class="gname">${esc(name)}</span></div>`;
+function wireHome(){ main.querySelectorAll("[data-home]").forEach(b=>b.onclick=()=>show(renderHome,{hero:true})); main.querySelectorAll("[data-vault]").forEach(b=>b.onclick=()=>show(renderVault)); }
+
+/* ---------- confetti ---------- */
+function confetti(){
+  if(reduced) return;
+  const cv=document.getElementById("confetti"), ctx=cv.getContext("2d");
+  cv.width=innerWidth*devicePixelRatio; cv.height=innerHeight*devicePixelRatio; ctx.scale(devicePixelRatio,devicePixelRatio);
+  const cols=["#1D4ED8","#00D09C","#22C55E","#8B5CF6","#EC4899","#F472B6","#EAB308","#EF4444"];
+  const ps=Array.from({length:150},()=>({x:innerWidth/2+(Math.random()-.5)*120,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:Math.random()*7+4,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[Math.floor(Math.random()*cols.length)]}));
+  const t0=performance.now();
+  (function f(now){
+    const el=now-t0; ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); ctx.clearRect(0,0,innerWidth,innerHeight);
+    ps.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.globalAlpha=Math.max(0,1-el/2600);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/3,p.s,p.s/1.6);ctx.restore();});
+    if(el<2600) requestAnimationFrame(f); else ctx.clearRect(0,0,innerWidth,innerHeight);
+  })(t0);
+}
+
+/* ---------- video ---------- */
+function videoHTML(){
+  const v=CONFIG.VIDEO;
+  if(!v.url) return `<div class="video ph" id="videoBox"><div class="ph-inner"><div class="play-ring"></div><div class="ph-title">Session video drops here</div><div class="ph-meta">Copilot Training for Sales People &middot; 90 min</div></div></div>`;
+  if(v.type==="mp4") return `<div class="video" id="videoBox"><video id="vid" controls playsinline preload="metadata" src="${esc(v.url)}"></video></div>`;
+  if(v.type==="embed") return `<div class="video" id="videoBox"><iframe src="${esc(v.url)}" title="Copilot Cowork session recording" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe></div>`;
+  return `<div class="video ph" id="videoBox"><div class="ph-inner">
+      <div class="play-ring"></div>
+      <div class="ph-title">${esc(v.title||"Watch the session")}</div>
+      <div class="ph-meta">${esc(v.meta||"")}</div>
+      <div class="actions" style="margin-top:14px"><a class="btn" href="${esc(streamUrl(null))}" target="_blank" rel="noopener">Watch the recording</a></div>
+      ${v.note?`<div class="ph-meta" style="margin-top:10px">${esc(v.note)}</div>`:""}
+    </div></div>`;
+}
+function streamUrl(ts){
+  const v=CONFIG.VIDEO; if(!v.url) return "";
+  if(ts==null) return v.url;
+  try{
+    // Shared Stream links already carry a nav= payload (referralInfo). A second nav=
+    // is ignored by Stream, so merge the start time into the existing one instead.
+    const nav=encodeURIComponent(btoa(JSON.stringify({playbackOptions:{startTimeInSeconds:adjSec(ts)}})));
+    const [base,qs=""]=v.url.split("?");
+    const parts=qs?qs.split("&").filter(p=>p&&!/^nav=/.test(p)):[];
+    parts.push("nav="+nav);
+    return base+"?"+parts.join("&");
+  }catch(e){ return v.url; }
+}
+function rewatch(ts){
+  const v=CONFIG.VIDEO;
+  if(v.url && (v.type==="stream"||v.type==="link")){ window.open(streamUrl(v.type==="stream"?ts:null),"_blank","noopener"); toast(`Opening at ${adjTs(ts)}`); return; }
+  show(renderHome,{hero:true,noFocus:true});
+  setTimeout(()=>{
+    const box=document.getElementById("videoBox"); if(box) box.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"});
+    const vid=document.getElementById("vid");
+    if(vid){ const go=()=>{ vid.currentTime=adjSec(ts); vid.play().catch(()=>{}); }; vid.readyState>=1?go():vid.addEventListener("loadedmetadata",go,{once:true}); }
+    else toast(`Skip to ${adjTs(ts)} in the recording`);
+  },120);
+}
+const rwLabel = () => (CONFIG.VIDEO.type==="stream"||CONFIG.VIDEO.type==="link")?"Open at":"Rewatch at";
+function wireRw(){ main.querySelectorAll("[data-rw]").forEach(b=>b.onclick=()=>rewatch(b.dataset.rw)); }
+
+/* ================= HOME ================= */
+function status(key){
+  const r=S[key];
+  if(key==="gauntlet" && G && !G.finished && G.started) return `<span class="badge resume">Resume</span>`;
+  if(!r) return "";
+  return r.cleared ? `<span class="badge done">&#10003; Cleared</span>` : `<span class="badge try">Retry</span>`;
+}
+function renderHome(){
+  const all = S.gauntlet?.cleared && S.myth?.cleared && S.showdown?.cleared;
+  main.innerHTML = `
+  <section class="screen">
+    <div class="hero-logo">${LOGO}</div>
+    <div class="center">
+      <div class="eyebrow">Revenue Enablement EMEA</div>
+      <h1 class="cover" tabindex="-1" data-focus>Copilot Cowork</h1>
+      <div class="cover-sub">Watch it. <b>Prove it.</b> Sell it.</div>
+      <div class="rainbow"></div>
+    </div>
+    ${videoHTML()}
+    <div class="video-cap"><span>Step 1 &middot; Watch the session</span><span>Step 2 &middot; Pick your fight below</span></div>
+
+    <div class="field"><label for="nm">Your name, for the scorecard</label><input id="nm" autocomplete="name" placeholder="e.g. Jamie Smith" value="${esc(S.name)}"></div>
+
+    <h2 class="h-sec">Choose your path</h2>
+    <p class="sub-sec">Play one. Play all three. Clear all three and you&rsquo;re a Triple Threat.</p>
+    ${all?`<div class="triple" style="margin-top:18px">TRIPLE THREAT<small>All three cleared. Go sell it.</small></div>`:""}
+    <div class="paths">
+      <button class="path" style="--acc:${CIRCLE[0]}" data-path="gauntlet">
+        <span class="num">1</span>
+        <span><span class="ptitle">The Gauntlet ${status("gauntlet")}</span><span class="pdesc">16 questions, 3 rounds, your confidence on the line. Pass at 80%.</span><span class="pmeta">~8 min &middot; Knowledge</span></span>
+        <span class="go-arrow" aria-hidden="true">&rarr;</span>
+      </button>
+      <button class="path" style="--acc:${CIRCLE[1]}" data-path="myth">
+        <span class="num">2</span>
+        <span><span class="ptitle">Myth Buster ${status("myth")}</span><span class="pdesc">60 seconds on the clock. Fact or myth? Every wrong call costs you 3 seconds.</span><span class="pmeta">1 min &middot; Speed</span></span>
+        <span class="go-arrow" aria-hidden="true">&rarr;</span>
+      </button>
+      <button class="path" style="--acc:${CIRCLE[2]}" data-path="showdown">
+        <span class="num">3</span>
+        <span><span class="ptitle">The Showdown ${status("showdown")}</span><span class="pdesc">One sceptical MSP owner. Six objections. Lose his trust and he walks.</span><span class="pmeta">~4 min &middot; Conversation</span></span>
+        <span class="go-arrow" aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+    <button class="vault-cta" data-vault>
+      <span><span class="ptitle">The Vault</span><span class="pdesc">Download the whitepaper, grab all 6 course links and see your scorecard.</span></span>
+      <span class="btn" aria-hidden="true">Open the Vault</span>
+    </button>
+  </section>`;
+  const nm=document.getElementById("nm"); nm.oninput=e=>S.name=e.target.value.trim();
+  main.querySelector('[data-path="gauntlet"]').onclick=()=>{ if(!G||G.finished) gNew(); G.started=true; gGo(G.step); };
+  main.querySelector('[data-path="myth"]').onclick=()=>show(mythIntro);
+  main.querySelector('[data-path="showdown"]').onclick=()=>{ sdNew(); show(sdIntro); };
+  wireHome();
+  if(all && !S.tripleShown){ S.tripleShown=true; setTimeout(confetti,300); }
+}
+
+function nextUp(current){
+  const games=[["gauntlet","The Gauntlet"],["myth","Myth Buster"],["showdown","The Showdown"]].filter(g=>g[0]!==current);
+  return `<div class="next-up"><h3>What&rsquo;s next?</h3><div class="actions">
+    ${games.map(g=>`<button class="btn ghost" data-jump="${g[0]}">${g[1]}${S[g[0]]?.cleared?" &#10003;":""}</button>`).join("")}
+    <button class="btn" data-vault>The Vault</button></div></div>`;
+}
+function wireNext(){
+  main.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.jump;
+    if(k==="gauntlet"){ if(!G||G.finished) gNew(); G.started=true; gGo(G.step); }
+    if(k==="myth") show(mythIntro);
+    if(k==="showdown"){ sdNew(); show(sdIntro); }
+  });
+  wireHome(); wireRw();
+}
+
+/* ================= GAME 1: THE GAUNTLET ================= */
+let G=null;
+const pts = q => ROUNDS.find(r=>r.id===q.round).points;
+const GMAX = QUESTIONS.reduce((a,q)=>a+pts(q),0);
+const GSTEPS=[]; ROUNDS.forEach(r=>{ GSTEPS.push({kind:"round",r}); QUESTIONS.forEach((q,i)=>{ if(q.round===r.id) GSTEPS.push({kind:"q",i}); }); }); GSTEPS.push({kind:"results"});
+function gNew(){ G={step:0,started:false,finished:false,order:QUESTIONS.map(q=>shuffle(q.options.map((o,i)=>i))),ans:QUESTIONS.map(()=>({sel:new Set(),done:false,ok:false,sure:null}))}; }
+function gGo(step){ G.step=step; const s=GSTEPS[step]; if(s.kind==="round") show(()=>gRound(s.r)); else if(s.kind==="q") show(()=>gQ(s.i)); else show(gResults); }
+
+function gRound(r){
+  const idx=ROUNDS.indexOf(r), count=QUESTIONS.filter(q=>q.round===r.id).length;
+  main.innerHTML=`<section class="screen">${topbar("The Gauntlet")}<div class="divider" style="flex:1;display:flex;flex-direction:column">
+    <div class="num" style="background:${CIRCLE[idx]}">${r.id}</div>
+    <div class="eyebrow muted">Round ${r.id} of ${ROUNDS.length}</div>
+    <h2 tabindex="-1" data-focus>${esc(r.name)}</h2><div class="rainbow"></div>
+    <p>${esc(r.sub)}<br><strong>${count} questions &middot; ${r.points} point${r.points>1?"s":""} each</strong></p>
+    <div class="actions"><button class="btn" id="go">Begin round ${r.id}</button></div></div></section>`;
+  document.getElementById("go").onclick=()=>gGo(G.step+1); wireHome();
+}
+
+function gQ(i, again){
+  const q=QUESTIONS[i], a=G.ans[i], r=ROUNDS.find(x=>x.id===q.round), multi=q.type==="multi";
+  const correct=q.options.map((o,k)=>o.c?k:-1).filter(k=>k>=0);
+  const segs=QUESTIONS.map((_,k)=>{const s=G.ans[k];return `<div class="seg ${s.done?(s.ok?"ok":"no"):(k===i?"now":"")}"></div>`;}).join("");
+  const opts=G.order[i].map(k=>{
+    const o=q.options[k], sel=a.sel.has(k); let cls=multi?"opt multi":"opt";
+    if(a.done){ if(o.c&&sel) cls+=" right"; else if(o.c) cls+=" right missed"; else if(sel) cls+=" wrong"; else cls+=" dim"; }
+    return `<button class="${cls}" data-k="${k}" aria-pressed="${sel}" ${a.done?"disabled":""}><span class="mk" aria-hidden="true"></span><span>${esc(o.t)}</span></button>`;
+  }).join("");
+  let bottom;
+  if(!a.done){
+    bottom=`<div class="lock-label">Lock it in. How sure are you?</div><div class="lock">
+      <button class="btn" data-sure="1" ${a.sel.size?"":"disabled"}>I&rsquo;m sure</button>
+      <button class="btn ghost" data-sure="0" ${a.sel.size?"":"disabled"}>Guessing</button></div>`;
+  } else {
+    const last=G.step===GSTEPS.length-2, nextRound=GSTEPS[G.step+1]?.kind==="round";
+    const head=a.ok?(a.sure?"Nailed it.":"Correct, and now you know it."):(multi?`Not quite. You need all ${correct.length}.`:"Not quite.");
+    bottom=`<div class="feedback ${a.ok?"":"bad"}" role="status" aria-live="polite"><h3>${head}</h3><p>${esc(q.why)}</p>
+      ${(!a.ok&&a.sure)?`<div class="warn">Confidently wrong. This is the one that bites in front of a customer.</div>`:""}
+      <button class="chip" data-rw="${q.ts}"><span class="play"></span>${rwLabel()} ${adjTs(q.ts)}</button></div>
+      <div class="actions"><button class="btn" id="next">${last?"See my result":(nextRound?"Next round":"Next question")}</button></div>`;
+  }
+  main.innerHTML=`<section class="screen${again?" still":""}">${topbar("The Gauntlet")}
+    <div class="progress" aria-hidden="true">${segs}</div>
+    <div class="qhead"><span>Round ${r.id} &middot; ${esc(r.name)}</span><span>Q${i+1}/${QUESTIONS.length} &middot; <span class="pts">${r.points} pt${r.points>1?"s":""}</span></span></div>
+    <h2 class="q" tabindex="-1" data-focus>${esc(q.q)}</h2>
+    <div class="hint">${multi?`Select all that apply (${correct.length} correct)`:"Choose one"}</div>
+    <div class="opts" role="group" aria-label="Answer options">${opts}</div>${bottom}</section>`;
+  wireHome(); wireRw();
+  if(!a.done){
+    main.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      const k=+b.dataset.k; if(multi){a.sel.has(k)?a.sel.delete(k):a.sel.add(k);} else a.sel=new Set([k]);
+      main.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed",a.sel.has(+x.dataset.k)));
+      main.querySelectorAll("[data-sure]").forEach(x=>x.disabled=!a.sel.size);
+    });
+    main.querySelectorAll("[data-sure]").forEach(b=>b.onclick=()=>{
+      a.sure=b.dataset.sure==="1"; a.ok=correct.length===a.sel.size&&correct.every(k=>a.sel.has(k)); a.done=true;
+      const y=scrollY; gQ(i,true); scrollTo(0,y);
+      main.querySelector(".feedback")?.scrollIntoView({behavior:reduced?"auto":"smooth",block:"nearest"});
+      document.getElementById("next")?.focus({preventScroll:true});
+    });
+  } else document.getElementById("next").onclick=()=>gGo(G.step+1);
+}
+
+function gResults(){
+  G.finished=true;
+  const got=QUESTIONS.reduce((s,q,i)=>s+(G.ans[i].ok?pts(q):0),0), pct=Math.round(got/GMAX*100), pass=got/GMAX>=CONFIG.PASS_MARK;
+  const nOk=G.ans.filter(a=>a.ok).length, lucky=QUESTIONS.filter((q,i)=>G.ans[i].ok&&!G.ans[i].sure).length;
+  const confWrong=G.ans.filter(a=>!a.ok&&a.sure).length;
+  const missed=QUESTIONS.map((q,i)=>({q,i})).filter(x=>!G.ans[x.i].ok).sort((x,y)=>toSec(x.q.ts)-toSec(y.q.ts));
+  const moneyMiss=QUESTIONS.filter((q,i)=>q.round===2&&!G.ans[i].ok).length;
+  const prev=S.gauntlet;
+  S.gauntlet={cleared:pass||!!prev?.cleared, short:`${pct}%`, line:`The Gauntlet: ${got}/${GMAX} (${pct}%) ${pass?"PASS":"retake"}`};
+  const bars=ROUNDS.map((r,idx)=>{const qs=QUESTIONS.map((q,i)=>({q,i})).filter(x=>x.q.round===r.id);const ok=qs.filter(x=>G.ans[x.i].ok).length;
+    return `<div class="bar-row"><span>${esc(r.name)}</span><div class="track"><div class="fill" data-w="${Math.round(ok/qs.length*100)}" style="background:${CIRCLE[idx]}"></div></div><span class="n">${ok}/${qs.length}</span></div>`;}).join("");
+  main.innerHTML=`<section class="screen results">${topbar("The Gauntlet")}
+    <h2 class="title" tabindex="-1" data-focus>${pass?"You survived the Gauntlet.":"The Gauntlet won this time."}</h2>
+    <div class="who">${esc(S.name||"Seller")} &middot; ${today()}</div><div class="rainbow" style="width:40%"></div>
+    <div class="score"><div class="big ${pass?"":"fail"}">${pct}%</div><div class="verdict"><div class="v">${pass?"PASS":"RETAKE"}</div><div class="s">${got} of ${GMAX} points<br>${nOk} of ${QUESTIONS.length} correct &middot; pass ${Math.round(CONFIG.PASS_MARK*100)}%</div></div></div>
+    <div class="section-h">By round</div><div class="line-sm"></div><div class="bars">${bars}</div>
+    <div class="section-h">Confidence check</div><div class="line-sm"></div>
+    <div class="stats"><div class="stat"><div class="k" style="color:var(--teal)">${nOk-lucky}</div><div class="l">Sure and right</div></div>
+      <div class="stat"><div class="k">${lucky}</div><div class="l">Right, but guessing</div></div>
+      <div class="stat ${confWrong?"alert":""}"><div class="k">${confWrong}</div><div class="l">Sure but wrong</div></div></div>
+    ${moneyMiss?`<p class="clean" style="margin-top:14px"><strong>Heads-up:</strong> you missed ${moneyMiss} commercial question${moneyMiss>1?"s":""}. Rewatch the pricing section before quoting a customer.</p>`:""}
+    <div class="section-h">Your rewatch list</div><div class="line-sm"></div>
+    ${missed.length?`<div class="rw-list">${missed.map(({q,i})=>`<button class="rw" data-rw="${q.ts}"><span class="t"><span class="play"></span>${adjTs(q.ts)}</span><span>${esc(q.q)}${G.ans[i].sure?"<small>Sure but wrong</small>":""}</span></button>`).join("")}</div>`:`<p class="clean">Nothing to rewatch. Clean sheet.</p>`}
+    <div class="actions" style="margin-top:26px"><button class="btn ghost" id="again">Run it again</button></div>
+    ${nextUp("gauntlet")}</section>`;
+  requestAnimationFrame(()=>setTimeout(()=>main.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%"),60));
+  document.getElementById("again").onclick=()=>{ gNew(); G.started=true; gGo(0); };
+  wireNext(); if(pass) setTimeout(confetti,250);
+}
+
+/* ================= GAME 2: MYTH BUSTER ================= */
+function mythIntro(){
+  main.innerHTML=`<section class="screen">${topbar("Myth Buster")}<div class="divider" style="flex:1;display:flex;flex-direction:column">
+    <div class="num" style="background:${CIRCLE[1]}">2</div>
+    <h2 tabindex="-1" data-focus>Myth Buster</h2><div class="rainbow"></div>
+    <p>${CONFIG.MYTH_SECONDS} seconds. ${MYTHS.length} claims reps actually make. Call it before the clock does.</p>
+    <ul class="rules">
+      <li><span>&#9889;</span><span>Streak <b>3</b> for <b>&times;2</b> points. Streak <b>6</b> for <b>&times;3</b>.</span></li>
+      <li><span>&#9203;</span><span>Wrong call? <b>&minus;3 seconds</b> and your streak resets.</span></li>
+      <li><span>&#127942;</span><span>Clear the deck early and every second left is worth <b>50</b>. Hit <b>${CONFIG.MYTH_CLEAR_SCORE.toLocaleString("en-GB")}</b> to clear the path.</span></li>
+    </ul>
+    <div class="actions"><button class="btn" id="go">I&rsquo;m ready</button></div></div></section>`;
+  document.getElementById("go").onclick=()=>show(mythCountdown); wireHome();
+}
+function mythCountdown(){
+  main.innerHTML=`<section class="screen">${topbar("Myth Buster")}<div class="divider" style="flex:1;display:flex;flex-direction:column"><div class="count bump" id="cd" aria-live="assertive">3</div><p class="muted">Keyboard: &larr; Myth &middot; &rarr; Fact</p></div></section>`;
+  wireHome();
+  let n=3; const el=document.getElementById("cd");
+  const iv=setInterval(()=>{ n--; if(n>=0){ el.textContent=n?n:"GO"; el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); } else { clearInterval(iv); show(mythPlay,{noFocus:true}); } }, reduced?400:700);
+  cleanup=()=>clearInterval(iv);
+}
+function mythPlay(){
+  const M={deck:shuffle(MYTHS.map((m,i)=>i)),pos:0,score:0,streak:0,best:0,right:0,answered:0,wrongs:[],rem:CONFIG.MYTH_SECONDS*1000,paused:false,lock:false,over:false,bonus:0,cleared:false};
+  const timers=[]; let raf, last=performance.now();
+  main.innerHTML=`<section class="screen">${topbar("Myth Buster")}
+    <div class="hud"><div class="time" id="tBox"><div class="v" id="secs">${CONFIG.MYTH_SECONDS}</div><small>seconds</small></div>
+      <div><div class="v" id="score">0</div><small>points</small></div><div class="mult" id="mult">&times;1</div></div>
+    <div class="timebar" id="tBar"><div id="tFill" style="width:100%"></div></div>
+    <div class="mcard" id="card"><div class="mcount" id="mcount"></div><div class="mtext" id="mtext" aria-live="polite"></div><div class="mtruth" id="mtruth"></div></div>
+    <div class="mbtns"><button class="mb myth" id="bMyth">MYTH<small>&larr;</small></button><button class="mb fact" id="bFact">FACT<small>&rarr;</small></button></div>
+    <div class="keys">Say it out loud. It helps.</div></section>`;
+  wireHome();
+  const $=id=>document.getElementById(id);
+  const card=$("card"), secs=$("secs"), fill=$("tFill");
+  function drawCard(){ const m=MYTHS[M.deck[M.pos]]; $("mcount").textContent=`${M.pos+1} / ${M.deck.length}`; $("mtext").textContent=m.s; $("mtruth").textContent=""; card.className="mcard"; }
+  function drawHud(){
+    const s=Math.max(0,Math.ceil(M.rem/1000)); secs.textContent=s; fill.style.width=(Math.max(0,M.rem)/(CONFIG.MYTH_SECONDS*1000)*100)+"%";
+    $("tBox").classList.toggle("low",s<=10); $("tBar").classList.toggle("low",s<=10);
+    const mu=M.streak>=6?3:M.streak>=3?2:1; const mEl=$("mult"); mEl.textContent=`\u00D7${mu}`; mEl.className=`mult ${mu>1?"x"+mu:""}`;
+    $("score").textContent=M.score.toLocaleString("en-GB");
+  }
+  function tick(now){ const dt=now-last; last=now; if(!M.paused&&!M.over){ M.rem-=dt; if(M.rem<=0){ M.rem=0; drawHud(); return end(); } } drawHud(); if(!M.over) raf=requestAnimationFrame(tick); }
+  function answer(isFact){
+    if(M.over||M.paused||M.lock) return;
+    const m=MYTHS[M.deck[M.pos]], ok=m.fact===isFact; M.answered++;
+    if(ok){
+      M.streak++; M.best=Math.max(M.best,M.streak); M.right++;
+      const gain=100*(M.streak>=6?3:M.streak>=3?2:1); M.score+=gain; popFx(`+${gain}`,"good");
+      card.className="mcard good"; M.lock=true; timers.push(setTimeout(()=>{M.lock=false;next();},reduced?120:280));
+    } else {
+      M.streak=0; M.rem-=3000; M.wrongs.push(m); popFx("\u22123s","bad");
+      try{navigator.vibrate&&navigator.vibrate(120);}catch(e){}
+      card.className="mcard"; void card.offsetWidth; card.className="mcard bad";
+      $("mtruth").textContent=`It\u2019s a ${m.fact?"FACT":"MYTH"}. ${m.truth}`;
+      M.paused=true; timers.push(setTimeout(()=>{ M.paused=false; last=performance.now(); if(M.rem<=0){M.rem=0;return end();} next(); },1800));
+    }
+    drawHud();
+  }
+  function next(){ if(M.over) return; M.pos++; if(M.pos>=M.deck.length){ M.bonus=Math.ceil(M.rem/1000)*50; M.score+=M.bonus; return end(); } drawCard(); }
+  function end(){ if(M.over) return; M.over=true; cancelAnimationFrame(raf); show(()=>mythResults(M)); }
+  const onKey=e=>{ if(e.key==="ArrowLeft"||e.key.toLowerCase()==="m"){e.preventDefault();answer(false);} if(e.key==="ArrowRight"||e.key.toLowerCase()==="f"){e.preventDefault();answer(true);} };
+  document.addEventListener("keydown",onKey);
+  $("bMyth").onclick=()=>answer(false); $("bFact").onclick=()=>answer(true);
+  cleanup=()=>{ M.over=true; cancelAnimationFrame(raf); timers.forEach(clearTimeout); document.removeEventListener("keydown",onKey); };
+  drawCard(); drawHud(); raf=requestAnimationFrame(tick);
+}
+function mythRank(s){ return s>=3500?"Legend":s>=CONFIG.MYTH_CLEAR_SCORE?"Myth Slayer":s>=1000?"Contender":"Rookie"; }
+function mythResults(M){
+  const rank=mythRank(M.score), cleared=M.score>=CONFIG.MYTH_CLEAR_SCORE, acc=M.answered?Math.round(M.right/M.answered*100):0;
+  const prevBest=S.myth?.best||0, best=Math.max(prevBest,M.score);
+  S.myth={cleared:cleared||!!S.myth?.cleared, best, short:best.toLocaleString("en-GB"), line:`Myth Buster: best ${best.toLocaleString("en-GB")} (${mythRank(best)})`};
+  const unique=[...new Map(M.wrongs.map(w=>[w.s,w])).values()];
+  main.innerHTML=`<section class="screen results">${topbar("Myth Buster")}
+    <h2 class="title" tabindex="-1" data-focus>${M.bonus?"Deck cleared.":"Time&rsquo;s up."}</h2>
+    <div class="who">${esc(S.name||"Seller")} &middot; ${today()}${M.score>prevBest&&prevBest?" &middot; New personal best":""}</div><div class="rainbow" style="width:40%"></div>
+    <div class="score"><div class="big ${cleared?"":"fail"}">${M.score.toLocaleString("en-GB")}</div><div class="verdict"><div class="v">${rank.toUpperCase()}</div><div class="s">${cleared?"Path cleared":`Clear it at ${CONFIG.MYTH_CLEAR_SCORE.toLocaleString("en-GB")}`}${M.bonus?`<br>+${M.bonus} time bonus`:""}</div></div></div>
+    <div class="section-h">The numbers</div><div class="line-sm"></div>
+    <div class="stats"><div class="stat"><div class="k">${M.answered}</div><div class="l">Claims called</div></div>
+      <div class="stat"><div class="k" style="color:var(--teal)">${acc}%</div><div class="l">Accuracy</div></div>
+      <div class="stat"><div class="k">${M.best}</div><div class="l">Best streak</div></div></div>
+    <div class="section-h">What caught you out</div><div class="line-sm"></div>
+    ${unique.length?`<div class="rw-list">${unique.map(w=>`<button class="rw" data-rw="${w.ts}"><span class="t"><span class="play"></span>${adjTs(w.ts)}</span><span>${esc(w.s)}<span class="win"><b>${w.fact?"FACT":"MYTH"}.</b> ${esc(w.truth)}</span></span></button>`).join("")}</div>`:`<p class="clean">Nothing. Not one. Fierce.</p>`}
+    <div class="actions" style="margin-top:26px"><button class="btn ghost" id="again">Beat my score</button></div>
+    ${nextUp("myth")}</section>`;
+  document.getElementById("again").onclick=()=>show(mythCountdown);
+  wireNext(); if(cleared) setTimeout(confetti,250);
+}
+
+/* ================= GAME 3: THE SHOWDOWN ================= */
+let SD=null;
+const TRUST_START=40, DELTA={best:12,ok:2,bad:-20};
+function sdNew(){ SD={round:0,trust:TRUST_START,prevTrust:TRUST_START,picks:[],order:SHOWDOWN.map(()=>shuffle([0,1,2])),answered:false,walked:false}; }
+const trustColor = t => t>=90?"var(--teal)":t>=60?"var(--c2)":t>=30?"#EAB308":"var(--red)";
+function meterHTML(val){ return `<div class="meter-wrap"><div class="meter-top"><span>${esc(PERSONA.name.split(" ")[0])}&rsquo;s trust</span><span class="tv" id="tv">${val}</span></div><div class="meter"><div class="mfill" id="mfill" style="width:${val}%;background:${trustColor(val)}"></div><div class="goal" title="Deal line"></div></div></div>`; }
+function personaHTML(mood){ return `<div class="persona"><div class="avatar ${mood||""}">${esc(PERSONA.initials)}</div><div><h3>${esc(PERSONA.name)}</h3><p>${esc(PERSONA.role)}</p></div></div>`; }
+
+function sdIntro(){
+  main.innerHTML=`<section class="screen">${topbar("The Showdown")}<div class="divider" style="flex:1;display:flex;flex-direction:column">
+    <div class="num" style="background:${CIRCLE[2]}">3</div>
+    <h2 tabindex="-1" data-focus>The Showdown</h2><div class="rainbow"></div>
+    <div style="max-width:520px;margin:26px auto 0;text-align:left">${personaHTML()}<p class="clean" style="margin:0 0 20px">${esc(PERSONA.bio)}</p></div>
+    <ul class="rules">
+      <li><span>&#128200;</span><span>His trust starts at <b>${TRUST_START}</b>. Get it to <b>90</b> by the end and the deal is yours.</span></li>
+      <li><span>&#128293;</span><span>Winning answer <b>+${DELTA.best}</b>. Vague answer <b>+${DELTA.ok}</b>. Wrong answer <b>${DELTA.bad}</b>.</span></li>
+      <li><span>&#128682;</span><span>Hit <b>zero</b> and he walks out. No second chances.</span></li>
+    </ul>
+    <div class="actions"><button class="btn" id="go">Face him</button></div></div></section>`;
+  document.getElementById("go").onclick=()=>show(sdRound); wireHome();
+}
+function sdRound(again){
+  const i=SD.round, R=SHOWDOWN[i], pick=SD.picks[i];
+  const mood=SD.answered?(pick.tier==="best"?"happy":pick.tier==="bad"?"mad":""):"";
+  const opts=SD.order[i].map(k=>{
+    const o=R.options[k]; let cls="opt";
+    if(SD.answered){ if(o.tier==="best") cls+=" right"; else if(k===pick.k) cls+=" wrong"; else cls+=" dim"; }
+    return `<button class="${cls}" data-k="${k}" ${SD.answered?"disabled":""}><span class="mk" aria-hidden="true"></span><span>${esc(o.t)}</span></button>`;
+  }).join("");
+  let bottom="";
+  if(SD.answered){
+    const o=R.options[pick.k], d=DELTA[o.tier], cls=o.tier==="best"?"":o.tier==="ok"?"mid":"bad";
+    const head=o.tier==="best"?"Landed.":o.tier==="ok"?"Too vague.":"That cost you.";
+    const last=SD.walked||i===SHOWDOWN.length-1;
+    bottom=`<div class="feedback ${cls}" role="status" aria-live="polite">
+      <h3>${head}<span class="delta ${d>0&&o.tier==="best"?"up":d>0?"flat":"down"}">${d>0?"+":""}${d} trust</span></h3>
+      <p class="react">&ldquo;${esc(o.react)}&rdquo;</p>
+      <div class="label">Coach</div><p>${esc(R.coach)}</p>
+      <button class="chip" data-rw="${R.ts}"><span class="play"></span>${rwLabel()} ${adjTs(R.ts)}</button></div>
+      <div class="actions"><button class="btn" id="next">${SD.walked?"He&rsquo;s leaving&hellip;":last?"See how it ended":"Next objection"}</button></div>`;
+  }
+  const shown=SD.answered?SD.prevTrust:SD.trust;
+  main.innerHTML=`<section class="screen${again?" still":""}">${topbar("The Showdown")}
+    ${meterHTML(shown)}${personaHTML(mood)}
+    <div class="bubble"><div class="rnd">Objection ${i+1} of ${SHOWDOWN.length}</div><div class="said" tabindex="-1" data-focus>${esc(R.obj)}</div></div>
+    <div class="hint" style="margin-top:26px">${SD.answered?"Your answer":"What do you say?"}</div>
+    <div class="opts" role="group" aria-label="Your response">${opts}</div>${bottom}</section>`;
+  wireHome(); wireRw();
+  if(SD.answered){
+    requestAnimationFrame(()=>setTimeout(()=>{ const f=document.getElementById("mfill"); if(f){ f.style.width=SD.trust+"%"; f.style.background=trustColor(SD.trust); document.getElementById("tv").textContent=SD.trust; } },80));
+    document.getElementById("next").onclick=()=>{ if(SD.walked||i===SHOWDOWN.length-1) return show(sdResults); SD.round++; SD.answered=false; show(()=>sdRound()); };
+  } else {
+    main.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      const k=+b.dataset.k, o=R.options[k];
+      SD.prevTrust=SD.trust; SD.trust=Math.max(0,Math.min(100,SD.trust+DELTA[o.tier]));
+      SD.picks[i]={k,tier:o.tier}; SD.answered=true; if(SD.trust<=0) SD.walked=true;
+      popFx(`${DELTA[o.tier]>0?"+":""}${DELTA[o.tier]}`, o.tier==="bad"?"bad":"good");
+      if(o.tier==="bad"){ try{navigator.vibrate&&navigator.vibrate(120);}catch(e){} }
+      const y=scrollY; sdRound(true); scrollTo(0,y);
+      main.querySelector(".feedback")?.scrollIntoView({behavior:reduced?"auto":"smooth",block:"nearest"});
+      document.getElementById("next")?.focus({preventScroll:true});
+    });
+  }
+}
+function sdResults(){
+  const t=SD.trust, bestCount=SD.picks.filter(p=>p&&p.tier==="best").length;
+  const outcome=SD.walked?["He walked.","Trust hit zero. Rewatch, then go again."]:t>=90?["Deal signed.",`${PERSONA.name.split(" ")[0]}&rsquo;s bringing Cowork to his clients.`]:t>=60?["Second meeting booked.","Close. He wants to see more before committing."]:["He&rsquo;s not convinced.","You kept him in the room, but no deal."];
+  const cleared=!SD.walked&&t>=90;
+  const label=SD.walked?"Walked":t>=90?"Signed":t>=60?"Second meeting":"Not convinced";
+  S.showdown={cleared:cleared||!!S.showdown?.cleared, short:label, line:`The Showdown: ${label} (trust ${t})`};
+  const misses=SHOWDOWN.map((R,i)=>({R,i,p:SD.picks[i]})).filter(x=>!x.p||x.p.tier!=="best");
+  main.innerHTML=`<section class="screen results">${topbar("The Showdown")}
+    <h2 class="title" tabindex="-1" data-focus>${outcome[0]}</h2>
+    <div class="who">${esc(S.name||"Seller")} vs ${esc(PERSONA.name)} &middot; ${today()}</div><div class="rainbow" style="width:40%"></div>
+    <div class="score"><div class="big ${cleared?"":"fail"}">${t}</div><div class="verdict"><div class="v">TRUST</div><div class="s">${outcome[1]}<br>${bestCount} of ${SHOWDOWN.length} winning lines</div></div></div>
+    <div style="max-width:560px;margin:10px auto 0;width:100%">${meterHTML(t)}</div>
+    <div class="section-h">Steal these lines</div><div class="line-sm"></div>
+    ${misses.length?`<div class="rw-list">${misses.map(({R,p})=>`<button class="rw" data-rw="${R.ts}"><span class="t"><span class="play"></span>${adjTs(R.ts)}</span><span>&ldquo;${esc(R.obj)}&rdquo;${!p?"<small>Didn&rsquo;t get this far</small>":p.tier==="bad"?"<small>Wrong answer</small>":"<small>Too vague</small>"}<span class="win"><b>Say:</b> ${esc(R.options.find(o=>o.tier==="best").t)}</span></span></button>`).join("")}</div>`:`<p class="clean">Six for six. He&rsquo;d hire you.</p>`}
+    <div class="actions" style="margin-top:26px"><button class="btn ghost" id="again">Rematch</button></div>
+    ${nextUp("showdown")}</section>`;
+  document.getElementById("again").onclick=()=>{ sdNew(); show(sdRound); };
+  wireNext(); if(cleared) setTimeout(confetti,250);
+}
+
+/* ================= THE VAULT ================= */
+function renderVault(){
+  const wp=CONFIG.WHITEPAPER_URL;
+  const games=[["gauntlet","The Gauntlet"],["myth","Myth Buster"],["showdown","The Showdown"]];
+  main.innerHTML=`<section class="screen">${topbar("The Vault")}
+    <h2 class="h-sec" tabindex="-1" data-focus>The Vault</h2>
+    <p class="sub-sec">Everything from the session, in one place.</p><div class="rainbow" style="width:40%"></div>
+    ${wp?`<a class="wp" href="${esc(wp)}" target="_blank" rel="noopener" download>`:`<div class="wp soon" aria-disabled="true">`}
+      <div class="doc" aria-hidden="true"></div>
+      <div><div class="eyebrow muted">Download</div><h3>${esc(CONFIG.WHITEPAPER_LABEL)}</h3><p>Differentiators, the commercial model, objection handling and a timestamp index for the full session.</p><span class="dl">${wp?"Download the whitepaper":"Coming soon"}</span></div>
+    ${wp?"</a>":"</div>"}
+    <div class="dls">${CONFIG.DOWNLOADS.slice(0,2).map((d,i)=>{ const acc=i?"#00D09C":"#1D4ED8";
+      const inner=`<span class="ftype" style="--acc2:${acc}" aria-hidden="true"><span>${esc(d.kind||"FILE")}</span></span><span><h4>${esc(d.title)}</h4><p>${esc(d.desc)}</p><span class="go">${d.url?"Download &darr;":"Coming soon"}</span></span>`;
+      return d.url?`<a class="dl-card" href="${esc(d.url)}" target="_blank" rel="noopener">${inner}</a>`:`<div class="dl-card soon" aria-disabled="true">${inner}</div>`; }).join("")}</div>
+    <div class="section-h">Course links</div><div class="line-sm"></div>
+    <div class="links">${CONFIG.LINKS.slice(0,6).map((l,i)=>{ const inner=`<span class="num" style="background:${CIRCLE[i]}">${i+1}</span><span><h4>${esc(l.title)}</h4><p>${esc(l.desc)}</p><span class="go">${l.url?"Open &rarr;":"Link coming soon"}</span></span>`;
+      return l.url?`<a class="lk" href="${esc(l.url)}" target="_blank" rel="noopener">${inner}</a>`:`<div class="lk soon" aria-disabled="true">${inner}</div>`; }).join("")}</div>
+    <div class="section-h">Your scorecard</div><div class="line-sm"></div>
+    <div class="scorecard">${games.map(([k,n])=>`<div class="sc ${S[k]?"":"none"}"><span>${n}${S[k]?.cleared?" &#10003;":""}</span><span>${S[k]?esc(S[k].short):"Not played yet"}</span></div>`).join("")}</div>
+    <div class="actions" style="margin-top:22px"><button class="btn" id="copy">Copy my scorecard</button><button class="btn ghost" data-home>Back to paths</button></div>
+    <textarea class="copybox" id="copybox" rows="4" readonly aria-label="Scorecard text"></textarea></section>`;
+  wireHome();
+  document.getElementById("copy").onclick=async()=>{
+    const played=games.filter(([k])=>S[k]).map(([k])=>S[k].line);
+    const all=games.every(([k])=>S[k]?.cleared);
+    const text=`Copilot Cowork | ${S.name||"Seller"} | ${today()}${all?" | TRIPLE THREAT":""}\n${played.length?played.join("\n"):"No games played yet"}`;
+    try{ await navigator.clipboard.writeText(text); toast("Copied. Post it in the team channel."); }
+    catch(e){ const b=document.getElementById("copybox"); b.value=text; b.style.display="block"; b.select(); toast("Select and copy the text below"); }
+  };
+}
+
+show(renderHome,{hero:true,noFocus:true});
+</script>
+</body>
+</html>
