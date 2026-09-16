@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="PAX8.COPILOT.COWORK.CHALLENGE" version="1.0"
+          xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd
+                              http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd
+                              http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+  </metadata>
+  <organizations default="PAX8.ORG">
+    <organization identifier="PAX8.ORG" structure="hierarchical">
+      <title>Copilot Cowork: Watch it. Prove it. Sell it.</title>
+      <item identifier="PAX8.ITEM.1" identifierref="PAX8.RES.1" isvisible="true">
+        <title>Copilot Cowork Challenge</title>
+        <adlcp:masteryscore>80</adlcp:masteryscore>
+        <adlcp:maxtimeallowed>02:00:00</adlcp:maxtimeallowed>
+        <adlcp:datafromlms></adlcp:datafromlms>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="PAX8.RES.1" type="webcontent" adlcp:scormtype="sco" href="index.html">
+      <file href="index.html"/>
+      <file href="scorm-wrapper.js"/>
+    </resource>
+  </resources>
+</manifest>
