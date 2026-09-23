@@ -1,3 +1,22 @@
+## 🎬 Brutally honest — a Blender-style clay short
+
+`honest.html` is a 108-second, Blender-style **clay-render** animation built in Three.js: soft
+clay materials, a studio environment map, soft shadows and a turntable plinth, with captions on
+top and a synthesised Web Audio score. It was made in answer to *"be brutally honest: what should
+I do with my life?"*, using only what Alex has written down (his coaching skills and this repo).
+
+**Nine chapters:** For Alex → what I actually know → the good (34% → 98.9% adoption, 22% → 84%
+satisfaction, ~£60k/yr, 4.9/5) → the bad (crates pile up against a closed SHIP IT door) → the
+ugly (a crowd of AI helpers, one holding a CIPD assignment) → what you may not be seeing (a
+glowing portfolio rises out of a box labelled *testezinho*) → what you see and look away from
+(a mirror that already knows) → my advice (pick one thing, walk it through the door, 30 days)
+→ what I wish for you (home, Sebastian, four Shih Tzus). It ends on *Vai.*
+
+- **Controls:** <kbd>Space</kbd> play/pause, <kbd>M</kbd> mute, <kbd>R</kbd> restart. Add `?t=73` to start part-way.
+- `?capture` exposes `window.__frame(t)` for deterministic frame-by-frame video export.
+
+---
+
 ## ✂️ What is the purpose of life? — a paper-collage animation
 
 `purpose.html` is a ~54-second, whimsical, hand-drawn **paper-collage** short made in pure
