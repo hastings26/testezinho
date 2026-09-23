@@ -1,0 +1,288 @@
+// Behavioural contract tests for onboarding-request.html.
+// Run:  node tests/onboarding-request.mjs        (needs playwright on the module path)
+//       NODE_PATH=$(npm root -g) node tests/onboarding-request.mjs
+import { pathToFileURL } from 'node:url';
+import { execSync } from 'node:child_process';
+
+let chromium;
+try {
+  ({ chromium } = await import('playwright'));
+} catch {
+  const root = execSync('npm root -g').toString().trim();
+  ({ chromium } = await import(pathToFileURL(`${root}/playwright/index.mjs`).href));
+}
+
+const file = new URL('../onboarding-request.html', import.meta.url).href;
+const results = [];
+const check = (name, actual, expected) => {
+  const ok = JSON.stringify(actual) === JSON.stringify(expected);
+  results.push(ok);
+  console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${ok ? '' : `  got=${JSON.stringify(actual)} want=${JSON.stringify(expected)}`}`);
+};
+
+const browser = await chromium.launch();
+const page = await browser.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push(String(e)));
+page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+await page.goto(file);
+
+const snap = () => page.evaluate(() => ({
+  hours: document.getElementById('hours').textContent,
+  count: document.getElementById('count').textContent,
+  total: document.getElementById('moduleTotal').textContent,
+  locked: document.getElementById('lockedCount').textContent,
+  added: document.getElementById('addedCount').textContent,
+  estimate: document.getElementById('dayEstimate').textContent,
+  split: document.querySelector('.split').textContent.replace(/\s+/g, ' ').trim(),
+  owner: document.getElementById('deliveryOwner').textContent,
+  coins: document.querySelectorAll('.coin').length,
+  boxesOn: document.querySelectorAll('.day-box.on').length,
+  boxes: document.querySelectorAll('.day-box').length,
+  sticky: document.getElementById('stickyText').textContent,
+  submitDisabled: document.getElementById('submit').disabled,
+  stickyDisabled: document.getElementById('stickySubmit').disabled,
+  lockedNames: [...document.querySelectorAll('.module.locked .module-name span:first-child')].map(s => s.textContent),
+}));
+
+// Initial state
+let s = await snap();
+check('19-module catalogue', s.total, '19');
+check('module rows rendered', await page.locator('.module').count(), 19);
+check('estimate prompts for department and role', s.estimate, 'SELECT A DEPARTMENT AND ROLE TO SEE THE ONBOARDING ESTIMATE.');
+check('sticky bar empty state', s.sticky, 'NOTHING SELECTED YET');
+check('submit disabled on load', s.submitDisabled, true);
+check('role locked until department chosen', await page.locator('#role').isDisabled(), true);
+
+// Spec section 38: Sales + Channel Account Manager
+await page.selectOption('#department', 'sales');
+check('role enabled after department', await page.locator('#role').isDisabled(), false);
+check('roles filtered by department', await page.locator('#role option').allTextContents(),
+  ['SELECT ROLE', 'Channel Account Manager', 'Account Executive', 'Sales Manager', 'CGS', 'MGS', 'TPS']);
+check('the new roles are Sales-only', await page.selectOption('#department', 'finance')
+  .then(() => page.locator('#role option').allTextContents()),
+  ['SELECT ROLE', 'Finance Analyst']);
+await page.selectOption('#department', 'sales');
+await page.selectOption('#role', 'cam');
+s = await snap();
+check('CAM hours', s.hours, '13');
+check('CAM selected', s.count, '10');
+check('CAM locked', s.locked, '10');
+check('CAM added', s.added, '0');
+check('CAM estimate before a name is entered', s.estimate, 'YOUR NEW HIRE WOULD NEED 4 ONBOARDING DAYS TO COMPLETE 13 HOURS OF ONBOARDING.');
+check('CAM delivery owner in note', s.owner, 'Revenue Enablement');
+check('CAM coins', s.coins, 4);
+check('CAM day boxes lit', s.boxesOn, 4);
+check('CAM day boxes drawn', s.boxes, 5);
+check('CAM sticky summary', s.sticky, '13 HRS · 10 MODULES · 4 DAYS');
+check('CAM locked modules', s.lockedNames, [
+  'Culture Essentials', 'Marketplace', 'Partner Enablement', 'Partner Support', 'Vendor',
+  'AI Literacy', 'M365', 'Power BI', 'Salesforce', 'Sales Complete']);
+check('LOCKED badges', await page.locator('.module .badge').count(), 10);
+
+// Submit validation gate (spec section 21)
+check('submit blocked without player setup', s.submitDisabled, true);
+await page.fill('#name', 'TEST USER');
+await page.fill('#start', '2026-10-01');
+await page.fill('#manager', 'TEST MANAGER');
+s = await snap();
+check('submit enabled when setup complete', s.submitDisabled, false);
+check('estimate picks up the entered name', s.estimate, 'TEST USER WOULD NEED 4 ONBOARDING DAYS TO COMPLETE 13 HOURS OF ONBOARDING.');
+check('both submits share state', s.stickyDisabled, false);
+
+// Locked modules cannot be removed (spec section 12)
+await page.locator('.module[data-id="culture"]').click({ force: true });
+s = await snap();
+check('locked module stays selected', s.count, '10');
+check('locked module flashes', await page.locator('.module[data-id="culture"]').evaluate(el => el.classList.contains('flash')), true);
+
+// Manager additions
+await page.locator('.module[data-id="academy"]').click();
+s = await snap();
+check('addition counted separately', s.added, '1');
+check('fractional hours to 1dp', s.hours, '13.8');
+check('addition in total', s.count, '11');
+
+// Additions survive a role change (spec section 11)
+await page.selectOption('#role', 'ae');
+s = await snap();
+check('AE locked recalculated', s.locked, '10');
+check('addition survives role change', s.added, '1');
+check('AE hours', s.hours, '10.3');
+check('AE estimate', s.estimate, 'TEST USER WOULD NEED 3 ONBOARDING DAYS TO COMPLETE 10.3 HOURS OF ONBOARDING.');
+
+// Department change clears locked, keeps additions
+await page.selectOption('#department', 'finance');
+s = await snap();
+check('department change clears locked', s.locked, '0');
+check('department change keeps additions', s.added, '1');
+check('department change disables submit', s.submitDisabled, true);
+await page.selectOption('#role', 'fin');
+s = await snap();
+check('finance baseline size', s.locked, '2');
+check('finance hours', s.hours, '2.8');
+check('finance estimate uses singular day', s.estimate, 'TEST USER WOULD NEED 1 ONBOARDING DAY TO COMPLETE 2.8 HOURS OF ONBOARDING.');
+check('finance delivery owner in note', s.owner, 'Finance');
+check('singular DAY in sticky bar', s.sticky, '2.8 HRS · 3 MODULES · 1 DAY');
+
+// [ALL] toggle skips locked modules (spec section 14)
+await page.locator('.all[data-group="Tools"]').click();
+s = await snap();
+check('[ALL] adds the group', s.added, '5');
+await page.locator('.all[data-group="Tools"]').click();
+s = await snap();
+check('[ALL] clears the group', s.added, '1');
+
+// Known difference 3: a manager may remove their own addition
+await page.locator('.module[data-id="academy"]').click();
+s = await snap();
+check('own addition removable', s.added, '0');
+
+// Whole catalogue
+await page.selectOption('#department', 'sales');
+await page.selectOption('#role', 'cam');
+for (const g of ['Culture', 'Offering', 'Tools', 'Department']) await page.locator(`.all[data-group="${g}"]`).click();
+s = await snap();
+check('every module selectable', s.count, '19');
+check('full catalogue hours', s.hours, '19.5');
+check('full catalogue estimate', s.estimate, 'TEST USER WOULD NEED 5 ONBOARDING DAYS TO COMPLETE 19.5 HOURS OF ONBOARDING.');
+check('coins track days', s.coins, 5);
+
+// Simulated submit (spec sections 24-25)
+await page.fill('#name', 'TEST USER');
+await page.fill('#start', '2026-10-01');
+await page.fill('#manager', 'TEST MANAGER');
+await page.locator('#submit').click();
+check('confirmation revealed', await page.locator('#confirmation').isVisible(), true);
+const log = await page.locator('#systemLog div').allTextContents();
+check('log lines', log.length, 7);
+check('log names content owner', log[1], '> CONTENT OWNER IDENTIFIED: Revenue Enablement.');
+check('log names distribution list', log[2], '> DISTRIBUTION LIST WILL BE NOTIFIED: Hiring Manager, Revenue Enablement.');
+check('log disclaims any real action', log[6], 'Nothing was sent, booked, stored, or tracked by this standalone prototype.');
+
+// No dependencies, no network (spec section 2)
+const requests = [];
+page.on('request', r => requests.push(r.url()));
+await page.reload();
+// ---------------------------------------------------------------------
+// Post-handoff additions (spec appendix A.6). Sets up its own state so it
+// does not depend on anything above it.
+// ---------------------------------------------------------------------
+await page.goto(file);
+check('name field asks for the new hire', await page.locator('label[for="name"]').textContent(), 'NEW HIRE NAME');
+check('ldap field present', await page.locator('#ldap').count(), 1);
+check('manager email field present', await page.locator('#managerEmail').count(), 1);
+
+await page.selectOption('#department', 'finance');
+await page.selectOption('#role', 'fin');
+await page.fill('#name', 'TEST USER');
+await page.fill('#start', '2026-10-01');
+await page.fill('#manager', 'TEST MANAGER');
+s = await snap();
+check('finance baseline is 2 hours', s.hours, '2');
+check('ldap is not required to submit', s.submitDisabled, false);
+
+// Additional requests fold into the estimate only when a duration is given.
+await page.fill('#extraName', 'Territory handover');
+await page.fill('#extraMinutes', '60');
+await page.locator('#extraAdd').click();
+s = await snap();
+check('request listed', await page.locator('.extra-list li').count(), 1);
+check('scoped request counts towards hours', s.hours, '3');
+check('request shown in the split line', s.split.includes('1 ADDITIONAL REQUEST'), true);
+check('request counts as a session in the sticky bar', s.sticky, '3 HRS · 3 MODULES · 1 DAY');
+
+await page.fill('#extraName', 'Meet the vendor team');
+await page.locator('#extraAdd').click();
+s = await snap();
+check('unscoped request added', await page.locator('.extra-list li').count(), 2);
+check('unscoped request does not change hours', s.hours, '3');
+check('unscoped request marked to be scoped',
+  await page.locator('.extra-list li').nth(1).locator('.mins').textContent(), 'TO BE SCOPED');
+check('two requests in the split line', s.split.includes('2 ADDITIONAL REQUESTS'), true);
+
+await page.locator('.extra-list li').first().locator('.drop').click();
+s = await snap();
+check('request removed', await page.locator('.extra-list li').count(), 1);
+check('hours drop back after removal', s.hours, '2');
+
+// Shadowing
+check('shadow field starts disabled', await page.locator('#shadowWho').isDisabled(), true);
+await page.locator('.shadow-toggle').click();   // as a user would — the checkbox itself is visually hidden
+check('toggle reflects the click', await page.locator('#shadowWanted').isChecked(), true);
+// The fill scales in over .14s, so let the transition settle before reading it.
+await page.waitForTimeout(300);
+check('the pixel box actually fills in', await page.evaluate(() =>
+  getComputedStyle(document.querySelector('.shadow-toggle .box'), '::after').transform), 'matrix(1, 0, 0, 1, 0, 0)');
+check('shadow field enabled once requested', await page.locator('#shadowWho').isDisabled(), false);
+await page.fill('#shadowWho', 'Dana Reeves');
+s = await snap();
+check('shadowing does not change the estimate', s.hours, '2');
+
+// Email to self: the link is only armed once there is an address.
+check('email link disabled without an address',
+  await page.locator('#emailSelf').getAttribute('aria-disabled'), 'true');
+await page.fill('#managerEmail', 'manager@example.com');
+check('email link armed', await page.locator('#emailSelf').getAttribute('aria-disabled'), 'false');
+const mailto = await page.locator('#emailSelf').getAttribute('href');
+check('mailto addresses the manager', mailto.startsWith('mailto:manager%40example.com'), true);
+const mailBody = decodeURIComponent(mailto.split('body=')[1]);
+check('summary names the new hire', mailBody.includes('New hire:    TEST USER'), true);
+check('summary carries the unscoped request', mailBody.includes('Meet the vendor team (to be scoped)'), true);
+check('summary carries the shadowing request', mailBody.includes('with Dana Reeves'), true);
+check('summary says nothing was sent', mailBody.includes('Nothing was sent, booked, stored or'), true);
+
+// Confetti fires on submit and cleans up after itself.
+await page.locator('#submit').click();
+const logText = await page.locator('#systemLog').textContent();
+check('shadowing reaches the log', logText.includes('SHADOWING REQUESTED WITH DANA REEVES'), true);
+check('requests reach the log', logText.includes('1 ADDITIONAL REQUEST TO BE REVIEWED'), true);
+// The log must quote the same total the page shows, requests included.
+check('log estimate matches the on-screen estimate',
+  logText.includes('ESTIMATE: 2 HOURS ACROSS 1 ONBOARDING DAY.'), true);
+check('confetti canvas exists', await page.locator('#confetti').count(), 1);
+await page.waitForFunction(() => document.getElementById('confetti').hidden, null, { timeout: 15000 });
+check('confetti clears itself away', await page.locator('#confetti').isVisible(), false);
+
+// The scanline overlay is gone.
+check('no scanline overlay',
+  await page.evaluate(() => getComputedStyle(document.body, '::after').content), 'none');
+
+// Syllabus view (spec appendix A.4)
+await page.goto(file + '#syllabus');
+check('syllabus view shown', await page.locator('#viewSyllabus').isVisible(), true);
+check('request view hidden', await page.locator('#viewRequest').isVisible(), false);
+check('sticky bar hidden on syllabus', await page.locator('#stickyBar').isVisible(), false);
+check('a card per module', await page.locator('.sy-card').count(), 19);
+check('syllabus adds no catalogue rows of its own', await page.locator('.module').count(), 19);
+check('catalogue rows not visible on the syllabus', await page.locator('.module').first().isVisible(), false);
+check('every card has an outline', await page.locator('.sy-card .sy-summary:not(:empty)').count(), 19);
+check('every card lists topics', await page.locator('.sy-card .sy-topics li').count() >= 19 * 3, true);
+check('placeholder warning present', await page.locator('.sy-warning').isVisible(), true);
+check('document title follows the view', await page.title(), 'Session Syllabus');
+
+// The requirement line is derived from the same data that drives locking.
+const cultureReq = await page.locator('.sy-card[data-id="culture"] .sy-req').textContent();
+check('culture is baseline for every department', cultureReq,
+  'Mandatory: baseline for Sales, Marketing, Finance, Revenue Enablement, Revenue Operations, Technical Pre-Sales, Vendor Experience.');
+check('sales-complete names the roles that add it',
+  await page.locator('.sy-card[data-id="sales-complete"] .sy-req').textContent(),
+  'Mandatory: added for Channel Account Manager, Sales Manager.');
+check('academy is marked optional',
+  await page.locator('.sy-card[data-id="academy"] .sy-req').textContent(),
+  'Optional — no department baseline or role requires this.');
+check('catalogue total', (await page.locator('#syllabusTotal').textContent()).includes('19 SESSIONS'), true);
+
+// Back to the form, with the parallax layers present but decorative.
+await page.goto(file + '#request');
+check('request view restored', await page.locator('#viewRequest').isVisible(), true);
+check('parallax layers rendered', await page.locator('.layer').count(), 3);
+check('parallax is hidden from assistive tech', await page.locator('.parallax').getAttribute('aria-hidden'), 'true');
+
+check('no external requests', requests.filter(u => !u.startsWith('file:')), []);
+check('no page errors', errors, []);
+
+await browser.close();
+const failed = results.filter(ok => !ok).length;
+console.log(`\n${results.length - failed}/${results.length} checks passed`);
+process.exit(failed ? 1 : 0);
