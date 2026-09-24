@@ -1,3 +1,28 @@
+## ✂️ What is the purpose of life? — a paper-collage animation
+
+`purpose.html` is a ~54-second, whimsical, hand-drawn **paper-collage** short made in pure
+JavaScript: Canvas 2D for the visuals and the Web Audio API for the score and sound effects.
+It uses no libraries, images or audio files. Open it and press play (sound on).
+
+**The story, in eight 6.4-second scenes:** a ransom-note title asks the question → *to be happy*
+(a sun rises, flowers pop up, Pip dances) → *to make something* (a cut-paper house flies in and
+gets taped down, the pencil doodles in the details) → *to figure it all out* (chalk formulas pile
+up until Pip gets dizzy) → *to love, and be loved* (Pip meets Bo on a paper doily) → *maybe it
+isn't one big answer…* (one giant "?" bursts into six little snapshots on a clothesline) →
+*…but lots of little ones, collected along the way* (moments fly into a glowing jar) → *so go
+on… collect yours.*
+
+- **Look:** torn-edge paper with white fibre fringes, drop shadows, paper grain, newsprint scraps,
+  masking tape, and "boiling" sketchy ink lines. It runs at 12 fps on purpose, for a stop-motion feel.
+- **Sound:** a C-major music-box tune over ukulele-style plucks, a pizzicato bass, woodblock,
+  shaker and a warm pad (75 bpm, two bars per scene), plus paper foley: page-turn swooshes,
+  tape rips, pencil scribbles, pops and jar clinks. All of it is synthesised and scheduled on the
+  audio clock, so picture and sound stay in sync.
+- **Controls:** click or <kbd>Space</kbd> to play/pause, <kbd>M</kbd> to mute, <kbd>R</kbd> to restart.
+  Add `#t=30` to the URL to start part-way through.
+
+---
+
 ## 🗡️ NODARIA: The Broken Flow — a learning RPG for mastering n8n
 
 `nodaria.html` is a standalone, playable vertical slice of a top-down action-adventure RPG
