@@ -1,3 +1,29 @@
+## 🎯 Copilot Cowork: Watch it. Prove it. Sell it. — a sales enablement challenge
+
+`copilot-cowork.html` is a standalone interactive enablement experience for Pax8 Revenue
+Enablement EMEA, built around the 8 Sept Copilot Cowork session recording. Watch the session,
+then prove you absorbed it across three paths — and every wrong answer hands you a deep-link
+back into the exact moment of the recording that covers it.
+
+- **The Gauntlet** (~8 min) — 16 questions over 3 rounds. You rate your confidence on each
+  answer before locking it in, so the results separate "sure and right" from "right, but
+  guessing" and, most usefully, "sure but wrong" — the ones that bite in front of a customer.
+  Pass mark 80%, with commercial questions worth double.
+- **Myth Buster** (1 min) — 20 claims reps actually make, 60 seconds on the clock. Call each
+  one fact or myth. Streaks multiply your score, wrong calls cost 3 seconds.
+- **The Showdown** (~4 min) — six objections from Dan Hollis, a sceptical MSP owner who got
+  burned by an AI pilot last year. His trust starts at 40; reach 90 and the deal is yours, hit
+  zero and he walks.
+
+Clear all three and you're a Triple Threat. The Vault collects the whitepaper, downloads,
+course links and a copyable scorecard.
+
+**LMS delivery:** `scorm/` holds upload-ready SCORM 1.2 and 2004 packages, built from this same
+file by `python3 scorm/build.py`. The SCORM adapter attaches from the outside and never modifies
+the app, so one source file serves both the web and the LMS. See `scorm/README.md`.
+
+---
+
 ## ✂️ What is the purpose of life? — a paper-collage animation
 
 `purpose.html` is a ~54-second, whimsical, hand-drawn **paper-collage** short made in pure
