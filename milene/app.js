@@ -245,7 +245,7 @@
 
   /* ---------------- navegação ---------------- */
   function renderNav() {
-    const r = location.hash || "#/";
+    const r = route;
     const items = [{ route: "#/", icon: "🏠", name: "Início" }].concat(MODULES).concat([{ route: "#/revisao", icon: "🃏", name: "Revisão rápida" }]);
     document.getElementById("sideNav").innerHTML = items.map((m) =>
       `<a href="${m.route}" class="${(m.route === "#/" ? r === "#/" || r === "" : r.startsWith(m.route)) ? "active" : ""}"><span>${m.icon}</span>${esc(m.name)}</a>`).join("") +
@@ -276,13 +276,30 @@
   function router() {
     Speech.stop();
     if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-    const h = location.hash || "#/";
+    clearInterval(arenaTimer);
+    const h = route;
     for (const [re, fn] of routes) { const m = h.match(re); if (m) { fn(m); break; } }
     renderNav();
     window.scrollTo(0, 0);
     $app.focus({ preventScroll: true });
   }
-  window.addEventListener("hashchange", router);
+  /* Navegação interna: funciona também dentro de páginas incorporadas, onde o hash da URL pode não mudar. */
+  let route = location.hash || "#/";
+  let arenaTimer = null;
+  function go(r) {
+    route = r;
+    try { if (location.hash !== r) history.pushState(null, "", r); } catch (e) { /* frame sem histórico */ }
+    router();
+  }
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href^="#/"]');
+    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
+    e.preventDefault();
+    go(a.getAttribute("href"));
+  });
+  const syncFromUrl = () => { const h = location.hash || "#/"; if (h !== route) { route = h; router(); } };
+  window.addEventListener("hashchange", syncFromUrl);
+  window.addEventListener("popstate", syncFromUrl);
 
   const header = (icon, title, sub) => `<header class="page-head"><a href="#/" class="back">← Início</a><h1><span class="h-icon">${icon}</span>${esc(title)}</h1>${sub ? `<p class="lead">${sub}</p>` : ""}</header>`;
 
@@ -395,7 +412,11 @@
       <p class="disclaimer">⚠️ IA é só para a preparação. O PSI 1126/2026 proíbe o uso de IA ou ferramentas externas de resposta durante as entrevistas síncronas avaliativas. Referências legais aqui são de estudo: confirme sempre no edital e no regulamento interno de licitações e contratos dos Correios.
       <button class="link-btn" id="resetBtn">Zerar progresso</button></p>`;
     document.getElementById("resetBtn").onclick = () => {
-      if (confirm("Apagar todo o progresso salvo neste navegador?")) { S = blank(); save(); router(); }
+      const b = document.getElementById("resetBtn");
+      if (b.dataset.armed) { S = blank(); save(); router(); toast("Progresso zerado."); return; }
+      b.dataset.armed = "1";
+      b.textContent = "Toque de novo para apagar tudo";
+      setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = "Zerar progresso"; } }, 4000);
     };
   }
 
@@ -678,13 +699,11 @@
       <div class="pager"><span></span><a class="btn ghost" href="#/arena/${track}${track === "simulado" ? "" : "/" + ((i + 1) % INTERVIEW[track].length)}" id="nextQ">Próxima pergunta →</a></div>`;
 
     $app.querySelectorAll("[data-star]").forEach((ta) => ta.oninput = () => { S.stories[key] = S.stories[key] || {}; S.stories[key][ta.dataset.star] = ta.value; save(); });
-    let tmr = null;
     document.getElementById("timerBtn").onclick = () => {
-      clearInterval(tmr);
+      clearInterval(arenaTimer);
       let s = 120; const out = document.getElementById("timer");
-      const tick = () => { out.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; out.classList.toggle("low", s <= 20); if (s-- <= 0) { clearInterval(tmr); out.textContent = "Tempo!"; } };
-      tick(); tmr = setInterval(tick, 1000);
-      window.addEventListener("hashchange", () => clearInterval(tmr), { once: true });
+      const tick = () => { out.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; out.classList.toggle("low", s <= 20); if (s-- <= 0) { clearInterval(arenaTimer); out.textContent = "Tempo!"; } };
+      tick(); arenaTimer = setInterval(tick, 1000);
     };
     document.getElementById("revealBtn").onclick = (e) => { e.target.remove(); document.getElementById("points").classList.remove("hidden"); seen(q.concepts, "iv"); };
     let rated = false;
