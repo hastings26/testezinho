@@ -1,3 +1,28 @@
+## 📑 MILENE | CONTRACT MISSION — preparação para Analista de Contratos de TIC
+
+`milene/` é um app web offline e personalizado (vanilla HTML/CSS/JS, sem build) que prepara
+Milene para o PSI 1126/2026 (Analista de Contratos · SUTIC/DIRAD). Abra `milene/index.html`
+(ou `/milene/` no GitHub Pages). Interface e conteúdo em português do Brasil.
+
+**Método central:** *o que você já sabe → vire a chave → quando os Correios são a parte contratante.*
+
+- **Minha Missão** — jornada em 12 estações (Necessidade → Encerramento), com o que acontece, o que a analista faz, “você já faz isso”, riscos e checagem rápida.
+- **Vire o Contrato** — 10 cartões que viram a experiência atual dela (renovação, SLA, aditivo, faturamento…) para o lado contratante.
+- **Contract Gossip** — 6 episódios da “Rádio Corredor” (~4–5 min) lidos em voz alta pela voz pt-BR do navegador (Web Speech API), ou lidos como chat.
+- **Contract Cases** — 6 simulações de decisão estilo Teams/WhatsApp; cada erro explica *o que faltou*, *o risco ignorado* e *o raciocínio melhor*.
+- **TIC sem o Geek** — nuvem, IaaS/PaaS/SaaS, APIs, WMS, TMS, SLA (com calculadora de disponibilidade), métricas, lock-in, LGPD, NDB/ADM.
+- **Interview Arena** — perguntas técnicas, de cenário e de competência (STAR), cronômetro e autoavaliação por pontos-chave (sem resposta-modelo para decorar), além de um simulado.
+- **Meus Pontos Fracos** — radar de habilidades, domínio por conceito, cobertura por formato e flashcards com repetição espaçada (Leitner).
+
+Os 26 conceitos aparecem em vários formatos (mapa, podcast, caso, flashcard, entrevista…), e o
+painel recomenda o próximo formato que ela ainda não usou. O progresso fica no `localStorage`.
+Conteúdo por arquivo: `content-core.js`, `content-gossip.js`, `content-cases.js`, `content-tic.js`.
+A base legal é a Lei 13.303/2016, com a Lei 14.133/2021 e a IN SGD/ME 94/2022 como vocabulário
+de boas práticas; confira sempre o edital e o regulamento interno dos Correios. IA é só para a
+preparação: o PSI proíbe IA durante as entrevistas avaliativas.
+
+---
+
 ## ✂️ What is the purpose of life? — a paper-collage animation
 
 `purpose.html` is a ~54-second, whimsical, hand-drawn **paper-collage** short made in pure
