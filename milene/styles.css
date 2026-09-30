@@ -396,3 +396,4 @@ button.chip:hover { background: color-mix(in srgb, var(--c) 20%, transparent); }
 .toast.level { background: var(--brand); color: var(--brand-ink); }
 .toast.out { opacity: 0; transform: translateY(8px); }
 @media (min-width: 901px) { .toasts { bottom: 24px; } }
+.rec-tag { font-size: .8rem; font-weight: 700; color: var(--muted); }

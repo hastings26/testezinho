@@ -272,8 +272,10 @@
     [/^#\/revisao\/([\w-]+)$/, (m) => review(m[1])],
     [/^#\/revisao$/, () => review()]
   ];
+  let currentAudio = null;
   function router() {
     Speech.stop();
+    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
     const h = location.hash || "#/";
     for (const [re, fn] of routes) { const m = h.match(re); if (m) { fn(m); break; } }
     renderNav();
@@ -468,10 +470,10 @@
         <a class="card episode ${S.done["ep:" + e.id] ? "is-done" : ""}" href="#/gossip/${e.id}">
           <div class="ep-art">EP ${i + 1}</div>
           <div><h3>${esc(e.title)}</h3><p class="muted">${esc(e.teaser)}</p>
-          <small>⏱ ~${e.minutes} min · ${e.concepts.map((c) => esc(CONCEPTS[c].name)).join(" · ")}</small></div>
+          <small>${(window.MM.AUDIO || {})[e.id] ? "🎙️ " : ""}⏱ ~${e.minutes} min · ${e.concepts.map((c) => esc(CONCEPTS[c].name)).join(" · ")}</small></div>
           ${S.done["ep:" + e.id] ? '<span class="badge">✓</span>' : ""}
         </a>`).join("")}</div>
-      <p class="note">${Speech.ok ? "O áudio usa a voz em português do seu navegador/celular. Se soar robótico, instale a voz pt-BR do sistema — ou leia como chat." : "Seu navegador não tem síntese de voz: os episódios ficam em modo leitura."}</p>`;
+      <p class="note">${Object.keys(window.MM.AUDIO || {}).length ? "Episódios com 🎙️ têm áudio gravado com vozes do Gemini. Toque numa fala para pular até ela." : Speech.ok ? "O áudio usa a voz em português do seu navegador/celular. Se soar robótico, instale a voz pt-BR do sistema — ou leia como chat." : "Seu navegador não tem síntese de voz: os episódios ficam em modo leitura."}</p>`;
   }
 
   function episode(id) {
@@ -480,7 +482,7 @@
     $app.innerHTML = `
       <header class="page-head"><a href="#/gossip" class="back">← Episódios</a><p class="eyebrow">Rádio Corredor</p><h1><span class="h-icon">🎧</span>${esc(ep.title)}</h1><p class="lead">${esc(ep.teaser)}</p></header>
       <div class="player-bar card">
-        <button class="btn" id="playBtn" ${Speech.ok ? "" : "disabled"}>▶ Ouvir</button>
+        <button class="btn" id="playBtn" ${Speech.ok || (window.MM.AUDIO || {})[ep.id] ? "" : "disabled"}>▶ Ouvir</button>
         <label class="rate">Velocidade <select id="rate">${[0.85, 1, 1.15, 1.3].map((r) => `<option value="${r}" ${S.rate === r ? "selected" : ""}>${r}×</option>`).join("")}</select></label>
         <div class="cast">${[...new Set(ep.lines.map((l) => l[0]))].map((k) => `<span class="who" style="--c:${CAST[k].color}"><b>${CAST[k].name}</b> ${esc(CAST[k].role)}</span>`).join("")}</div>
       </div>
@@ -488,20 +490,37 @@
       <div class="card"><button class="btn ghost" id="finishBtn">Terminei de ouvir/ler</button>
         <div id="epChecks" class="${S.done["ep:" + ep.id] ? "" : "hidden"}"><h3>O que ficou?</h3>${ep.checks.map((c, i) => quizHTML(c, `epq:${ep.id}:${i}`)).join("")}
         <div class="chips">${ep.concepts.map(chip).join("")}</div></div></div>`;
-    let playing = false;
     const btn = document.getElementById("playBtn");
     const hl = (i) => { $app.querySelectorAll(".line").forEach((l) => l.classList.toggle("now", +l.dataset.line === i)); const cur = $app.querySelector(`[data-line="${i}"]`); if (cur) cur.scrollIntoView({ block: "center", behavior: "smooth" }); };
-    let at = 0;
     const finish = () => {
       document.getElementById("epChecks").classList.remove("hidden");
       if (!S.done["ep:" + ep.id]) { S.done["ep:" + ep.id] = 1; seen(ep.concepts, "pod"); award(30, ep.concepts, "episódio"); }
     };
-    btn.onclick = () => {
-      if (playing) { Speech.stop(); playing = false; btn.textContent = "▶ Continuar"; return; }
-      playing = true; btn.textContent = "⏸ Pausar";
-      Speech.play(ep.lines, at, (i) => { at = i; hl(i); }, () => { playing = false; at = 0; btn.textContent = "▶ Ouvir de novo"; hl(-1); finish(); });
-    };
-    $app.querySelectorAll(".line").forEach((l) => l.onclick = () => { if (!Speech.ok) return; at = +l.dataset.line; playing = true; btn.textContent = "⏸ Pausar"; Speech.play(ep.lines, at, (i) => { at = i; hl(i); }, () => { playing = false; at = 0; btn.textContent = "▶ Ouvir de novo"; finish(); }); });
+    const rec = (window.MM.AUDIO || {})[ep.id];
+    if (rec) {
+      /* Áudio gravado (Gemini TTS): um MP3 por episódio + início de cada fala. */
+      const audio = (currentAudio = new Audio(rec.src));
+      audio.preload = "metadata";
+      audio.playbackRate = S.rate;
+      btn.disabled = false;
+      let lastLine = -1;
+      const lineAt = (t) => { let i = 0; while (i + 1 < rec.starts.length && rec.starts[i + 1] <= t + 0.05) i++; return i; };
+      audio.ontimeupdate = () => { const i = lineAt(audio.currentTime); if (i !== lastLine) { lastLine = i; hl(i); } };
+      audio.onplay = () => { btn.textContent = "⏸ Pausar"; };
+      audio.onpause = () => { if (!audio.ended) btn.textContent = "▶ Continuar"; };
+      audio.onended = () => { btn.textContent = "▶ Ouvir de novo"; lastLine = -1; hl(-1); finish(); };
+      audio.onerror = () => { btn.textContent = "Áudio indisponível"; btn.disabled = true; };
+      btn.onclick = () => { audio.paused ? audio.play() : audio.pause(); };
+      $app.querySelectorAll(".line").forEach((l) => l.onclick = () => { audio.currentTime = rec.starts[+l.dataset.line] || 0; audio.play(); });
+      document.getElementById("rate").addEventListener("change", () => { audio.playbackRate = S.rate; });
+      btn.insertAdjacentHTML("afterend", `<span class="rec-tag">🎙️ ${Math.floor(rec.duration / 60)}:${String(Math.round(rec.duration % 60)).padStart(2, "0")}</span>`);
+    } else {
+      /* Sem gravação: voz do navegador, fala por fala. */
+      let playing = false, at = 0;
+      const go = () => { playing = true; btn.textContent = "⏸ Pausar"; Speech.play(ep.lines, at, (i) => { at = i; hl(i); }, () => { playing = false; at = 0; btn.textContent = "▶ Ouvir de novo"; hl(-1); finish(); }); };
+      btn.onclick = () => { if (playing) { Speech.stop(); playing = false; btn.textContent = "▶ Continuar"; return; } go(); };
+      $app.querySelectorAll(".line").forEach((l) => l.onclick = () => { if (!Speech.ok) return; at = +l.dataset.line; go(); });
+    }
     document.getElementById("rate").onchange = (e) => { S.rate = +e.target.value; save(); };
     document.getElementById("finishBtn").onclick = finish;
     ep.checks.forEach((c, i) => bindQuiz($app, c, `epq:${ep.id}:${i}`, ep.concepts, "pod", 15));
