@@ -5,12 +5,12 @@
 window.MM = window.MM || {};
 
 MM.SKILLS = {
-  compliance:   { name: "Compliance",   icon: "⚖️", color: "#6C5CE7" },
-  risco:        { name: "Risco",        icon: "🛡️", color: "#E17055" },
-  dinheiro:     { name: "Dinheiro",     icon: "💰", color: "#00A884" },
-  documentacao: { name: "Documentação", icon: "📁", color: "#0984E3" },
-  stakeholders: { name: "Stakeholders", icon: "🤝", color: "#D63384" },
-  tecnologia:   { name: "Tecnologia",   icon: "🧩", color: "#F2A900" }
+  compliance:   { name: "Compliance",   icon: "⚖️", color: "#7A5AA6" },
+  risco:        { name: "Risco",        icon: "🛡️", color: "#C2413A" },
+  dinheiro:     { name: "Dinheiro",     icon: "💰", color: "#2E8B57" },
+  documentacao: { name: "Documentação", icon: "📁", color: "#3A6EA5" },
+  stakeholders: { name: "Stakeholders", icon: "🤝", color: "#A12E4D" },
+  tecnologia:   { name: "Tecnologia",   icon: "🧩", color: "#C98A00" }
 };
 
 MM.LEVELS = [

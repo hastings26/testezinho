@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const { SKILLS, LEVELS, CONCEPTS, STATIONS, FLIPS, EPISODES, CAST, CASES, PEOPLE, TIC, INTERVIEW } = window.MM;
+  const { SKILLS, LEVELS, CONCEPTS, STATIONS, FLIPS, EPISODES, CAST, CASES, PEOPLE, TIC, INTERVIEW, AVATARS, AVATAR_FOR, VIDEOS, ytUrl, EXAMS, EXAM_PASS } = window.MM;
   const $app = document.getElementById("app");
   const STORE_KEY = "milene-contract-mission-v1";
 
@@ -13,17 +13,22 @@
     case: { label: "Caso",       icon: "💬" },
     tic:  { label: "TIC",        icon: "🧩" },
     card: { label: "Flashcard",  icon: "🃏" },
-    iv:   { label: "Entrevista", icon: "🎤" }
+    iv:   { label: "Entrevista", icon: "🎤" },
+    read: { label: "Leitura",    icon: "📖" },
+    game: { label: "Jogo",       icon: "🎲" }
   };
 
   const MODULES = [
     { id: "missao", route: "#/missao", icon: "🗺️", name: "Minha Missão",        desc: "O que o cargo faz, estação por estação." },
-    { id: "flip",   route: "#/flip",   icon: "🔄", name: "Vire o Contrato",     desc: "Do lado de quem presta para o lado de quem contrata." },
+    { id: "leitura", route: "#/leitura", icon: "📖", name: "Para ler",          desc: "Textos curtos e vídeos de apoio, no seu ritmo." },
     { id: "gossip", route: "#/gossip", icon: "🎧", name: "Contract Gossip",     desc: "Rádio Corredor: fofoca de firma que ensina." },
+    { id: "jogos",  route: "#/jogos",  icon: "🎲", name: "Joguinhos",           desc: "Teste rápido, sem compromisso. Jogue quando quiser." },
+    { id: "flip",   route: "#/flip",   icon: "🔄", name: "Vire o Contrato",     desc: "Do lado de quem presta para o lado de quem contrata." },
     { id: "casos",  route: "#/casos",  icon: "💬", name: "Contract Cases",      desc: "Decisões reais, consequências reais." },
     { id: "tic",    route: "#/tic",    icon: "🧩", name: "TIC sem o Geek",      desc: "Só a tecnologia que o contrato precisa." },
     { id: "arena",  route: "#/arena",  icon: "🎤", name: "Interview Arena",     desc: "Técnica, cenário e competência." },
-    { id: "fracos", route: "#/fracos", icon: "🎯", name: "Meus Pontos Fracos",  desc: "Onde revisar — e em qual formato." }
+    { id: "fracos", route: "#/fracos", icon: "🎯", name: "Meus Pontos Fracos",  desc: "Onde revisar — e em qual formato." },
+    { id: "prova",  route: "#/prova",  icon: "🏁", name: "Simulado final",      desc: "20 questões, 5 versões, com correção comentada." }
   ];
 
   /* ---------------- utilidades ---------------- */
@@ -42,10 +47,16 @@
     cards: {},
     stories: {},
     streak: { last: null, count: 0 },
-    rate: 1
+    rate: 1,
+    last: null,
+    audioPos: {},
+    games: {},
+    exams: { runs: {}, history: [], best: null }
   });
   let S = blank();
   try { const raw = localStorage.getItem(STORE_KEY); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) { /* armazenamento indisponível */ }
+  if (!S.exams || !S.exams.runs) S.exams = { runs: {}, history: [], best: null };
+  S.games = S.games || {}; S.audioPos = S.audioPos || {};
   const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* ignora */ } };
 
   function touchStreak() {
@@ -126,6 +137,8 @@
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$modal.classList.contains("hidden")) closeModal(); });
 
   const chip = (id) => CONCEPTS[id] ? `<button class="chip" data-concept="${id}" style="--c:${SKILLS[CONCEPTS[id].skill].color}">${SKILLS[CONCEPTS[id].skill].icon} ${esc(CONCEPTS[id].name)}</button>` : "";
+  const avatar = (key, cls) => { const a = AVATARS[AVATAR_FOR[key] || key]; return a ? `<img class="av ${cls || ""}" src="${a.src}" alt="${esc(a.alt)}" loading="lazy" decoding="async" />` : ""; };
+  const videoLinks = (id) => (VIDEOS[id] || []).map((q) => `<a class="yt" href="${ytUrl(q)}" target="_blank" rel="noopener">▶ ${esc(q)}</a>`).join("");
   const skillTag = (k) => `<span class="skill-tag" style="--c:${SKILLS[k].color}">${SKILLS[k].icon} ${SKILLS[k].name}</span>`;
 
   function conceptModal(id, fmt) {
@@ -141,6 +154,7 @@
         ${Speech.ok ? `<button class="btn ghost" data-say="${id}">🔊 Ouvir resumo</button>` : ""}
         <a class="btn ghost" href="#/revisao/${id}" data-close>🃏 Flashcards</a>
       </div>
+      ${VIDEOS[id] ? `<h4 class="mini-h">Vídeos para assistir (YouTube)</h4><div class="yts">${videoLinks(id)}</div>` : ""}
       <h4 class="mini-h">Formatos em que você já viu este conceito</h4>
       <div class="coverage">${cov}</div>
       <h4 class="mini-h">Onde ele aparece</h4>
@@ -167,13 +181,13 @@
     </div>`;
   }
   function feedbackHTML(fb, ok, extra) {
-    if (ok) return `<div class="fb good"><strong>✅ Boa.</strong> ${esc(fb.melhor)}${extra || ""}</div>`;
-    return `<div class="fb bad">
-      <strong>Quase — vamos ver o raciocínio.</strong>
+    if (ok) return `<div class="fb good">${avatar("acerto", "fb-av")}<div><strong>✅ Boa!</strong> ${esc(fb.melhor)}${extra || ""}</div></div>`;
+    return `<div class="fb bad">${avatar("erro", "fb-av")}<div>
+      <strong>Quase. Bora entender o raciocínio?</strong>
       ${fb.faltou ? `<p><span class="fb-k">🔎 Que informação faltou</span>${esc(fb.faltou)}</p>` : ""}
       ${fb.risco ? `<p><span class="fb-k">⚠️ Que risco passou batido</span>${esc(fb.risco)}</p>` : ""}
       <p><span class="fb-k">🧠 Raciocínio melhor</span>${esc(fb.melhor)}</p>${extra || ""}
-    </div>`;
+    </div></div>`;
   }
   function bindQuiz(root, check, key, concepts, fmt, xpOk, onDone) {
     const box = root.querySelector(`[data-quiz="${key}"]`);
@@ -250,7 +264,7 @@
     document.getElementById("sideNav").innerHTML = items.map((m) =>
       `<a href="${m.route}" class="${(m.route === "#/" ? r === "#/" || r === "" : r.startsWith(m.route)) ? "active" : ""}"><span>${m.icon}</span>${esc(m.name)}</a>`).join("") +
       `<div class="side-xp"><div class="lvl">${esc(level().title)}</div><div class="bar"><i style="width:${level().pct}%"></i></div><small>${S.xp} XP · 🔥 ${S.streak.count} dia(s)</small></div>`;
-    const tabs = [["#/", "🏠", "Início"], ["#/missao", "🗺️", "Missão"], ["#/casos", "💬", "Casos"], ["#/gossip", "🎧", "Podcast"], ["#/arena", "🎤", "Arena"], ["#/fracos", "🎯", "Foco"]];
+    const tabs = [["#/", "🏠", "Início"], ["#/missao", "🗺️", "Missão"], ["#/leitura", "📖", "Ler"], ["#/gossip", "🎧", "Ouvir"], ["#/jogos", "🎲", "Jogar"], ["#/fracos", "🎯", "Foco"]];
     document.getElementById("tabBar").innerHTML = tabs.map(([h, i, n]) =>
       `<a href="${h}" class="${(h === "#/" ? r === "#/" || r === "" : r.startsWith(h)) ? "active" : ""}"><span>${i}</span><small>${n}</small></a>`).join("");
   }
@@ -269,18 +283,38 @@
     [/^#\/arena\/(\w+)$/, (m) => arena(m[1])],
     [/^#\/arena$/, () => arena("tecnica")],
     [/^#\/fracos$/, weak],
+    [/^#\/leitura\/([\w-]+)$/, (m) => reading(m[1])],
+    [/^#\/leitura$/, readingList],
+    [/^#\/jogos\/relampago$/, gameFlash],
+    [/^#\/jogos\/pares$/, gamePairs],
+    [/^#\/jogos\/ordem$/, gameOrder],
+    [/^#\/jogos$/, games],
+    [/^#\/prova\/(v\d)\/resultado$/, (m) => examResult(m[1])],
+    [/^#\/prova\/(v\d)$/, (m) => exam(m[1])],
+    [/^#\/prova$/, exams],
     [/^#\/revisao\/([\w-]+)$/, (m) => review(m[1])],
     [/^#\/revisao$/, () => review()]
   ];
   let currentAudio = null;
+  const audioFailed = {};
   function router() {
     Speech.stop();
     if (currentAudio) { currentAudio.pause(); currentAudio = null; }
     clearInterval(arenaTimer);
     const h = route;
-    for (const [re, fn] of routes) { const m = h.match(re); if (m) { fn(m); break; } }
+    let matched = false;
+    for (const [re, fn] of routes) { const m = h.match(re); if (m) { fn(m); matched = true; break; } }
+    if (!matched) home();
+    if (h !== "#/" && h !== "" && matched) {
+      const t = $app.querySelector(".page-head h1");
+      let title = "";
+      if (t) { const c = t.cloneNode(true); c.querySelectorAll(".h-icon").forEach((x) => x.remove()); title = c.textContent.trim(); }
+      S.last = { route: h, title, at: Date.now() };
+      save();
+    }
     renderNav();
     window.scrollTo(0, 0);
+    parallax();
     $app.focus({ preventScroll: true });
   }
   /* Navegação interna: funciona também dentro de páginas incorporadas, onde o hash da URL pode não mudar. */
@@ -301,7 +335,10 @@
   window.addEventListener("hashchange", syncFromUrl);
   window.addEventListener("popstate", syncFromUrl);
 
-  const header = (icon, title, sub) => `<header class="page-head"><a href="#/" class="back">← Início</a><h1><span class="h-icon">${icon}</span>${esc(title)}</h1>${sub ? `<p class="lead">${sub}</p>` : ""}</header>`;
+  const header = (icon, title, sub, back) => {
+    const key = (route.split("/")[1] || "home");
+    return `<header class="page-head has-av"><div class="ph-text"><a href="${back ? back[0] : "#/"}" class="back">← ${back ? back[1] : "Início"}</a><h1><span class="h-icon">${icon}</span>${esc(title)}</h1>${sub ? `<p class="lead">${sub}</p>` : ""}</div>${avatar(key, "ph-av")}</header>`;
+  };
 
   /* ---------------- recomendações ---------------- */
   function recommendations(n) {
@@ -341,6 +378,9 @@
       case "casos": return count("case:", CASES);
       case "tic": return count("tic:", TIC);
       case "arena": { const all = [].concat(...["tecnica", "cenario", "competencia"].map((t) => INTERVIEW[t].map((_, i) => t + i))); return all.filter((k) => S.done["iv:" + k]).length / all.length; }
+      case "leitura": return count("read:", STATIONS);
+      case "jogos": return ["relampago", "pares", "ordem"].filter((k) => S.games[k] != null).length / 3;
+      case "prova": return EXAMS.filter((e) => (S.exams.runs[e.id] || {}).best >= EXAM_PASS).length / EXAMS.length;
       case "fracos": { const ids = Object.keys(CONCEPTS); return ids.filter((id) => mastery(id) >= 60).length / ids.length; }
     }
     return 0;
@@ -348,68 +388,85 @@
 
   function home() {
     const L = level();
-    const nextStation = STATIONS.find((s) => !S.done["st:" + s.id]) || STATIONS[STATIONS.length - 1];
-    const recs = recommendations(3);
+    const nextStation = STATIONS.find((st) => !S.done["st:" + st.id]) || STATIONS[STATIONS.length - 1];
+    const recs = recommendations(2);
     const due = dueCards().length;
+    const h = new Date().getHours();
+    const hello = h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
+    const last = S.last && S.last.route && S.last.route !== "#/" ? S.last : null;
     $app.innerHTML = `
       <section class="hero">
-        <div class="player">
-          <div class="avatar">M</div>
-          <div class="player-info">
-            <p class="eyebrow">Jogadora</p>
-            <h1>MILENE – ANALISTA DE CONTRATOS</h1>
-            <p class="muted">Nível ${L.i + 1} · <strong>${esc(L.title)}</strong>${L.next ? ` · faltam ${L.next.xp - S.xp} XP para “${esc(L.next.title)}”` : " · nível máximo"}</p>
+        <div class="hero-bg" aria-hidden="true">
+          <span class="petal p1" data-depth="0.18"></span><span class="petal p2" data-depth="0.32"></span><span class="petal p3" data-depth="0.1"></span><span class="ring r1" data-depth="0.24"></span>
+        </div>
+        <div class="hero-copy">
+          <p class="eyebrow">${hello}, Milene 🌻</p>
+          <h1>Rumo a Analista de Contratos de TIC</h1>
+          <p class="hero-sub">Você já domina o contrato do lado de quem presta o serviço. Aqui você aprende o lado de quem contrata, no seu ritmo e na ordem que quiser.</p>
+          <div class="hero-cta">
+            ${last ? `<a class="btn big" href="${last.route}">▶ Continuar: ${esc(last.title || "de onde parou")}</a>` : `<a class="btn big" href="#/missao/${nextStation.id}">▶ Começar pela jornada</a>`}
+            <a class="btn ghost big" href="#/prova">🏁 Simulado final</a>
+          </div>
+          <div class="level">
+            <div class="level-top"><strong>Nível ${L.i + 1} · ${esc(L.title)}</strong><span>${S.xp} XP${L.next ? ` · faltam ${L.next.xp - S.xp}` : ""}</span></div>
             <div class="bar big"><i style="width:${L.pct}%"></i></div>
           </div>
-          <div class="player-stats">
-            <div><strong>${S.xp}</strong><small>XP</small></div>
-            <div><strong>🔥 ${S.streak.count}</strong><small>dias</small></div>
-            <div><strong>${due}</strong><small>cards p/ hoje</small></div>
-          </div>
         </div>
-        <div class="skills-row">${Object.keys(SKILLS).map((k) => `<div class="skill-pill" style="--c:${SKILLS[k].color}"><span>${SKILLS[k].icon}</span><div><small>${SKILLS[k].name}</small><strong>${S.skills[k]} XP</strong></div></div>`).join("")}</div>
+        <div class="hero-art" data-depth="-0.08">${avatar("home", "hero-av")}</div>
       </section>
 
-      <section class="card">
-        <div class="section-h"><h2>Minha Missão</h2><a href="#/missao" class="link">Ver jornada completa →</a></div>
-        <p class="muted">Você já domina a gestão do contrato do lado de quem presta. A missão é dominar o ciclo inteiro do lado de quem contrata.</p>
-        <div class="journey-strip">${STATIONS.map((s, i) => `
-          <a href="#/missao/${s.id}" class="j-node ${S.done["st:" + s.id] ? "done" : s.id === nextStation.id ? "next" : ""}" title="${esc(s.name)}">
-            <span class="j-ico">${S.done["st:" + s.id] ? "✓" : s.icon}</span><small>${esc(s.name)}</small>
+      <section class="stats-row">
+        <div class="stat"><strong>🔥 ${S.streak.count}</strong><small>dia(s) seguidos</small></div>
+        <div class="stat"><strong>${Object.keys(S.done).filter((k) => k.startsWith("st:")).length}/${STATIONS.length}</strong><small>etapas da jornada</small></div>
+        <a class="stat" href="#/revisao"><strong>${due}</strong><small>flashcards para hoje</small></a>
+        <a class="stat" href="#/prova"><strong>${S.exams.best != null ? S.exams.best + "%" : "—"}</strong><small>melhor simulado</small></a>
+      </section>
+
+      <section class="card journey-card">
+        <div class="section-h"><h2>Sua jornada</h2><a href="#/missao" class="link">Ver o mapa completo →</a></div>
+        <div class="journey-strip">${STATIONS.map((st, i) => `
+          <a href="#/missao/${st.id}" class="j-node ${S.done["st:" + st.id] ? "done" : st.id === nextStation.id ? "next" : ""}" title="${esc(st.name)}">
+            <span class="j-ico">${S.done["st:" + st.id] ? "✓" : st.icon}</span><small>${esc(st.name)}</small>
           </a>${i < STATIONS.length - 1 ? '<span class="j-line"></span>' : ""}`).join("")}
         </div>
       </section>
 
       <section class="grid-2">
         <div class="card today">
-          <h2>Missão de hoje</h2>
+          <h2>Se você tiver 10 minutos hoje</h2>
           <ol class="todo">
-            <li><a href="#/missao/${nextStation.id}"><span>${nextStation.icon}</span><div><strong>Estação: ${esc(nextStation.name)}</strong><small>Próximo passo da jornada</small></div></a></li>
-            ${recs.map((r) => `<li><a href="${r.route}"><span>${FORMATS[r.fmt].icon}</span><div><strong>${esc(CONCEPTS[r.id].name)}</strong><small>${esc(r.title)} · novo formato para fixar</small></div></a></li>`).join("")}
-            ${due ? `<li><a href="#/revisao"><span>🃏</span><div><strong>${due} flashcards pendentes</strong><small>5 minutos de revisão espaçada</small></div></a></li>` : ""}
+            <li><a href="#/missao/${nextStation.id}"><span>${nextStation.icon}</span><div><strong>Etapa: ${esc(nextStation.name)}</strong><small>Próximo passo da jornada</small></div></a></li>
+            ${recs.map((r) => `<li><a href="${r.route}"><span>${FORMATS[r.fmt].icon}</span><div><strong>${esc(CONCEPTS[r.id].name)}</strong><small>${esc(r.title)}</small></div></a></li>`).join("")}
+            ${due ? `<li><a href="#/revisao"><span>🃏</span><div><strong>${due} flashcards</strong><small>Revisão espaçada, 5 minutos</small></div></a></li>` : `<li><a href="#/jogos/relampago"><span>⚡</span><div><strong>Quiz relâmpago</strong><small>60 segundos para aquecer</small></div></a></li>`}
           </ol>
         </div>
-        <div class="card role">
-          <h2>O cargo em 2 blocos</h2>
-          <div class="pillar"><h3>📝 Instrução de contratações de TIC</h3><p>Viabilidade, ETP, Termo de Referência, especificações, estimativa de custo, critérios de medição, níveis mínimos de serviço, riscos, apoio à licitação ou contratação direta, articulação com técnica, Jurídico, orçamento e Financeiro.</p></div>
-          <div class="pillar"><h3>📋 Gestão operacional de contratos de TIC</h3><p>Vigência, prazos, prorrogações, aditivos, alterações de valor e escopo, execução orçamentária (empenho, liquidação, pagamento), rastreabilidade, conformidade, apoio aos fiscais e gestão de fornecedores.</p></div>
-          <p class="note">Temas citados no edital: WMS, TMS, Cloud, APIs, projetos NDB e iniciativas ADM.</p>
+        <div class="card cheer">
+          ${avatar("fim", "cheer-av")}
+          <div>
+            <h2>Sem ordem obrigatória</h2>
+            <p>Pule para o que você sente que precisa. Tudo fica salvo neste aparelho: você fecha e, quando voltar, continua de onde parou.</p>
+          </div>
         </div>
       </section>
 
       <section>
-        <div class="section-h"><h2>Módulos</h2></div>
-        <div class="modules">${MODULES.map((m) => { const p = Math.round(progressOf(m.id) * 100); return `
+        <div class="section-h"><h2>Escolha seu caminho</h2></div>
+        <div class="modules">${MODULES.map((m) => { const pr = Math.round(progressOf(m.id) * 100); return `
           <a class="module" href="${m.route}">
             <span class="m-icon">${m.icon}</span>
             <strong>${esc(m.name)}</strong>
             <small>${esc(m.desc)}</small>
-            <div class="bar"><i style="width:${p}%"></i></div><em>${p}%</em>
+            <div class="bar"><i style="width:${pr}%"></i></div><em>${pr}%</em>
           </a>`; }).join("")}
         </div>
       </section>
 
-      <p class="disclaimer">⚠️ IA é só para a preparação. O PSI 1126/2026 proíbe o uso de IA ou ferramentas externas de resposta durante as entrevistas síncronas avaliativas. Referências legais aqui são de estudo: confirme sempre no edital e no regulamento interno de licitações e contratos dos Correios.
+      <section class="card skills-card">
+        <h2>Suas habilidades</h2>
+        <div class="skills-row">${Object.keys(SKILLS).map((k) => `<div class="skill-pill" style="--c:${SKILLS[k].color}"><span>${SKILLS[k].icon}</span><div><small>${SKILLS[k].name}</small><strong>${S.skills[k]} XP</strong></div></div>`).join("")}</div>
+      </section>
+
+      <p class="disclaimer">IA é só para a preparação: o PSI 1126/2026 proíbe o uso de IA ou ferramentas externas de resposta durante as entrevistas avaliativas. As referências legais servem para estudo; confirme sempre no edital e no regulamento interno de licitações e contratos dos Correios.
       <button class="link-btn" id="resetBtn">Zerar progresso</button></p>`;
     document.getElementById("resetBtn").onclick = () => {
       const b = document.getElementById("resetBtn");
@@ -442,16 +499,14 @@
     const s = STATIONS[i], prev = STATIONS[i - 1], next = STATIONS[i + 1];
     seen(s.concepts, "map");
     $app.innerHTML = `
-      <header class="page-head"><a href="#/missao" class="back">← Jornada</a>
-        <p class="eyebrow">Estação ${i + 1} de ${STATIONS.length}</p>
-        <h1><span class="h-icon">${s.icon}</span>${esc(s.name)}</h1></header>
+      ${header(s.icon, s.name, `Etapa ${i + 1} de ${STATIONS.length} · documento-chave: ${esc(s.doc)}`, ["#/missao", "Jornada"])}
       <div class="station-grid">
         <div class="card s-block"><h3>O que acontece</h3><p>${esc(s.what)}</p></div>
         <div class="card s-block accent"><h3>O que a analista faz</h3><p>${esc(s.analyst)}</p></div>
         <div class="card s-block bridge-card"><h3>🔄 Você já faz isso</h3><p>${esc(s.youAlready)}</p></div>
         <div class="card s-block risk"><h3>⚠️ Onde costuma dar errado</h3><p>${esc(s.risk)}</p></div>
       </div>
-      <div class="card"><h3>📄 Documento-chave</h3><p>${esc(s.doc)}</p>
+      <div class="card"><h3>📄 Documento-chave</h3><p>${esc(s.doc)} · <a class="link" href="#/leitura/${s.id}">Ler o texto completo desta etapa →</a></p>
         <h3>Conceitos desta estação</h3><div class="chips">${s.concepts.map(chip).join("")}</div></div>
       <div class="card"><h3>Checagem rápida</h3>${quizHTML(s.check, "st:" + s.id)}</div>
       <div class="pager">${prev ? `<a class="btn ghost" href="#/missao/${prev.id}">← ${esc(prev.name)}</a>` : "<span></span>"}${next ? `<a class="btn" href="#/missao/${next.id}">${esc(next.name)} →</a>` : `<a class="btn" href="#/flip">Próximo módulo: Vire o Contrato →</a>`}</div>`;
@@ -491,17 +546,17 @@
         <a class="card episode ${S.done["ep:" + e.id] ? "is-done" : ""}" href="#/gossip/${e.id}">
           <div class="ep-art">EP ${i + 1}</div>
           <div><h3>${esc(e.title)}</h3><p class="muted">${esc(e.teaser)}</p>
-          <small>${(window.MM.AUDIO || {})[e.id] ? "🎙️ " : ""}⏱ ~${e.minutes} min · ${e.concepts.map((c) => esc(CONCEPTS[c].name)).join(" · ")}</small></div>
+          <small>⏱ ~${e.minutes} min · ${e.concepts.map((c) => esc(CONCEPTS[c].name)).join(" · ")}</small></div>
           ${S.done["ep:" + e.id] ? '<span class="badge">✓</span>' : ""}
         </a>`).join("")}</div>
-      <p class="note">${Object.keys(window.MM.AUDIO || {}).length ? "Episódios com 🎙️ têm áudio gravado com vozes do Gemini. Toque numa fala para pular até ela." : Speech.ok ? "O áudio usa a voz em português do seu navegador/celular. Se soar robótico, instale a voz pt-BR do sistema — ou leia como chat." : "Seu navegador não tem síntese de voz: os episódios ficam em modo leitura."}</p>`;
+      <p class="note">${Speech.ok ? "O áudio usa a voz em português do seu navegador/celular. Se soar robótico, instale a voz pt-BR do sistema — ou leia como chat." : "Seu navegador não tem síntese de voz: os episódios ficam em modo leitura."}</p>`;
   }
 
   function episode(id) {
     const ep = EPISODES.find((e) => e.id === id);
     if (!ep) return gossip();
     $app.innerHTML = `
-      <header class="page-head"><a href="#/gossip" class="back">← Episódios</a><p class="eyebrow">Rádio Corredor</p><h1><span class="h-icon">🎧</span>${esc(ep.title)}</h1><p class="lead">${esc(ep.teaser)}</p></header>
+      ${header("🎧", ep.title, esc(ep.teaser), ["#/gossip", "Episódios"])}
       <div class="player-bar card">
         <button class="btn" id="playBtn" ${Speech.ok || (window.MM.AUDIO || {})[ep.id] ? "" : "disabled"}>▶ Ouvir</button>
         <label class="rate">Velocidade <select id="rate">${[0.85, 1, 1.15, 1.3].map((r) => `<option value="${r}" ${S.rate === r ? "selected" : ""}>${r}×</option>`).join("")}</select></label>
@@ -517,28 +572,40 @@
       document.getElementById("epChecks").classList.remove("hidden");
       if (!S.done["ep:" + ep.id]) { S.done["ep:" + ep.id] = 1; seen(ep.concepts, "pod"); award(30, ep.concepts, "episódio"); }
     };
-    const rec = (window.MM.AUDIO || {})[ep.id];
+    const rec = audioFailed[ep.id] ? null : (window.MM.AUDIO || {})[ep.id];
     if (rec) {
       /* Áudio gravado (Gemini TTS): um MP3 por episódio + início de cada fala. */
       const audio = (currentAudio = new Audio(rec.src));
       audio.preload = "metadata";
       audio.playbackRate = S.rate;
       btn.disabled = false;
-      let lastLine = -1;
+      let lastLine = -1, lastSaved = 0;
+      /* Sem marcações por fala (áudio gerado fora do script): estima pelo tamanho de cada fala. */
+      if (!rec.starts) audio.addEventListener("loadedmetadata", () => {
+        const lens = ep.lines.map((l) => l[1].length + 20), tot = lens.reduce((a, b) => a + b, 0);
+        let acc = 0; rec.starts = lens.map((n) => { const st = (acc / tot) * audio.duration; acc += n; return st; });
+        rec.duration = audio.duration;
+        const tag = $app.querySelector(".rec-tag"); if (tag) tag.textContent = "🎙️ " + Math.floor(audio.duration / 60) + ":" + String(Math.round(audio.duration % 60)).padStart(2, "0");
+      });
+      audio.addEventListener("loadedmetadata", () => { const pos = S.audioPos[ep.id]; if (pos && pos < audio.duration - 5) { audio.currentTime = pos; btn.textContent = "▶ Continuar de onde parou"; } });
       const lineAt = (t) => { let i = 0; while (i + 1 < rec.starts.length && rec.starts[i + 1] <= t + 0.05) i++; return i; };
-      audio.ontimeupdate = () => { const i = lineAt(audio.currentTime); if (i !== lastLine) { lastLine = i; hl(i); } };
+      audio.ontimeupdate = () => {
+        if (rec.starts) { const i = lineAt(audio.currentTime); if (i !== lastLine) { lastLine = i; hl(i); } }
+        if (Math.abs(audio.currentTime - lastSaved) > 4) { lastSaved = audio.currentTime; S.audioPos[ep.id] = audio.currentTime; save(); }
+      };
       audio.onplay = () => { btn.textContent = "⏸ Pausar"; };
       audio.onpause = () => { if (!audio.ended) btn.textContent = "▶ Continuar"; };
-      audio.onended = () => { btn.textContent = "▶ Ouvir de novo"; lastLine = -1; hl(-1); finish(); };
-      audio.onerror = () => { btn.textContent = "Áudio indisponível"; btn.disabled = true; };
+      audio.onended = () => { btn.textContent = "▶ Ouvir de novo"; lastLine = -1; hl(-1); delete S.audioPos[ep.id]; save(); finish(); };
+      audio.onerror = () => { audioFailed[ep.id] = true; if (currentAudio === audio) episode(ep.id); };
       btn.onclick = () => { audio.paused ? audio.play() : audio.pause(); };
-      $app.querySelectorAll(".line").forEach((l) => l.onclick = () => { audio.currentTime = rec.starts[+l.dataset.line] || 0; audio.play(); });
+      $app.querySelectorAll(".line").forEach((l) => l.onclick = () => { if (!rec.starts) return; audio.currentTime = rec.starts[+l.dataset.line] || 0; audio.play(); });
       document.getElementById("rate").addEventListener("change", () => { audio.playbackRate = S.rate; });
-      btn.insertAdjacentHTML("afterend", `<span class="rec-tag">🎙️ ${Math.floor(rec.duration / 60)}:${String(Math.round(rec.duration % 60)).padStart(2, "0")}</span>`);
+      btn.insertAdjacentHTML("afterend", `<span class="rec-tag">🎙️ ${rec.duration ? Math.floor(rec.duration / 60) + ":" + String(Math.round(rec.duration % 60)).padStart(2, "0") : "áudio gravado"}</span>`);
     } else {
       /* Sem gravação: voz do navegador, fala por fala. */
-      let playing = false, at = 0;
-      const go = () => { playing = true; btn.textContent = "⏸ Pausar"; Speech.play(ep.lines, at, (i) => { at = i; hl(i); }, () => { playing = false; at = 0; btn.textContent = "▶ Ouvir de novo"; hl(-1); finish(); }); };
+      let playing = false, at = S.audioPos["line:" + ep.id] || 0;
+      if (at) btn.textContent = "▶ Continuar de onde parou";
+      const go = () => { playing = true; btn.textContent = "⏸ Pausar"; Speech.play(ep.lines, at, (i) => { at = i; hl(i); S.audioPos["line:" + ep.id] = i; save(); }, () => { playing = false; at = 0; delete S.audioPos["line:" + ep.id]; save(); btn.textContent = "▶ Ouvir de novo"; hl(-1); finish(); }); };
       btn.onclick = () => { if (playing) { Speech.stop(); playing = false; btn.textContent = "▶ Continuar"; return; } go(); };
       $app.querySelectorAll(".line").forEach((l) => l.onclick = () => { if (!Speech.ok) return; at = +l.dataset.line; go(); });
     }
@@ -563,7 +630,7 @@
     if (!c) return cases();
     let step = 0, score = 0;
     $app.innerHTML = `
-      <header class="page-head"><a href="#/casos" class="back">← Casos</a><p class="eyebrow">${esc(c.channel)}</p><h1><span class="h-icon">💬</span>${esc(c.title)}</h1></header>
+      ${header("💬", c.title, esc(c.channel), ["#/casos", "Casos"])}
       <div class="chat card"><div class="chat-body" id="chat"></div></div>
       <div id="decision"></div>`;
     const chat = document.getElementById("chat"), dec = document.getElementById("decision");
@@ -617,7 +684,7 @@
         award(Math.round(((score - prev) / max) * 75) + (prev ? 0 : 10), c.concepts, "caso");
       }
       const msg = score === max ? "Decisão de analista sênior. 👏" : score >= max * 0.6 ? "Bom raciocínio — revise os pontos em que o feedback apontou risco." : "Vale refazer: leia os feedbacks e tente de novo amanhã. Repetir é parte do método.";
-      dec.innerHTML = `<div class="card result"><h2>${score}/${max}</h2><p>${msg}</p><div class="chips">${c.concepts.map(chip).join("")}</div>
+      dec.innerHTML = `<div class="card result">${avatar(score >= max * 0.6 ? "vitoria" : "erro", "result-av")}<h2>${score}/${max}</h2><p>${msg}</p><div class="chips">${c.concepts.map(chip).join("")}</div>
         <div class="row gap"><button class="btn ghost" id="redo">Refazer</button><a class="btn" href="#/casos">Outros casos</a></div></div>`;
       document.getElementById("redo").onclick = () => caseView(c.id);
     }
@@ -787,7 +854,7 @@
     const draw = () => {
       if (k >= total) {
         award(good * 5, [...new Set(deck.map((d) => d.id))], "revisão");
-        $app.innerHTML = header("🃏", title) + `<div class="card center"><h2>${good}/${total} de primeira</h2><p class="muted">Os que você errou voltam amanhã. Os que acertou, mais tarde. Esse espaçamento é o que faz a memória fixar.</p><div class="row gap center"><a class="btn ghost" href="#/fracos">Ver pontos fracos</a><a class="btn" href="#/">Início</a></div></div>`;
+        $app.innerHTML = header("🃏", title) + `<div class="card center">${avatar(good >= total * 0.6 ? "vitoria" : "fim", "result-av")}<h2>${good}/${total} de primeira</h2><p class="muted">Os que você errou voltam amanhã. Os que acertou, mais tarde. Esse espaçamento é o que faz a memória fixar.</p><div class="row gap center"><a class="btn ghost" href="#/fracos">Ver pontos fracos</a><a class="btn" href="#/">Início</a></div></div>`;
         renderNav();
         return;
       }
@@ -816,6 +883,293 @@
     };
     draw();
   }
+
+
+  /* ---------------- PARA LER ---------------- */
+  const readMinutes = (st) => Math.max(2, Math.round((st.what + st.analyst + st.youAlready + st.risk + st.concepts.map((c) => CONCEPTS[c].points.join(" ") + CONCEPTS[c].bridge).join(" ")).split(/\s+/).length / 180));
+  function readingList() {
+    $app.innerHTML = header("📖", "Para ler", "Textos curtos, um por etapa do contrato. Leia na ordem ou pule direto para o que precisa. Cada conceito tem vídeos de apoio no YouTube.") + `
+      <div class="read-list">${STATIONS.map((st, i) => `
+        <a class="read-item ${S.done["read:" + st.id] ? "is-done" : ""}" href="#/leitura/${st.id}">
+          <span class="ri-n">${String(i + 1).padStart(2, "0")}</span>
+          <span class="ri-t"><strong>${esc(st.name)}</strong><small>${st.concepts.map((c) => esc(CONCEPTS[c].name)).join(" · ")}</small></span>
+          <span class="ri-m">${S.done["read:" + st.id] ? "✓ lido" : readMinutes(st) + " min"}</span>
+        </a>`).join("")}</div>
+      <section class="card"><h2>Glossário rápido</h2><p class="muted">Toque num termo para ver a explicação, a ponte com o que você já faz e os vídeos.</p>
+        <div class="chips">${Object.keys(CONCEPTS).sort((a, b) => CONCEPTS[a].name.localeCompare(CONCEPTS[b].name, "pt")).map(chip).join("")}</div></section>`;
+  }
+  function reading(id) {
+    const i = STATIONS.findIndex((x) => x.id === id);
+    if (i < 0) return readingList();
+    const st = STATIONS[i], prev = STATIONS[i - 1], next = STATIONS[i + 1];
+    $app.innerHTML = header(st.icon, st.name, `Leitura ${i + 1} de ${STATIONS.length} · cerca de ${readMinutes(st)} minutos`, ["#/leitura", "Leituras"]) + `
+      <article class="article card">
+        <p class="article-lead">${esc(st.what)}</p>
+        <h3>O que a analista de contratos faz aqui</h3><p>${esc(st.analyst)}</p>
+        <div class="bridge"><strong>🔄 Você já faz isso:</strong> ${esc(st.youAlready)}</div>
+        <h3>Onde costuma dar errado</h3><p>${esc(st.risk)}</p>
+        <p class="doc-line">📄 Documento-chave: <strong>${esc(st.doc)}</strong></p>
+        ${st.concepts.map((c) => { const k = CONCEPTS[c]; return `
+          <section class="concept-sec">
+            <h2>${esc(k.name)}</h2>
+            <p class="lead">${esc(k.short)}</p>
+            <ul class="points">${k.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+            <p class="bridge-inline"><strong>Ponte:</strong> ${esc(k.bridge)}</p>
+            ${VIDEOS[c] ? `<div class="yts"><span class="yts-l">Vídeos no YouTube</span>${videoLinks(c)}</div>` : ""}
+          </section>`; }).join("")}
+        <div class="row gap article-actions">
+          ${Speech.ok ? `<button class="btn ghost" id="sayAll">🔊 Ouvir este texto</button>` : ""}
+          <button class="btn" id="markRead">${S.done["read:" + st.id] ? "✓ Lido. Ler de novo conta como revisão" : "Marcar como lido"}</button>
+        </div>
+      </article>
+      <div class="pager">${prev ? `<a class="btn ghost" href="#/leitura/${prev.id}">← ${esc(prev.name)}</a>` : "<span></span>"}${next ? `<a class="btn" href="#/leitura/${next.id}">${esc(next.name)} →</a>` : `<a class="btn" href="#/prova">Fazer o simulado final →</a>`}</div>`;
+    document.getElementById("markRead").onclick = (e) => {
+      seen(st.concepts, "read");
+      if (!S.done["read:" + st.id]) { S.done["read:" + st.id] = 1; award(15, st.concepts, "leitura"); }
+      e.target.textContent = "✓ Lido";
+    };
+    const say = document.getElementById("sayAll");
+    if (say) say.onclick = () => Speech.speakText([st.name, st.what, "O que a analista faz: " + st.analyst, "Você já faz isso: " + st.youAlready, "Atenção: " + st.risk].concat(st.concepts.map((c) => CONCEPTS[c].name + ". " + CONCEPTS[c].short + " " + CONCEPTS[c].points.join(" "))).join(" "));
+  }
+
+  /* ---------------- JOGUINHOS ---------------- */
+  const allChecks = () => [].concat(
+    STATIONS.map((x) => ({ ...x.check, concepts: x.concepts })),
+    FLIPS.map((x) => ({ ...x.check, concepts: x.concepts })),
+    ...EPISODES.map((e) => e.checks.map((c) => ({ ...c, concepts: e.concepts }))));
+  function games() {
+    const g = S.games;
+    const tile = (r, ic, t, d, best) => `<a class="game-tile" href="${r}"><span class="gt-ic">${ic}</span><strong>${t}</strong><small>${d}</small>${best != null ? `<em>Recorde: ${best}</em>` : `<em>Ainda não jogado</em>`}</a>`;
+    $app.innerHTML = header("🎲", "Joguinhos", "Todos opcionais. Use para testar o que já sabe, aquecer antes de estudar ou descontrair.") + `
+      <div class="game-grid">
+        ${tile("#/jogos/relampago", "⚡", "Quiz relâmpago", "60 segundos. Quantas você acerta?", g.relampago)}
+        ${tile("#/jogos/pares", "🧩", "Ligue os pares", "Ligue cada termo à sua definição.", g.pares != null ? g.pares + " erro(s)" : null)}
+        ${tile("#/jogos/ordem", "🧭", "Ordem da jornada", "Coloque as etapas do contrato na ordem certa.", g.ordem != null ? g.ordem + " erro(s)" : null)}
+        ${tile("#/prova", "🏁", "Simulado final", "20 questões, 5 versões, com correção comentada.", S.exams && S.exams.best != null ? S.exams.best + "%" : null)}
+      </div>`;
+  }
+  function gameFlash() {
+    const pool = shuffle(allChecks());
+    let i = 0, ok = 0, total = 0, left = 60, locked = false;
+    const touchedC = new Set();
+    $app.innerHTML = header("⚡", "Quiz relâmpago", "Responda o máximo que conseguir em 60 segundos.", ["#/jogos", "Joguinhos"]) + `
+      <div class="card flash"><div class="flash-top"><span class="timer" id="ft">60</span><span class="flash-score" id="fs">0 acertos</span></div><div id="fq"></div></div>`;
+    const draw = () => {
+      const q = pool[i % pool.length];
+      const opts = shuffle(q.options.map((o, k) => ({ t: o[0], ok: o[1], k })));
+      document.getElementById("fq").innerHTML = `<p class="quiz-q">${esc(q.q)}</p><div class="options">${opts.map((o) => `<button class="option" data-ok="${o.ok ? 1 : 0}">${esc(o.t)}</button>`).join("")}</div><p class="flash-why" id="fw"></p>`;
+      locked = false;
+      document.querySelectorAll("#fq .option").forEach((b) => b.onclick = () => {
+        if (locked) return; locked = true; total++;
+        const good = b.dataset.ok === "1";
+        q.concepts.forEach((c) => touchedC.add(c));
+        result(q.concepts, good);
+        if (good) { ok++; b.classList.add("right"); } else { b.classList.add("wrong"); document.querySelector('#fq [data-ok="1"]').classList.add("right"); document.getElementById("fw").textContent = q.fb.melhor; }
+        document.getElementById("fs").textContent = ok + " acerto" + (ok === 1 ? "" : "s");
+        setTimeout(() => { if (left > 0) { i++; draw(); } }, good ? 450 : 1800);
+      });
+    };
+    const end = () => {
+      clearInterval(arenaTimer);
+      const best = Math.max(S.games.relampago || 0, ok);
+      const rec = ok > (S.games.relampago || 0);
+      S.games.relampago = best; save();
+      seen([...touchedC], "game");
+      award(ok * 4, [...touchedC], "quiz relâmpago");
+      $app.querySelector(".flash").innerHTML = `<div class="center">${avatar(ok >= 6 ? "vitoria" : "pensando", "result-av")}<h2>${ok} de ${total}</h2><p>${rec ? "Novo recorde! 🌻" : "Recorde atual: " + best}</p><div class="row gap center"><button class="btn" id="again">Jogar de novo</button><a class="btn ghost" href="#/jogos">Outros jogos</a></div></div>`;
+      document.getElementById("again").onclick = gameFlash;
+    };
+    draw();
+    clearInterval(arenaTimer);
+    arenaTimer = setInterval(() => { left--; const t = document.getElementById("ft"); if (t) { t.textContent = left; t.classList.toggle("low", left <= 10); } if (left <= 0) end(); }, 1000);
+  }
+  function gamePairs() {
+    const ids = shuffle(Object.keys(CONCEPTS)).slice(0, 5);
+    let pick = null, miss = 0, done = 0;
+    $app.innerHTML = header("🧩", "Ligue os pares", "Toque num termo e depois na definição dele.", ["#/jogos", "Joguinhos"]) + `
+      <div class="card pairs"><div class="pair-cols">
+        <div class="pair-col">${shuffle(ids).map((id) => `<button class="pair term" data-id="${id}">${esc(CONCEPTS[id].name)}</button>`).join("")}</div>
+        <div class="pair-col">${shuffle(ids).map((id) => `<button class="pair def" data-id="${id}">${esc(CONCEPTS[id].short)}</button>`).join("")}</div>
+      </div><p class="muted center" id="pmsg">Erros: 0</p></div>`;
+    $app.querySelectorAll(".pair.term").forEach((b) => b.onclick = () => { if (b.disabled) return; $app.querySelectorAll(".pair.term").forEach((x) => x.classList.remove("sel")); b.classList.add("sel"); pick = b; });
+    $app.querySelectorAll(".pair.def").forEach((b) => b.onclick = () => {
+      if (!pick || b.disabled) return;
+      if (b.dataset.id === pick.dataset.id) {
+        [b, pick].forEach((x) => { x.disabled = true; x.classList.remove("sel"); x.classList.add("matched"); });
+        result([b.dataset.id], true); pick = null; done++;
+        if (done === ids.length) {
+          const prev = S.games.pares; S.games.pares = prev == null ? miss : Math.min(prev, miss); save();
+          seen(ids, "game"); award(Math.max(10, 30 - miss * 5), ids, "ligue os pares");
+          document.getElementById("pmsg").innerHTML = `<strong>Pronto! ${miss} erro(s).</strong> <button class="link-btn" id="again">Jogar de novo</button>`;
+          document.getElementById("again").onclick = gamePairs;
+        }
+      } else {
+        miss++; result([pick.dataset.id], false);
+        b.classList.add("shake"); setTimeout(() => b.classList.remove("shake"), 400);
+        document.getElementById("pmsg").textContent = "Erros: " + miss;
+      }
+    });
+  }
+  function gameOrder() {
+    const start = Math.floor(Math.random() * (STATIONS.length - 5));
+    const seq = STATIONS.slice(start, start + 6);
+    let pos = 0, miss = 0;
+    $app.innerHTML = header("🧭", "Ordem da jornada", "Toque nas etapas na ordem em que acontecem num contrato de TIC.", ["#/jogos", "Joguinhos"]) + `
+      <div class="card order"><ol class="order-done" id="od"></ol><div class="order-pool">${shuffle(seq).map((x) => `<button class="pair" data-id="${x.id}">${x.icon} ${esc(x.name)}</button>`).join("")}</div><p class="muted center" id="omsg"></p></div>`;
+    $app.querySelectorAll(".order-pool .pair").forEach((b) => b.onclick = () => {
+      const want = seq[pos];
+      if (b.dataset.id === want.id) {
+        b.remove(); pos++;
+        document.getElementById("od").insertAdjacentHTML("beforeend", `<li>${want.icon} ${esc(want.name)} <small>${esc(want.doc)}</small></li>`);
+        document.getElementById("omsg").textContent = "";
+        if (pos === seq.length) {
+          const prev = S.games.ordem; S.games.ordem = prev == null ? miss : Math.min(prev, miss); save();
+          const cs = [...new Set(seq.flatMap((x) => x.concepts))];
+          seen(cs, "game"); award(Math.max(10, 30 - miss * 5), cs, "ordem da jornada");
+          document.getElementById("omsg").innerHTML = `<strong>Jornada completa com ${miss} erro(s).</strong> <button class="link-btn" id="again">Jogar de novo</button>`;
+          document.getElementById("again").onclick = gameOrder;
+        }
+      } else {
+        miss++;
+        b.classList.add("shake"); setTimeout(() => b.classList.remove("shake"), 400);
+        const tried = seq.find((x) => x.id === b.dataset.id);
+        document.getElementById("omsg").textContent = `Ainda não. Antes de “${tried.name}” vem outra etapa. Dica: o que precisa existir antes?`;
+      }
+    });
+  }
+
+
+  /* ---------------- SIMULADO FINAL ---------------- */
+  const stationOf = (cid) => STATIONS.find((st) => st.concepts.includes(cid));
+  function exams() {
+    const hist = S.exams.history.slice(-5).reverse();
+    $app.innerHTML = header("🏁", "Simulado final", `5 versões com 20 questões cada. Para passar: ${EXAM_PASS}% ou mais. Você pode parar no meio e continuar depois; as respostas ficam salvas.`) + `
+      <div class="exam-grid">${EXAMS.map((e, i) => { const r = S.exams.runs[e.id] || {}; const inProg = r.current && !r.current.done;
+        const ans = inProg ? Object.keys(r.current.answers).length : 0;
+        return `<a class="exam-tile ${r.best >= EXAM_PASS ? "passed" : ""}" href="#/prova/${e.id}">
+          <span class="et-n">${i + 1}</span>
+          <strong>${esc(e.title)}</strong>
+          <small>${inProg ? `Em andamento: ${ans}/20 respondidas` : r.best != null ? `Melhor nota: ${r.best}% · ${r.tries} tentativa(s)` : "Ainda não feita"}</small>
+          <em>${r.best >= EXAM_PASS ? "✓ Aprovada" : inProg ? "Continuar →" : r.best != null ? "Refazer →" : "Começar →"}</em>
+        </a>`; }).join("")}</div>
+      ${hist.length ? `<section class="card"><h2>Últimas tentativas</h2><ul class="hist">${hist.map((h) => `<li><span>${esc(EXAMS.find((e) => e.id === h.v).title)}</span><strong class="${h.pct >= EXAM_PASS ? "ok" : "no"}">${h.pct}%</strong><small>${new Date(h.at).toLocaleDateString("pt-BR")}</small></li>`).join("")}</ul></section>` : ""}
+      <p class="note">Dica: faça uma versão, leia a correção com calma, revise os conceitos indicados e só depois tente a próxima. Errar aqui é o que faz acertar lá.</p>`;
+  }
+  function exam(v) {
+    const E = EXAMS.find((e) => e.id === v);
+    if (!E) return exams();
+    const R = (S.exams.runs[v] = S.exams.runs[v] || { tries: 0, best: null });
+    if (!R.current || R.current.done) {
+      R.current = { idx: 0, answers: {}, order: E.questions.map(() => shuffle([0, 1, 2, 3])), started: Date.now() };
+      save();
+    }
+    const cur = R.current;
+    const draw = () => {
+      const q = E.questions[cur.idx], ord = cur.order[cur.idx], picked = cur.answers[cur.idx];
+      const answered = Object.keys(cur.answers).length;
+      $app.innerHTML = header("🏁", E.title, "", ["#/prova", "Simulado"]) + `
+        <div class="exam-top"><div class="bar big"><i style="width:${(answered / 20) * 100}%"></i></div><span>${answered}/20 respondidas</span></div>
+        <div class="exam-dots">${E.questions.map((_, i) => `<button class="ed ${cur.answers[i] != null ? "on" : ""} ${i === cur.idx ? "cur" : ""}" data-go="${i}" aria-label="Questão ${i + 1}">${i + 1}</button>`).join("")}</div>
+        <section class="card exam-q">
+          <p class="eyebrow">Questão ${cur.idx + 1} de 20</p>
+          <h2>${esc(q[1])}</h2>
+          <div class="options">${ord.map((k) => `<button class="option ${picked === k ? "picked" : ""}" data-k="${k}">${esc(q[2][k])}</button>`).join("")}</div>
+          <div class="row gap exam-nav">
+            <button class="btn ghost" id="prevQ" ${cur.idx === 0 ? "disabled" : ""}>← Anterior</button>
+            ${cur.idx < 19 ? `<button class="btn" id="nextQ">Próxima →</button>` : ""}
+            <button class="btn ${answered === 20 ? "" : "ghost"}" id="submitX">Entregar simulado</button>
+          </div>
+          <p class="muted small" id="xmsg">A correção comentada aparece quando você entregar.</p>
+        </section>`;
+      $app.querySelectorAll("[data-k]").forEach((b) => b.onclick = () => {
+        cur.answers[cur.idx] = +b.dataset.k; save();
+        $app.querySelectorAll("[data-k]").forEach((x) => x.classList.toggle("picked", x === b));
+        setTimeout(() => { if (cur.idx < 19) { cur.idx++; save(); draw(); } else draw(); }, 260);
+      });
+      $app.querySelectorAll("[data-go]").forEach((b) => b.onclick = () => { cur.idx = +b.dataset.go; save(); draw(); });
+      document.getElementById("prevQ").onclick = () => { cur.idx--; save(); draw(); };
+      const nx = document.getElementById("nextQ"); if (nx) nx.onclick = () => { cur.idx++; save(); draw(); };
+      document.getElementById("submitX").onclick = (e) => {
+        const missing = 20 - Object.keys(cur.answers).length;
+        if (missing && !e.target.dataset.armed) { e.target.dataset.armed = "1"; e.target.textContent = `Faltam ${missing}. Toque de novo para entregar assim mesmo`; return; }
+        grade(v);
+      };
+    };
+    draw();
+  }
+  function grade(v) {
+    const E = EXAMS.find((e) => e.id === v), R = S.exams.runs[v], cur = R.current;
+    let right = 0;
+    const wrong = [];
+    E.questions.forEach((q, i) => {
+      const ok = cur.answers[i] === 0;
+      if (ok) right++; else wrong.push(i);
+      result([q[0]], ok);
+      seen([q[0]], "iv");
+    });
+    const pct = Math.round((right / E.questions.length) * 100);
+    cur.done = true; cur.pct = pct; cur.wrong = wrong; cur.finished = Date.now();
+    R.tries = (R.tries || 0) + 1;
+    const first = R.best == null || pct > R.best;
+    R.best = Math.max(R.best || 0, pct);
+    R.last = { answers: cur.answers, pct, wrong, at: cur.finished };
+    S.exams.best = Math.max(S.exams.best || 0, pct);
+    S.exams.history.push({ v, pct, at: cur.finished });
+    save();
+    award(right * 5 + (pct >= EXAM_PASS && first ? 100 : 0), [...new Set(E.questions.map((q) => q[0]))], "simulado");
+    go(`#/prova/${v}/resultado`);
+  }
+  function examResult(v) {
+    const E = EXAMS.find((e) => e.id === v), R = (S.exams.runs[v] || {});
+    if (!E || !R.last) return exams();
+    const L = R.last, passed = L.pct >= EXAM_PASS;
+    const byConcept = {};
+    L.wrong.forEach((i) => { const c = E.questions[i][0]; byConcept[c] = (byConcept[c] || 0) + 1; });
+    const study = Object.entries(byConcept).sort((a, b) => b[1] - a[1]);
+    const nextExam = EXAMS[(EXAMS.findIndex((e) => e.id === v) + 1) % EXAMS.length];
+    $app.innerHTML = header("🏁", "Resultado · " + E.title, "", ["#/prova", "Simulado"]) + `
+      <section class="card result-hero ${passed ? "pass" : "fail"}">
+        ${avatar(passed ? "vitoria" : "fim", "result-av big")}
+        <div>
+          <p class="eyebrow">${passed ? "Aprovada nesta versão" : "Ainda não. E tudo bem: é treino"}</p>
+          <h2 class="score-big">${L.pct}%</h2>
+          <p>${20 - L.wrong.length} de 20 corretas · mínimo para passar: ${EXAM_PASS}%</p>
+          <div class="row gap"><a class="btn" href="#/prova/${v}">Refazer esta versão</a><a class="btn ghost" href="#/prova/${nextExam.id}">${esc(nextExam.title)} →</a></div>
+        </div>
+      </section>
+      ${study.length ? `<section class="card"><h2>O que estudar antes da próxima</h2><p class="muted">Ordenado pelos conceitos em que você mais errou. Cada um tem leitura, flashcards e vídeos.</p>
+        <div class="study-list">${study.map(([c, n]) => { const st = stationOf(c); return `
+          <div class="study-item">
+            <div><strong>${esc(CONCEPTS[c].name)}</strong><small>${n} erro(s) · ${esc(CONCEPTS[c].short)}</small></div>
+            <div class="study-actions">
+              ${st ? `<a class="pill" href="#/leitura/${st.id}">📖 Ler</a>` : ""}
+              <a class="pill" href="#/revisao/${c}">🃏 Flashcards</a>
+              <button class="pill" data-concept="${c}">💡 Resumo</button>
+              ${VIDEOS[c] ? `<a class="pill" href="${ytUrl(VIDEOS[c][0])}" target="_blank" rel="noopener">▶ Vídeo</a>` : ""}
+            </div>
+          </div>`; }).join("")}</div></section>` : `<section class="card center"><h2>Nenhum erro. 🌻</h2><p class="muted">Agora tente outra versão para confirmar que o raciocínio está firme.</p></section>`}
+      <section class="card"><h2>Correção comentada</h2>
+        <div class="review-list">${E.questions.map((q, i) => { const a = L.answers[i]; const ok = a === 0; return `
+          <details class="rv ${ok ? "ok" : "no"}" ${ok ? "" : "open"}>
+            <summary><span class="rv-n">${i + 1}</span><span class="rv-q">${esc(q[1])}</span><span class="rv-s">${ok ? "✓" : "✗"}</span></summary>
+            ${ok ? "" : `<p class="rv-yours"><span>Sua resposta</span>${a == null ? "Não respondida" : esc(q[2][a])}</p>`}
+            <p class="rv-right"><span>Resposta certa</span>${esc(q[2][0])}</p>
+            <p class="rv-why"><span>Por quê</span>${esc(q[3])}</p>
+            ${ok ? "" : `<button class="link-btn" data-concept="${q[0]}">Revisar: ${esc(CONCEPTS[q[0]].name)} →</button>`}
+          </details>`; }).join("")}</div>
+      </section>`;
+  }
+
+
+  /* ---------------- parallax ---------------- */
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let parTick = false;
+  function parallax() {
+    parTick = false;
+    const y = window.scrollY || 0;
+    document.querySelectorAll("[data-depth]").forEach((el) => { el.style.transform = `translate3d(0, ${(y * parseFloat(el.dataset.depth)).toFixed(1)}px, 0)`; });
+  }
+  if (!reduceMotion) window.addEventListener("scroll", () => { if (!parTick) { parTick = true; requestAnimationFrame(parallax); } }, { passive: true });
 
   /* ---------------- start ---------------- */
   router();
