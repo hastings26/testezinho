@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const { SKILLS, LEVELS, CONCEPTS, STATIONS, FLIPS, EPISODES, CAST, CASES, PEOPLE, TIC, INTERVIEW, AVATARS, AVATAR_FOR, VIDEOS, ytUrl, EXAMS, EXAM_PASS } = window.MM;
+  const { SKILLS, LEVELS, CONCEPTS, STATIONS, FLIPS, EPISODES, CAST, CASES, PEOPLE, TIC, INTERVIEW, AVATARS, AVATAR_FOR, VIDEOS, ytUrl, EXAMS, EXAM_PASS, LETTER } = window.MM;
   const $app = document.getElementById("app");
   const STORE_KEY = "milene-contract-mission-v1";
 
@@ -292,6 +292,7 @@
     [/^#\/prova\/(v\d)\/resultado$/, (m) => examResult(m[1])],
     [/^#\/prova\/(v\d)$/, (m) => exam(m[1])],
     [/^#\/prova$/, exams],
+    [/^#\/certificado$/, certificate],
     [/^#\/revisao\/([\w-]+)$/, (m) => review(m[1])],
     [/^#\/revisao$/, () => review()]
   ];
@@ -422,6 +423,12 @@
         <a class="stat" href="#/prova"><strong>${S.exams.best != null ? S.exams.best + "%" : "—"}</strong><small>melhor simulado</small></a>
       </section>
 
+      ${certReady() ? `<a class="card cert-banner" href="#/certificado">${avatar("vitoria", "cb-av")}<div><p class="eyebrow">Missão cumprida</p><h2>Seu certificado está pronto 🎓</h2><p>Você passou nas 5 versões do simulado final. Toque para ver.</p></div></a>` : ""}
+      <button class="card letter-card" id="openLetter" type="button">
+        <span class="envelope" aria-hidden="true">💌</span>
+        <span><strong>${esc(LETTER.title)}</strong><small>Do ${esc(LETTER.from)}, com carinho. Toque para abrir.</small></span>
+      </button>
+
       <section class="card journey-card">
         <div class="section-h"><h2>Sua jornada</h2><a href="#/missao" class="link">Ver o mapa completo →</a></div>
         <div class="journey-strip">${STATIONS.map((st, i) => `
@@ -468,6 +475,8 @@
 
       <p class="disclaimer">IA é só para a preparação: o PSI 1126/2026 proíbe o uso de IA ou ferramentas externas de resposta durante as entrevistas avaliativas. As referências legais servem para estudo; confirme sempre no edital e no regulamento interno de licitações e contratos dos Correios.
       <button class="link-btn" id="resetBtn">Zerar progresso</button></p>`;
+    document.getElementById("openLetter").onclick = openLetter;
+    if (!S.letterSeen) setTimeout(() => { if (route === "#/" || route === "") { S.letterSeen = true; save(); openLetter(); } }, 900);
     document.getElementById("resetBtn").onclick = () => {
       const b = document.getElementById("resetBtn");
       if (b.dataset.armed) { S = blank(); save(); router(); toast("Progresso zerado."); return; }
@@ -480,6 +489,10 @@
   /* ---------------- MINHA MISSÃO ---------------- */
   function missao() {
     $app.innerHTML = header("🗺️", "Minha Missão", "O ciclo de vida de uma contratação de TIC, do problema ao encerramento. Toque numa estação.") + `
+      <section class="grid-2">
+        <div class="card role"><h2>📝 Bloco 1 · Instrução de contratações de TIC</h2><p>Viabilidade, ETP, Termo de Referência, especificações técnicas, estimativa de custo, planejamento, critérios de medição, níveis mínimos de serviço, análise de riscos, apoio à licitação ou contratação direta, articulação com áreas técnica, jurídica, orçamentária e financeira.</p></div>
+        <div class="card role"><h2>📋 Bloco 2 · Gestão operacional de contratos de TIC</h2><p>Vigência, prazos, prorrogações, aditivos, alterações de valor e escopo, execução orçamentária (empenho, liquidação, pagamento), rastreabilidade documental, conformidade, apoio aos fiscais e gestão de fornecedores. Temas do edital: WMS, TMS, Cloud, APIs, projetos NDB e iniciativas ADM.</p></div>
+      </section>
       <section class="card flipline">
         <div class="persp"><small>Hoje</small><strong>ÓRGÃO PÚBLICO</strong><span>↓ contrata</span><strong class="hl">CORREIOS prestam o serviço</strong></div>
         <div class="persp-arrow">⇄</div>
@@ -572,7 +585,25 @@
       document.getElementById("epChecks").classList.remove("hidden");
       if (!S.done["ep:" + ep.id]) { S.done["ep:" + ep.id] = 1; seen(ep.concepts, "pod"); award(30, ep.concepts, "episódio"); }
     };
-    const rec = audioFailed[ep.id] ? null : (window.MM.AUDIO || {})[ep.id];
+    const rawRec = audioFailed[ep.id] ? null : (window.MM.AUDIO || {})[ep.id];
+    if (rawRec && rawRec.sync === false) {
+      /* Áudio livre (conversa gerada a partir do roteiro): player próprio, sem sincronizar falas. */
+      const box = document.createElement("section");
+      box.className = "card audio-free";
+      box.innerHTML = `<div class="af-h"><span class="af-ic">🎙️</span><div><strong>Versão em áudio${rawRec.title ? ": " + esc(rawRec.title) : ""}</strong><small>Conversa gravada a partir deste roteiro. Se algum detalhe divergir, vale o texto abaixo.</small></div></div><audio controls preload="metadata" src="${rawRec.src}"></audio>`;
+      $app.querySelector(".player-bar").before(box);
+      const au = box.querySelector("audio");
+      currentAudio = au;
+      au.playbackRate = S.rate;
+      au.addEventListener("loadedmetadata", () => { const pos = S.audioPos[ep.id]; if (pos && pos < au.duration - 5) au.currentTime = pos; });
+      let ls = 0;
+      au.addEventListener("timeupdate", () => { if (Math.abs(au.currentTime - ls) > 4) { ls = au.currentTime; S.audioPos[ep.id] = au.currentTime; save(); } });
+      au.addEventListener("ended", () => { delete S.audioPos[ep.id]; save(); finish(); });
+      au.addEventListener("error", () => box.remove());
+      document.getElementById("rate").addEventListener("change", () => { au.playbackRate = S.rate; });
+      const pb = $app.querySelector(".player-bar .btn"); if (pb) pb.textContent = "▶ Ouvir o roteiro";
+    }
+    const rec = rawRec && rawRec.sync !== false ? rawRec : null;
     if (rec) {
       /* Áudio gravado (Gemini TTS): um MP3 por episódio + início de cada fala. */
       const audio = (currentAudio = new Audio(rec.src));
@@ -605,7 +636,7 @@
       /* Sem gravação: voz do navegador, fala por fala. */
       let playing = false, at = S.audioPos["line:" + ep.id] || 0;
       if (at) btn.textContent = "▶ Continuar de onde parou";
-      const go = () => { playing = true; btn.textContent = "⏸ Pausar"; Speech.play(ep.lines, at, (i) => { at = i; hl(i); S.audioPos["line:" + ep.id] = i; save(); }, () => { playing = false; at = 0; delete S.audioPos["line:" + ep.id]; save(); btn.textContent = "▶ Ouvir de novo"; hl(-1); finish(); }); };
+      const go = () => { if (currentAudio && currentAudio.pause) currentAudio.pause(); playing = true; btn.textContent = "⏸ Pausar"; Speech.play(ep.lines, at, (i) => { at = i; hl(i); S.audioPos["line:" + ep.id] = i; save(); }, () => { playing = false; at = 0; delete S.audioPos["line:" + ep.id]; save(); btn.textContent = "▶ Ouvir de novo"; hl(-1); finish(); }); };
       btn.onclick = () => { if (playing) { Speech.stop(); playing = false; btn.textContent = "▶ Continuar"; return; } go(); };
       $app.querySelectorAll(".line").forEach((l) => l.onclick = () => { if (!Speech.ok) return; at = +l.dataset.line; go(); });
     }
@@ -1039,11 +1070,52 @@
   }
 
 
+
+  /* ---------------- recado & certificado ---------------- */
+  const letterHTML = () => `<div class="letter">${LETTER.paragraphs.map((p, i) => `<p class="${i === 0 ? "salute" : ""}">${esc(p)}</p>`).join("")}<p class="sign">${esc(LETTER.sign)}<br /><span class="signature">${esc(LETTER.from)}</span></p></div>`;
+  function openLetter() { openModal(`<div class="letter-wrap">${avatar("fim", "letter-av")}${letterHTML()}</div>`); }
+  const passedCount = () => EXAMS.filter((e) => (S.exams.runs[e.id] || {}).best >= EXAM_PASS).length;
+  const certReady = () => passedCount() === EXAMS.length;
+  function certificate() {
+    const n = passedCount();
+    if (!certReady()) {
+      $app.innerHTML = header("🎓", "Certificado", "O certificado é liberado quando você passar nas 5 versões do simulado final.", ["#/prova", "Simulado"]) + `
+        <section class="card center">${avatar("pensando", "result-av")}<h2>${n} de ${EXAMS.length} versões aprovadas</h2>
+          <div class="bar big cert-progress"><i style="width:${(n / EXAMS.length) * 100}%"></i></div>
+          <p class="muted">Falta pouco. Cada versão aprovada é um passo a mais.</p><a class="btn" href="#/prova">Ir para o simulado</a></section>`;
+      return;
+    }
+    const avg = Math.round(EXAMS.reduce((a, e) => a + S.exams.runs[e.id].best, 0) / EXAMS.length);
+    if (!S.certAt) { S.certAt = Date.now(); save(); }
+    const date = new Date(S.certAt).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" });
+    $app.innerHTML = header("🎓", "Certificado", "Você chegou lá. Este é o seu.", ["#/prova", "Simulado"]) + `
+      <section class="certificate" id="cert">
+        <div class="cert-inner">
+          <p class="cert-eyebrow">Certificado de conclusão</p>
+          <p class="cert-small">Certificamos que</p>
+          <h2 class="cert-name">Milene Santos de Lucena</h2>
+          <p class="cert-text">concluiu a preparação <strong>Contract Mission</strong> para Analista de Contratos de TIC (PSI 1126/2026), aprovada nas 5 versões do simulado final com média de <strong>${avg}%</strong>, cobrindo todo o ciclo de vida das contratações de TIC: da necessidade ao encerramento.</p>
+          <div class="cert-skills">${Object.keys(SKILLS).map((k) => `<span>${SKILLS[k].icon} ${SKILLS[k].name}</span>`).join("")}</div>
+          <div class="cert-foot">
+            <div><span class="signature">${esc(LETTER.from)}</span><small>com muito orgulho</small></div>
+            <div class="cert-seal" aria-hidden="true">🌻</div>
+            <div><strong>${esc(date)}</strong><small>data de conclusão</small></div>
+          </div>
+        </div>
+      </section>
+      <div class="row gap center cert-actions"><button class="btn" id="printCert">Imprimir ou salvar em PDF</button><button class="btn ghost" id="openLetter2">💌 Ler o recado</button></div>
+      <section class="card">${letterHTML()}</section>`;
+    document.getElementById("printCert").onclick = () => { try { window.print(); } catch (e) { toast("Use o menu do navegador para imprimir."); } };
+    document.getElementById("openLetter2").onclick = openLetter;
+    if (!S.certCelebrated) { S.certCelebrated = true; save(); toast("🎓 Parabéns, Milene! Certificado liberado.", "level"); }
+  }
+
   /* ---------------- SIMULADO FINAL ---------------- */
   const stationOf = (cid) => STATIONS.find((st) => st.concepts.includes(cid));
   function exams() {
     const hist = S.exams.history.slice(-5).reverse();
     $app.innerHTML = header("🏁", "Simulado final", `5 versões com 20 questões cada. Para passar: ${EXAM_PASS}% ou mais. Você pode parar no meio e continuar depois; as respostas ficam salvas.`) + `
+      <a class="card cert-line" href="#/certificado"><span>🎓</span><div><strong>Certificado: ${passedCount()} de ${EXAMS.length} versões aprovadas</strong><small>${certReady() ? "Liberado! Toque para ver." : "Passe nas 5 versões para liberar o certificado."}</small></div></a>
       <div class="exam-grid">${EXAMS.map((e, i) => { const r = S.exams.runs[e.id] || {}; const inProg = r.current && !r.current.done;
         const ans = inProg ? Object.keys(r.current.answers).length : 0;
         return `<a class="exam-tile ${r.best >= EXAM_PASS ? "passed" : ""}" href="#/prova/${e.id}">
@@ -1134,7 +1206,8 @@
           <p class="eyebrow">${passed ? "Aprovada nesta versão" : "Ainda não. E tudo bem: é treino"}</p>
           <h2 class="score-big">${L.pct}%</h2>
           <p>${20 - L.wrong.length} de 20 corretas · mínimo para passar: ${EXAM_PASS}%</p>
-          <div class="row gap"><a class="btn" href="#/prova/${v}">Refazer esta versão</a><a class="btn ghost" href="#/prova/${nextExam.id}">${esc(nextExam.title)} →</a></div>
+          ${certReady() ? `<p><a class="btn" href="#/certificado">🎓 Ver meu certificado</a></p>` : `<p class="muted">Certificado: ${passedCount()} de ${EXAMS.length} versões aprovadas.</p>`}
+          <div class="row gap"><a class="btn ${certReady() ? "ghost" : ""}" href="#/prova/${v}">Refazer esta versão</a><a class="btn ghost" href="#/prova/${nextExam.id}">${esc(nextExam.title)} →</a></div>
         </div>
       </section>
       ${study.length ? `<section class="card"><h2>O que estudar antes da próxima</h2><p class="muted">Ordenado pelos conceitos em que você mais errou. Cada um tem leitura, flashcards e vídeos.</p>

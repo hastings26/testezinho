@@ -1,11 +1,10 @@
-/* Áudio do Contract Gossip. Coloque os arquivos ep1.mp3 … ep6.mp3 nesta pasta (audio/).
-   Se um arquivo ainda não existir, o app usa a voz do navegador para aquele episódio. */
+/* Áudio do Contract Gossip.
+   sync: false = conversa gravada a partir do roteiro (player próprio, sem destacar as falas).
+   Sem entrada aqui, o episódio usa a voz do navegador para ler o roteiro. */
 window.MM = window.MM || {};
 MM.AUDIO = {
-  ep1: { src: "audio/ep1.mp3" },
-  ep2: { src: "audio/ep2.mp3" },
-  ep3: { src: "audio/ep3.mp3" },
-  ep4: { src: "audio/ep4.mp3" },
-  ep5: { src: "audio/ep5.mp3" },
-  ep6: { src: "audio/ep6.mp3" }
+  ep1: { src: "audio/ep1.mp3", sync: false, title: "Por que sua empresa compra software errado" },
+  ep2: { src: "audio/ep2.mp3", sync: false, title: "A farsa do relatório de 100% online" },
+  ep3: { src: "audio/ep3.mp3", sync: false, title: "Apostila ou termo aditivo nas estatais" },
+  ep6: { src: "audio/ep6.mp3", sync: false, title: "Por que o Financeiro trava os pagamentos" }
 };

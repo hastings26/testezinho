@@ -47,3 +47,16 @@ MM.VIDEOS = {
   metricas: ["pontos de função explicado", "UST unidade de serviço técnico contratos de TI"]
 };
 MM.ytUrl = (q) => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+
+/* Recado do Alex (aparece na tela inicial e no certificado). */
+MM.LETTER = {
+  from: "Alex",
+  title: "Um recado pra você",
+  paragraphs: [
+    "Milene,",
+    "Antes de qualquer prova, eu quero que você saiba de uma coisa: eu tenho muito orgulho de você. Orgulho da profissional que você se tornou, de tudo o que construiu com esforço, cuidado e coragem, e da mulher incrível que você é todos os dias.",
+    "Este app é só um caminho. O conhecimento você já tem; o resto é organizar, praticar e confiar em você. Vá no seu ritmo, erre sem medo e volte quantas vezes quiser.",
+    "Onde quer que essa seleção te leve, você já chegou muito longe. E eu vou estar aqui, torcendo e comemorando cada passo com você."
+  ],
+  sign: "Com todo o meu carinho e orgulho,"
+};
