@@ -48,6 +48,9 @@ MM.VIDEOS = {
 };
 MM.ytUrl = (q) => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
 
+/* Data da entrevista (AAAA-MM-DD). Se ficar null, ela mesma define na tela inicial. */
+MM.EXAM_DATE = null;
+
 /* Recado do Alex (aparece na tela inicial e no certificado). */
 MM.LETTER = {
   from: "Alex",

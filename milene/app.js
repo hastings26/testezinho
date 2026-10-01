@@ -21,7 +21,7 @@
   const MODULES = [
     { id: "missao", route: "#/missao", icon: "🗺️", name: "Minha Missão",        desc: "O que o cargo faz, estação por estação." },
     { id: "leitura", route: "#/leitura", icon: "📖", name: "Para ler",          desc: "Textos curtos e vídeos de apoio, no seu ritmo." },
-    { id: "gossip", route: "#/gossip", icon: "🎧", name: "Contract Gossip",     desc: "Rádio Corredor: fofoca de firma que ensina." },
+    { id: "gossip", route: "#/gossip", icon: "🎧", name: "Podcast Contrato Gossip", desc: "6 episódios para ouvir no trajeto, com treino depois." },
     { id: "jogos",  route: "#/jogos",  icon: "🎲", name: "Joguinhos",           desc: "Teste rápido, sem compromisso. Jogue quando quiser." },
     { id: "flip",   route: "#/flip",   icon: "🔄", name: "Vire o Contrato",     desc: "Do lado de quem presta para o lado de quem contrata." },
     { id: "casos",  route: "#/casos",  icon: "💬", name: "Contract Cases",      desc: "Decisões reais, consequências reais." },
@@ -38,6 +38,33 @@
   const shuffle = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
+  /* ---------------- sons (Web Audio, sem arquivos) ---------------- */
+  const Sfx = {
+    ctx: null,
+    on() { return S.sound !== false; },
+    tone(freq, start, dur, type, vol) {
+      const c = this.ctx, o = c.createOscillator(), g = c.createGain();
+      o.type = type || "sine"; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, c.currentTime + start);
+      g.gain.exponentialRampToValueAtTime(vol || 0.12, c.currentTime + start + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + start + dur);
+      o.connect(g).connect(c.destination); o.start(c.currentTime + start); o.stop(c.currentTime + start + dur + 0.05);
+    },
+    play(kind) {
+      if (!this.on()) return;
+      try {
+        this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)();
+        if (this.ctx.state === "suspended") this.ctx.resume();
+        const t = (f, s, d, ty, v) => this.tone(f, s, d, ty, v);
+        if (kind === "ok") { t(660, 0, 0.12, "sine"); t(990, 0.09, 0.22, "sine"); }
+        else if (kind === "no") { t(330, 0, 0.18, "triangle", 0.09); t(262, 0.12, 0.26, "triangle", 0.08); }
+        else if (kind === "tap") { t(880, 0, 0.06, "sine", 0.05); }
+        else if (kind === "win") { [523, 659, 784, 1047].forEach((f, i) => t(f, i * 0.1, 0.3, "sine", 0.11)); }
+        else if (kind === "level") { [392, 523, 659, 784, 1047, 1319].forEach((f, i) => t(f, i * 0.08, 0.35, "triangle", 0.1)); }
+      } catch (e) { /* áudio indisponível */ }
+    }
+  };
+
   /* ---------------- estado ---------------- */
   const blank = () => ({
     xp: 0,
@@ -51,12 +78,15 @@
     last: null,
     audioPos: {},
     games: {},
-    exams: { runs: {}, history: [], best: null }
+    exams: { runs: {}, history: [], best: null },
+    sound: true,
+    examDate: null
   });
   let S = blank();
   try { const raw = localStorage.getItem(STORE_KEY); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) { /* armazenamento indisponível */ }
   if (!S.exams || !S.exams.runs) S.exams = { runs: {}, history: [], best: null };
   S.games = S.games || {}; S.audioPos = S.audioPos || {};
+  if (!S.examDate && window.MM.EXAM_DATE) S.examDate = window.MM.EXAM_DATE;
   const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { /* ignora */ } };
 
   function touchStreak() {
@@ -81,7 +111,7 @@
     skills.forEach((k) => (S.skills[k] += share));
     save();
     toast(`+${xp} XP${skills.length ? " · " + skills.map((k) => SKILLS[k].icon + " " + SKILLS[k].name).join(" ") : ""}${why ? " — " + why : ""}`);
-    if (level().i > before) setTimeout(() => toast(`🏆 Novo nível: ${level().title}`, "level"), 700);
+    if (level().i > before) setTimeout(() => { Sfx.play("level"); toast(`🏆 Novo nível: ${level().title}`, "level"); }, 700);
     renderNav();
   }
 
@@ -162,6 +192,8 @@
   }
 
   document.addEventListener("click", (e) => {
+    const snd = e.target.closest("[data-sound]");
+    if (snd) { S.sound = S.sound === false; save(); renderNav(); const hb = document.getElementById("homeSound"); if (hb) hb.textContent = S.sound ? "🔊" : "🔇"; if (S.sound) Sfx.play("ok"); toast(S.sound ? "Sons ligados" : "Sons desligados"); return; }
     const c = e.target.closest("[data-concept]");
     if (c) { e.preventDefault(); conceptModal(c.dataset.concept, c.dataset.fmt || null); return; }
     const say = e.target.closest("[data-say]");
@@ -181,6 +213,7 @@
     </div>`;
   }
   function feedbackHTML(fb, ok, extra) {
+    Sfx.play(ok ? "ok" : "no");
     if (ok) return `<div class="fb good">${avatar("acerto", "fb-av")}<div><strong>✅ Boa!</strong> ${esc(fb.melhor)}${extra || ""}</div></div>`;
     return `<div class="fb bad">${avatar("erro", "fb-av")}<div>
       <strong>Quase. Bora entender o raciocínio?</strong>
@@ -263,8 +296,9 @@
     const items = [{ route: "#/", icon: "🏠", name: "Início" }].concat(MODULES).concat([{ route: "#/revisao", icon: "🃏", name: "Revisão rápida" }]);
     document.getElementById("sideNav").innerHTML = items.map((m) =>
       `<a href="${m.route}" class="${(m.route === "#/" ? r === "#/" || r === "" : r.startsWith(m.route)) ? "active" : ""}"><span>${m.icon}</span>${esc(m.name)}</a>`).join("") +
+      `<button class="sound-toggle" data-sound type="button">${S.sound !== false ? "🔊 Sons ligados" : "🔇 Sons desligados"}</button>` +
       `<div class="side-xp"><div class="lvl">${esc(level().title)}</div><div class="bar"><i style="width:${level().pct}%"></i></div><small>${S.xp} XP · 🔥 ${S.streak.count} dia(s)</small></div>`;
-    const tabs = [["#/", "🏠", "Início"], ["#/missao", "🗺️", "Missão"], ["#/leitura", "📖", "Ler"], ["#/gossip", "🎧", "Ouvir"], ["#/jogos", "🎲", "Jogar"], ["#/fracos", "🎯", "Foco"]];
+    const tabs = [["#/", "🏠", "Início"], ["#/missao", "🗺️", "Missão"], ["#/leitura", "📖", "Ler"], ["#/gossip", "🎧", "Podcast"], ["#/jogos", "🎲", "Jogar"], ["#/fracos", "🎯", "Foco"]];
     document.getElementById("tabBar").innerHTML = tabs.map(([h, i, n]) =>
       `<a href="${h}" class="${(h === "#/" ? r === "#/" || r === "" : r.startsWith(h)) ? "active" : ""}"><span>${i}</span><small>${n}</small></a>`).join("");
   }
@@ -274,7 +308,9 @@
     [/^#\/missao\/([\w-]+)$/, (m) => station(m[1])],
     [/^#\/missao$/, missao],
     [/^#\/flip$/, flips],
+    [/^#\/gossip\/([\w-]+)\/treino$/, (m) => episodeTraining(m[1])],
     [/^#\/gossip\/([\w-]+)$/, (m) => episode(m[1])],
+    [/^#\/jogos\/pares\/([\w-]+)$/, (m) => gamePairs(m[1])],
     [/^#\/gossip$/, gossip],
     [/^#\/casos\/([\w-]+)$/, (m) => caseView(m[1])],
     [/^#\/casos$/, cases],
@@ -387,6 +423,15 @@
     return 0;
   }
 
+  const daysTo = (d) => { if (!d) return null; const a = new Date(today() + "T12:00:00"), b = new Date(d + "T12:00:00"); return Math.round((b - a) / 86400000); };
+  function countdownHTML() {
+    const n = daysTo(S.examDate);
+    if (n == null) return `<div class="countdown set"><span class="cd-ic">📅</span><div><strong>Quando é a sua entrevista?</strong><small>Coloque a data e eu conto os dias com você.</small></div><input type="date" id="examDate" aria-label="Data da entrevista" /></div>`;
+    const date = new Date(S.examDate + "T12:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
+    const msg = n > 1 ? `faltam <b>${n}</b> dias` : n === 1 ? "é <b>amanhã</b>!" : n === 0 ? "é <b>hoje</b>! Você está pronta. 🌻" : "já passou. Que orgulho de você!";
+    const daily = n > 0 ? Math.max(1, Math.ceil(Math.max(0, STATIONS.length - Object.keys(S.done).filter((k) => k.startsWith("st:")).length) / n)) : 0;
+    return `<div class="countdown"><div class="cd-num">${n > 0 ? n : n === 0 ? "🎯" : "🎓"}<small>${n > 1 ? "dias" : n === 1 ? "dia" : ""}</small></div><div><strong>Entrevista em ${esc(date)}: ${msg}</strong><small>${n > 0 ? `Ritmo sugerido: ${daily} etapa(s) da jornada por dia + 1 episódio do podcast.` : ""} <button class="link-btn" id="changeDate" type="button">Mudar data</button></small></div></div>`;
+  }
   function home() {
     const L = level();
     const nextStation = STATIONS.find((st) => !S.done["st:" + st.id]) || STATIONS[STATIONS.length - 1];
@@ -414,6 +459,14 @@
           </div>
         </div>
         <div class="hero-art" data-depth="-0.08">${avatar("home", "hero-av")}</div>
+      </section>
+
+      <section class="home-top-row">${countdownHTML()}<button class="sound-big" data-sound type="button" aria-label="Ligar ou desligar sons"><span id="homeSound">${S.sound !== false ? "🔊" : "🔇"}</span><small>Sons</small></button></section>
+
+      <section class="card podcast-strip">
+        <div class="section-h"><h2>🎧 Podcast Contrato Gossip</h2><a href="#/gossip" class="link">Todos os episódios →</a></div>
+        <p class="muted">Conversas de 16 a 27 minutos para ouvir no trajeto. Depois de cada uma, um treino rápido.</p>
+        <div class="pod-row">${EPISODES.map((e, i) => `<a class="pod-tile ${S.done["ep:" + e.id] ? "is-done" : ""}" href="#/gossip/${e.id}"><span class="pod-n">EP ${i + 1}</span><strong>${esc(e.title)}</strong><small>${S.done["ep:" + e.id] ? "✓ ouvido" : S.audioPos[e.id] ? "▶ continuar" : "▶ ouvir"}${S.games["ep:" + e.id] != null ? " · treino " + S.games["ep:" + e.id] + "/6" : ""}</small></a>`).join("")}</div>
       </section>
 
       <section class="stats-row">
@@ -476,6 +529,10 @@
       <p class="disclaimer">IA é só para a preparação: o PSI 1126/2026 proíbe o uso de IA ou ferramentas externas de resposta durante as entrevistas avaliativas. As referências legais servem para estudo; confirme sempre no edital e no regulamento interno de licitações e contratos dos Correios.
       <button class="link-btn" id="resetBtn">Zerar progresso</button></p>`;
     document.getElementById("openLetter").onclick = openLetter;
+    const dIn = document.getElementById("examDate");
+    if (dIn) dIn.onchange = () => { if (dIn.value) { S.examDate = dIn.value; save(); Sfx.play("ok"); home(); } };
+    const ch = document.getElementById("changeDate");
+    if (ch) ch.onclick = () => { S.examDate = null; save(); home(); };
     if (!S.letterSeen) setTimeout(() => { if (route === "#/" || route === "") { S.letterSeen = true; save(); openLetter(); } }, 900);
     document.getElementById("resetBtn").onclick = () => {
       const b = document.getElementById("resetBtn");
@@ -554,12 +611,13 @@
 
   /* ---------------- CONTRACT GOSSIP ---------------- */
   function gossip() {
-    $app.innerHTML = header("🎧", "Contract Gossip", "Rádio Corredor: episódios de 4–5 minutos. Personagens fictícios, conteúdo técnico de verdade. Ouça no trajeto ou leia como conversa.") +
+    $app.innerHTML = header("🎧", "Podcast Contrato Gossip", "Rádio Corredor: cada episódio tem uma conversa em áudio para ouvir no trajeto e um roteiro curto para ler. Depois, um treino rápido para fixar.") +
       `<div class="episodes">${EPISODES.map((e, i) => `
         <a class="card episode ${S.done["ep:" + e.id] ? "is-done" : ""}" href="#/gossip/${e.id}">
           <div class="ep-art">EP ${i + 1}</div>
           <div><h3>${esc(e.title)}</h3><p class="muted">${esc(e.teaser)}</p>
-          <small>⏱ ~${e.minutes} min · ${e.concepts.map((c) => esc(CONCEPTS[c].name)).join(" · ")}</small></div>
+          ${S.games["ep:" + e.id] != null ? `<small class="train-best">🎲 Treino: ${S.games["ep:" + e.id]}/6</small>` : ""}
+          <small>${(window.MM.AUDIO || {})[e.id] ? `🎙️ áudio de ${window.MM.AUDIO[e.id].minutes} min + roteiro de ~${e.minutes} min` : `⏱ ~${e.minutes} min`} · ${e.concepts.map((c) => esc(CONCEPTS[c].name)).join(" · ")}</small></div>
           ${S.done["ep:" + e.id] ? '<span class="badge">✓</span>' : ""}
         </a>`).join("")}</div>
       <p class="note">${Speech.ok ? "O áudio usa a voz em português do seu navegador/celular. Se soar robótico, instale a voz pt-BR do sistema — ou leia como chat." : "Seu navegador não tem síntese de voz: os episódios ficam em modo leitura."}</p>`;
@@ -569,7 +627,7 @@
     const ep = EPISODES.find((e) => e.id === id);
     if (!ep) return gossip();
     $app.innerHTML = `
-      ${header("🎧", ep.title, esc(ep.teaser), ["#/gossip", "Episódios"])}
+      ${header("🎧", ep.title, esc(ep.teaser), ["#/gossip", "Podcast"])}
       <div class="player-bar card">
         <button class="btn" id="playBtn" ${Speech.ok || (window.MM.AUDIO || {})[ep.id] ? "" : "disabled"}>▶ Ouvir</button>
         <label class="rate">Velocidade <select id="rate">${[0.85, 1, 1.15, 1.3].map((r) => `<option value="${r}" ${S.rate === r ? "selected" : ""}>${r}×</option>`).join("")}</select></label>
@@ -578,7 +636,9 @@
       <div class="transcript">${ep.lines.map(([who, text], i) => `<div class="line ${who}" data-line="${i}" style="--c:${CAST[who].color}"><b>${CAST[who].name}</b><p>${esc(text)}</p></div>`).join("")}</div>
       <div class="card"><button class="btn ghost" id="finishBtn">Terminei de ouvir/ler</button>
         <div id="epChecks" class="${S.done["ep:" + ep.id] ? "" : "hidden"}"><h3>O que ficou?</h3>${ep.checks.map((c, i) => quizHTML(c, `epq:${ep.id}:${i}`)).join("")}
-        <div class="chips">${ep.concepts.map(chip).join("")}</div></div></div>`;
+        <div class="chips">${ep.concepts.map(chip).join("")}</div></div></div>
+      ${trainCard(ep)}`;
+    $app.querySelector(".player-bar").insertAdjacentHTML("afterend", `<a class="train-hint" href="#/gossip/${ep.id}/treino">🎲 Depois de ouvir: treino com 6 perguntas sobre este episódio →</a>`);
     const btn = document.getElementById("playBtn");
     const hl = (i) => { $app.querySelectorAll(".line").forEach((l) => l.classList.toggle("now", +l.dataset.line === i)); const cur = $app.querySelector(`[data-line="${i}"]`); if (cur) cur.scrollIntoView({ block: "center", behavior: "smooth" }); };
     const finish = () => {
@@ -590,7 +650,7 @@
       /* Áudio livre (conversa gerada a partir do roteiro): player próprio, sem sincronizar falas. */
       const box = document.createElement("section");
       box.className = "card audio-free";
-      box.innerHTML = `<div class="af-h"><span class="af-ic">🎙️</span><div><strong>Versão em áudio${rawRec.title ? ": " + esc(rawRec.title) : ""}</strong><small>Conversa gravada a partir deste roteiro. Se algum detalhe divergir, vale o texto abaixo.</small></div></div><audio controls preload="metadata" src="${rawRec.src}"></audio>`;
+      box.innerHTML = `<div class="af-h"><span class="af-ic">🎙️</span><div><strong>Versão em áudio${rawRec.title ? ": " + esc(rawRec.title) : ""}</strong><small>Conversa gravada a partir deste roteiro. Se algum detalhe divergir, vale o texto abaixo.</small></div></div><audio controls preload="metadata" src="${rawRec.src}"></audio>${(window.MM.ERRATA || {})[ep.id] ? `<details class="errata"><summary>📝 Antes de ouvir: o que este áudio simplifica ou inventa</summary><ul>${window.MM.ERRATA[ep.id].map((x) => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}`;
       $app.querySelector(".player-bar").before(box);
       const au = box.querySelector("audio");
       currentAudio = au;
@@ -909,6 +969,7 @@
         seen([c.id], "card");
         result([c.id], g === 2);
         if (g === 2) good++;
+        Sfx.play(g === 2 ? "ok" : g === 1 ? "tap" : "no");
         k++; draw();
       };
     };
@@ -963,6 +1024,70 @@
     if (say) say.onclick = () => Speech.speakText([st.name, st.what, "O que a analista faz: " + st.analyst, "Você já faz isso: " + st.youAlready, "Atenção: " + st.risk].concat(st.concepts.map((c) => CONCEPTS[c].name + ". " + CONCEPTS[c].short + " " + CONCEPTS[c].points.join(" "))).join(" "));
   }
 
+
+  /* ---------------- treino pós-podcast ---------------- */
+  function trainCard(ep) {
+    const best = S.games["ep:" + ep.id];
+    return `<section class="card train-card">
+      ${avatar("jogos", "train-av")}
+      <div>
+        <p class="eyebrow">Treino pós-podcast</p>
+        <h2>Agora é jogar para fixar</h2>
+        <p class="muted">Ouviu ou leu? Fixe com perguntas sobre os temas do episódio. Cada erro vem com a explicação.${best != null ? ` Seu melhor: <strong>${best}/6</strong>.` : ""}</p>
+        <div class="row gap"><a class="btn" href="#/gossip/${ep.id}/treino">🎲 Treino do episódio (6 perguntas)</a><a class="btn ghost" href="#/jogos/pares/${ep.id}">🧩 Ligue os pares</a><a class="btn ghost" href="#/revisao/${ep.concepts[0]}">🃏 Flashcards</a></div>
+      </div>
+    </section>`;
+  }
+  function episodePool(ep) {
+    const has = (cs) => cs.some((c) => ep.concepts.includes(c));
+    const fromChecks = (c, cs) => ({ q: c.q, opts: c.options.map((o) => ({ t: o[0], ok: o[1] })), why: c.fb.melhor, concepts: cs });
+    const pool = [];
+    ep.checks.forEach((c) => pool.push(fromChecks(c, ep.concepts)));
+    STATIONS.forEach((st) => { if (has(st.concepts)) pool.push(fromChecks(st.check, st.concepts.filter((c) => ep.concepts.includes(c)))); });
+    FLIPS.forEach((f) => { if (has(f.concepts)) pool.push(fromChecks(f.check, f.concepts)); });
+    EXAMS.forEach((E) => E.questions.forEach((q) => { if (ep.concepts.includes(q[0])) pool.push({ q: q[1], opts: q[2].map((t, k) => ({ t, ok: k === 0 })), why: q[3], concepts: [q[0]] }); }));
+    const seenQ = new Set();
+    return shuffle(pool).filter((x) => (seenQ.has(x.q) ? false : seenQ.add(x.q)));
+  }
+  function episodeTraining(id) {
+    const ep = EPISODES.find((e) => e.id === id);
+    if (!ep) return gossip();
+    const qs = episodePool(ep).slice(0, 6);
+    const idx = EPISODES.indexOf(ep), next = EPISODES[idx + 1];
+    let i = 0, ok = 0;
+    const wrong = [];
+    $app.innerHTML = header("🎲", "Treino: " + ep.title, "6 perguntas sobre os temas deste episódio. Sem pressa: leia a explicação de cada uma.", ["#/gossip/" + ep.id, "Episódio"]) + `<section class="card" id="tr"></section>`;
+    const box = document.getElementById("tr");
+    const draw = () => {
+      const q = qs[i];
+      const opts = shuffle(q.opts);
+      box.innerHTML = `<div class="exam-top"><div class="bar big"><i style="width:${(i / qs.length) * 100}%"></i></div><span>${i + 1}/${qs.length}</span></div>
+        <p class="quiz-q">${esc(q.q)}</p><div class="options">${opts.map((o, k) => `<button class="option" data-k="${k}">${esc(o.t)}</button>`).join("")}</div><div class="quiz-fb"></div>`;
+      box.querySelectorAll("[data-k]").forEach((b) => b.onclick = () => {
+        const good = opts[+b.dataset.k].ok;
+        box.querySelectorAll("[data-k]").forEach((x) => { x.disabled = true; if (opts[+x.dataset.k].ok) x.classList.add("right"); });
+        if (!good) { b.classList.add("wrong"); wrong.push(q); } else ok++;
+        result(q.concepts, good);
+        const last = i === qs.length - 1;
+        box.querySelector(".quiz-fb").innerHTML = feedbackHTML({ melhor: q.why, faltou: good ? "" : "", risco: "" }, good) + `<button class="btn" id="trNext">${last ? "Ver resultado" : "Próxima →"}</button>`;
+        document.getElementById("trNext").onclick = () => { i++; last ? end() : draw(); };
+      });
+    };
+    const end = () => {
+      const prev = S.games["ep:" + ep.id];
+      S.games["ep:" + ep.id] = Math.max(prev || 0, ok); save();
+      seen(ep.concepts, "game");
+      award(ok * 5 + (prev == null ? 10 : 0), ep.concepts, "treino do podcast");
+      const weak = [...new Set(wrong.flatMap((q) => q.concepts))];
+      box.innerHTML = `<div class="center">${avatar(ok >= 5 ? "vitoria" : "pensando", "result-av")}<h2>${ok} de ${qs.length}</h2>
+        <p>${ok === qs.length ? "Perfeito! Esse episódio ficou. 🌻" : ok >= 4 ? "Muito bem! Revise rapidinho o que escapou." : "Bom começo. Releia o episódio e tente de novo: repetir é o que fixa."}</p>
+        ${weak.length ? `<p class="muted">Vale revisar:</p><div class="chips" style="justify-content:center">${weak.map(chip).join("")}</div>` : ""}
+        <div class="row gap center" style="margin-top:16px"><button class="btn" id="trAgain">Jogar de novo</button><a class="btn ghost" href="#/jogos/pares/${ep.id}">🧩 Ligue os pares</a>${next ? `<a class="btn ghost" href="#/gossip/${next.id}">Próximo episódio →</a>` : `<a class="btn ghost" href="#/prova">🏁 Simulado final</a>`}</div></div>`;
+      document.getElementById("trAgain").onclick = () => episodeTraining(id);
+    };
+    draw();
+  }
+
   /* ---------------- JOGUINHOS ---------------- */
   const allChecks = () => [].concat(
     STATIONS.map((x) => ({ ...x.check, concepts: x.concepts })),
@@ -995,6 +1120,7 @@
         const good = b.dataset.ok === "1";
         q.concepts.forEach((c) => touchedC.add(c));
         result(q.concepts, good);
+        Sfx.play(good ? "ok" : "no");
         if (good) { ok++; b.classList.add("right"); } else { b.classList.add("wrong"); document.querySelector('#fq [data-ok="1"]').classList.add("right"); document.getElementById("fw").textContent = q.fb.melhor; }
         document.getElementById("fs").textContent = ok + " acerto" + (ok === 1 ? "" : "s");
         setTimeout(() => { if (left > 0) { i++; draw(); } }, good ? 450 : 1800);
@@ -1014,8 +1140,10 @@
     clearInterval(arenaTimer);
     arenaTimer = setInterval(() => { left--; const t = document.getElementById("ft"); if (t) { t.textContent = left; t.classList.toggle("low", left <= 10); } if (left <= 0) end(); }, 1000);
   }
-  function gamePairs() {
-    const ids = shuffle(Object.keys(CONCEPTS)).slice(0, 5);
+  function gamePairs(epId) {
+    const ep = typeof epId === "string" ? EPISODES.find((e) => e.id === epId) : null;
+    const base = ep ? shuffle(ep.concepts) : [];
+    const ids = base.concat(shuffle(Object.keys(CONCEPTS).filter((c) => !base.includes(c)))).slice(0, 5);
     let pick = null, miss = 0, done = 0;
     $app.innerHTML = header("🧩", "Ligue os pares", "Toque num termo e depois na definição dele.", ["#/jogos", "Joguinhos"]) + `
       <div class="card pairs"><div class="pair-cols">
@@ -1027,15 +1155,15 @@
       if (!pick || b.disabled) return;
       if (b.dataset.id === pick.dataset.id) {
         [b, pick].forEach((x) => { x.disabled = true; x.classList.remove("sel"); x.classList.add("matched"); });
-        result([b.dataset.id], true); pick = null; done++;
+        result([b.dataset.id], true); pick = null; done++; Sfx.play(done === ids.length ? "win" : "ok");
         if (done === ids.length) {
           const prev = S.games.pares; S.games.pares = prev == null ? miss : Math.min(prev, miss); save();
           seen(ids, "game"); award(Math.max(10, 30 - miss * 5), ids, "ligue os pares");
           document.getElementById("pmsg").innerHTML = `<strong>Pronto! ${miss} erro(s).</strong> <button class="link-btn" id="again">Jogar de novo</button>`;
-          document.getElementById("again").onclick = gamePairs;
+          document.getElementById("again").onclick = () => gamePairs(epId);
         }
       } else {
-        miss++; result([pick.dataset.id], false);
+        miss++; result([pick.dataset.id], false); Sfx.play("no");
         b.classList.add("shake"); setTimeout(() => b.classList.remove("shake"), 400);
         document.getElementById("pmsg").textContent = "Erros: " + miss;
       }
@@ -1050,7 +1178,7 @@
     $app.querySelectorAll(".order-pool .pair").forEach((b) => b.onclick = () => {
       const want = seq[pos];
       if (b.dataset.id === want.id) {
-        b.remove(); pos++;
+        b.remove(); pos++; Sfx.play(pos === seq.length ? "win" : "ok");
         document.getElementById("od").insertAdjacentHTML("beforeend", `<li>${want.icon} ${esc(want.name)} <small>${esc(want.doc)}</small></li>`);
         document.getElementById("omsg").textContent = "";
         if (pos === seq.length) {
@@ -1061,7 +1189,7 @@
           document.getElementById("again").onclick = gameOrder;
         }
       } else {
-        miss++;
+        miss++; Sfx.play("no");
         b.classList.add("shake"); setTimeout(() => b.classList.remove("shake"), 400);
         const tried = seq.find((x) => x.id === b.dataset.id);
         document.getElementById("omsg").textContent = `Ainda não. Antes de “${tried.name}” vem outra etapa. Dica: o que precisa existir antes?`;
@@ -1107,7 +1235,7 @@
       <section class="card">${letterHTML()}</section>`;
     document.getElementById("printCert").onclick = () => { try { window.print(); } catch (e) { toast("Use o menu do navegador para imprimir."); } };
     document.getElementById("openLetter2").onclick = openLetter;
-    if (!S.certCelebrated) { S.certCelebrated = true; save(); toast("🎓 Parabéns, Milene! Certificado liberado.", "level"); }
+    if (!S.certCelebrated) { S.certCelebrated = true; save(); Sfx.play("level"); toast("🎓 Parabéns, Milene! Certificado liberado.", "level"); }
   }
 
   /* ---------------- SIMULADO FINAL ---------------- */
@@ -1154,7 +1282,7 @@
           <p class="muted small" id="xmsg">A correção comentada aparece quando você entregar.</p>
         </section>`;
       $app.querySelectorAll("[data-k]").forEach((b) => b.onclick = () => {
-        cur.answers[cur.idx] = +b.dataset.k; save();
+        cur.answers[cur.idx] = +b.dataset.k; save(); Sfx.play("tap");
         $app.querySelectorAll("[data-k]").forEach((x) => x.classList.toggle("picked", x === b));
         setTimeout(() => { if (cur.idx < 19) { cur.idx++; save(); draw(); } else draw(); }, 260);
       });
@@ -1189,12 +1317,14 @@
     S.exams.history.push({ v, pct, at: cur.finished });
     save();
     award(right * 5 + (pct >= EXAM_PASS && first ? 100 : 0), [...new Set(E.questions.map((q) => q[0]))], "simulado");
+    examResult.played = false;
     go(`#/prova/${v}/resultado`);
   }
   function examResult(v) {
     const E = EXAMS.find((e) => e.id === v), R = (S.exams.runs[v] || {});
     if (!E || !R.last) return exams();
     const L = R.last, passed = L.pct >= EXAM_PASS;
+    if (route.endsWith("/resultado") && !examResult.played) { examResult.played = true; setTimeout(() => Sfx.play(passed ? "win" : "tap"), 200); }
     const byConcept = {};
     L.wrong.forEach((i) => { const c = E.questions[i][0]; byConcept[c] = (byConcept[c] || 0) + 1; });
     const study = Object.entries(byConcept).sort((a, b) => b[1] - a[1]);
