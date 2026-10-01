@@ -650,7 +650,7 @@
       /* Áudio livre (conversa gerada a partir do roteiro): player próprio, sem sincronizar falas. */
       const box = document.createElement("section");
       box.className = "card audio-free";
-      box.innerHTML = `<div class="af-h"><span class="af-ic">🎙️</span><div><strong>Versão em áudio${rawRec.title ? ": " + esc(rawRec.title) : ""}</strong><small>Conversa gravada a partir deste roteiro. Se algum detalhe divergir, vale o texto abaixo.</small></div></div><audio controls preload="metadata" src="${rawRec.src}"></audio>${(window.MM.ERRATA || {})[ep.id] ? `<details class="errata"><summary>📝 Antes de ouvir: o que este áudio simplifica ou inventa</summary><ul>${window.MM.ERRATA[ep.id].map((x) => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}`;
+      box.innerHTML = `<div class="af-h"><span class="af-ic">🎙️</span><div><strong>Versão em áudio${rawRec.title ? ": " + esc(rawRec.title) : ""}</strong><small>Conversa gerada por IA a partir do roteiro e revisada. Leia as correções antes; se algo divergir, vale o texto do app.</small></div></div><audio controls preload="metadata" src="${rawRec.src}"></audio>${(window.MM.ERRATA || {})[ep.id] ? `<details class="errata"><summary>📝 Antes de ouvir: correções da professora (${window.MM.ERRATA[ep.id].length})</summary><ul>${window.MM.ERRATA[ep.id].map((x) => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}`;
       $app.querySelector(".player-bar").before(box);
       const au = box.querySelector("audio");
       currentAudio = au;
