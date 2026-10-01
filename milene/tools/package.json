@@ -1,0 +1,14 @@
+{
+  "name": "milene-podcast-tools",
+  "version": "1.0.0",
+  "description": "Gera o áudio do Contract Gossip com Gemini TTS",
+  "scripts": {
+    "podcasts": "node generate-podcasts.mjs",
+    "podcasts:mock": "node generate-podcasts.mjs --mock"
+  },
+  "dependencies": {
+    "@breezystack/lamejs": "^1.2.7"
+  },
+  "private": true,
+  "type": "module"
+}
