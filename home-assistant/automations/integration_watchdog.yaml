@@ -1,0 +1,133 @@
+# Integration watchdog
+#
+# Why this exists: on 2026-08-03 at 18:06 Home Assistant restarted and five
+# cloud integrations never came back. It went unnoticed for ten days, during
+# which the Ring arm/disarm automations were dead. Nothing alerted.
+#
+# Two automations:
+#   1. an anchor entity going unavailable for 15 minutes  -> alert
+#   2. a post-restart sweep 10 minutes after startup       -> alert
+#
+# Anchors are one or two representative entities per integration, so the
+# alert names the integration rather than spamming one message per entity.
+#
+# NOTE on the phone anchor: use `sensor.as_iphone_ssid`, NOT
+# `device_tracker.as_iphone`. When the companion app stops reporting, the
+# tracker does not go unavailable — it freezes on its last value ("home").
+# That frozen value is exactly what kept the presence automations from ever
+# firing, so watching the tracker's state would not have caught it.
+
+- id: integration_watchdog_offline
+  alias: Watchdog - alert when an integration goes offline
+  description: >-
+    Fires when an anchor entity stays unavailable for 15 minutes, which is
+    long enough to ignore normal restarts and reconnects.
+  mode: queued
+  max: 10
+
+  triggers:
+    - trigger: state
+      id: Ring
+      entity_id:
+        - camera.front_door_live_view
+        - camera.garden_live_view
+      to: unavailable
+      for: "00:15:00"
+
+    - trigger: state
+      id: Tuya plugs
+      entity_id:
+        - switch.cheirinho_socket_1
+        - switch.led_lights_2_socket_1
+      to: unavailable
+      for: "00:15:00"
+
+    - trigger: state
+      id: TVs
+      entity_id:
+        - media_player.bedroom_1_bedroom_tv
+        - media_player.living_room_samsung_8_series_85
+      to: unavailable
+      for: "00:15:00"
+
+    - trigger: state
+      id: iPhone companion app
+      entity_id: sensor.as_iphone_ssid
+      to: unavailable
+      for: "00:15:00"
+
+    - trigger: state
+      id: Robot vacuum
+      entity_id: vacuum.matrix10_ultra
+      to: unavailable
+      for: "00:15:00"
+
+  actions:
+    # Persistent notification first: it needs no working integration, so it
+    # still lands when the phone itself is what went offline.
+    - action: persistent_notification.create
+      data:
+        title: "⚠️ Integration offline: {{ trigger.id }}"
+        message: >-
+          {{ trigger.to_state.attributes.friendly_name | default(trigger.entity_id) }}
+          ({{ trigger.entity_id }}) has been unavailable for 15 minutes.
+          Check Settings → Devices & Services for a re-authentication prompt.
+        notification_id: "watchdog_{{ trigger.id | slugify }}"
+
+    - action: notify.send_message
+      target:
+        entity_id: notify.as_iphone
+      data:
+        message: >-
+          ⚠️ {{ trigger.id }} offline — {{ trigger.entity_id }} unavailable for 15 min.
+      continue_on_error: true
+
+
+- id: integration_watchdog_after_restart
+  alias: Watchdog - sweep integrations after a restart
+  description: >-
+    Ten minutes after startup, list any anchor still unavailable. This is the
+    check that would have caught the 3 August outage on the day it happened.
+  mode: single
+
+  triggers:
+    - trigger: homeassistant
+      event: start
+
+  actions:
+    - delay: "00:10:00"
+
+    - variables:
+        anchors:
+          - camera.front_door_live_view
+          - camera.garden_live_view
+          - switch.cheirinho_socket_1
+          - switch.led_lights_2_socket_1
+          - media_player.bedroom_1_bedroom_tv
+          - media_player.living_room_samsung_8_series_85
+          - sensor.as_iphone_ssid
+          - vacuum.matrix10_ultra
+        dead: >-
+          {{ anchors | select('is_state', 'unavailable') | list }}
+
+    - condition: template
+      value_template: "{{ dead | count > 0 }}"
+
+    - action: persistent_notification.create
+      data:
+        title: "⚠️ {{ dead | count }} integration(s) did not come back after restart"
+        message: >-
+          Still unavailable 10 minutes after startup:
+          {% for e in dead %}
+          - {{ e }}
+          {% endfor %}
+          Check Settings → Devices & Services for re-authentication prompts.
+        notification_id: "watchdog_restart_sweep"
+
+    - action: notify.send_message
+      target:
+        entity_id: notify.as_iphone
+      data:
+        message: >-
+          ⚠️ {{ dead | count }} integration(s) did not come back after the HA restart.
+      continue_on_error: true
