@@ -1,0 +1,296 @@
+{
+  "id": "ai-literacy",
+  "title": "AI Literacy",
+  "subtitle": "Foundations of working well with AI",
+  "accent": "#4af6c3",
+  "terms": [
+    { "term": "PROMPT", "hint": "The instruction you give an AI" },
+    { "term": "TOKEN", "hint": "A chunk of text a model reads or writes" },
+    { "term": "MODEL", "hint": "The trained system that generates answers" },
+    { "term": "AGENT", "hint": "AI that takes actions, not just chats" },
+    { "term": "CONTEXT", "hint": "All the input a model can see at once" },
+    { "term": "BIAS", "hint": "Skew in the data or the output" },
+    { "term": "VERIFY", "hint": "What you must always do with AI output" },
+    { "term": "DATASET", "hint": "The collection a model learned from" },
+    { "term": "LATENCY", "hint": "The delay before a response arrives" },
+    { "term": "GROUNDING", "hint": "Tying answers to real, cited sources" },
+    { "term": "GUARDRAIL", "hint": "A safety limit on what AI may do" },
+    { "term": "HALLUCINATION", "hint": "A confident answer that is simply wrong" }
+  ],
+  "questions": [
+    {
+      "q": "An AI gives a confident, detailed answer that turns out to be completely made up. What is this called?",
+      "options": ["A hallucination", "A guardrail", "A token limit", "Fine-tuning"],
+      "answer": 0,
+      "explain": "Models can produce fluent, confident text that is factually wrong. That is a hallucination — which is exactly why you verify."
+    },
+    {
+      "q": "Which task should stay with a human rather than be handed to AI?",
+      "options": ["Drafting a first version of an email", "Summarising a long report", "Final sign-off on a legal contract", "Brainstorming campaign ideas"],
+      "answer": 2,
+      "explain": "AI is great for drafts, summaries and ideas. Accountable final decisions — legal sign-off — stay with a human."
+    },
+    {
+      "q": "Your prompt returns a vague, generic answer. What is the best fix?",
+      "options": ["Ask the same thing again", "Add context, a goal, and an example", "Use ALL CAPS", "Wait and retry later"],
+      "answer": 1,
+      "explain": "Specificity beats repetition. Give the model context, the goal, the audience, and an example of what good looks like."
+    },
+    {
+      "q": "You need AI to answer using your company's private documents. What approach fits best?",
+      "options": ["Hope the model already knows", "Ground it on the documents (RAG / upload)", "Increase the temperature", "Ask it to guess confidently"],
+      "answer": 1,
+      "explain": "Grounding the model on the actual source documents keeps answers tied to your reality instead of its training data."
+    },
+    {
+      "q": "An AI answer looks perfect on a topic you don't know well. Best next step?",
+      "options": ["Ship it immediately", "Verify the key claims against a trusted source", "Ask it if it's sure", "Add more emojis"],
+      "answer": 1,
+      "explain": "'Looks confident' is not 'is correct'. Verify the load-bearing claims before you rely on them."
+    },
+    {
+      "q": "What does the 'context window' of a model limit?",
+      "options": ["How fast it types", "How much text it can consider at once", "How polite it is", "How many users it has"],
+      "answer": 1,
+      "explain": "The context window is the total amount of input (and output) the model can hold in view for a single response."
+    },
+    {
+      "q": "Which is the strongest sign you should NOT automate a task with AI yet?",
+      "options": ["It's repetitive", "It's well-documented", "Mistakes are costly and hard to reverse", "It's boring"],
+      "answer": 2,
+      "explain": "High-stakes, hard-to-reverse work needs a human in the loop. Start automating where errors are cheap and visible."
+    },
+    {
+      "q": "What is the main risk of training data that over-represents one group?",
+      "options": ["Faster responses", "Biased outputs that disadvantage others", "Lower energy use", "Shorter answers"],
+      "answer": 1,
+      "explain": "Skewed data produces skewed outputs. Representative data and testing reduce bias."
+    },
+    {
+      "q": "A teammate pastes confidential customer data into a public AI tool. The biggest concern is:",
+      "options": ["It might be slow", "Data may leave your control and be retained", "The answer will be too long", "It costs tokens"],
+      "answer": 1,
+      "explain": "Treat AI inputs like anything you send outside the building. Use approved tools and avoid pasting secrets into public ones."
+    },
+    {
+      "q": "What's the best mindset for working with AI day to day?",
+      "options": ["Trust it completely", "Treat it as a fast junior who needs checking", "Never use it", "Only use it for fun"],
+      "answer": 1,
+      "explain": "A capable, fast collaborator whose work you review — that framing captures both the leverage and the responsibility."
+    }
+  ],
+  "tools": [
+    { "id": "chatgpt", "label": "ChatGPT", "icon": "💬" },
+    { "id": "copilot", "label": "Copilot", "icon": "🧑‍💻" },
+    { "id": "claude", "label": "Claude", "icon": "📜" },
+    { "id": "notebooklm", "label": "NotebookLM", "icon": "📓" },
+    { "id": "agent", "label": "AI Agent", "icon": "🤖" },
+    { "id": "search", "label": "Web Search", "icon": "🔎" },
+    { "id": "human", "label": "Human only", "icon": "🧠" }
+  ],
+  "tooltasks": [
+    { "task": "Refactor a function and generate unit tests, right inside your code editor.", "answer": "copilot", "explain": "Copilot lives in the IDE with your codebase in view — in-editor coding is its home turf." },
+    { "task": "Answer questions across 30 PDFs you uploaded, with a citation for every claim.", "answer": "notebooklm", "explain": "NotebookLM grounds answers in the sources you give it and cites each one — built for your own documents." },
+    { "task": "Get this morning's headlines about a breaking news event.", "answer": "search", "explain": "Live, changing facts need real-time web search, not a model's frozen training data." },
+    { "task": "Sign off the final compensation figures in an employee's job offer.", "answer": "human", "explain": "High-stakes, accountable, sensitive decisions stay with a person — full stop." },
+    { "task": "Research a venue, book it, add it to your calendar, and email the attendees.", "answer": "agent", "explain": "A chain of actions across multiple tools is exactly what an agent is for." },
+    { "task": "Read a 60-page policy document and produce a careful, structured risk summary.", "answer": "claude", "explain": "Long-context, careful reasoning over a big document plays to a strong general assistant." },
+    { "task": "Give five quick analogies to explain APIs to a complete beginner.", "answer": "chatgpt", "explain": "Fast, general explanation with no special context needed — a quick chat model nails this." }
+  ],
+  "scenarios": [
+    {
+      "prompt": "A customer asks whether your software is fully GDPR-compliant. Which AI-drafted reply would you approve to send?",
+      "answers": [
+        { "text": "\"Yes — our product is 100% GDPR-compliant in every region, guaranteed.\"", "verdict": "Overclaims and states legal compliance as a fact it can't back." },
+        { "text": "\"We take data protection seriously and follow GDPR principles. For the specifics on your region, I'll connect you with our Data Protection Officer.\"", "verdict": "Helpful, honest, and routes the legal specifics to the right human." },
+        { "text": "\"I'm not sure, sorry.\"", "verdict": "Accurate that it doesn't know, but unhelpful and unprofessional." }
+      ],
+      "best": 1,
+      "explain": "Approve the reply that helps the customer without making legal guarantees it can't stand behind — and escalates specifics to a human."
+    },
+    {
+      "prompt": "You asked an AI to summarise this quarter's numbers for the board. Which summary do you approve?",
+      "answers": [
+        { "text": "A confident summary featuring a precise figure (£4.2m) that does not appear anywhere in the source.", "verdict": "Contains a fabricated number — a hallucination presented as fact." },
+        { "text": "Accurate figures pulled from the source, with one missing data point clearly flagged as 'not provided'.", "verdict": "Accurate and transparent about a gap — exactly what a board needs." },
+        { "text": "A vague paragraph with no numbers at all.", "verdict": "Too vague to be useful for a board decision." }
+      ],
+      "best": 1,
+      "explain": "Approve the answer that is accurate and honest about what it doesn't know. Invented precision is the most dangerous kind of wrong."
+    },
+    {
+      "prompt": "An AI wrote a script to clean up old database records. Which version do you approve to run in production?",
+      "answers": [
+        { "text": "Deletes everything older than the cutoff immediately, with no backup and no confirmation.", "verdict": "Destructive and irreversible, with zero safeguards." },
+        { "text": "Runs a dry-run first, filters strictly by date, logs exactly what it would delete, and asks before committing.", "verdict": "Scoped, reversible, and observable — safe to run." },
+        { "text": "Has lovely comments explaining the code, but still deletes everything with no backup.", "verdict": "Well-documented, but still unsafe." }
+      ],
+      "best": 1,
+      "explain": "For anything irreversible, approve the option with a dry-run, scoping, and logging. Good comments don't make a destructive action safe."
+    },
+    {
+      "prompt": "A teammate used AI to draft their performance self-review. Which output do you approve?",
+      "answers": [
+        { "text": "Invents impressive achievements and metrics the person never actually did.", "verdict": "Fabricated accomplishments — dishonest and risky." },
+        { "text": "A polished draft built only from the real work the person listed, written in their voice.", "verdict": "Uses genuine input, saves time, and stays honest." },
+        { "text": "Generic filler full of buzzwords and no specifics.", "verdict": "Harmless but useless." }
+      ],
+      "best": 1,
+      "explain": "AI is great for shaping and polishing real input. The moment it invents accomplishments, you've traded a time-saver for a liability."
+    }
+  ],
+  "chains": [
+    {
+      "title": "Working with AI, end to end",
+      "steps": [
+        "Define the task and what 'good' looks like",
+        "Write a clear, specific prompt",
+        "Generate a first draft",
+        "Verify the output against a trusted source",
+        "Refine, then ship it and own the result"
+      ]
+    },
+    {
+      "title": "Responding to a suspected hallucination",
+      "steps": [
+        "Notice a claim that sounds too confident",
+        "Check it against a reliable source",
+        "Confirm it is unsupported",
+        "Correct the output",
+        "Add the source so it can't slip through again"
+      ]
+    }
+  ],
+  "repairs": [
+    {
+      "bad": "write something about AI",
+      "options": ["Make it good", "Write a 150-word intro explaining what generative AI is, for non-technical managers, with one everyday analogy.", "Tell me about AI please", "Write about AI in detail"],
+      "answer": 1,
+      "explain": "A strong prompt sets length, audience, purpose and form — vague verbs like 'write something' give vague output."
+    },
+    {
+      "bad": "fix my code",
+      "options": ["Fix it", "This Python function throws an IndexError on empty input (code below) — explain the cause and give a corrected version with a guard clause.", "Make the code work", "Debug please"],
+      "answer": 1,
+      "explain": "Give the language, the actual error, the code, and what 'fixed' should look like."
+    },
+    {
+      "bad": "summarise this",
+      "options": ["Summarise", "Summarise the attached report in 5 bullets for an exec audience, focusing on risks and the decisions needed.", "Make it short", "TL;DR"],
+      "answer": 1,
+      "explain": "Specify length, format, audience and focus, or you'll get a generic summary of the wrong things."
+    }
+  ],
+  "builds": [
+    {
+      "goal": "You want back a table comparing 3 AI tools by price, best use, and a one-line verdict.",
+      "options": ["'tell me about tools'", "'Compare ChatGPT, Copilot and Claude in a markdown table with columns: Price, Best use, Verdict (one line each).'", "'which tool is best'", "'list AI tools'"],
+      "answer": 1,
+      "explain": "Name the items, the exact columns, and the output format you want."
+    },
+    {
+      "goal": "You want a polite 3-sentence email declining a meeting invite.",
+      "options": ["'say no'", "'Write a polite 3-sentence email declining Tuesday's budget meeting, offering to send written input instead.'", "'decline meeting'", "'no thanks email'"],
+      "answer": 1,
+      "explain": "State the tone, the length, the specific situation, and the alternative you're offering."
+    },
+    {
+      "goal": "You want 5 multiple-choice quiz questions, with answers, generated from a document.",
+      "options": ["'make a quiz'", "'From the text below, write 5 multiple-choice questions (4 options each) and mark the correct answer for each.'", "'questions please'", "'test me'"],
+      "answer": 1,
+      "explain": "Specify the count, the structure, and that the correct answers should be marked."
+    }
+  ],
+  "aivshuman": [
+    { "text": "I do not have personal opinions, but here are three balanced considerations to weigh.", "source": "AI", "explain": "The hedging disclaimer 'I don't have personal opinions' is a classic AI tell." },
+    { "text": "ugh this meeting could've been an email lol. anyway i pinged Sam, he's on it.", "source": "Human", "explain": "Lowercase, slang, and a real name plus a casual action read as a human colleague." },
+    { "text": "Certainly! Here is a comprehensive, structured overview. First… Second… In conclusion…", "source": "AI", "explain": "Eager 'Certainly!', perfectly balanced structure and a tidy 'In conclusion' are typical AI patterns." },
+    { "text": "Honestly not sure — I think it broke after Thursday's deploy but I'd have to dig into the logs to be certain.", "source": "Human", "explain": "Genuine uncertainty tied to a specific event and a personal next step feels human." }
+  ],
+  "redteam": [
+    {
+      "context": "An AI wrote this reply to a customer asking 'Is our data safe?'",
+      "claims": [
+        { "text": "Data is encrypted at rest and in transit.", "flawed": false, "note": "A reasonable, checkable claim." },
+        { "text": "Our systems are 100% unhackable.", "flawed": true, "note": "No system is 100% unhackable — an overclaim." },
+        { "text": "We are fully GDPR and HIPAA compliant.", "flawed": true, "note": "States legal compliance as fact with no basis — verify before claiming." },
+        { "text": "Access is limited to authorised staff.", "flawed": false, "note": "A plausible, standard control." }
+      ]
+    },
+    {
+      "context": "An AI summarised the quarter's results.",
+      "claims": [
+        { "text": "Revenue grew this quarter.", "flawed": false, "note": "General and supportable." },
+        { "text": "Revenue was exactly £4.2m.", "flawed": true, "note": "A specific figure that isn't in the source — likely fabricated." },
+        { "text": "Churn fell slightly.", "flawed": false, "note": "Reasonable if backed by the data." },
+        { "text": "This guarantees we'll beat target next quarter.", "flawed": true, "note": "An unfounded guarantee about the future." }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "evidence": ["Email 09:02 — 'Ship the report, the AI draft looks great!'", "AI draft footer — 'NOTE: figures are illustrative placeholders'", "Slack 09:30 — 'Board is asking why revenue shows £0.0m??'"],
+      "question": "What actually went wrong?",
+      "options": ["The board misread the report", "Placeholder AI figures were shipped without verification", "The email server failed", "Revenue genuinely was £0"],
+      "answer": 1,
+      "explain": "The draft itself warned the figures were placeholders — nobody verified before shipping."
+    },
+    {
+      "evidence": ["Ticket — 'customer says password-reset email never arrived'", "Mail logs — reset emails being flagged as spam", "Chatbot transcript — 'Your account has been deleted as requested.'", "Customer — 'I never asked to delete anything!'"],
+      "question": "What happened?",
+      "options": ["The customer deleted their own account", "The AI chatbot claimed an action it never took and misinformed the customer", "The spam filter deleted the account", "Nothing actually went wrong"],
+      "answer": 1,
+      "explain": "The bot confidently asserted a deletion that never happened — a fabricated action on top of the real spam-filter issue."
+    }
+  ],
+  "rooms": [
+    {
+      "name": "The Prompt Vault",
+      "scenario": "A sealed panel will only open for a well-formed prompt.",
+      "q": "Which prompt opens the vault?",
+      "options": ["'write stuff'", "'Draft a 100-word product update for customers, friendly tone, highlighting the new export feature.'", "'product update'", "'make it good'"],
+      "answer": 1,
+      "explain": "Audience, length, tone and content — the lock clicks open."
+    },
+    {
+      "name": "The Hall of Verification",
+      "scenario": "An AI states a statistic that supposedly unlocks the door.",
+      "q": "What do you do?",
+      "options": ["Trust it and walk through", "Verify the statistic against a trusted source first", "Ask the AI to sound more confident", "Ignore the door"],
+      "answer": 1,
+      "explain": "Verify before you rely — only then does the door open."
+    },
+    {
+      "name": "The Tool Chamber",
+      "scenario": "To escape you must handle: 'book a room, update the calendar, and email the team.'",
+      "q": "Which tool gets you out?",
+      "options": ["A web search", "An AI agent that can take those multi-step actions", "A spell-checker", "Nothing — wait for help"],
+      "answer": 1,
+      "explain": "Multiple actions across apps call for an agent. Freedom!"
+    }
+  ],
+  "surveys": [
+    {
+      "question": "Name a great everyday use of AI at work",
+      "answers": [
+        { "text": "Drafting emails & documents", "points": 32 },
+        { "text": "Summarising long content", "points": 27 },
+        { "text": "Brainstorming ideas", "points": 19 },
+        { "text": "Writing or fixing code", "points": 14 },
+        { "text": "Research & search", "points": 8 }
+      ],
+      "decoys": ["Approving legal contracts", "Guessing the lottery"]
+    },
+    {
+      "question": "Name something you should always do with AI output",
+      "answers": [
+        { "text": "Verify it against a source", "points": 38 },
+        { "text": "Edit & refine it", "points": 24 },
+        { "text": "Check the sources", "points": 18 },
+        { "text": "Keep a human in the loop", "points": 12 },
+        { "text": "Own the final result", "points": 8 }
+      ],
+      "decoys": ["Trust it blindly", "Forward it unread"]
+    }
+  ]
+}

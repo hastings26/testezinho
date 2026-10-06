@@ -1,0 +1,28 @@
+{
+  "id": "project",
+  "title": "Project Management",
+  "subtitle": "Delivering on time and on scope",
+  "terms": [
+    { "term": "SCOPE", "hint": "What's in (and out of) the project" },
+    { "term": "MILESTONE", "hint": "A checkpoint that marks progress" },
+    { "term": "BUDGET", "hint": "The money you have to work with" },
+    { "term": "RISK", "hint": "Something that could go wrong" },
+    { "term": "STAKEHOLDER", "hint": "Anyone with a stake in the outcome" },
+    { "term": "TIMELINE", "hint": "When things need to happen" },
+    { "term": "BACKLOG", "hint": "The prioritised list of work to do" },
+    { "term": "SPRINT", "hint": "A short, focused burst of delivery" },
+    { "term": "DEPENDENCY", "hint": "A task that must wait on another" },
+    { "term": "DELIVERABLE", "hint": "A concrete thing you hand over" }
+  ],
+  "questions": [
+    { "q": "New 'must-have' features keep getting added mid-project. This is…", "options": ["Good momentum", "Scope creep — manage it via change control", "A risk register", "A milestone"], "answer": 1, "explain": "Uncontrolled additions blow timelines and budgets. Capture changes and re-agree scope explicitly." },
+    { "q": "What's the point of a daily stand-up?", "options": ["A long status report", "A quick sync on progress, plans and blockers", "Performance reviews", "To fill the calendar"], "answer": 1, "explain": "Short and focused: what's done, what's next, what's blocking. Solve details afterwards." },
+    { "q": "A risk register exists to…", "options": ["Assign blame later", "Identify risks early and plan responses", "Track expenses", "Replace the timeline"], "answer": 1, "explain": "Naming risks early lets you mitigate or plan for them before they bite." },
+    { "q": "Task B can't start until Task A finishes. Task A is a…", "options": ["Milestone", "Dependency for B", "Deliverable", "Stakeholder"], "answer": 1, "explain": "B depends on A. Mapping dependencies reveals the critical path through the work." },
+    { "q": "Best way to handle a slipping deadline?", "options": ["Hide it and hope", "Flag it early and discuss scope, time or resource trade-offs", "Blame the team", "Quietly drop quality"], "answer": 1, "explain": "Surface slippage early so stakeholders can choose the trade-off consciously." },
+    { "q": "A good milestone is…", "options": ["Vague and movable", "Specific, dated and verifiable", "Whatever's easiest", "Only known to the manager"], "answer": 1, "explain": "Clear, dated milestones make progress visible and honest." }
+  ],
+  "chains": [
+    { "title": "Running a project", "steps": ["Define scope and goals", "Plan tasks and timeline", "Assign clear owners", "Track progress and risks", "Deliver and review"] }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "security",
+  "title": "Security Awareness",
+  "subtitle": "Spotting and stopping everyday threats",
+  "terms": [
+    { "term": "PHISHING", "hint": "A fake message that steals your login" },
+    { "term": "PASSWORD", "hint": "The secret that should never be reused" },
+    { "term": "MALWARE", "hint": "Software built to harm or steal" },
+    { "term": "FIREWALL", "hint": "Filters traffic in and out of a network" },
+    { "term": "ENCRYPTION", "hint": "Scrambling data so only a key unlocks it" },
+    { "term": "PATCH", "hint": "An update that fixes a security flaw" },
+    { "term": "BACKUP", "hint": "A spare copy you can recover from" },
+    { "term": "RANSOMWARE", "hint": "Malware that locks files for a payment" },
+    { "term": "VERIFY", "hint": "Confirm a request before you act on it" },
+    { "term": "VPN", "hint": "An encrypted tunnel for remote access" }
+  ],
+  "questions": [
+    {
+      "q": "An email says 'Your account is locked — click here now to fix it.' Best move?",
+      "options": ["Click fast before it's too late", "Stop, don't click, and verify via the official site or IT", "Reply with your password", "Forward it to the whole team"],
+      "answer": 1,
+      "explain": "Urgency + a link to 'fix' your account is the classic phishing pattern. Navigate to the real site yourself or check with IT."
+    },
+    {
+      "q": "What's the strongest single habit for account safety?",
+      "options": ["One memorable password everywhere", "Unique passwords plus multi-factor authentication", "Writing passwords on a sticky note", "Sharing logins to save time"],
+      "answer": 1,
+      "explain": "Unique passwords (a manager helps) and MFA mean one leaked password doesn't open everything."
+    },
+    {
+      "q": "The 'CEO' texts you urgently asking for gift cards. This is most likely:",
+      "options": ["A normal request", "A social-engineering / impersonation scam", "A bonus", "A system update"],
+      "answer": 1,
+      "explain": "Urgency, secrecy, and an odd payment method are textbook impersonation. Verify through a known channel before acting."
+    },
+    {
+      "q": "Best defence against ransomware wiping your work?",
+      "options": ["Pay the ransom first", "Tested, offline backups and prompt patching", "Turn off the firewall", "Disable updates"],
+      "answer": 1,
+      "explain": "Reliable backups let you recover without paying, and patching closes the holes ransomware exploits."
+    },
+    {
+      "q": "You find a USB stick in the car park. You should:",
+      "options": ["Plug it in to find the owner", "Hand it to IT/security and never plug it in", "Take it home", "Share it around"],
+      "answer": 1,
+      "explain": "'Lost' USB drives are a known attack. Plugging in unknown devices can auto-install malware — hand it to security."
+    },
+    {
+      "q": "Good rule for sensitive data and public AI or web tools?",
+      "options": ["Paste anything to save time", "Never paste secrets/customer data into unapproved tools", "Email it to yourself", "Post it publicly"],
+      "answer": 1,
+      "explain": "Treat any external tool like sending data outside the building. Use approved tools and keep secrets out of public ones."
+    }
+  ],
+  "chains": [
+    {
+      "title": "Handling a suspicious email",
+      "steps": [
+        "Notice the urgency or odd request",
+        "Don't click any links or attachments",
+        "Verify the sender via a known channel",
+        "Report it to IT / security",
+        "Delete it"
+      ]
+    }
+  ]
+}

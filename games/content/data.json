@@ -1,0 +1,28 @@
+{
+  "id": "data",
+  "title": "Data & Analytics",
+  "subtitle": "Thinking clearly with numbers",
+  "terms": [
+    { "term": "DATA", "hint": "Recorded facts you can analyse" },
+    { "term": "METRIC", "hint": "A number you track over time" },
+    { "term": "AVERAGE", "hint": "The typical value in a set" },
+    { "term": "OUTLIER", "hint": "A value far from the rest" },
+    { "term": "TREND", "hint": "The direction over time" },
+    { "term": "SAMPLE", "hint": "A subset that stands in for the whole" },
+    { "term": "DASHBOARD", "hint": "A live view of key metrics" },
+    { "term": "INSIGHT", "hint": "A finding that changes a decision" },
+    { "term": "BASELINE", "hint": "The starting point you compare against" },
+    { "term": "FORECAST", "hint": "An estimate of what's coming" }
+  ],
+  "questions": [
+    { "q": "Ice-cream sales and sunburn both rise together. This shows…", "options": ["Ice cream causes sunburn", "Correlation, not causation (a hot day drives both)", "Sunburn causes ice cream sales", "Nothing at all"], "answer": 1, "explain": "Two things moving together doesn't mean one causes the other — look for a common cause." },
+    { "q": "A 'vanity metric' is one that…", "options": ["Looks impressive but doesn't guide a decision", "Is always wrong", "Costs money to collect", "Only finance cares about"], "answer": 0, "explain": "If a metric goes up and you'd do nothing differently, it's vanity. Track metrics that change actions." },
+    { "q": "One customer spent £1m; the rest spent £5. The average is misleading because of…", "options": ["A typo", "An outlier skewing the mean — use the median", "Too small a sample", "Rounding"], "answer": 1, "explain": "Outliers drag the mean. The median often describes 'typical' far better." },
+    { "q": "Before trusting a chart, you should first check…", "options": ["The colours", "The source, the time range, and the axis scale", "How pretty it is", "Who sent it"], "answer": 1, "explain": "Source, range and axis can flip the story. Always read them before you believe the shape." },
+    { "q": "A good metric to act on is…", "options": ["Total page views ever", "One tied to a goal, with a baseline to compare against", "Whatever is easiest to get", "The biggest number available"], "answer": 1, "explain": "Goal-linked metrics with a baseline tell you whether you're actually improving." },
+    { "q": "Your sample is 8 people, all from one team. The risk is…", "options": ["The data is too accurate", "It's not representative — conclusions may not generalise", "It's too expensive", "Nothing, more data is always worse"], "answer": 1, "explain": "A small, skewed sample can mislead. Make sure it represents the population you care about." }
+  ],
+  "chains": [
+    { "title": "From data to decision", "steps": ["Ask a clear question", "Gather reliable data", "Clean and sanity-check it", "Find the insight", "Act, then measure the result"] }
+  ]
+}

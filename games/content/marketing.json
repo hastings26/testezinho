@@ -1,0 +1,28 @@
+{
+  "id": "marketing",
+  "title": "Marketing Fundamentals",
+  "subtitle": "Reaching the right people with the right message",
+  "terms": [
+    { "term": "BRAND", "hint": "What people feel about you" },
+    { "term": "AUDIENCE", "hint": "The people you're trying to reach" },
+    { "term": "CAMPAIGN", "hint": "A coordinated push toward a goal" },
+    { "term": "CONTENT", "hint": "The useful stuff you publish" },
+    { "term": "FUNNEL", "hint": "The path from aware to buyer" },
+    { "term": "ENGAGEMENT", "hint": "How people interact with you" },
+    { "term": "CONVERSION", "hint": "When interest becomes action" },
+    { "term": "SEGMENT", "hint": "A distinct group within the audience" },
+    { "term": "MESSAGING", "hint": "The core points you communicate" },
+    { "term": "REACH", "hint": "How many people you got in front of" }
+  ],
+  "questions": [
+    { "q": "Strong messaging starts by being clear about…", "options": ["Your favourite colour", "Who the audience is and what they care about", "The font", "The budget"], "answer": 1, "explain": "Message-market fit comes from knowing the audience's needs, not your preferences." },
+    { "q": "A marketing 'funnel' describes…", "options": ["A kitchen tool", "The journey from awareness to consideration to purchase", "The office layout", "A type of ad"], "answer": 1, "explain": "People move through stages — awareness → interest → decision. Different content suits each." },
+    { "q": "High reach but no conversions usually means…", "options": ["Perfect campaign", "The message or offer isn't landing with the right people", "Too few impressions", "You should stop measuring"], "answer": 1, "explain": "Reach without action points to a targeting or message problem, not a volume one." },
+    { "q": "Why segment an audience?", "options": ["To make work harder", "To tailor the message to each group's needs", "To reduce reach on purpose", "It's a legal requirement"], "answer": 1, "explain": "Different segments care about different things — tailored beats generic." },
+    { "q": "A brand is best described as…", "options": ["Just a logo", "The overall impression and trust people hold of you", "A colour palette", "An ad budget"], "answer": 1, "explain": "Brand is the gut feeling people have about you — built over every interaction, not just the logo." },
+    { "q": "The best content marketing is…", "options": ["All about you", "Genuinely useful to the audience", "As salesy as possible", "Published as rarely as possible"], "answer": 1, "explain": "Useful, relevant content earns attention and trust; constant selling repels it." }
+  ],
+  "chains": [
+    { "title": "Launching a campaign", "steps": ["Define the audience", "Set the goal and core message", "Choose the channels", "Launch and engage", "Measure and optimise"] }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "sales",
+  "title": "B2B Sales Skills",
+  "subtitle": "Discovery, value, and closing well",
+  "terms": [
+    { "term": "PROSPECT", "hint": "A potential customer worth pursuing" },
+    { "term": "PIPELINE", "hint": "Your deals in progress, by stage" },
+    { "term": "DISCOVERY", "hint": "Asking to understand real needs" },
+    { "term": "OBJECTION", "hint": "A reason a buyer hesitates" },
+    { "term": "CLOSING", "hint": "Securing the commitment to buy" },
+    { "term": "QUOTA", "hint": "The sales target you carry" },
+    { "term": "CHURN", "hint": "Customers who leave or cancel" },
+    { "term": "UPSELL", "hint": "Selling a higher tier or add-on" },
+    { "term": "REFERRAL", "hint": "A warm lead from a happy customer" },
+    { "term": "VALUE", "hint": "The outcome the buyer actually pays for" }
+  ],
+  "questions": [
+    {
+      "q": "What should you do most in a strong discovery call?",
+      "options": ["Pitch features the whole time", "Ask questions and listen for the real problem", "Talk about price first", "Read your slides aloud"],
+      "answer": 1,
+      "explain": "Discovery is about their world, not your deck. Ask, listen, and find the problem worth paying to solve."
+    },
+    {
+      "q": "A prospect says 'You're too expensive.' Best first response?",
+      "options": ["Immediately drop the price", "Explore what they're comparing it to and the value at stake", "End the call", "Insist they're wrong"],
+      "answer": 1,
+      "explain": "Price objections are usually value questions. Understand the comparison and reframe around the outcome before discounting."
+    },
+    {
+      "q": "Which best reflects value-based selling?",
+      "options": ["Listing every feature", "Tying your solution to their measurable business outcome", "Talking only about you", "Lowest price wins"],
+      "answer": 1,
+      "explain": "Buyers pay for outcomes. Connect what you sell to the result they care about, in their numbers."
+    },
+    {
+      "q": "Your pipeline is full but nothing closes. Most likely issue?",
+      "options": ["Too many real, qualified deals", "Weak qualification — deals that were never going to buy", "Too much follow-up", "Prices too low"],
+      "answer": 1,
+      "explain": "A bloated, stalled pipeline usually means poor qualification. Be honest about which deals are truly real."
+    },
+    {
+      "q": "Best moment to ask for a referral?",
+      "options": ["Never", "Right after delivering a clear win for a happy customer", "Before you've delivered anything", "Only when you're desperate"],
+      "answer": 1,
+      "explain": "Referrals flow when value is fresh and obvious. Ask when the customer is delighted, not when your quota is panicking."
+    },
+    {
+      "q": "How can AI genuinely help an SDR's day?",
+      "options": ["Auto-sending generic spam at scale", "Drafting tailored outreach you personalise and verify", "Faking customer quotes", "Replacing all human judgement"],
+      "answer": 1,
+      "explain": "AI is great for fast, tailored first drafts and research — you still add the human personalisation and judgement."
+    }
+  ],
+  "chains": [
+    {
+      "title": "Running a deal from first contact to close",
+      "steps": [
+        "Qualify the prospect",
+        "Run discovery to find the real need",
+        "Map your solution to their outcome",
+        "Handle objections honestly",
+        "Close and confirm the next steps"
+      ]
+    }
+  ]
+}

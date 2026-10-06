@@ -1,0 +1,28 @@
+{
+  "id": "communication",
+  "title": "Communication Skills",
+  "subtitle": "Being clear, heard and understood",
+  "terms": [
+    { "term": "CLARITY", "hint": "Being easy to understand" },
+    { "term": "LISTEN", "hint": "Truly hearing the other person" },
+    { "term": "EMPATHY", "hint": "Seeing it from their side" },
+    { "term": "CONCISE", "hint": "Saying it in fewer words" },
+    { "term": "AUDIENCE", "hint": "Who you're speaking to" },
+    { "term": "FEEDBACK", "hint": "Input that helps someone improve" },
+    { "term": "TONE", "hint": "The feeling behind your words" },
+    { "term": "QUESTION", "hint": "How you draw out understanding" },
+    { "term": "SUMMARY", "hint": "The key points, briefly" },
+    { "term": "PERSUADE", "hint": "Move someone to your view" }
+  ],
+  "questions": [
+    { "q": "The most important part of communication is often…", "options": ["Talking more", "Listening to understand, not just to reply", "Using big words", "Speaking fastest"], "answer": 1, "explain": "Listening to understand is what makes the other person feel heard — and reveals what to say next." },
+    { "q": "To make an email clear, you should…", "options": ["Bury the ask at the end", "Lead with the key point and the action needed", "Write as much as possible", "Avoid any structure"], "answer": 1, "explain": "Busy readers skim. Put the point and the ask up front." },
+    { "q": "'Active listening' includes…", "options": ["Planning your reply while they talk", "Paraphrasing back to confirm you understood", "Checking your phone", "Interrupting to speed things up"], "answer": 1, "explain": "Reflecting back what you heard confirms understanding and shows you were truly listening." },
+    { "q": "When giving difficult feedback, tone should be…", "options": ["Harsh, to make the point", "Calm, respectful and specific", "Sarcastic", "Avoided entirely"], "answer": 1, "explain": "Calm and specific lets the message land without triggering defensiveness." },
+    { "q": "Knowing your audience changes…", "options": ["Nothing", "The words, detail and examples you choose", "Only the font", "The time of day only"], "answer": 1, "explain": "The same idea is framed differently for an exec, a peer, or a beginner." },
+    { "q": "A good way to check you were understood is to…", "options": ["Assume you were", "Ask them to summarise the next step", "Send it again louder", "Add more jargon"], "answer": 1, "explain": "Having them restate the action confirms the message actually landed." }
+  ],
+  "chains": [
+    { "title": "Delivering a clear message", "steps": ["Know your audience", "Lead with the key point", "Keep it concise", "Invite questions", "Confirm understanding"] }
+  ]
+}
