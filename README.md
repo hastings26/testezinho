@@ -39,14 +39,30 @@ travelled on their own. Then the Great Disconnection shattered it. You are a you
 2. **Explore** the village (top-down, WASD/arrows) and talk to villagers.
 3. **Learn a power** — recruit Node Spirit companions: **Triggi** (triggers), **Jessa**
    (items/JSON), **Ifrit** (branching logic).
-4. **Build** the fix in a real, n8n-style **workflow builder** — add nodes, wire output ●
+4. **Build** the fix in a real, n8n-style **workflow builder**. The very first build runs in
+   **guided "one step at a time" mode** — only the one glowing target is clickable and
+   everything else is inert, so a first-timer literally cannot get it wrong (with a
+   *skip & build freely* escape). After that you build freely: add nodes, wire output ●
    ports to input ● ports, configure each node, then **Run the Flow** and watch every parcel
-   land in a live sink read-out.
+   land in a live sink read-out. A first-time **"how to build"** card explains the mechanics,
+   and **Bug the coach** narrates every step live along the bottom ("✓ Split Out added… now
+   wire the Trigger into it"), always pointing at the single most useful next move — so you
+   learn *why* as you place each node. Nodes auto-arrange into tidy left→right columns so the
+   flow fits on screen without dragging, and **milestone pop-ups** celebrate each correct move
+   with a plain-English + everyday-life analogy ("You built a decision! — like a doorman with
+   a guest list: on the list? come in. Not on it? turned away.").
 5. **Survive the disruption** — a late parcel arrives with a blank name and no RSVP. Your
    flow still runs "green" but silently returns a real guest. You must add a guard for the
    missing value and route it to human **Review**.
 6. **Face the review** — **The Auditor** quizzes you on *why* it works (trigger type, empty
    vs. null, silent failure, human safety). Pass to rank up **Spark → Connector**.
+
+**Learning clarity** is built in so you always know what you're learning and what's next:
+a persistent **objective tracker** (current quest + a `Learning:` chip row + the next step),
+a labeled **mastery → next-rank** bar, a full **roadmap** view (press `M`) showing the n8n
+curriculum as done / current / locked with real node mappings, plus a **training** card at
+quest start, a **teachable-moment card** the first time each concept unlocks ("Jessa's Split
+Out ≈ the n8n Split Out node"), and a **what-you-learned recap** after the Auditor.
 
 Everything the doc calls out is modelled: the **companion system**, the **Flowfolio**
 journal (every concept has *Tale / Mechanism / Real World* views), the impatient hint
