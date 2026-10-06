@@ -1,0 +1,40 @@
+{
+  "source_scan": "/root/.claude/uploads/b616bfcf-9ff0-57ff-9a64-899f5df0cb47/07fdd008-D55A126C53564ACB84B099270E2C6221.png",
+  "border_od_mm": 50.0,
+  "border_width_mm": 0.8,
+  "relief_mm": 1.0,
+  "backing_mm": 2.2,
+  "total_thickness_mm": 3.2,
+  "scan": {
+    "px_per_mm": 19.286,
+    "speckles_removed_px": 8,
+    "scanned_border_runout_mm": 0.892
+  },
+  "repair": {
+    "stroke_below_min_before_pct": 18.0,
+    "stroke_below_min_after_pct": 4.2,
+    "added_material_pct_of_ink": 4.25,
+    "isolated_dots_thickened": 1,
+    "merges_prevented": 1,
+    "gap_below_min_after_pct": 3.7,
+    "dots_below_min_after": 1
+  },
+  "checks": {
+    "watertight": true,
+    "winding_consistent": true,
+    "volume_positive": true,
+    "contact_faces_coplanar": true,
+    "total_thickness_mm": 3.2,
+    "outside_diameter_mm": 50.0,
+    "contours_closed": true,
+    "no_self_intersection": true,
+    "islands": 34,
+    "triangles": 292788,
+    "thickness_ok": true,
+    "diameter_ok": true
+  },
+  "step": "34 relief solids fused, simplified to 0.02 mm",
+  "flags": [
+    "3.7% of the negative-space skeleton is below the 0.45 mm gap minimum. Not corrected: opening these gaps requires eroding the calligraphy either side."
+  ]
+}
